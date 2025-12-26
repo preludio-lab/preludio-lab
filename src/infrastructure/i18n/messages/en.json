@@ -1,0 +1,129 @@
+{
+    "Metadata": {
+        "title": "Preludio Lab | Closer to the Classics, More Joy in Every Note",
+        "description": "Deepen that spark of 'I love this piece.' Through interactive scores and audio, we bring you an experience that touches the heart of masterpieces. Join us for enriching moments where classical music becomes a constant companion in your life."
+    },
+    "Common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "notFound": "Page Not Found",
+        "notFoundDesc": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+        "backToHome": "Back to Home"
+    },
+    "Home": {
+        "hero": {
+            "title": "Where You Find the Music You'll Love Forever.",
+            "description": "Discovering wonderful music is a treasure that gently colors your life. Trace the score and unravel the stories behind the sound. Preludio Lab is your guide to that 'perfect piece' that transforms your everyday life.",
+            "explore": "Explore Works",
+            "about": "About Us"
+        },
+        "discover": "Discover",
+        "categories": {
+            "works": {
+                "name": "Works",
+                "desc": "The stories behind masterpieces and moments that move you."
+            },
+            "composers": {
+                "name": "Composers",
+                "desc": "The lives and passions of the musicians who colored their eras."
+            },
+            "theory": {
+                "name": "Theory",
+                "desc": "Unlock the secrets of sound to enjoy listening even more."
+            },
+            "eras": {
+                "name": "Eras",
+                "desc": "Feel the atmosphere of the times and bring music to life."
+            },
+            "instruments": {
+                "name": "Instruments",
+                "desc": "History and charm of the partners that weave the sound."
+            },
+            "performers": {
+                "name": "Performers",
+                "desc": "Records of soul-stirring performances and expressions."
+            },
+            "terminology": {
+                "name": "Terminology",
+                "desc": "Messages from composers hidden within the score."
+            },
+            "columns": {
+                "name": "Columns",
+                "desc": "Diverse readings to color your musical life."
+            },
+            "originals": {
+                "name": "Originals",
+                "desc": "Original compositions presented by Preludio Lab."
+            }
+        },
+        "featured": {
+            "title": "Featured Work",
+            "readMore": "Read Article",
+            "defaultDescription": "A work by {composer}."
+        }
+    },
+    "Navigation": {
+        "home": "Home",
+        "works": "Works",
+        "composers": "Composers",
+        "about": "About"
+    },
+    "Footer": {
+        "copyright": "© {year} Preludio Lab. All rights reserved.",
+        "tagline": "Beyond Listening. Dive deeper into the classics."
+    },
+    "Player": {
+        "invalidRequest": "Invalid playback request"
+    },
+    "CategoryIndex": {
+        "title": "{category}",
+        "searchPlaceholder": "Search by keyword...",
+        "emptyState": "No content found matching your criteria.",
+        "totalCount": "{count} items in total",
+        "filter": {
+            "title": "Filter",
+            "difficulty": "Difficulty",
+            "era": "Era",
+            "instrument": "Instrument",
+            "all": "All"
+        },
+        "sort": {
+            "label": "Sort",
+            "latest": "Latest",
+            "oldest": "Oldest",
+            "title": "Name",
+            "difficulty_asc": "Difficulty (Easy to Hard)",
+            "difficulty_desc": "Difficulty (Hard to Easy)",
+            "popular": "Popular",
+            "trending": "Trending"
+        },
+        "categories": {
+            "works": "Works",
+            "composers": "Composers",
+            "theory": "Music Theory",
+            "eras": "Musical Eras",
+            "instruments": "Instruments",
+            "performers": "Performers",
+            "terminology": "Terminology",
+            "columns": "Columns"
+        },
+        "difficulty": {
+            "Beginner": "Beginner",
+            "Intermediate": "Intermediate",
+            "Advanced": "Advanced"
+        },
+        "readMore": "Read More"
+    },
+    "Error": {
+        "title": "Something went wrong!",
+        "description": "We apologize for the inconvenience. The error has been logged.",
+        "toastMessage": "Something went wrong while loading the page.",
+        "retry": "Try again"
+    },
+    "Consent": {
+        "title": "About Cookie Usage",
+        "message": "{siteName} uses cookies to provide you with the optimal viewing experience and to analyze how our site is used.",
+        "accept": "Accept All",
+        "reject": "Reject"
+    }
+}

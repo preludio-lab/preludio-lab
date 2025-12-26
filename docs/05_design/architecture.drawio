@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-12-11T23:35:00Z" agent="5.0 (Chrome)" etag="12345678" version="20.0.5" type="device">
+  <diagram id="system-arch" name="System Architecture">
+    <mxGraphModel dx="1260" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Users -->
+        <mxCell id="user" value="User\nPC / Mobile" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1F5FE;strokeColor=#0288D1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="160" height="80" as="geometry" />
+        </mxCell>
+        <!-- Services -->
+        <mxCell id="services" value="Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#43A047;" vertex="1" parent="1">
+          <mxGeometry x="260" y="30" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="vercel" value="Vercel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FB8C00;" vertex="1" parent="services">
+          <mxGeometry x="10" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="supabase" value="Supabase" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FB8C00;" vertex="1" parent="services">
+          <mxGeometry x="110" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sentry" value="Sentry" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#FB8C00;" vertex="1" parent="services">
+          <mxGeometry x="60" y="70" width="80" height="40" as="geometry" />
+        </mxCell>
+        <!-- External Services -->
+        <mxCell id="external" value="External Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#FDD835;" vertex="1" parent="1">
+          <mxGeometry x="520" y="30" width="200" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="youtube" value="YouTube" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;" vertex="1" parent="external">
+          <mxGeometry x="10" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="affiliate" value="Affiliate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;" vertex="1" parent="external">
+          <mxGeometry x="110" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="payment" value="Payment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;" vertex="1" parent="external">
+          <mxGeometry x="60" y="80" width="80" height="40" as="geometry" />
+        </mxCell>
+        <!-- DevOps -->
+        <mxCell id="devops" value="DevOps" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;" vertex="1" parent="1">
+          <mxGeometry x="260" y="200" width="200" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="github" value="GitHub" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#5E35B1;" vertex="1" parent="devops">
+          <mxGeometry x="10" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="actions" value="GitHub Actions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#5E35B1;" vertex="1" parent="devops">
+          <mxGeometry x="110" y="10" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="gemini" value="Google AI Studio\n(Gemini API)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE7F6;strokeColor=#5E35B1;" vertex="1" parent="devops">
+          <mxGeometry x="60" y="80" width="100" height="50" as="geometry" />
+        </mxCell>
+        <!-- Connections -->
+        <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="user" target="services" />
+        <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="services" target="external" />
+        <mxCell id="edge3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="devops" target="services" />
+        <!-- Additional arrows for clarity -->
+        <mxCell id="edge4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="user" target="devops" />
+        <mxCell id="edge5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="services" target="devops" />
+        <mxCell id="edge6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="external" target="services" />
+        <mxCell id="edge7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#424242;" edge="1" parent="1" source="devops" target="external" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,42 @@
+name: AI Agent Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      script_name:
+        description: 'Script to run (npm run <script>)'
+        required: true
+        default: 'start'
+        type: choice
+        options:
+          - start
+          # Add other agents here as they are implemented
+          # - agent:writer
+          # - agent:composer
+          # - agent:translator
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5 # Safety limit for Free Tier
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: agents/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ./agents
+        run: npm ci
+
+      - name: Run Agent Script
+        working-directory: ./agents
+        env:
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+        run: npm run ${{ inputs.script_name }}
