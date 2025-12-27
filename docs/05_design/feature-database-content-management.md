@@ -1,16 +1,16 @@
-# Supabaseコンテンツ管理システム設計書 (feature-supabase-content-management.md)
+# データベースコンテンツ管理システム設計書 (feature-database-content-management.md)
 
 ## 1. 概要
-本ドキュメントは、MDXコンテンツをマスタデータ（Source of Truth）とし、Supabaseをサーチ・インデックスおよびメタデータ管理用として活用するための「ハイブリッド・コンテンツ管理システム」の仕様を定義します。
+本ドキュメントは、MDXコンテンツをマスタデータ（Source of Truth）とし、データベースをサーチ・インデックスおよびメタデータ管理用として活用するための「ハイブリッド・コンテンツ管理システム」の仕様を定義します。
 
 ## 2. Hybrid Content Model
-Gitで管理されるMDXファイルと、パフォーマンス・検索性に優れたSupabase DBの役割を明確に分け、同期させます。
+Gitで管理されるMDXファイルと、パフォーマンス・検索性に優れたデータベースの役割を明確に分け、同期させます。
 
 ### 2.1 役割分担
 - **MDX (File System):**
   - **Single Source of Truth.** 全てのコンテンツ（本文、フロントマター）の正本。
   - バージョン管理、PRベースの編集・レビュー。
-- **Supabase (PostgreSQL):**
+- **Database (PostgreSQL):**
   - **ReadOnly Index.** MDXから抽出されたメタデータの保持。
   - 高速なフィルタリング、ソート、セグメンテーション。
   - 全文検索 (FTS) およびセマンティック検索 (pgvector)。
@@ -24,10 +24,10 @@ MDXの変更がマージされた際、または開発者の手動実行によ�
 4. **Embed:** 必要に応じてGemini APIを呼び出し、記事内容のベクトル表現（Embedding）を `content_embeddings` テーブルに保存。
 
 ## 3. 検索仕様
-Supabaseの機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
+データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
 
 ### 3.1 検索エンジンの構成
-- **全文検索 (Full Text Search):** PostgreSQLの `to_tsvector` を使用し、日本語・英語等のキーワードマッチング。
+- **全文検索 (Full Text Search):** PostgreSQLの `to_tsvector` を使用したキーワードマッチング。
 - **ベクトル検索 (Vector Search):** `pgvector` を使用し、キーワードが一致しなくても「意味が近い」コンテンツを抽出。
 - **ハイブリッド検索:** FTSとベクトル検索の結果を重み付けして統合。
 
