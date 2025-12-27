@@ -32,15 +32,15 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 - **Cloudflare R2 (Public Body Store):**
   - **公開後の本文JSONの正本。**
   - Supabaseの1GB制限 (900MB利用でほぼ満杯) を回避するため、10GB無料のR2を採用。
-- **GitHub (Backup & Build Source):**
-  - **Read-Only Snapshot.**
-  - DBからエクスポートされたMDXファイルを保持。
-  - Vercelによるビルドで使用。
+- **GitHub (Code Repository):**
+  - **Application Code Only.**
+  - 70,000記事のMDXファイルは **Git管理しません** (Repo肥大化防止のため)。
+  - ビルド時 (`generateStaticParams`) に Supabase から直接データを取得してページを生成します。
 
-### 3.2 Workflow: AI-Assisted Admin Flow
-1.  **Edit:** 人間/AIがAdmin UI (Next.js) でDBを更新。
-2.  **Preview:** Admin UI上でリアルタイムプレビュー (DBデータをレンダリング)。
-3.  **Sync:** 変更確定後、非同期プロセスでMDXを生成しGitHubへコミット（バックアップ）。
+### 3.2 Workflow: Direct DB Build Flow
+1.  **Edit:** 人間/AIがAdmin UIでDBを更新。
+2.  **Publish:** ステータスを公開に変更。
+3.  **Revalidate:** On-demand ISR APIを叩き、Next.jsキャッシュを更新 (+ Pagefind Index更新)。
 
 ### 3.3 Editor Stack (Admin UI)
 - **Framework:** Next.js (App Router)
