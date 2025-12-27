@@ -105,3 +105,18 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 - `composers`: 作曲家メタデータ
 - `works`: 楽曲・譜例メタデータ
 - `content_embeddings`: 検索用ベクトルデータ
+
+## 8. Asset Delivery Strategy (Score SSG & R2)
+
+「描画パフォーマンス」と「UX」を最大化するため、楽譜および画像アセットはサーバーサイドで事前に静的生成し、最適化された状態で配信します。
+
+### 8.1 Server-Side Score Rendering
+Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(CLS)を回避します。
+
+- **Generation:** Admin UIでの保存時、Node.js環境で `abcjs` を実行し、ベクター画像 (**SVG**) を生成。
+- **Interactive Hydration:** 通常表示は軽量な `<img>` タグ。再生時のみ座標データ(JSON)をロードし、ハイライト表示等のインタラクションを実現する「Progressive Hydration」を採用。
+
+### 8.2 Cloudflare R2 Integration
+- **Storage:** 生成されたSVGおよびアップロードされた画像は **Cloudflare R2** に保存。
+- **Delivery:** Vercel または Cloudflare CDN を通じてキャッシュ・配信。
+- **Zero Egress Fee:** R2の特性を活かし、帯域コストを気にせず高品質なアセットを配信。
