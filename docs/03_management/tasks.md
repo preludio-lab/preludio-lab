@@ -164,15 +164,14 @@ Status: `[/]` 進行中
         - [ ] **Git Sync**: DB変更をトリガーにした MDX Export & GitHub Commit ロジック (Edge Function) 実装
     - [ ] **[検証]** AI編集支援とGit同期フローの動作確認
 
-- [ ] **5.6 検索機能の実装 (Supabase Hybrid Search)**
-    - [ ] **[仕様策定]** ハイブリッド検索仕様の策定
-        - [ ] Full Text Search (pg_trgm) と Vector Search (pgvector) の重み付け設計
-        - [ ] 検索モーダル（Cmd+K）のUI設計
-    - [ ] **[実装]** 検索機能の実装
-        - [ ] Supabase RPC (PostgreSQL Function) によるハイブリッド検索ロジック実装
-        - [ ] クライアントサイド検索UIの実装（`useSearch` Hook）
-    - [ ] **[テスト・動作検証]** 検索精度の検証
-        - [ ] 日本語キーワードおよび意味検索（Semantic Search）の精度確認
+- [ ] **5.6 検索機能の実装 (Tiered Hybrid Search)**
+    - [ ] **[実装]** DB Semantic Search (Tier 2/Long-tail)
+        - [ ] Supabase `pgvector` & `tsvector` インデックス構築
+        - [ ] API Route: Semantic Search & Keyword Search Implementation
+    - [ ] **[実装]** Pagefind Full-Text Search (Tier 1/Top 1000)
+        - [ ] Build Script: `pagefind` indexing after export
+        - [ ] Client UI: Search Widget integration
+    - [ ] **[検証]** 検索レイテンシと精度の確認 (`pagefind` vs `db`)
 
 ## Phase 6: AIエージェント開発 ("Brain") & コンテンツ量産
 - [ ] **6.1 コンテンツ生成エージェント (Content Generation Agent)**
