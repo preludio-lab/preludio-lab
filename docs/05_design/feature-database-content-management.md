@@ -98,10 +98,10 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
     - **Impact:** 検索意図の80%はこれでカバー可能。
 
 2.  **Full-Text Search (Client-Side / Pagefind):**
-    - **Target:** **Rendered Content Body** (HTML).
-    - **Mechanism:** **Pagefind** (Static Search Library). ビルド時に静的HTMLをインデックス化し、クライアントサイドで検索を実行。
-    - **Use Case:** 「"第3小節のトリル"という記述がある記事」のようなキーワード完全一致検索。
-    - **Merit:** DB容量を一切消費せず、かつ「本文検索」を実現可能。Zero Costで最高峰のUXを提供するための切り札。
+    - **Target:** **Pre-rendered Content Only** (Top 1,000 popular articles).
+    - **Limitation:** Hybrid ISR（On-demand生成）のページはビルド時に存在しないため、Pagefindのインデックスには含まれません。
+    - **Strategy:** 全7万記事の全文検索はリソース的に困難（インデックスサイズが肥大化する）ため、「主要記事は全文検索可能」「ロングテール記事はSummary検索（DB）でヒットさせる」という**Tiered Search Strategy**を採用します。
+    - **Merit:** DB容量を一切消費せず、主要コンテンツに対しては最高峰の検索体験を提供。
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
 
 ### 5.1 検索エンジンの構成
