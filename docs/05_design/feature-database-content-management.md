@@ -86,7 +86,22 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 
 これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
 
-## 7. 検索仕様
+## 7. 検索仕様 (Hybrid Search Strategy)
+
+「本文がDBにない」という制約を逆手に取り、**Server-Side (Semantic)** と **Client-Side (Full-Text)** を組み合わせた、コスト効率と精度の高い検索体験を提供します。
+
+### 7.1 Search Layers
+1.  **Metadata & Summary Search (Supabase DB):**
+    - **Target:** Metadata (Title, Composer, etc.) + **AI Summary**.
+    - **Mechanism:** PostgreSQL `tsvector` (Keyword) & `pgvector` (Semantic).
+    - **Use Case:** 「バッハのヴァイオリン曲」「悲しい雰囲気の曲」といった概念検索。
+    - **Impact:** 検索意図の80%はこれでカバー可能。
+
+2.  **Full-Text Search (Client-Side / Pagefind):**
+    - **Target:** **Rendered Content Body** (HTML).
+    - **Mechanism:** **Pagefind** (Static Search Library). ビルド時に静的HTMLをインデックス化し、クライアントサイドで検索を実行。
+    - **Use Case:** 「"第3小節のトリル"という記述がある記事」のようなキーワード完全一致検索。
+    - **Merit:** DB容量を一切消費せず、かつ「本文検索」を実現可能。Zero Costで最高峰のUXを提供するための切り札。
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
 
 ### 5.1 検索エンジンの構成
