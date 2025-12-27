@@ -129,10 +129,11 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 
 「描画パフォーマンス」と「UX」を最大化するため、楽譜および画像アセットはサーバーサイドで事前に静的生成し、最適化された状態で配信します。
 
-### 8.1 Server-Side Score Rendering
+### 8.1 Server-Side Score Rendering (ABC & MusicXML)
 Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(CLS)を回避します。
+また、**ABC記法**（AI生成用）だけでなく、**MusicXML形式**（既存リポジトリ抜粋用）もサポートし、世界最高品質の譜例を提供します。
 
-- **Generation:** Admin UIでの保存時、Node.js環境で `abcjs` を実行し、ベクター画像 (**SVG**) を生成。
+- **Generation:** Admin UIでの保存時、フォーマットに応じて `abcjs` または `OpenSheetMusicDisplay` (Headless) を実行し、統一されたベクター画像 (**SVG**) を生成。
 - **Interactive Hydration:** 通常表示は軽量な `<img>` タグ。再生時のみ座標データ(JSON)をロードし、ハイライト表示等のインタラクションを実現する「Progressive Hydration」を採用。
 
 ### 8.2 Cloudflare R2 Integration
