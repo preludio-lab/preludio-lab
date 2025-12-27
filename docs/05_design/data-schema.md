@@ -104,7 +104,8 @@ MDX（Frontmatter）の情報をインデックス化し、検索・フィルタ
 | `era` | text | - | 時代様式 |
 | `nationality` | text | - | 国籍 |
 | `portrait_url` | text | - | 肖像画画像URL |
-| `content_text` | text | - | 検索用プレーンテキスト本体 |
+| `summary` | text | - | AI生成要約 (約300文字) |
+| `content_index` | tsvector | - | 全文検索用インデックス (FTS) |
 | `tags` | text[] | '{}' | タグの配列 |
 | `created_at` | timestamptz | now() | 作成日時 |
 | `updated_at` | timestamptz | now() | 更新日時 |
@@ -127,7 +128,8 @@ MDX（Frontmatter）の情報をインデックス化し、検索・フィルタ
 | `artwork_url` | text | - | サムネイルURL |
 | `start_seconds` | int | - | 再生開始時間 |
 | `end_seconds` | int | - | 再生終了時間 |
-| `content_text` | text | - | 検索用プレーンテキスト本体 |
+| `summary` | text | - | AI生成要約 (約300文字) |
+| `content_index` | tsvector | - | 全文検索用インデックス (FTS) |
 | `tags` | text[] | '{}' | タグの配列 |
 | `created_at` | timestamptz | now() | 作成日時 |
 | `updated_at` | timestamptz | now() | 更新日時 |
@@ -142,5 +144,5 @@ MDX（Frontmatter）の情報をインデックス化し、検索・フィルタ
 | `content_id` | uuid | - | 対象テーブルのID |
 | `lang` | text | - | 言語コード |
 | `embedding` | vector(768) | - | ベクトルデータ (Gemini用) |
-| `text_chunk` | text | - | ベクトル化されたテキスト断片 |
+| `text_chunk` | text | - | ベクトル化されたテキスト断片 (Summary) |
 | `created_at` | timestamptz | now() | 作成日時 |

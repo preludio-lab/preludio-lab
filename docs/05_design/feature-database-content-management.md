@@ -15,24 +15,30 @@
   - **Actions:** 2,000 minutes/month.
   - **Impact:** 毎回全件ビルド・全件同期を行うとCI時間を食い潰す。
 
-### 2.2 Scalability Target
-- **Volume:** 70,000 Contents (10k Works x 7 Langs).
-- **Performance:** 検索応答速度 < 200ms, ビルド時間内の収束。
+### 2.2 Scalability Target & Decisions
+- **Volume:** 70,000 Articles (10,000 Works x 7 Languages).
+- **Goal:** Cost < Free Tier limit, Performance < 200ms Search, Build Time < Const.
 
-## 3. Hybrid Content Model & Architecture Strategy
-上記の制約をクリアするため、以下の戦略を採用します。
+## 3. High-Scalability Architecture Strategy
+7万記事規模をZero Costで運用するための確定アーキテクチャ。
 
-### 3.1 Storage Optimization (Supabase 500MB対策)
-DBは「正本」ではなく「検索インデックス」であるため、保存データを極限まで軽量化します。
-- **No Raw Text in DB:** `content_text` (MDX本文) はDBに保存せず、検索用の `tsvector` (PostgreSQL全文検索インデックス) のみを生成・保存するアプローチを検討、または検索対象を「概要 (Summary/Intro)」に限定します。
-- **Vector Quantization:** Embeddingデータは容量を圧迫するため、重要コンテンツ（Introductionなど）に限定するか、将来的に圧縮手法（ハーフプレシジョン等）を適用します。
+### 3.1 Storage Strategy (Summary-based Indexing)
+Supabase (500MB) の容量制限を遵守するため、**DBにはMDX全文を保存しません。**
+- **Summary Only:** AIにより生成された「要約 (Summary, ~300chars)」と「メタデータ」のみをDBに保存します。
+- **Vector Optimization:** ベクトルデータも要約に対して生成し、容量を節約します。
 
-### 3.2 Incremental Sync (GitHub Actions 2000分対策)
-- **Differential Sync:** `sync-supabase.ts` は、GitのDiff情報（`git diff --name-only`）を利用し、**「変更があったMDXのみ」** をDBに同期します。
-- **Cached Build:** Next.jsのISR (Incremental Static Regeneration) を活用し、変更がないページの再ビルドを回避します。
+### 3.2 Build Strategy (Hybrid ISR)
+全件SSGはCI時間を超過するため採用不可。**Hybrid ISR** を採用します。
+- **Top 1,000 SSG:** アクセス数の多い主要1,000記事のみビルド時に静的生成。
+- **On-demand ISR:** 残りのロングテール記事は、初回アクセス時に生成（`fallback: blocking`）し、CDNキャッシュさせます。
+- **Benefit:** 記事数が増えてもビルド時間は一定に保たれます。
 
-### 3.3 Asset Externalization (GitHub 500MB対策)
-- **Images:** リポジトリには含めず、**Cloudflare R2** などの外部ストレージ、またはYouTube/WikiCommons等の外部URLを参照する設計とし、Gitリポジトリを軽量（テキストのみ）に保ちます。
+### 3.3 Synchronization (Differential Sync)
+- **Git Diff:** `git diff --name-only` を使用し、変更差分のみを検出してDB更新・Embedding生成を行います。
+- **CI Cost:** 全件スキャンを回避し、CI実行時間を数秒〜数分に抑えます。
+
+### 3.4 Assets
+- **Externalization:** 画像ファイルはGitリポジトリに含めず、外部ストレージ (Cloudflare R2, YouTube, etc.) を参照します。
 
 ## 4. Hybrid Content Model (Role Definition)
 
