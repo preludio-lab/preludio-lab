@@ -14,6 +14,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 ### 3.1 Data Source Roles & Persistence Matrix (Split-Storage)
 
 **容量見積もり (1.2GB) に基づき、本文のみ外部Storageへ分離します。**
+詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
 ただし、アプリケーション(Admin)からは透過的に扱います。
 
 | 管理対象 | Master Source | Physical Location | Note |

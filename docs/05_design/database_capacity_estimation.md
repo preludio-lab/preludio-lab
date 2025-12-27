@@ -1,4 +1,4 @@
-# Capacity Estimation & Storage Strategy for 70,000 Articles (Revised with Indexes)
+# Database Capacity Estimation & Storage Strategy
 
 ## 1. 前提条件 (Assumptions)
 - **記事数:** 70,000
