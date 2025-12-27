@@ -133,7 +133,9 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(CLS)を回避します。
 また、**ABC記法**（AI生成用）だけでなく、**MusicXML形式**（既存リポジトリ抜粋用）もサポートし、世界最高品質の譜例を提供します。
 
-- **Generation:** Admin UIでの保存時、フォーマットに応じて `abcjs` または `OpenSheetMusicDisplay` (Headless) を実行し、統一されたベクター画像 (**SVG**) を生成。
+- **Generation:** Admin UIでの保存時、フォーマットに応じて適切なエンジンを実行し、統一されたベクター画像 (**SVG**) を生成。
+  - **ABC:** `abcjs`を使用。
+  - **MusicXML:** **Verovio** を使用。学術レベルの高品質な浄書（Engraving）が可能。
 - **Interactive Hydration:** 通常表示は軽量な `<img>` タグ。再生時のみ座標データ(JSON)をロードし、ハイライト表示等のインタラクションを実現する「Progressive Hydration」を採用。
 
 ### 8.2 Cloudflare R2 Integration

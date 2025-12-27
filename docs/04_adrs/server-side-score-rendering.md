@@ -19,12 +19,13 @@
 
 ### 3.1 Rendering Logic (Dual-Format Support)
 Admin UIでの保存時（または非同期ジョブ）に、Node.js上でレンダリングエンジンを実行し、SVG文字列を生成します。
-既存の高品質な楽譜リポジトリ（MusicXML形式）からの抜粋利用と、AI生成（ABC形式）の双方に対応します。
 
 1.  **Format Switch:**
     - **ABC:** `abcjs` を使用してレンダリング。
-    - **MusicXML:** `opensheetmusicdisplay` (Server-side) または `musicxml-interfaces` 等を使用してSVG化（またはABCへ変換してレンダリング）。
+    - **MusicXML:** **Verovio** (WASM/Node.js) を使用。
+        - **Reason:** OSMDと比較して、サーバーサイドでの動作が軽量（DOM不要）であり、かつ「浄書（Engraving）」の品質が学術レベルで非常に高いため。
 2.  **Process:** Text Data -> Render Engine -> Optimize SVG.
+3.  **Output:** Static SVG File.
 3.  **Output:** Static SVG File.
 
 ### 3.2 Delivery Strategy (Cloudflare R2)
