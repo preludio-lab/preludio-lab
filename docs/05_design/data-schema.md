@@ -91,6 +91,7 @@ export type ContentDetail = ContentSummary & {
 ## 5. データベーススキーマ (PostgreSQL)
 
 MDX（Frontmatter）の情報をインデックス化し、検索・フィルタリングに使用するためのテーブル構造。
+**Master Source:** `Supabase Storage (bucket: content/*.mdx)`
 
 ### 5.1. `composers` テーブル
 作曲家のメタデータ。`slug` と `lang` の組み合わせでユニークとする。

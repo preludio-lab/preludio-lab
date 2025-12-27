@@ -158,12 +158,11 @@ Status: `[/]` 進行中
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
-    - [ ] **[実装]** MDX同期パイプライン (Script-based Sync)
-        - [ ] `scripts/sync-supabase.ts` の実装（MDXパース -> DB Upsert）。**SEO (`hreflang`) 自動生成ロジック** を同期スクリプトに組み込む
-        - [ ] コンテンツ埋め込み (Embeddings) 生成処理の実装（同期スクリプト内でOpenAI/Gemini APIをコール）
-        - [ ] GitHub Actionsによる自動同期フロー (`content-sync.yml`) の構築
-    - [ ] **[検証]** データ整合性確認
-        - [ ] ローカル環境での同期テストとSupabase Dashboardでのデータ確認
+    - [ ] **[実装]** Storage-First Content Pipeline
+        - [ ] **Storage Setup**: `content` バケットの作成（Access Policy設定: Public Read, Auth Write）
+        - [ ] **Admin Flow**: ドラフトアップロード・承認・公開機能のプロトタイプ実装
+        - [ ] **Sync Trigger**: Storage Event (`INSERT/UPDATE`) によるメタデータ同期のエッジファンクション実装
+    - [ ] **[検証]** コンテンツ公開・同期フローの動作確認
 
 - [ ] **5.6 検索機能の実装 (Supabase Hybrid Search)**
     - [ ] **[仕様策定]** ハイブリッド検索仕様の策定

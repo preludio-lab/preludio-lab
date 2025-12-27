@@ -1,78 +1,62 @@
 # データベースコンテンツ管理システム設計書 (feature-database-content-management.md)
 
 ## 1. 概要
-本ドキュメントは、MDXコンテンツをマスタデータ（Source of Truth）とし、データベースをサーチ・インデックスおよびメタデータ管理用として活用するための「ハイブリッド・コンテンツ管理システム」の仕様を定義します。
+本ドキュメントは、**Supabase Storage (Object Storage)** をコンテンツの正本（Master）とし、Databaseを検索インデックスとして活用する「Storage-First Headless Content System」の仕様を定義します。
+このアーキテクチャにより、Gitリポジトリの軽量化と、SaaS無料枠（Storage 1GB + DB 500MB）の最大活用を実現します。
 
 ## 2. 前提条件と制約 (Constraints)
-本システムは個人開発における「Zero Cost Architecture」を前提とし、以下のSaaS無料枠の制限内で、エンタープライズレベルのデータ量（70,000記事＝10,000楽曲×7言語）を扱う設計とします。
+- **Supabase Storage (Object):** 1GB Free Limit. (ここにMDXファイルを格納)
+- **Supabase Database:** 500MB Free Limit. (ここにメタデータと要約を格納)
+- **GitHub:** Code Only. (コンテンツファイルを含まない)
 
-### 2.1 SaaS Free Tier Limits
-- **Supabase (Database):**
-  - **Storage:** 500MB Limit.
-  - **Impact:** 7万記事の全文テキストとベクトルデータをそのまま格納すると容量超過のリスクがある。
-- **GitHub (Repo & CI):**
-  - **Storage:** 500MB (Recommended soft limit).
-  - **Actions:** 2,000 minutes/month.
-  - **Impact:** 毎回全件ビルド・全件同期を行うとCI時間を食い潰す。
-
-### 2.2 Scalability Target & Decisions
+### 2.2 Scalability Target
 - **Volume:** 70,000 Articles (10,000 Works x 7 Languages).
-- **Goal:** Cost < Free Tier limit, Performance < 200ms Search, Build Time < Const.
+- **Goal:** ローカルPCのディスク圧迫回避、Git操作の高速性維持。
 
-## 3. High-Scalability Architecture Strategy
-7万記事規模をZero Costで運用するための確定アーキテクチャ。
+## 3. Storage-First Architecture Strategy
 
-### 3.1 Storage Strategy (Summary-based Indexing)
-Supabase (500MB) の容量制限を遵守するため、**DBにはMDX全文を保存しません。**
-- **Summary Only:** AIにより生成された「要約 (Summary, ~300chars)」と「メタデータ」のみをDBに保存します。
-- **Vector Optimization:** ベクトルデータも要約に対して生成し、容量を節約します。
+### 3.1 Data Source Roles
+- **Supabase Storage (Master):**
+  - MDXファイルの物理保存場所。
+  - 構成: `bucket: content`
+    - `public/`: 公開済みコンテンツ
+    - `drafts/`: 承認待ち/作業中コンテンツ
+- **Database (Index):**
+  - メタデータ、要約、ベクトルデータの保持。
+  - フロントエンドからの検索・フィルタリング用。
 
-### 3.2 Build Strategy (Hybrid ISR)
-全件SSGはCI時間を超過するため採用不可。**Hybrid ISR** を採用します。
-- **Top 1,000 SSG:** アクセス数の多い主要1,000記事のみビルド時に静的生成。
-- **On-demand ISR:** 残りのロングテール記事は、初回アクセス時に生成（`fallback: blocking`）し、CDNキャッシュさせます。
-- **Benefit:** 記事数が増えてもビルド時間は一定に保たれます。
+### 3.2 Workflow: Headless CMS Flow
+Git PRの代わりに、管理画面を通じた承認フローを導入します。
 
-### 3.3 Synchronization (Differential Sync)
-- **Git Diff:** `git diff --name-only` を使用し、変更差分のみを検出してDB更新・Embedding生成を行います。
-- **CI Cost:** 全件スキャンを回避し、CI実行時間を数秒〜数分に抑えます。
+1.  **Generate:** AI Agentが `drafts/` フォルダにMDXをアップロード。
+2.  **Review:** 人間がAdmin AppでDraftを閲覧・修正。
+3.  **Publish:** 承認アクション → ファイルを `public/` へ移動 + DBインデックス更新 (Edge Function)。
 
-### 3.4 Assets
-- **Externalization:** 画像ファイルはGitリポジトリに含めず、外部ストレージ (Cloudflare R2, YouTube, etc.) を参照します。
+### 3.3 Build Strategy (Remote Hybrid ISR)
+- **Fetch:** ビルド時/ISR生成時に `supabase.storage.download` でMDXを取得。
+- **Cache:** 取得したMDXはNext.jsのData CacheおよびCDNにキャッシュされる。
 
 ## 4. Hybrid Content Model (Role Definition)
 
-### 4.1 役割分担
-- **MDX (File System):**
-  - **Single Source of Truth.** 全てのコンテンツ（本文、フロントマター）の正本。
-  - バージョン管理、PRベースの編集・レビュー。
+### 4.1 役割分担 (Revised)
+- **Supabase Storage (Object):**
+  - **Single Source of Truth.**
+  - 容量: 1GB (Free Tier)。350MB程度のテキストデータなら余裕で格納可能。
 - **Database (PostgreSQL):**
-  - **ReadOnly Index.** MDXから抽出されたメタデータの保持。
-  - 高速なフィルタリング、ソート、セグメンテーション。
-  - 全文検索 (FTS) およびセマンティック検索 (pgvector)。
+  - **ReadOnly Index.** Storage上のファイルのメタデータコピー。
+  - 容量: 500MB (Free Tier)。要約とメタデータのみで200MB程度に抑える。
 
-### 4.2 マスターデータ管理戦略の比較検討 (Comparison)
-プロジェクトの特性（個人開発、AIエージェント活用、音楽理論コンテンツ）を踏まえ、マスターデータの置き場所について比較・選定を行います。
+### 4.2 マスターデータ管理戦略の決定 (Comparison Result)
+ADR `docs/04_adrs/storage-master-architecture.md` に基づき、**Supabase Storage Master** を採用します。
+Gitによる管理は廃止し、リポジトリを軽量に保ちます。
 
-| 比較項目 | **Option A: GitHub (File System) Master** [推奨] | Option B: Database Master (Headless CMS) |
-| :--- | :--- | :--- |
-| **信頼できる情報源** | Gitリポジトリ (MDX Files) | PostgreSQL Database |
-| **AI生成フロー** | エージェントがPRを作成 → **Diff機能で人間がレビュー** → マージ | エージェントがAPIで直接DB更新 → 即時反映（レビュー困難） |
-| **品質担保 (QA)** | 楽曲解説の「ハルシネーション」をPRレビューで防げる。 | 不正なデータが混入した場合、検知とロールバックが難しい。 |
-| **表現力** | MDX内でReactコンポーネント (`<ScoreRenderer />`) を自由に配置可能。 | DB内のテキストをパースしてコンポーネント展開する処理が複雑・脆弱。 |
-| **バックアップ** | `git clone` だけで全コンテンツ復元可能 (Disaster Recovery)。 | DBダンプと定期バックアップの管理が必要。 |
-| **更新の即時性** | デプロイ（または同期スクリプト実行）が必要。 | 変更後即座に反映可能。 |
+### 4.3 Publishing Pipeline
+ファイル操作（Upload/Move/Delete）をトリガーに、Supabase Database Webhooks または Edge Functions を使用してDBインデックスを同期します。
 
-#### [結論] 推奨案: Option A (GitHub Master)
-本プロジェクトでは **「AI生成コンテンツの品質管理（ハルシネーション防止）」** が最重要課題であるため、GitHubのPull Requestフローを強制できる **Option A** を採用します。データベースはあくまで「検索・参照用インデックス」として利用し、正本データとしては扱いません。
-
-### 4.3 同期フロー (Sync Pipeline)
-MDXの変更がマージされた際、または開発者の手動実行により、以下のフローでDBを更新します。
-
-1. **Scan:** `content/**/*.mdx` を走査。
-2. **Parse:** `gray-matter` でフロントマターを抽出し、Markdown本文をプレーンテキストに変換。
-3. **Upsert:** `slug` と `lang` をユニークキーとして `works` / `composers` テーブルへデータを更新。
-4. **Embed:** 必要に応じてGemini APIを呼び出し、記事内容のベクトル表現（Embedding）を `content_embeddings` テーブルに保存。
+1. **Trigger:** `storage.objects` へのINSERT/UPDATE/DELETEイベント (Webhook/Function).
+2. **Process:** 変更されたMDXファイルをロードし、フロントマターをパース。
+3. **Upsert:** `slug` と `lang` をキーにDBメタデータを更新。
+4. **Embed:** 要約テキストに対してVector生成を行い保存。
 
 ## 5. 検索仕様
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
