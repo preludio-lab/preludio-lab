@@ -90,34 +90,34 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 
 これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
 
-## 7. 検索仕様 (Hybrid Search Strategy)
+## 7. 検索仕様 (Tiered Hybrid Search Strategy)
 
-「本文がDBにない」という制約を逆手に取り、**Server-Side (Semantic)** と **Client-Side (Full-Text)** を組み合わせた、コスト効率と精度の高い検索体験を提供します。
+「本文がDBにない」かつ「DB容量制限(500MB)」という条件下で、最高峰の検索体験を実現するための戦略。
 
-### 7.1 Search Layers
-1.  **Metadata & Summary Search (Supabase DB):**
-    - **Target:** Metadata (Title, Composer, etc.) + **AI Summary**.
-    - **Mechanism:** PostgreSQL `tsvector` (Keyword) & `pgvector` (Semantic).
-    - **Use Case:** 「バッハのヴァイオリン曲」「悲しい雰囲気の曲」といった概念検索。
-    - **Impact:** 検索意図の80%はこれでカバー可能。
+### 7.1 Tier 1: Client-Side Full-Text Search (Top 1,000 Articles)
+重要な人気記事に対しては、通信遅延ゼロの「爆速」検索を提供します。
 
-2.  **Full-Text Search (Client-Side / Pagefind):**
-    - **Target:** **Pre-rendered Content Only** (Top 1,000 popular articles).
-    - **Limitation:** Hybrid ISR（On-demand生成）のページはビルド時に存在しないため、Pagefindのインデックスには含まれません。
-    - **Strategy:** 全7万記事の全文検索はリソース的に困難（インデックスサイズが肥大化する）ため、「主要記事は全文検索可能」「ロングテール記事はSummary検索（DB）でヒットさせる」という**Tiered Search Strategy**を採用します。
-    - **Merit:** DB容量を一切消費せず、主要コンテンツに対しては最高峰の検索体験を提供。
-データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
+- **Technology:** **Pagefind**
+- **Mechanism:** ビルドされた静的HTML (SSG) からインデックスを生成し、ブラウザ上で検索を実行。
+- **Scope:** プリビルドされる Top 1,000 記事の**全文**。
+- **UX:** キーワード入力と同時に結果が表示される "Find-as-you-type" 体験。
 
-### 5.1 検索エンジンの構成
-- **全文検索 (Full Text Search):** PostgreSQLの `to_tsvector` を使用したキーワードマッチング。
-- **ベクトル検索 (Vector Search):** `pgvector` を使用し、キーワードが一致しなくても「意味が近い」コンテンツを抽出。
-- **ハイブリッド検索:** FTSとベクトル検索の結果を重み付けして統合。
+### 7.2 Tier 2: Server-Side Semantic Search (Long-tail Articles)
+ロングテール記事（全70,000件）に対しては、DBのメタデータと要約を用いた「概念検索」を提供します。
 
-### 5.2 検索フィルタ
-- 言語 (`lang`)
-- 作曲家 (`composer_name`)
-- 難易度 (`difficulty`)
-- カテゴリ/タグ (`tags`)
+- **Technology:** **Supabase Database (PostgreSQL)**
+- **Mechanism:**
+  - **Keyword:** `pg_trgm` (Trigram) によるタイトル・作曲家名のあいまい検索。
+  - **Semantic:** `pgvector` (**halfvec/16-bit**) による要約文の意味検索。
+- **Scope:** 全記事のメタデータ、タグ、および **AI要約 (Summary)**。
+- **UX:** 「悲しい雰囲気の曲」「バッハのバイオリン」といった自然言語クエリに対応。
+
+### 7.3 Search UI Integration
+ユーザーには裏側の仕組み（Pagefind vs DB）を意識させない統合UIを提供します。
+
+1.  入力中は **Pagefind** が即座に候補を表示（Tier 1）。
+2.  Enterキー押下、または「もっと見る」で **DB検索API** をコールし、全件から検索（Tier 2）。
+3.  結果を統合して表示。
 
 ## 6. テーブル設計概要
 詳細は `docs/05_design/data-schema.md` を参照してください。
