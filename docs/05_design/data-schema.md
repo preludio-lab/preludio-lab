@@ -88,62 +88,43 @@ export type ContentDetail = ContentSummary & {
 };
 ```
 
-## 5. データベーススキーマ (PostgreSQL)
+## 5. データベーススキーマ (Database-First Master)
 
-MDX（Frontmatter）の情報をインデックス化し、検索・フィルタリングに使用するためのテーブル構造。
-**Master Source:** `Supabase Storage (bucket: content/*.mdx)`
+コンテンツ正本となるテーブル設計。AI編集の粒度に合わせた正規化を行う。
 
-### 5.1. `composers` テーブル
-作曲家のメタデータ。`slug` と `lang` の組み合わせでユニークとする。
-
-| Column | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | プライマリキー |
-| `slug` | text | - | URLスラッグ |
-| `lang` | text | - | 言語コード (ja, en, etc...) |
-| `name` | text | - | 作曲家名 |
-| `era` | text | - | 時代様式 |
-| `nationality` | text | - | 国籍 |
-| `portrait_url` | text | - | 肖像画画像URL |
-| `summary` | text | - | AI生成要約 (約300文字) |
-| `content_index` | tsvector | - | 全文検索用インデックス (FTS) |
-| `tags` | text[] | '{}' | タグの配列 |
-| `created_at` | timestamptz | now() | 作成日時 |
-| `updated_at` | timestamptz | now() | 更新日時 |
-
-### 5.2. `works` テーブル
-楽曲および譜例のメタデータ。
+### 5.1 `articles` テーブル
+記事の基本メタデータおよびSEO情報。
 
 | Column | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | プライマリキー |
-| `slug` | text | - | URLスラッグ |
-| `lang` | text | - | 言語コード |
-| `composer_id` | uuid | - | `composers.id` への外部キー (Optional) |
-| `composer_name` | text | - | 検索用作曲家名（非正規化） |
-| `title` | text | - | 記事タイトル |
-| `work_title` | text | - | 作品名（作品番号等） |
-| `musical_key` | text | - | 調性 |
-| `difficulty` | text | - | 難易度 |
-| `audio_src` | text | - | YouTube ID / 音源URL |
-| `artwork_url` | text | - | サムネイルURL |
-| `start_seconds` | int | - | 再生開始時間 |
-| `end_seconds` | int | - | 再生終了時間 |
-| `summary` | text | - | AI生成要約 (約300文字) |
-| `content_index` | tsvector | - | 全文検索用インデックス (FTS) |
-| `tags` | text[] | '{}' | タグの配列 |
-| `created_at` | timestamptz | now() | 作成日時 |
-| `updated_at` | timestamptz | now() | 更新日時 |
+| `id` | uuid | uuid_generate_v4() | PK |
+| `slug` | text | - | URL Slug (Unique) |
+| `lang` | text | - | Language Code |
+| `title` | text | - | Title |
+| `composer_id` | uuid | - | FK to composers |
+| `is_public` | boolean | false | 公開フラグ |
+| `last_synced_at` | timestamptz | - | Git同期日時 |
 
-### 5.3. `content_embeddings` テーブル
-セマンティック検索（ベクトル検索）用のデータ。
+### 5.2 `sections` テーブル (Granular Content)
+記事を構成するセクションブロック。AIの部分編集単位。
 
 | Column | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | プライマリキー |
-| `content_type` | text | - | 'work' または 'composer' |
-| `content_id` | uuid | - | 対象テーブルのID |
-| `lang` | text | - | 言語コード |
-| `embedding` | vector(768) | - | ベクトルデータ (Gemini用) |
-| `text_chunk` | text | - | ベクトル化されたテキスト断片 (Summary) |
-| `created_at` | timestamptz | now() | 作成日時 |
+| `id` | uuid | uuid_generate_v4() | PK |
+| `article_id` | uuid | - | FK to articles |
+| `order_index` | int | 0 | 表示順序 |
+| `heading` | text | - | セクション見出し |
+| `content_body` | text | - | Markdown本文 |
+| `token_count` | int | - | トークン数（AI制御用） |
+| `embedding` | vector(768) | - | セクション単位のベクトル（要約セクションのみ生成推奨） |
+
+### 5.3 `music_scores` テーブル
+楽譜データのリポジトリ。
+
+| Column | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | uuid | uuid_generate_v4() | PK |
+| `title` | text | - | 譜例タイトル |
+| `format` | text | 'abc' | 'abc' or 'musicxml' |
+| `data` | text | - | 楽譜データ本体 |
+| `hash` | text | - | データハッシュ（重複検知用） |

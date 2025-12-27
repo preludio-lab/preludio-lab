@@ -158,11 +158,11 @@ Status: `[/]` 進行中
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
-    - [ ] **[実装]** Storage-First Content Pipeline
-        - [ ] **Storage Setup**: `content` バケットの作成（Access Policy設定: Public Read, Auth Write）
-        - [ ] **Admin Flow**: ドラフトアップロード・承認・公開機能のプロトタイプ実装
-        - [ ] **Sync Trigger**: Storage Event (`INSERT/UPDATE`) によるメタデータ同期のエッジファンクション実装
-    - [ ] **[検証]** コンテンツ公開・同期フローの動作確認
+    - [ ] **[実装]** Database-First Admin UI
+        - [ ] **Admin App**: Next.js (App Router) + Tiptap/Lexical による編集画面の実装
+        - [ ] **DB Sync**: 編集内容のDB保存およびプレビュー機能の実装
+        - [ ] **Git Sync**: DB変更をトリガーにした MDX Export & GitHub Commit ロジック (Edge Function) 実装
+    - [ ] **[検証]** AI編集支援とGit同期フローの動作確認
 
 - [ ] **5.6 検索機能の実装 (Supabase Hybrid Search)**
     - [ ] **[仕様策定]** ハイブリッド検索仕様の策定

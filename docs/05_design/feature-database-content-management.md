@@ -1,62 +1,43 @@
 # データベースコンテンツ管理システム設計書 (feature-database-content-management.md)
 
 ## 1. 概要
-本ドキュメントは、**Supabase Storage (Object Storage)** をコンテンツの正本（Master）とし、Databaseを検索インデックスとして活用する「Storage-First Headless Content System」の仕様を定義します。
-このアーキテクチャにより、Gitリポジトリの軽量化と、SaaS無料枠（Storage 1GB + DB 500MB）の最大活用を実現します。
+本ドキュメントは、**Supabase Database** をコンテンツの正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Content Application」の仕様を定義します。
+Gitは、DBデータの「バックアップ」および「静的サイト生成(SSG)ソース」として位置付けます。
 
 ## 2. 前提条件と制約 (Constraints)
-- **Supabase Storage (Object):** 1GB Free Limit. (ここにMDXファイルを格納)
-- **Supabase Database:** 500MB Free Limit. (ここにメタデータと要約を格納)
-- **GitHub:** Code Only. (コンテンツファイルを含まない)
+- **Supabase Database:** 500MB Free Limit (Master).
+- **GitHub:** Output Target for Backup & Build.
+- **Scale:** 70,000 Articles (Granular Sections).
 
-### 2.2 Scalability Target
-- **Volume:** 70,000 Articles (10,000 Works x 7 Languages).
-- **Goal:** ローカルPCのディスク圧迫回避、Git操作の高速性維持。
-
-## 3. Storage-First Architecture Strategy
+## 3. Database-First Configuration
 
 ### 3.1 Data Source Roles
-- **Supabase Storage (Master):**
-  - MDXファイルの物理保存場所。
-  - 構成: `bucket: content`
-    - `public/`: 公開済みコンテンツ
-    - `drafts/`: 承認待ち/作業中コンテンツ
-- **Database (Index):**
-  - メタデータ、要約、ベクトルデータの保持。
-  - フロントエンドからの検索・フィルタリング用。
-
-### 3.2 Workflow: Headless CMS Flow
-Git PRの代わりに、管理画面を通じた承認フローを導入します。
-
-1.  **Generate:** AI Agentが `drafts/` フォルダにMDXをアップロード。
-2.  **Review:** 人間がAdmin AppでDraftを閲覧・修正。
-3.  **Publish:** 承認アクション → ファイルを `public/` へ移動 + DBインデックス更新 (Edge Function)。
-
-### 3.3 Build Strategy (Remote Hybrid ISR)
-- **Fetch:** ビルド時/ISR生成時に `supabase.storage.download` でMDXを取得。
-- **Cache:** 取得したMDXはNext.jsのData CacheおよびCDNにキャッシュされる。
-
-## 4. Hybrid Content Model (Role Definition)
-
-### 4.1 役割分担 (Revised)
-- **Supabase Storage (Object):**
+- **Supabase Database (Master):**
   - **Single Source of Truth.**
-  - 容量: 1GB (Free Tier)。350MB程度のテキストデータなら余裕で格納可能。
-- **Database (PostgreSQL):**
-  - **ReadOnly Index.** Storage上のファイルのメタデータコピー。
-  - 容量: 500MB (Free Tier)。要約とメタデータのみで200MB程度に抑える。
+  - コンテンツを構造化して管理 (`articles`, `sections`, `music_scores`).
+  - AIによる一括変換・分析の基盤。
+- **GitHub (Backup & Build Source):**
+  - **Read-Only Snapshot.**
+  - DBからエクスポートされたMDXファイルを保持。
+  - Vercelによるビルドで使用。
 
-### 4.2 マスターデータ管理戦略の決定 (Comparison Result)
-ADR `docs/04_adrs/storage-master-architecture.md` に基づき、**Supabase Storage Master** を採用します。
-Gitによる管理は廃止し、リポジトリを軽量に保ちます。
+### 3.2 Workflow: AI-Assisted Admin Flow
+1.  **Edit:** 人間/AIがAdmin UI (Next.js) でDBを更新。
+2.  **Preview:** Admin UI上でリアルタイムプレビュー (DBデータをレンダリング)。
+3.  **Sync:** 変更確定後、非同期プロセスでMDXを生成しGitHubへコミット（バックアップ）。
 
-### 4.3 Publishing Pipeline
-ファイル操作（Upload/Move/Delete）をトリガーに、Supabase Database Webhooks または Edge Functions を使用してDBインデックスを同期します。
+### 3.3 Editor Stack (Admin UI)
+- **Framework:** Next.js (App Router)
+- **Editor:** Tiptap / Lexical
+- **AI Integration:** Vercel AI SDK (Streaming edits).
 
-1. **Trigger:** `storage.objects` へのINSERT/UPDATE/DELETEイベント (Webhook/Function).
-2. **Process:** 変更されたMDXファイルをロードし、フロントマターをパース。
-3. **Upsert:** `slug` と `lang` をキーにDBメタデータを更新。
-4. **Embed:** 要約テキストに対してVector生成を行い保存。
+## 4. データ構造戦略 (Granular Schema)
+AIの作業効率を高めるため、コンテンツを粒度細かく管理します。
+詳細は `docs/05_design/data-schema.md` を参照。
+
+- **Articles:** 記事のメタデータ (Slug, Title).
+- **Sections:** 見出しごとの本文ブロック。AIの部分編集対象。
+- **Music Scores:** 楽譜データを独立管理。
 
 ## 5. 検索仕様
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
