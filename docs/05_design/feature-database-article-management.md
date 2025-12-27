@@ -1,7 +1,7 @@
 # データベース記事管理システム設計書 (feature-database-article-management.md)
 
 ## 1. 概要
-本ドキュメントは、**Supabase Database** をコンテンツの正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Content Application」の仕様を定義します。
+本ドキュメントは、**Supabase Database** を記事の正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Article Application」の仕様を定義します。
 Gitは、DBデータの「バックアップ」および「静的サイト生成(SSG)ソース」として位置付けます。
 
 ## 2. 前提条件と制約 (Constraints)
@@ -13,7 +13,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 ### 3.1 Data Source Roles & Persistence Matrix (Split-Storage)
 
-**容量見積もり (1.2GB) に基づき、本文のみ外部Storageへ分離します。**
+**容量見積もり (1.2GB) に基づき、記事本文のみ外部Storageへ分離します。**
 詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
 ただし、アプリケーション(Admin)からは透過的に扱います。
 
@@ -26,7 +26,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 | **Content Body (Public)** | **Cloudflare R2** | **Public Bucket**. 10GB Free. 900MBのデータも余裕。 |
 
 - **Supabase Database (Master Index):**
-  - メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
+  - 記事メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
 - **Supabase Storage (Draft Store):**
   - 執筆中のドラフトデータを一時保存。Authとの連携を重視。
 - **Cloudflare R2 (Public Body Store):**
@@ -52,7 +52,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 「AIエージェントによる編集のしやすさ」と「配信パフォーマンス」を両立させるため、**PostgreSQL JSONB** を活用したハイブリッド構造を採用します。
 
 - **Normalized Tables:** `articles`, `works` 等の親エンティティ、および `translations` テーブル自体は正規化して管理。
-- **JSONB Content:** コンテンツのセクション構造（段落、楽譜、見出し）は、`translations` テーブル内の **`content_structure` (JSONB)** カラムに格納します。
+- **JSONB Content:** 記事本文のセクション構造（段落、楽譜、見出し）は、`translations` テーブル内の **`content_structure` (JSONB)** カラムに格納します。
 
 ### Merits
 - **No JOINs:** 1レコード取得するだけで、その言語の記事構成要素が全て手に入る。
@@ -76,7 +76,7 @@ DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用�
 
 ### 5.2 Search Optimization
 JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離します。
-- **Storage:** コンテンツは `jsonb` カラム。
+- **Storage:** 記事本文は `jsonb` カラム（またはStorage）。
 - **Index:** 保存時、検索対象テキストを抽出して `tsvector`カラム (Full Text Search) および `vector` カラム (Semantic Search) に保存。
 - **Query:** 検索時はインデックスのみを参照し、高速に応答する。
 
@@ -92,7 +92,7 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 - **Scalability:** 言語数が増えてもカラム追加（`title_ja`, `title_en`...）は不要。レコード追加のみで対応可能。
 
 ### 5.2 Translation Table Pattern
-すべてのマスタデータおよびコンテンツデータに対して、対となる `_translations` テーブルを定義します。
+すべてのマスタデータおよび記事データに対して、対となる `_translations` テーブルを定義します。
 
 - **Master Entity:** `id`, `slug` (Canonical), `universal_attributes`...
 - **Translation Entity:** `entity_id` (FK), `lang` (ISO code), `localized_attributes`...
@@ -151,7 +151,7 @@ Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(
 - **Storage:** 生成されたSVGおよびアップロードされた画像は **Cloudflare R2** に保存。
 - **Delivery:** Vercel または Cloudflare CDN を通じてキャッシュ・配信。
 ### 8.3 Asset Reference Strategy
-Supabase上のコンテンツとR2上のアセットは、**Asset ID (UUID)** によって疎結合にリンクさせます。
+Supabase上の記事データとR2上のアセットは、**Asset ID (UUID)** によって疎結合にリンクさせます。
 MDX（JSONB構造）の中に直接URLを書き込むのではなく、ID指定を行うことで、ドメイン変更やストレージ移行に強い設計とします。
 
 - **Score Reference:**

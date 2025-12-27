@@ -1,7 +1,7 @@
 # データスキーマ設計 (Data Schema Design)
 
 ## 1. Frontmatterスキーマ定義 (MDX)
-全てのMDXコンテンツは、以下のZodスキーマ定義に従う必要がある。
+全てのMDX記事は、以下のZodスキーマ定義に従う必要がある。
 
 > [!NOTE]
 > **用語解説 (Terminology)**
@@ -90,7 +90,7 @@ export type ContentDetail = ContentSummary & {
 
 ## 5. データベーススキーマ (Database-First Master)
 
-コンテンツ正本となるテーブル設計。AI編集の粒度に合わせた正規化を行う。
+記事正本となるテーブル設計。AI編集の粒度に合わせた正規化を行う。
 
 ### 5.1 `articles` テーブル
 記事の基本メタデータおよびSEO情報。
@@ -144,7 +144,7 @@ export type ContentDetail = ContentSummary & {
 | | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
 | | `bio_summary` | text | 略歴要約 |
 | | `wikipedia_url` | text | Wikipediaリンク |
-| | **`content_storage_path`** | **text** | **本文JSONデータのStorageパス (`content/uuid.json`)** |
+| | **`content_storage_path`** | **text** | **記事本文JSONデータのStorageパス (`article/uuid.json`)** |
 
 ### 5.2. Works (Master)
 | Table | Column | Type | Description |

@@ -14,7 +14,7 @@ Status: `[/]` 進行中
 
 - [x] **1.2 基本設計**
     - [x] **ルーティング設計:** `app/[lang]/` 配下のURL構造とページ遷移の定義
-    - [x] **コンテンツデータ設計:** MDX Frontmatterのスキーマ定義 (Title, Composer, Difficulty, Tags...)
+    - [x] **記事データ設計:** MDX Frontmatterのスキーマ定義 (Title, Composer, Difficulty, Tags...)
     - [x] **コンポーネント設計:** UIパーツ（Atoms/Molecules）と機能コンポーネント（Organisms）のリストアップ
     - [x] **デザイン仕様策定:** `docs/05_design/ui-design.md` (Tokens, Changeability) の作成
     - [x] **エージェント設計:** AIエージェント（Musicologist, Translator, *Designer*）の出力フォーマットとインターフェース定義
@@ -73,13 +73,13 @@ Status: `[/]` 進行中
     - [x] UIモード実装: Mini Player (Footer) & Focus Mode (Ref: `REQ-UI-004-02`)
     - [x] 楽譜との同期ロジックの実装（Click to Play / StartTime指定の実装）
 
-- [x] **4.3 多言語MDXシステム & コンテンツフロー**
+- [x] **4.3 多言語MDX記事システム & 制作フロー**
     - [x] MDXディレクトリ構成の設計 (`content/[lang]/...`)
     - [x] MDX Loader / Parser の実装
     - [x] Pagefind 検索の実装 (Ref: `technology-requirements`)
     - [x] 目次 (TOC) 自動生成機能の実装 (Ref: `REQ-UI-005-02`)
     - [x] シリーズナビゲーション (Previous/Next/Index) の実装 (Ref: `REQ-CONT-SERIES`)
-    - [x] コンテンツパイプラインの定義: Agent出力(MDX) -> Git PR -> Deployの流れを検証 (Manual Build Verified)
+    - [x] コンテンツパイプラインの定義: Agent出力(MDX記事) -> Git PR -> Deployの流れを検証 (Manual Build Verified)
 
 - [x] **4.4 アーキテクチャ・リファクタリング (Architecture Refactoring)**
     - [x] **Score機能のClean Architecture化**
@@ -150,7 +150,7 @@ Status: `[/]` 進行中
     - [x] **[リファクタリング]** フィルターロジックの分離
         - [x] 検索・絞り込みロジックを Custom Hook（`useFilter`）へ抽出し、保守性を向上
 
-- [ ] **5.5 データベースコンテンツ管理の構築 (Database Content Management)**
+- [ ] **5.5 データベース記事管理の構築 (Database Article Management)**
     - [x] **[環境構築]** データベースプロジェクト設計とセットアップ
         - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
         - [x] データベースプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
@@ -215,7 +215,7 @@ Status: `[/]` 進行中
     - [ ] **[検証]** 選定精度の確認
         - [ ] 意図しない動画（BGM集、リアクション動画等）の排除率確認
 
-- [ ] **6.5 コンテンツ量産体制の構築と実行 (Content Operations)**
+- [ ] **6.5 記事コンテンツ量産体制の構築と実行 (Article Operations)**
     - [ ] **[仕様策定]** コンテンツ戦略とパイプライン定義
         - [ ] 初回リリース用コンテンツ選定 (Target: 10-20 articles for Launch)
         - [ ] コンテントマップ作成: Pillar Content (没入感), Guide Content (入門), Niche Content (専門性), Utility Content (実用) のバランス設計
