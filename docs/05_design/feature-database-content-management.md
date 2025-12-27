@@ -131,3 +131,7 @@ MDX（JSONB構造）の中に直接URLを書き込むのではなく、ID指定�
   - Resolved URL: `https://assets.preludio.io/images/{uuid-5678}.webp`
 
 これにより、フロントエンドコンポーネント `<Score id="uuid" />` は、ビルド時または実行時にIDから正しいR2 URLを解決して表示します。
+
+#### ID vs Title Strategy
+- **ID (UUID):** システム内部の参照用。不変 (Immutable) であるため、ファイル名の変更やタイトルの修正を行ってもリンク切れが発生しません。
+- **Title (Metadata):** 管理画面での表示および検索用（`music_scores` テーブルの `title` カラム）。人間にとっての意味（例: "Main Theme", "第1主題"）はここで管理します。
