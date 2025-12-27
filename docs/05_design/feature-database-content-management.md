@@ -119,4 +119,15 @@ Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(
 ### 8.2 Cloudflare R2 Integration
 - **Storage:** 生成されたSVGおよびアップロードされた画像は **Cloudflare R2** に保存。
 - **Delivery:** Vercel または Cloudflare CDN を通じてキャッシュ・配信。
-- **Zero Egress Fee:** R2の特性を活かし、帯域コストを気にせず高品質なアセットを配信。
+### 8.3 Asset Reference Strategy
+Supabase上のコンテンツとR2上のアセットは、**Asset ID (UUID)** によって疎結合にリンクさせます。
+MDX（JSONB構造）の中に直接URLを書き込むのではなく、ID指定を行うことで、ドメイン変更やストレージ移行に強い設計とします。
+
+- **Score Reference:**
+  - JSONB Data: `{ "type": "score", "score_id": "uuid-1234", ... }`
+  - Resolved URL: `https://assets.preludio.io/scores/{uuid-1234}.svg`
+- **Image Reference:**
+  - JSONB Data: `{ "type": "image", "image_id": "uuid-5678", ... }`
+  - Resolved URL: `https://assets.preludio.io/images/{uuid-5678}.webp`
+
+これにより、フロントエンドコンポーネント `<Score id="uuid" />` は、ビルド時または実行時にIDから正しいR2 URLを解決して表示します。
