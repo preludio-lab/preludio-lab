@@ -11,7 +11,18 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 ## 3. Database-First Configuration
 
-### 3.1 Data Source Roles
+### 3.1 Data Source Roles & Persistence Matrix
+
+「専用管理画面（Admin View）」を前提とし、**全てのコンテンツ（メタデータ・本文・多言語）の正本を RDBMS (Supabase) に集約します。**
+GitHubはあくまで「生成された結果の出力先」として扱います。
+
+| 管理対象 (Item) | Master Source **(RDBMS)** | Backup / Build Source **(GitHub)** |
+| :--- | :---: | :---: |
+| **Metadata (JA - Master)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
+| **Body (JA - Master)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
+| **Metadata (Translations)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
+| **Body (Translations)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
+
 - **Supabase Database (Master):**
   - **Single Source of Truth.**
   - コンテンツを構造化して管理 (`articles`, `sections`, `music_scores`).
