@@ -199,3 +199,14 @@ type Section =
 | `work_id` | uuid | FK to works |
 | `format` | text | 'abc' / 'musicxml' |
 | `data` | text | Score Data |
+
+### 5.6. Content Embeddings (Semantic Search)
+**pgvector (0.5.0+)** の **halfvec (16-bit)** 型を使用し、インデックス容量を削減する。
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | uuid | PK |
+| `content_type` | text | 'work' / 'composer' / 'article' |
+| `content_id` | uuid | FK to translations tables |
+| `lang` | text | ISO Lang Code |
+| `embedding` | **halfvec(768)** | 16-bit Quantized Vector |

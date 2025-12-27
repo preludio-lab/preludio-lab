@@ -1,57 +1,54 @@
-# Capacity Estimation & Storage Strategy for 70,000 Articles
+# Capacity Estimation & Storage Strategy for 70,000 Articles (Revised with Indexes)
 
-## 1. 前提条件とコンテンツモデル (Assumptions)
+## 1. 前提条件 (Assumptions)
+- **記事数:** 70,000
+- **DB Limit:** 500 MB (Supabase Free Tier)
 
-「世界最高のクラシック音楽サイト」を目指すための、妥協のない高品質コンテンツを想定します。
+## 2. インデックスの基礎知識 (Technical Context)
+DB容量は「データそのもの(Table)」と「検索用索引(Index)」の合計になります。
 
-- **記事数:** 70,000 (10,000 Works x 7 Languages)
-- **読了時間:** 5分程度 (読み応えのある専門的解説)
-- **文字数:** 4,000文字 (日本語換算)
-- **譜例数:** 5つ (4-6小節のABC記法)
-
-## 2. 1記事あたりの容量試算 (Per Article Estimation)
-
-| 項目 (Item) | 想定サイズ | 備考 |
+| Index Type | 用途 | 容量目安 (vs データ) |
 | :--- | :--- | :--- |
-| **Metadata** (Slug, IDs) | 0.2 KB | UUID, Index |
-| **Summary** (300 chars) | 1.0 KB | 検索結果用要約 |
-| **Music Scores** (ABC x 5) | 0.5 KB | ABC記法は非常に軽量 (100bytes x 5) |
-| **Vectors** (Summary Only) | 3.0 KB | 768次元 float32 (検索用) |
-| **Content Body** (Long Text) | **12.0 KB** | 4,000文字 * 3bytes (UTF-8) |
-| **JSON Overhead** | 1.0 KB | 構造化タグ等 |
-| **Total Size** | **17.7 KB** | |
+| **B-Tree** | ID, Slug, Foreign Key | **~20%** (軽量) |
+| **GIN** | 全文検索 (Tag, Summary) | **~60-100%** (中量。単語数に比例) |
+| **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
 
-## 3. 総容量とFree Tier判定 (Total vs Limit)
+## 3. 詳細容量見積もり (Detailed Calculation)
 
-### 70,000記事の総容量
-$$ 17.7 \text{ KB} \times 70,000 = 1,239,000 \text{ KB} \approx \mathbf{1.24 \text{ GB}} $$
+### 3.1 Raw Data Size (Table)
+| 項目 | 単価 | 70k件合計 | 備考 |
+| :--- | :--- | :--- | :--- |
+| Metadata (ID, Slug) | 0.2 KB | **14 MB** | |
+| Summary (Text) | 1.0 KB | **70 MB** | |
+| Music Scores (JSONB) | 0.5 KB | **35 MB** | |
+| **Content Body (JSON)** | - | **0 MB** | **Split-Storage (R2へ除外)** |
+| **Table Total** | | **119 MB** | |
 
-### Supabase Free Tier Limit Check
-- **Database Limit:** **500 MB**
-- **Result:** **判定: 容量超過 (Over Limit)**
-  - 全てをDB (`jsonb`) に格納すると、無料枠を **2.5倍** 超過します。
-  - インデックス作成によるオーバーヘッドを含めるとさらに逼迫します。
+### 3.2 Index Size (Overhead)
+普通に実装すると、Vectorのインデックスでパンクします。
+
+| Index | 対象 | 試算 | 判定 |
+| :--- | :--- | :--- | :--- |
+| **PK/FK Indexes** | ID, Slug | 14 MB * 20% = **3 MB** | 誤差レベル |
+| **Search Index** | Summary (GIN) | 70 MB * 60% = **42 MB** | 許容範囲 |
+| **Vector Data** | `vector(768)` | 3 KB * 70k = **210 MB** | **巨大** (Float32) |
+| **Vector Index** | HNSW | 210 MB * 100% = **210 MB** | **巨大** |
+| **Grand Total** | (Table + Index) | 119 + 3 + 42 + 420 = **584 MB** | ❌ **OUT (>500MB)** |
 
 ---
 
-## 4. 対策: Split-Storage Strategy (Zero Cost Architecture)
+## 4. 解決策: Half-Precision Vectors (`halfvec`)
 
-「DB管理の利便性」と「容量制限」を両立させるため、**「検索に必要なデータはDB、重い本文はObject Storage」** に物理配置を分割します。
+pgvector 0.5.0+ でサポートされた **16-bit浮動小数点 (`halfvec`)** を採用します。
+精度への影響は軽微ですが、容量は **半分** になります。
 
-### 4.1 データ配置プラン
+| 項目 | Float32 (通常) | **Halfvec (16-bit)** |
+| :--- | :--- | :--- |
+| **Vector Data** | 210 MB | **105 MB** |
+| **Vector Index** | 210 MB | **100 MB** (approx) |
+| **New Total** | 584 MB | **369 MB** |
 
-| データ区分 | 保存先 | 容量見積もり (70k) | 判定 |
-| :--- | :--- | :--- | :--- |
-| **Index Data**<br>(Meta, Summary, Scores, Vectors) | **Supabase DB** | 4.7 KB x 70k = **329 MB** | ✅ **Safe** (< 500 MB) |
-| **Body Data**<br>(Main Content Text) | **Cloudflare R2** | 13.0 KB x 70k = **910 MB** | ✅ **Safe** (< 10 GB) |
+### 最終判定 (Final Verdict)
+$$ \mathbf{369 \text{ MB}} < 500 \text{ MB} \rightarrow \text{ ✅ \textbf{SAFE}} $$
 
-### 4.2 Application Architecture
-Admin UIおよびアプリケーションからは、この分割を意識させない設計とします。
-
-1.  **Read:** `articles` テーブルと一緒に、透過的に Storage から本文JSONを取得 (または遅延ロード)。
-2.  **Write:** Admin UI保存時に、トランザクション内で「DBメタデータ更新」と「Storage JSONアップロード」を同時に実行。
-3.  **Search:** 検索はDB内の `Summary` および `Tags` に対して行う（本文全文検索はコスト的に諦めるか、Pagefind等のクライアント検索に委譲）。
-
-### 5. 結論
-世界最高品質のコンテンツ(1.2GB)を維持しつつZero Costを守るためには、**本文(Body)の外部化が必須**です。
-しかし、**楽譜データ(Scores)** は軽量(0.5KB)であるため、**DB内に格納して問題ありません。** これにより、「楽譜の内容による検索（メロディ検索など）」の可能性を残せます。
+`halfvec` を採用することで、インデックスを含めても無料枠内に収めることが可能です。
