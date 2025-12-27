@@ -42,15 +42,32 @@ GitHubはあくまで「生成された結果の出力先」として扱いま�
 - **Editor:** Tiptap / Lexical
 - **AI Integration:** Vercel AI SDK (Streaming edits).
 
-## 4. データ構造戦略 (Granular Schema)
-AIの作業効率を高めるため、コンテンツを粒度細かく管理します。
-詳細は `docs/05_design/data-schema.md` を参照。
+## 4. データ構造戦略 (JSONB Hybrid Model)
 
-- **Articles:** 記事のメタデータ (Slug, Title).
-- **Sections:** 見出しごとの本文ブロック。AIの部分編集対象。
-- **Music Scores:** 楽譜データを独立管理。
+「AIエージェントによる編集のしやすさ」と「配信パフォーマンス」を両立させるため、**PostgreSQL JSONB** を活用したハイブリッド構造を採用します。
 
-## 5. 多言語対応戦略 (Internationalization Strategy)
+- **Normalized Tables:** `articles`, `works` 等の親エンティティ、および `translations` テーブル自体は正規化して管理。
+- **JSONB Content:** コンテンツのセクション構造（段落、楽譜、見出し）は、`translations` テーブル内の **`content_structure` (JSONB)** カラムに格納します。
+
+### Merits
+- **No JOINs:** 1レコード取得するだけで、その言語の記事構成要素が全て手に入る。
+- **Flexibility:** 「ここはテキスト」「次は楽譜」といった構造を配列順序として直感的に管理できる。
+- **AI-Friendly:** AIに対する「特定のセクションID (`intro`) のみを書き換えよ」という指示が容易。
+
+## 5. Performance Strategy
+
+### 5.1 ISR (Incremental Static Regeneration)
+DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用します。
+- **Read:** ユーザーアクセス時は Vercel CDN (Edge) から静的HTMLを配信。DBアクセスは発生しない。
+- **Revalidate:** DB更新時、対象記事のパスのみを On-demand Revalidation で再構築。
+
+### 5.2 Search Optimization
+JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離します。
+- **Storage:** コンテンツは `jsonb` カラム。
+- **Index:** 保存時、検索対象テキストを抽出して `tsvector`カラム (Full Text Search) および `vector` カラム (Semantic Search) に保存。
+- **Query:** 検索時はインデックスのみを参照し、高速に応答する。
+
+## 6. 多言語対応戦略 (Internationalization Strategy)
 
 「世界最高峰のデータベース設計」として、**Normalized Translation Pattern (正規化された翻訳パターン)** を採用します。
 「普遍的な事実（Universal Facts）」と「言語固有の表現（Localized Content）」をテーブルレベルで物理的に分離し、保守性と拡張性を最大化します。
@@ -69,7 +86,7 @@ AIの作業効率を高めるため、コンテンツを粒度細かく管理し
 
 これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
 
-## 6. 検索仕様
+## 7. 検索仕様
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
 
 ### 5.1 検索エンジンの構成

@@ -144,6 +144,7 @@ export type ContentDetail = ContentSummary & {
 | | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
 | | `bio_summary` | text | 略歴要約 |
 | | `wikipedia_url` | text | Wikipediaリンク |
+| | **`content_structure`** | **jsonb** | **Bio詳細、年表など (NoSQL Structure)** |
 
 ### 5.2. Works (Master)
 | Table | Column | Type | Description |
@@ -157,6 +158,7 @@ export type ContentDetail = ContentSummary & {
 | | `title` | text | 作品名 (e.g. '無伴奏ヴァイオリンソナタ第1番') |
 | | `popular_title` | text | 通称 (e.g. 'Adagio') |
 | | `description` | text | 概要テキスト |
+| | **`content_structure`** | **jsonb** | **本文セクション構造 (Array of Sections)** |
 
 ### 5.3. Articles & Content (Application Data)
 記事管理も言語ごとにレコードを分離する。
@@ -172,19 +174,19 @@ export type ContentDetail = ContentSummary & {
 | | `title` | text | 記事タイトル |
 | | `is_public` | boolean | 公開フラグ |
 | | `last_synced_at` | timestamptz | Git同期日時 |
+| | **`content_structure`** | **jsonb** | **記事セクション構造 (Array of Sections)** |
 
-### 5.4. Sections (Content Blocks)
-`article_translations` に紐づく、言語ごとに独立したコンテンツブロック。
-※ 翻訳によってはセクション構成（段落構成）が変わるリライトを許容するため、Article(Universal)ではなくTranslationに紐づける。
+### 5.4. Content Structure (JSONB Schema)
+`content_structure` カラムに格納されるJSONの型定義（TypeScript Interfaceイメージ）。
 
-| Column | Type | Description |
-| :--- | :--- | :--- |
-| `id` | uuid | PK |
-| `article_translation_id` | uuid | FK to article_translations |
-| `order_index` | int | 表示順 |
-| `heading` | text | 見出し |
-| `content_body` | text | Markdown本文 |
-| `embedding` | vector(768) | ベクトル (Gemini) |
+```ts
+type ContentStructure = Section[];
+
+type Section = 
+  | { id: string; type: 'text'; heading?: string; body: string }
+  | { id: string; type: 'score'; work_id?: string; score_id?: string; comment?: string }
+  | { id: string; type: 'youtube'; videoId: string; start: number; end: number; comment?: string };
+```
 
 ### 5.5. Music Scores (Shared Asset)
 楽譜データは言語非依存の共有アセットとして管理。
