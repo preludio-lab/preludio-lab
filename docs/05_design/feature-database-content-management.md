@@ -21,12 +21,16 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 | **Metadata** | **RDBMS** | `works`, `translations` tables | Searchable, Fast |
 | **Scores (ABC)** | **RDBMS** | `translations` (JSONB) | Lightweight (0.5KB), Searchable |
 | **Summary** | **RDBMS** | `translations` (JSONB) | For Search & List View |
-| **Content Body** | **RDBMS** | **Object Storage (JSON)** | **Heavy Text (12KB)**. Offloaded. |
+| **Content Body (Draft)** | **Supabase Storage** | **Private Bucket**. Auth/RLSで保護。 |
+| **Content Body (Public)** | **Cloudflare R2** | **Public Bucket**. 10GB Free. 900MBのデータも余裕。 |
 
 - **Supabase Database (Master Index):**
   - メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
-- **Supabase Storage (Body Store):**
-  - 長文の本文データをJSON形式で保持 (Total ~900MB < 1GB).
+- **Supabase Storage (Draft Store):**
+  - 執筆中のドラフトデータを一時保存。Authとの連携を重視。
+- **Cloudflare R2 (Public Body Store):**
+  - **公開後の本文JSONの正本。**
+  - Supabaseの1GB制限 (900MB利用でほぼ満杯) を回避するため、10GB無料のR2を採用。
 - **GitHub (Backup & Build Source):**
   - **Read-Only Snapshot.**
   - DBからエクスポートされたMDXファイルを保持。

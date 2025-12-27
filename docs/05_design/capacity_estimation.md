@@ -43,7 +43,7 @@ $$ 17.7 \text{ KB} \times 70,000 = 1,239,000 \text{ KB} \approx \mathbf{1.24 \te
 | データ区分 | 保存先 | 容量見積もり (70k) | 判定 |
 | :--- | :--- | :--- | :--- |
 | **Index Data**<br>(Meta, Summary, Scores, Vectors) | **Supabase DB** | 4.7 KB x 70k = **329 MB** | ✅ **Safe** (< 500 MB) |
-| **Body Data**<br>(Main Content Text) | **Supabase Storage**<br>(or Cloudflare R2) | 13.0 KB x 70k = **910 MB** | ✅ **Safe** (< 1 GB / 10 GB) |
+| **Body Data**<br>(Main Content Text) | **Cloudflare R2** | 13.0 KB x 70k = **910 MB** | ✅ **Safe** (< 10 GB) |
 
 ### 4.2 Application Architecture
 Admin UIおよびアプリケーションからは、この分割を意識させない設計とします。
