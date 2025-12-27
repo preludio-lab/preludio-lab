@@ -11,22 +11,22 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 ## 3. Database-First Configuration
 
-### 3.1 Data Source Roles & Persistence Matrix
+### 3.1 Data Source Roles & Persistence Matrix (Split-Storage)
 
-「専用管理画面（Admin View）」を前提とし、**全てのコンテンツ（メタデータ・本文・多言語）の正本を RDBMS (Supabase) に集約します。**
-GitHubはあくまで「生成された結果の出力先」として扱います。
+**容量見積もり (1.2GB) に基づき、本文のみ外部Storageへ分離します。**
+ただし、アプリケーション(Admin)からは透過的に扱います。
 
-| 管理対象 (Item) | Master Source **(RDBMS)** | Backup / Build Source **(GitHub)** |
-| :--- | :---: | :---: |
-| **Metadata (JA - Master)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
-| **Body (JA - Master)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
-| **Metadata (Translations)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
-| **Body (Translations)** | ✅ **Primary (Edit here)** | 🔄 Generated (Read-Only) |
+| 管理対象 | Master Source | Physical Location | Note |
+| :--- | :---: | :--- | :--- |
+| **Metadata** | **RDBMS** | `works`, `translations` tables | Searchable, Fast |
+| **Scores (ABC)** | **RDBMS** | `translations` (JSONB) | Lightweight (0.5KB), Searchable |
+| **Summary** | **RDBMS** | `translations` (JSONB) | For Search & List View |
+| **Content Body** | **RDBMS** | **Object Storage (JSON)** | **Heavy Text (12KB)**. Offloaded. |
 
-- **Supabase Database (Master):**
-  - **Single Source of Truth.**
-  - コンテンツを構造化して管理 (`articles`, `sections`, `music_scores`).
-  - AIによる一括変換・分析の基盤。
+- **Supabase Database (Master Index):**
+  - メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
+- **Supabase Storage (Body Store):**
+  - 長文の本文データをJSON形式で保持 (Total ~900MB < 1GB).
 - **GitHub (Backup & Build Source):**
   - **Read-Only Snapshot.**
   - DBからエクスポートされたMDXファイルを保持。

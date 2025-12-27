@@ -144,7 +144,7 @@ export type ContentDetail = ContentSummary & {
 | | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
 | | `bio_summary` | text | 略歴要約 |
 | | `wikipedia_url` | text | Wikipediaリンク |
-| | **`content_structure`** | **jsonb** | **Bio詳細、年表など (NoSQL Structure)** |
+| | **`content_storage_path`** | **text** | **本文JSONデータのStorageパス (`content/uuid.json`)** |
 
 ### 5.2. Works (Master)
 | Table | Column | Type | Description |
@@ -158,7 +158,8 @@ export type ContentDetail = ContentSummary & {
 | | `title` | text | 作品名 (e.g. '無伴奏ヴァイオリンソナタ第1番') |
 | | `popular_title` | text | 通称 (e.g. 'Adagio') |
 | | `description` | text | 概要テキスト |
-| | **`content_structure`** | **jsonb** | **本文セクション構造 (Array of Sections)** |
+| | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
+| | **`content_storage_path`** | **text** | **本文JSONデータのStorageパス** |
 
 ### 5.3. Articles & Content (Application Data)
 記事管理も言語ごとにレコードを分離する。
@@ -174,7 +175,8 @@ export type ContentDetail = ContentSummary & {
 | | `title` | text | 記事タイトル |
 | | `is_public` | boolean | 公開フラグ |
 | | `last_synced_at` | timestamptz | Git同期日時 |
-| | **`content_structure`** | **jsonb** | **記事セクション構造 (Array of Sections)** |
+| | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
+| | **`content_storage_path`** | **text** | **本文JSONデータのStorageパス** |
 
 ### 5.4. Content Structure (JSONB Schema)
 `content_structure` カラムに格納されるJSONの型定義（TypeScript Interfaceイメージ）。
