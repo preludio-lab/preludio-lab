@@ -127,4 +127,71 @@ export type ContentDetail = ContentSummary & {
 | `title` | text | - | 譜例タイトル |
 | `format` | text | 'abc' | 'abc' or 'musicxml' |
 | `data` | text | - | 楽譜データ本体 |
-| `hash` | text | - | データハッシュ（重複検知用） |
+## 5. データベーススキーマ (Translation Pattern)
+普遍的な事実(Universal)と言語固有情報(Localized)を分離した正規化スキーマ。
+
+### 5.1. Composers (Master)
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`composers`** | `id` | uuid | PK |
+| (Universal) | `slug` | text | Canonical Slug (e.g., 'bach') |
+| | `born_at` | date | 生年月日 |
+| | `died_at` | date | 没年月日 |
+| | `nationality` | text | 国籍コード (ISO 3166) |
+| | `portrait_url` | text | 肖像画URL |
+| **`composer_translations`** | `composer_id` | uuid | FK to composers |
+| (Localized) | `lang` | text | ISO Lang Code (ja, en...) |
+| | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
+| | `bio_summary` | text | 略歴要約 |
+| | `wikipedia_url` | text | Wikipediaリンク |
+
+### 5.2. Works (Master)
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`works`** | `id` | uuid | PK |
+| (Universal) | `composer_id` | uuid | FK to composers |
+| | `catalogue_id` | text | 作品番号 (e.g. 'BWV 1001') |
+| | `key` | text | 調性 (e.g. 'Gm') - 統一表記 |
+| **`work_translations`** | `work_id` | uuid | FK to works |
+| (Localized) | `lang` | text | ISO Lang Code |
+| | `title` | text | 作品名 (e.g. '無伴奏ヴァイオリンソナタ第1番') |
+| | `popular_title` | text | 通称 (e.g. 'Adagio') |
+| | `description` | text | 概要テキスト |
+
+### 5.3. Articles & Content (Application Data)
+記事管理も言語ごとにレコードを分離する。
+
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`articles`** | `id` | uuid | PK |
+| (Universal) | `work_id` | uuid | FK to works |
+| | `slug` | text | URL Slug (e.g. 'analysis') |
+| **`article_translations`** | `id` | uuid | PK (Sectionsの親になるためIDが必要) |
+| (Localized) | `article_id` | uuid | FK to articles |
+| | `lang` | text | ISO Lang Code |
+| | `title` | text | 記事タイトル |
+| | `is_public` | boolean | 公開フラグ |
+| | `last_synced_at` | timestamptz | Git同期日時 |
+
+### 5.4. Sections (Content Blocks)
+`article_translations` に紐づく、言語ごとに独立したコンテンツブロック。
+※ 翻訳によってはセクション構成（段落構成）が変わるリライトを許容するため、Article(Universal)ではなくTranslationに紐づける。
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | uuid | PK |
+| `article_translation_id` | uuid | FK to article_translations |
+| `order_index` | int | 表示順 |
+| `heading` | text | 見出し |
+| `content_body` | text | Markdown本文 |
+| `embedding` | vector(768) | ベクトル (Gemini) |
+
+### 5.5. Music Scores (Shared Asset)
+楽譜データは言語非依存の共有アセットとして管理。
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | uuid | PK |
+| `work_id` | uuid | FK to works |
+| `format` | text | 'abc' / 'musicxml' |
+| `data` | text | Score Data |

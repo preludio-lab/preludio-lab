@@ -39,7 +39,26 @@ AIの作業効率を高めるため、コンテンツを粒度細かく管理し
 - **Sections:** 見出しごとの本文ブロック。AIの部分編集対象。
 - **Music Scores:** 楽譜データを独立管理。
 
-## 5. 検索仕様
+## 5. 多言語対応戦略 (Internationalization Strategy)
+
+「世界最高峰のデータベース設計」として、**Normalized Translation Pattern (正規化された翻訳パターン)** を採用します。
+「普遍的な事実（Universal Facts）」と「言語固有の表現（Localized Content）」をテーブルレベルで物理的に分離し、保守性と拡張性を最大化します。
+
+### 5.1 アーキテクチャ原則
+- **Separation of Concerns:** 
+  - `works` (Universal): 作曲年、作品番号、調性など、言語に依存しない事実は1箇所で管理。
+  - `work_translations` (Localized): タイトル、解説、要約など、言語ごとに変化する情報は翻訳テーブルで管理。
+- **Scalability:** 言語数が増えてもカラム追加（`title_ja`, `title_en`...）は不要。レコード追加のみで対応可能。
+
+### 5.2 Translation Table Pattern
+すべてのマスタデータおよびコンテンツデータに対して、対となる `_translations` テーブルを定義します。
+
+- **Master Entity:** `id`, `slug` (Canonical), `universal_attributes`...
+- **Translation Entity:** `entity_id` (FK), `lang` (ISO code), `localized_attributes`...
+
+これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
+
+## 6. 検索仕様
 データベースの検索機能を活用し、従来のファイルベース検索では困難だった高度な検索を実現します。
 
 ### 5.1 検索エンジンの構成
