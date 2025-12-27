@@ -150,12 +150,12 @@ Status: `[/]` 進行中
     - [x] **[リファクタリング]** フィルターロジックの分離
         - [x] 検索・絞り込みロジックを Custom Hook（`useFilter`）へ抽出し、保守性を向上
 
-- [ ] **5.5 コンテンツ管理のSupabase移行 (Supabase Content Management)**
-    - [x] **[環境構築]** Supabaseプロジェクト設計とセットアップ
+- [ ] **5.5 データベースコンテンツ管理の構築 (Database Content Management)**
+    - [x] **[環境構築]** データベースプロジェクト設計とセットアップ
         - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
-        - [x] Supabaseプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
+        - [x] データベースプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
     - [x] **[仕様策定]** DBスキーマとHybrid Content Model
-        - [x] Master: MDX / Index & Vector: Supabase という役割分担の定義
+        - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
     - [ ] **[実装]** MDX同期パイプライン (Script-based Sync)
