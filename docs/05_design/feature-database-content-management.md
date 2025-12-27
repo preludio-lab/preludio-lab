@@ -59,6 +59,14 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 - **Flexibility:** 「ここはテキスト」「次は楽譜」といった構造を配列順序として直感的に管理できる。
 - **AI-Friendly:** AIに対する「特定のセクションID (`intro`) のみを書き換えよ」という指示が容易。
 
+### 4.1 Storage Key Strategy (UUID vs Slug)
+Object Storage上のJSONファイル名は、Slugではなく **UUID (Record ID) を使用します。**
+
+- **Format:** `content/{uuid}.json` (e.g. `content/550e8400-e29b-41d4-a716-446655440000.json`)
+- **Reason:**
+  - **Slug is Mutable:** URL変更によりSlugが変わった場合、Storage上のファイル移動（Copy+Delete）が発生し、整合性担保が困難になるため。
+  - **UUID is Immutable:** 記事の親が移動したりタイトルが変わったりしても、コンテンツ実体へのリンクは不変に保たれる。
+
 ## 5. Performance Strategy
 
 ### 5.1 ISR (Incremental Static Regeneration)
