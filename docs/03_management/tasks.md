@@ -154,10 +154,10 @@ Status: `[/]` 進行中
     - [x] **[環境構築]** Supabaseプロジェクト設計とセットアップ
         - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
         - [x] Supabaseプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
-    - [ ] **[仕様策定]** DBスキーマとHybrid Content Model
-        - [ ] Master: MDX / Index & Vector: Supabase という役割分担の定義
-        - [ ] テーブル設計 (`works`, `composers`, `embeddings`)
-        - [ ] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
+    - [x] **[仕様策定]** DBスキーマとHybrid Content Model
+        - [x] Master: MDX / Index & Vector: Supabase という役割分担の定義
+        - [x] テーブル設計 (`works`, `composers`, `embeddings`)
+        - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
     - [ ] **[実装]** MDX同期パイプライン (Script-based Sync)
         - [ ] `scripts/sync-supabase.ts` の実装（MDXパース -> DB Upsert）。**SEO (`hreflang`) 自動生成ロジック** を同期スクリプトに組み込む
         - [ ] コンテンツ埋め込み (Embeddings) 生成処理の実装（同期スクリプト内でOpenAI/Gemini APIをコール）

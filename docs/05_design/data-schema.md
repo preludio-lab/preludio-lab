@@ -87,3 +87,60 @@ export type ContentDetail = ContentSummary & {
     body: string;
 };
 ```
+
+## 5. データベーススキーマ (PostgreSQL / Supabase)
+
+MDX（Frontmatter）の情報をインデックス化し、検索・フィルタリングに使用するためのテーブル構造。
+
+### 5.1. `composers` テーブル
+作曲家のメタデータ。`slug` と `lang` の組み合わせでユニークとする。
+
+| Column | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | uuid | uuid_generate_v4() | プライマリキー |
+| `slug` | text | - | URLスラッグ |
+| `lang` | text | - | 言語コード (ja, en, etc...) |
+| `name` | text | - | 作曲家名 |
+| `era` | text | - | 時代様式 |
+| `nationality` | text | - | 国籍 |
+| `portrait_url` | text | - | 肖像画画像URL |
+| `content_text` | text | - | 検索用プレーンテキスト本体 |
+| `tags` | text[] | '{}' | タグの配列 |
+| `created_at` | timestamptz | now() | 作成日時 |
+| `updated_at` | timestamptz | now() | 更新日時 |
+
+### 5.2. `works` テーブル
+楽曲および譜例のメタデータ。
+
+| Column | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | uuid | uuid_generate_v4() | プライマリキー |
+| `slug` | text | - | URLスラッグ |
+| `lang` | text | - | 言語コード |
+| `composer_id` | uuid | - | `composers.id` への外部キー (Optional) |
+| `composer_name` | text | - | 検索用作曲家名（非正規化） |
+| `title` | text | - | 記事タイトル |
+| `work_title` | text | - | 作品名（作品番号等） |
+| `musical_key` | text | - | 調性 |
+| `difficulty` | text | - | 難易度 |
+| `audio_src` | text | - | YouTube ID / 音源URL |
+| `artwork_url` | text | - | サムネイルURL |
+| `start_seconds` | int | - | 再生開始時間 |
+| `end_seconds` | int | - | 再生終了時間 |
+| `content_text` | text | - | 検索用プレーンテキスト本体 |
+| `tags` | text[] | '{}' | タグの配列 |
+| `created_at` | timestamptz | now() | 作成日時 |
+| `updated_at` | timestamptz | now() | 更新日時 |
+
+### 5.3. `content_embeddings` テーブル
+セマンティック検索（ベクトル検索）用のデータ。
+
+| Column | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | uuid | uuid_generate_v4() | プライマリキー |
+| `content_type` | text | - | 'work' または 'composer' |
+| `content_id` | uuid | - | 対象テーブルのID |
+| `lang` | text | - | 言語コード |
+| `embedding` | vector(768) | - | ベクトルデータ (Gemini用) |
+| `text_chunk` | text | - | ベクトル化されたテキスト断片 |
+| `created_at` | timestamptz | now() | 作成日時 |
