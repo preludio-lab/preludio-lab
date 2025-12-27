@@ -88,7 +88,7 @@ export type ContentDetail = ContentSummary & {
 };
 ```
 
-## 5. データベーススキーマ (PostgreSQL / Supabase)
+## 5. データベーススキーマ (PostgreSQL)
 
 MDX（Frontmatter）の情報をインデックス化し、検索・フィルタリングに使用するためのテーブル構造。
 
