@@ -1,4 +1,4 @@
-# データベースコンテンツ管理システム設計書 (feature-database-content-management.md)
+# データベース記事管理システム設計書 (feature-database-article-management.md)
 
 ## 1. 概要
 本ドキュメントは、**Supabase Database** をコンテンツの正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Content Application」の仕様を定義します。
