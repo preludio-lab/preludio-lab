@@ -1,7 +1,7 @@
 # データスキーマ設計 (Data Schema Design)
 
 ## 1. Frontmatterスキーマ定義 (MDX)
-全てのMDXコンテンツは、以下のZodスキーマ定義に従う必要がある。
+全てのMDX記事は、以下のZodスキーマ定義に従う必要がある。
 
 > [!NOTE]
 > **用語解説 (Terminology)**
@@ -87,3 +87,86 @@ export type ContentDetail = ContentSummary & {
     body: string;
 };
 ```
+
+## 5. データベーススキーマ (Translation Pattern)
+普遍的な事実(Universal)と言語固有情報(Localized)を分離した正規化スキーマ。
+
+### 5.1. Composers (Master)
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`composers`** | `id` | uuid | PK |
+| (Universal) | `slug` | text | Canonical Slug (e.g., 'bach') |
+| | `born_at` | date | 生年月日 |
+| | `died_at` | date | 没年月日 |
+| | `nationality` | text | 国籍コード (ISO 3166) |
+| | `portrait_url` | text | 肖像画URL |
+| **`composer_translations`** | `composer_id` | uuid | FK to composers |
+| (Localized) | `lang` | text | ISO Lang Code (ja, en...) |
+| | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
+| | `bio_summary` | text | 略歴要約 |
+| | `wikipedia_url` | text | Wikipediaリンク |
+
+### 5.2. Works (Master)
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`works`** | `id` | uuid | PK |
+| (Universal) | `composer_id` | uuid | FK to composers |
+| | `catalogue_id` | text | 作品番号 (e.g. 'BWV 1001') |
+| | `key` | text | 調性 (e.g. 'Gm') - 統一表記 |
+| **`work_translations`** | `work_id` | uuid | FK to works |
+| (Localized) | `lang` | text | ISO Lang Code |
+| | `title` | text | 作品名 (e.g. '無伴奏ヴァイオリンソナタ第1番') |
+| | `popular_title` | text | 通称 (e.g. 'Adagio') |
+| | `description` | text | 概要テキスト |
+
+### 5.3. Articles (Application Data)
+記事管理も言語ごとにレコードを分離する。
+
+| Table | Column | Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`articles`** | `id` | uuid | PK |
+| (Universal) | `work_id` | uuid | FK to works |
+| | `slug` | text | URL Slug (e.g. 'analysis') |
+| **`article_translations`** | `id` | uuid | PK (Sectionsの親になるためIDが必要) |
+| (Localized) | `article_id` | uuid | FK to articles |
+| | `lang` | text | ISO Lang Code |
+| | `title` | text | 記事タイトル |
+| | `status` | text | 'draft' | 'draft', 'published', 'private' |
+| | `published_at` | timestamptz | - | 公開日時 |
+| | **`storage_synced_at`** | **timestamptz** | **-** | **R2/Storage同期完了日時 (SSG対象フラグ)** |
+| | **`metadata`** | **jsonb** | **作曲家・作品名を含むメタデータ (JOIN回避用)** |
+| | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
+| | **`content_storage_path`** | **text** | **記事本文MDXデータのStorageパス (`article/uuid.mdx`)** |
+
+### 5.4. Content Structure (JSONB Schema)
+`content_structure` カラムに格納されるJSONの型定義（TypeScript Interfaceイメージ）。
+
+```ts
+type ContentStructure = Section[];
+
+type Section = 
+  | { id: string; type: 'text'; heading?: string; body: string }
+  | { id: string; type: 'score'; work_id?: string; score_id?: string; comment?: string }
+  | { id: string; type: 'youtube'; videoId: string; start: number; end: number; comment?: string };
+```
+
+### 5.5. Music Scores (Shared Asset)
+楽譜データは言語非依存の共有アセットとして管理。
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | uuid | PK |
+| `work_id` | uuid | FK to works |
+| `format` | text | 'abc' / 'musicxml' |
+| `data` | text | Score Data |
+
+### 5.6. Content Embeddings (Semantic Search)
+**pgvector (0.5.0+)** の **halfvec (16-bit)** 型を使用し、インデックス容量を削減する。
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| `id` | uuid | PK |
+| `content_type` | text | 'work' / 'composer' / 'article' |
+| `content_id` | uuid | FK to translations tables |
+| `lang` | text | ISO Lang Code |
+| `embedding` | **halfvec(768)** | 16-bit Quantized Vector |

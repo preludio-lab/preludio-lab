@@ -14,6 +14,28 @@
     },
     "terms": [
         {
+            "id": "term_article",
+            "context": "Web Page Unit (Entity)",
+            "en": "Article",
+            "ja": "記事",
+            "es": "Artículo",
+            "fr": "Article",
+            "de": "Artikel",
+            "it": "Articolo",
+            "zh": "文章"
+        },
+        {
+            "id": "term_content",
+            "context": "Body / Payload",
+            "en": "Content",
+            "ja": "コンテンツ (本文)",
+            "es": "Contenido",
+            "fr": "Contenu",
+            "de": "Inhalt",
+            "it": "Contenuto",
+            "zh": "内容"
+        },
+        {
             "id": "term_work",
             "context": "Musical Composition",
             "en": "Work",

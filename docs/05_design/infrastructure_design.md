@@ -9,9 +9,9 @@
 
 | 環境 (Environment) | アプリケーション (App) | データベース (DB) | AIエージェント (Agent Runner) | 用途・特徴 |
 | :--- | :--- | :--- | :--- | :--- |
-| **Development** | **Local PC**<br>`localhost:3000` | **Local Supabase (Docker)**<br>*完全分離 / オフライン* | **Local PC**<br>*手動実行* | 機能開発、単体テスト、エージェントの試運転。**本番データ破壊リスクなし**。 |
-| **Staging** | **Vercel Preview**<br>`git-branch-url` | **Supabase (Prod)**<br>*直接接続 (要注意)* | **GitHub Actions**<br>*Pull Request Trigger* | ステージング相当。本番DBを参照するため、**書き込みテストは厳禁**。 |
-| **Production** | **Vercel Production**<br>`preludiolab.com` | **Supabase (Prod)**<br>*本番データ* | **GitHub Actions**<br>*Schedule / API Trigger* | 本番稼働環境。エンドユーザー向け公開。 |
+| **Development** | **Local PC**<br>`localhost:3000` | **Supabase (Staging)**<br>*Cloud Staging or Shared Prod* | **Local PC**<br>*手動実行* | 機能開発、単体テスト。Cloud DBを参照し、環境差異を減らす。 |
+| **Staging** | **Vercel Preview**<br>`git-branch-url` | **Supabase (Staging)**<br>*Cloud Staging or Shared Prod* | **GitHub Actions**<br>*Pull Request Trigger* | ステージング相当。本番またはStaging DBを参照。 |
+| **Production** | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>*本番データ* | **GitHub Actions**<br>*Schedule / API Trigger* | 本番稼働環境。エンドユーザー向け公開。 |
 
 ---
 
@@ -34,18 +34,6 @@
 
 ---
 
-### 環境戦略 (Environment Strategy)
-| Environment | Next.js Runtime | Connected Database | Note |
-| :--- | :--- | :--- | :--- |
-| **Development** | Local | **Local Supabase (Docker)** | 安全。何を壊しても本番に影響なし。 |
-| **Staging** | Vercel (Preview) | **Supabase (Cloud)** | 本番と同じDBを参照（※コストゼロでの妥協点。書込禁止） |
-| **Production** | Vercel (Prod) | **Supabase (Cloud)** | 本番運用。 |
-
-**リスク管理 (Seed Data Strategy):**
-- **Master Data as Code:** 重要なマスタデータ（カテゴリ定義など）はDBのみに持たせず、コードベース（Seedファイル）で管理する。
-- **Reconstruction:** 万が一DBが消失しても、Seed実行によりアプリが動作する最低限の状態へ復旧可能にする。
-
----
 
 ## 3. DNS (Cloudflare)
 ドメイン管理およびDNSには **Cloudflare** を使用します。
@@ -101,8 +89,8 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
       1.  **Seed Data:** 復旧可能なマスタデータはGit管理する。
       2.  **pg_dump:** (Option) GitHub Actions定期実行により、主要データをダンプして外部ストレージ（Artifacts等）に退避するフローを検討する。
 
-### [REQ-INFRA-DB-SEARCH] Search Infrastructure (Hybrid)
-Pure Static (Pagefind) は廃止し、**Supabase Hybrid Search** へ完全移行することで、検索品質とスケーラビリティを確保する。
+### [REQ-INFRA-DB-SEARCH] Search Infrastructure (Tiered Hybrid)
+**Pagefind (Tier 1)** と **Supabase Hybrid Search (Tier 2)** を併用し、速度と網羅性を両立する。
 
 - **Extensions:**
     - `vector`: AI Embeddings (Gemini) の格納・検索用。
@@ -169,5 +157,28 @@ Hobby Plan (Free Tier) の制限内で運用するための管理指針です。
   - *対策:* 画像などのバイナリはDBに入れず、必ず Object Storage または外部ホスティング（YouTube等）を利用する。
 - **Active Projects:** 2 projects maximum
   - *対策:* Prod/Devの2環境構成までとし、それ以上はDockerを利用する。
-- **Pausing:** 1週間アクセスがないと一時停止される。
   - *対策:* 定期的なCronジョブまたはアクセスにより稼働を維持する。
+
+---
+
+## 9. 有料コンテンツ配信戦略 (Tier 3 Performance Optimization)
+SSR (Server-Side Rendering) による有料記事（Tier 3）のパフォーマンス劣化を防ぎ、プレミアムなユーザー体験を維持するための戦略定義。
+
+### 9.1 Streaming & Suspense (Partial Rendering)
+ページ全体をSSRで待機させるのではなく、**「ガワ（Shell）」**と**「中身（Content）」**を分離して配信します。
+
+*   **Static Shell (Instant):** ヘッダー、サイドバー、ローディングスケルトン等は `layout.tsx` レベルでキャッシュまたは静的生成し、即座に表示します。
+*   **Streaming Content (Async):** 権限チェックが必要な本文コンポーネントのみを `<Suspense>` でラップし、非同期に読み込みます。
+     - これにより、TTFB（最初の1バイト）の遅延を隠蔽し、体感速度を向上させます。
+
+### 9.2 Edge Runtime for Auth
+認証および権限チェックのオーバーヘッドを最小化します。
+
+*   **Edge Runtime:** 認証ミドルウェアおよびAPIルートには **Edge Runtime** を採用し、ユーザーに近いロケーションで実行させます。
+*   **JWT Verification:** Supabase Authのセッション検証は、DB問い合わせを行わず、Edge上での **JWT検証**（署名チェック）のみで完結させます。
+
+### 9.3 R2 Access Optimization
+Cloudflare R2へのアクセス遅延を最小化します。
+
+*   **Location:** Vercel (US East) と Cloudflare R2 のデータセンター間のレイテンシは極めて低いため、SSR時のボトルネックとはなりません。
+*   **Mechanism:** SSRサーバー（Next.js）がAWS SDKを使用して **Private Bucket** からMDXを取得し、レンダリングして返却します。

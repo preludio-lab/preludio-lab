@@ -11,6 +11,8 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term (En) | Term (Ja) | Description | Context / Usage |
 | :--- | :--- | :--- | :--- |
+| **Article** | 記事 | URLを持つWeb上の１ページ単位。コンテンツ管理の最小親エンティティ。 | `/articles/[slug]` |
+| **Content** | コンテンツ/本文 | Articleを構成する中身全体の総称。Text, Score, Imageを含む。 | `content_structure` |
 | **Work** | 作品 | 楽曲そのもの（例：平均律クラヴィーア曲集 第1巻）。 | Metadata (Title, Op) |
 | **Movement** | 楽章/曲 | 作品の中の個別の曲（例：プレリュード）。 | `work_id` vs `movement_id` |
 | **Score** | 楽譜 | 視覚化された音符情報。ABC記法で記述される。 | `<ScoreRenderer />` |
