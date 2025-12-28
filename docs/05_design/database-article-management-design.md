@@ -19,7 +19,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 | Data Category | Master Storage Strategy | Data Format | Service (Physical Location) | Note |
 | :--- | :--- | :--- | :--- | :--- |
-| **Metadata (Key Fields)** | **RDBMS** | `Column` (UUID, String) | **Supabase DB** | 検索・結合・参照整合性用。 |
+| **Metadata (Key Fields)** | **RDBMS** | `String` / `UUID` | **Supabase DB** | 検索・結合用（フィールド単位でカラム化） |
 | **Metadata (Flexible)** | **RDBMS** | `JSONB` | **Supabase DB** | UI表示用テキスト、追加属性。 |
 | **Scores (Notation)** | **RDBMS** | `Text` (ABC / MusicXML) | **Supabase DB** | 楽譜データ本体。共有リソース。 |
 | **Summary / Embeddings** | **RDBMS** | `Text` / `Vector (16-bit)` | **Supabase DB** | Semantic Search & Recommendation. |
