@@ -9,9 +9,9 @@
 
 | 環境 (Environment) | アプリケーション (App) | データベース (DB) | AIエージェント (Agent Runner) | 用途・特徴 |
 | :--- | :--- | :--- | :--- | :--- |
-| **Development** | **Local PC**<br>`localhost:3000` | **Local Supabase (Docker)**<br>*完全分離 / オフライン* | **Local PC**<br>*手動実行* | 機能開発、単体テスト、エージェントの試運転。**本番データ破壊リスクなし**。 |
-| **Staging** | **Vercel Preview**<br>`git-branch-url` | **Supabase (Prod)**<br>*直接接続 (要注意)* | **GitHub Actions**<br>*Pull Request Trigger* | ステージング相当。本番DBを参照するため、**書き込みテストは厳禁**。 |
-| **Production** | **Vercel Production**<br>`preludiolab.com` | **Supabase (Prod)**<br>*本番データ* | **GitHub Actions**<br>*Schedule / API Trigger* | 本番稼働環境。エンドユーザー向け公開。 |
+| **Development** | **Local PC**<br>`localhost:3000` | **Supabase (Staging)**<br>*Cloud Staging or Shared Prod* | **Local PC**<br>*手動実行* | 機能開発、単体テスト。Cloud DBを参照し、環境差異を減らす。 |
+| **Staging** | **Vercel Preview**<br>`git-branch-url` | **Supabase (Staging)**<br>*Cloud Staging or Shared Prod* | **GitHub Actions**<br>*Pull Request Trigger* | ステージング相当。本番またはStaging DBを参照。 |
+| **Production** | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>*本番データ* | **GitHub Actions**<br>*Schedule / API Trigger* | 本番稼働環境。エンドユーザー向け公開。 |
 
 ---
 
@@ -34,18 +34,6 @@
 
 ---
 
-### 環境戦略 (Environment Strategy)
-| Environment | Next.js Runtime | Connected Database | Note |
-| :--- | :--- | :--- | :--- |
-| **Development** | Local | **Local Supabase (Docker)** | 安全。何を壊しても本番に影響なし。 |
-| **Staging** | Vercel (Preview) | **Supabase (Cloud)** | 本番と同じDBを参照（※コストゼロでの妥協点。書込禁止） |
-| **Production** | Vercel (Prod) | **Supabase (Cloud)** | 本番運用。 |
-
-**リスク管理 (Seed Data Strategy):**
-- **Master Data as Code:** 重要なマスタデータ（カテゴリ定義など）はDBのみに持たせず、コードベース（Seedファイル）で管理する。
-- **Reconstruction:** 万が一DBが消失しても、Seed実行によりアプリが動作する最低限の状態へ復旧可能にする。
-
----
 
 ## 3. DNS (Cloudflare)
 ドメイン管理およびDNSには **Cloudflare** を使用します。
