@@ -17,7 +17,20 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
   - **Filtering:** `WHERE status = 'published'` というクエリで即座に公開記事のみを取得するため。Object Storage内のFrontmatter管理ではリスティングや検索が低速になるため採用しません。
   - **Security (RLS):** DBのRow Level Securityにより、非公開記事へのアクセスをAPIレベルで確実に遮断するため。
 
-### 3.2 Data Source Roles & Persistence Matrix (Split-Storage)
+### 3.2 Status & Storage Synchronization Logic
+「物理的なファイルの置き場所」と「DB上のステータス」は以下のルールで同期されます。DBが**正 (Source of Truth)** であり、Storageは従属します。
+
+| Status (DB) | Storage Location | Listing / Search | Access Control |
+| :--- | :--- | :--- | :--- |
+| **Draft** | **Supabase (Private)** | Hidden | Login Required (RLS) |
+| **Published** | **R2 (Public)** | Visible (`WHERE status='published'`) | Public |
+| **Archived** | **R2 (Public)** | Hidden | Public (Direct Link Only) |
+
+- **Why DB Status?**
+  - **Listing:** 記事一覧ページやサイトマップ生成時、R2を全スキャンするのは非効率です。DBへの `SELECT` が必須です。
+  - **Atomicity:** 「公開」アクションは、「DB更新」と「Storage移動」のトランザクションとして管理されます。
+
+### 3.3 Data Source Roles & Persistence Matrix (Split-Storage)
 
 **容量見積もり (1.2GB) に基づき、記事本文のみ外部Storageへ分離します。**
 詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
@@ -44,14 +57,14 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
   - 70,000記事のMDXファイルは **Git管理しません** (Repo肥大化防止のため)。
   - ビルド時 (`generateStaticParams`) に Supabase から直接データを取得してページを生成します。
 
-### 3.3 Workflow: Direct DB Build Flow
+### 3.4 Workflow: Direct DB Build Flow
 1.  **Edit:**
     - **Human:** Admin UI (Visual Editor) で編集。
     - **AI Agent:** DB直接接続 または API経由 (Headless) でデータを生成・更新。
 2.  **Publish:** ステータスを公開に変更。
 3.  **Revalidate:** On-demand ISR APIを叩き、Next.jsキャッシュを更新 (+ Pagefind Index更新)。
 
-### 3.4 Editor Stack (Admin UI)
+### 3.5 Editor Stack (Admin UI)
 - **Framework:** Next.js (App Router)
 - **Editor:** Tiptap / Lexical
 - **AI Integration:** Vercel AI SDK (Streaming edits).
