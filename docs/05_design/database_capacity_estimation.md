@@ -1,65 +1,48 @@
-# Database Capacity Estimation & Storage Strategy
+# Database Capacity Estimation
 
-## 1. 前提条件 (Assumptions)
-- **記事数:** 70,000
-- **DB Limit:** 500 MB (Supabase Free Tier)
+**Objective:** Validate that 70,000 articles can fit within **Supabase Free Tier (500 MB)**.
 
-## 2. インデックスの基礎知識 (Technical Context)
-DB容量は「データそのもの(Table)」と「検索用索引(Index)」の合計になります。
+## 1. Conclusion: Strategy for 500MB
+To manage 70k articles within 500MB, the following strategies are **mandatory**:
 
-| Index Type | 用途 | 容量目安 (vs データ) |
-| :--- | :--- | :--- |
-| **B-Tree** | ID, Slug, Foreign Key | **~20%** (軽量) |
-| **GIN** | 全文検索 (Tag, Summary) | **~60-100%** (中量。単語数に比例) |
-| **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
+1.  **Split-Storage:** Move Article Body (MDX) to Object Storage (R2).
+2.  **Half-Precision:** Use `halfvec` (16-bit) for Vector Embeddings.
+3.  **Summary Only:** Index `summary` for search, not the full body.
 
-### 2.1 ID Strategy (UUID vs Integer)
-「UUID (16-byte) は Int (4-byte) より大きく、圧迫するのではないか？」という懸念に対する検証。
-結論：**70,000件規模では誤差 (約1MBの差) であり、無視できます。**
-
-- **UUID (16 bytes):** 16B * 70,000 = **1.12 MB**
-- **Integer (4 bytes):** 4B * 70,000 = **0.28 MB**
-- **Difference:** **0.84 MB** (< 0.2% of 500MB Limit)
-
-**Architecture Decision:**
-セキュリティ（推測困難性）、分散採番（AI/StagingでのID生成）、およびSupabase Authとの親和性を優先し、**UUID**を採用します。
-
-## 3. 詳細容量見積もり (Detailed Calculation)
-
-### 3.1 Raw Data Size (Table)
-| 項目 | 単価 | 70k件合計 | 備考 |
-| :--- | :--- | :--- | :--- |
-| Metadata (ID, Slug) | 0.2 KB | **14 MB** | |
-| Summary (Text) | 1.0 KB | **70 MB** | |
-| Music Scores (Text) | 0.5 KB | **35 MB** | |
-| **Content Body (MDX)** | - | **0 MB** | **Split-Storage (R2へ除外)** |
-| **Table Total** | | **119 MB** | |
-
-### 3.2 Index Size (Overhead)
-普通に実装すると、Vectorのインデックスでパンクします。
-
-| Index | 対象 | 試算 | 判定 |
-| :--- | :--- | :--- | :--- |
-| **PK/FK Indexes** | ID, Slug | 14 MB * 20% = **3 MB** | 誤差レベル |
-| **Search Index** | Summary (GIN) | 70 MB * 60% = **42 MB** | 許容範囲 |
-| **Vector Data** | `vector(768)` | 3 KB * 70k = **210 MB** | **巨大** (Float32) |
-| **Vector Index** | HNSW | 210 MB * 100% = **210 MB** | **巨大** |
-| **Grand Total** | (Table + Index) | 119 + 3 + 42 + 420 = **584 MB** | ❌ **OUT (>500MB)** |
+**Result:** Estimated Total Usage = **~370 MB** (✅ Safe)
 
 ---
 
-## 4. 解決策: Half-Precision Vectors (`halfvec`)
+## 2. Detailed Breakdown
 
-pgvector 0.5.0+ でサポートされた **16-bit浮動小数点 (`halfvec`)** を採用します。
-精度への影響は軽微ですが、容量は **半分** になります。
+### 2.1 Table Data (Rows)
+MDX bodies are excluded. Only Metadata, Scores, and Summaries are stored.
 
-| 項目 | Float32 (通常) | **Halfvec (16-bit)** |
-| :--- | :--- | :--- |
-| **Vector Data** | 210 MB | **105 MB** |
-| **Vector Index** | 210 MB | **100 MB** (approx) |
-| **New Total** | 584 MB | **369 MB** |
+| Item | Per Row | 70k Total | Note |
+| :--- | :--- | :--- | :--- |
+| **Metadata** | 0.2 KB | 14 MB | ID(UUID), Slug, Titles |
+| **Summary** | 1.0 KB | 70 MB | For Search & Listing |
+| **Scores** | 0.5 KB | 35 MB | ABC/MusicXML (Text) |
+| **Content Body** | - | **0 MB** | **Offloaded to R2** |
+| **Table Total** | | **119 MB** | |
 
-### 最終判定 (Final Verdict)
-$$ \mathbf{369 \text{ MB}} < 500 \text{ MB} \rightarrow \text{ ✅ \textbf{SAFE}} $$
+### 2.2 vector (Embeddings)
+Standard `float32` vectors exceed the limit. `halfvec` is required.
 
-`halfvec` を採用することで、インデックスを含めても無料枠内に収めることが可能です。
+| Type | Size per Row | Data Total | Index (HNSW) | Total Impact |
+| :--- | :--- | :--- | :--- | :--- |
+| **Float32** | 3 KB | 210 MB | ~210 MB | **420 MB** (❌ Fatal) |
+| **Halfvec** | 1.5 KB | **105 MB** | **~100 MB** | **205 MB** (✅ Safe) |
+
+### 2.3 Total Capacity Usage
+| Category | Size |
+| :--- | :--- |
+| **Table Data** | 119 MB |
+| **Standard Indexes** (B-Tree/GIN) | 45 MB |
+| **Vector Data + Index** (`halfvec`) | 205 MB |
+| **Grand Total** | **369 MB** |
+
+## 3. ID Strategy (UUID vs Integer)
+**Decision: Use UUID.**
+Difference is negligible: `16 bytes` vs `4 bytes` * 70k = **~0.8 MB diff**.
+Prioritize randomness and security over micro-optimization.
