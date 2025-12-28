@@ -27,10 +27,25 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 | **Archived** | **R2 (Public)** | Hidden | Public (Direct Link Only) |
 
 - **Why DB Status?**
-  - **Listing:** 記事一覧ページやサイトマップ生成時、R2を全スキャンするのは非効率です。DBへの `SELECT` が必須です。
+  - **Listing (Build/ISR Time):** 記事一覧ページやサイトマップ生成時、R2を全スキャンするのは非効率です。DBへの `SELECT` が必須です。
   - **Atomicity:** 「公開」アクションは、「DB更新」と「Storage移動」のトランザクションとして管理されます。
 
-### 3.3 Data Source Roles & Persistence Matrix (Split-Storage)
+### 3.3 Runtime Access Strategy (Performance & Security)
+ユーザーからのアクセス時、記事タイプによって「DB参照の有無」を使い分け、パフォーマンスとセキュリティを両立させます。
+
+| Article Type | Status | Delivery Method | Runtime DB Access | Latency |
+| :--- | :--- | :--- | :--- | :--- |
+| **Public Article** | `published` | **CDN (Static)** | **No (Zero)** | Low (Fastest) |
+| **Private/Paid** | `private` | **API (Dynamic)** | **Yes (RLS Check)** | Medium (Auth Required) |
+
+1.  **Public Access (90%+):**
+    - R2上のPublicバケットにあるJSON/MDXを直接（またはNext.js経由で）参照します。
+    - **DB/RLSは経由しません。** そのための「R2への物理コピー」です。
+2.  **Private/Paid Access:**
+    - R2上のPublicファイルには「鍵アイコン付きの要約」のみを配置（または配置しない）。
+    - 閲覧時は `supabase.rpc` 経由でコンテンツをリクエストし、**DBのRLSで権限チェック**を行った上で、Signed URLまたはデータを返却します。
+
+### 3.4 Data Source Roles & Persistence Matrix (Split-Storage)
 
 **容量見積もり (1.2GB) に基づき、記事本文のみ外部Storageへ分離します。**
 詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
@@ -57,14 +72,14 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
   - 70,000記事のMDXファイルは **Git管理しません** (Repo肥大化防止のため)。
   - ビルド時 (`generateStaticParams`) に Supabase から直接データを取得してページを生成します。
 
-### 3.4 Workflow: Direct DB Build Flow
+### 3.5 Workflow: Direct DB Build Flow
 1.  **Edit:**
     - **Human:** Admin UI (Visual Editor) で編集。
     - **AI Agent:** DB直接接続 または API経由 (Headless) でデータを生成・更新。
 2.  **Publish:** ステータスを公開に変更。
 3.  **Revalidate:** On-demand ISR APIを叩き、Next.jsキャッシュを更新 (+ Pagefind Index更新)。
 
-### 3.5 Editor Stack (Admin UI)
+### 3.6 Editor Stack (Admin UI)
 - **Framework:** Next.js (App Router)
 - **Editor:** Tiptap / Lexical
 - **AI Integration:** Vercel AI SDK (Streaming edits).
