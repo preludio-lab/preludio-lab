@@ -101,8 +101,8 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
       1.  **Seed Data:** 復旧可能なマスタデータはGit管理する。
       2.  **pg_dump:** (Option) GitHub Actions定期実行により、主要データをダンプして外部ストレージ（Artifacts等）に退避するフローを検討する。
 
-### [REQ-INFRA-DB-SEARCH] Search Infrastructure (Hybrid)
-Pure Static (Pagefind) は廃止し、**Supabase Hybrid Search** へ完全移行することで、検索品質とスケーラビリティを確保する。
+### [REQ-INFRA-DB-SEARCH] Search Infrastructure (Tiered Hybrid)
+**Pagefind (Tier 1)** と **Supabase Hybrid Search (Tier 2)** を併用し、速度と網羅性を両立する。
 
 - **Extensions:**
     - `vector`: AI Embeddings (Gemini) の格納・検索用。
@@ -169,5 +169,28 @@ Hobby Plan (Free Tier) の制限内で運用するための管理指針です。
   - *対策:* 画像などのバイナリはDBに入れず、必ず Object Storage または外部ホスティング（YouTube等）を利用する。
 - **Active Projects:** 2 projects maximum
   - *対策:* Prod/Devの2環境構成までとし、それ以上はDockerを利用する。
-- **Pausing:** 1週間アクセスがないと一時停止される。
   - *対策:* 定期的なCronジョブまたはアクセスにより稼働を維持する。
+
+---
+
+## 9. 有料コンテンツ配信戦略 (Tier 3 Performance Optimization)
+SSR (Server-Side Rendering) による有料記事（Tier 3）のパフォーマンス劣化を防ぎ、プレミアムなユーザー体験を維持するための戦略定義。
+
+### 9.1 Streaming & Suspense (Partial Rendering)
+ページ全体をSSRで待機させるのではなく、**「ガワ（Shell）」**と**「中身（Content）」**を分離して配信します。
+
+*   **Static Shell (Instant):** ヘッダー、サイドバー、ローディングスケルトン等は `layout.tsx` レベルでキャッシュまたは静的生成し、即座に表示します。
+*   **Streaming Content (Async):** 権限チェックが必要な本文コンポーネントのみを `<Suspense>` でラップし、非同期に読み込みます。
+     - これにより、TTFB（最初の1バイト）の遅延を隠蔽し、体感速度を向上させます。
+
+### 9.2 Edge Runtime for Auth
+認証および権限チェックのオーバーヘッドを最小化します。
+
+*   **Edge Runtime:** 認証ミドルウェアおよびAPIルートには **Edge Runtime** を採用し、ユーザーに近いロケーションで実行させます。
+*   **JWT Verification:** Supabase Authのセッション検証は、DB問い合わせを行わず、Edge上での **JWT検証**（署名チェック）のみで完結させます。
+
+### 9.3 R2 Access Optimization
+Cloudflare R2へのアクセス遅延を最小化します。
+
+*   **Location:** Vercel (US East) と Cloudflare R2 のデータセンター間のレイテンシは極めて低いため、SSR時のボトルネックとはなりません。
+*   **Mechanism:** SSRサーバー（Next.js）がAWS SDKを使用して **Private Bucket** からMDXを取得し、レンダリングして返却します。
