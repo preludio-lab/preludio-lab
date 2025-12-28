@@ -154,15 +154,15 @@ Status: `[/]` 進行中
     - [x] **[環境構築]** データベースプロジェクト設計とセットアップ
         - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
         - [x] データベースプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
-    - [x] **[仕様策定]** DBスキーマとHybrid Content Model
+    - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
     - [ ] **[実装]** Database-First Admin UI
-        - [ ] **Admin App**: Next.js (App Router) + Tiptap/Lexical による編集画面の実装
-        - [ ] **DB Sync**: 編集内容のDB保存およびプレビュー機能の実装
-        - [ ] **Git Sync**: DB変更をトリガーにした MDX Export & GitHub Commit ロジック (Edge Function) 実装
-    - [ ] **[検証]** AI編集支援とGit同期フローの動作確認
+        - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
+        - [ ] **DB Sync**: 編集内容のDB更新およびObject StorageへのMDX保存の実装
+        - [ ] **Direct Build**: SupabaseからMDXをDirect FetchしてビルドするSSGロジックの実装
+    - [ ] **[検証]** AI編集支援とSSGビルドフローの動作確認
 
 - [ ] **5.6 検索機能の実装 (Tiered Hybrid Search)**
     - [ ] **[実装]** DB Semantic Search (Tier 2/Long-tail)

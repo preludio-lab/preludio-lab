@@ -23,15 +23,15 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 | **Metadata (Flexible)** | **RDBMS** | `JSONB` | **Supabase DB** | UI表示用テキスト、追加属性。 |
 | **Scores (Notation)** | **RDBMS** | `Text` (ABC / MusicXML) | **Supabase DB** | 楽譜データ本体。共有リソース。 |
 | **Summary / Embeddings** | **RDBMS** | `Text` / `Vector (16-bit)` | **Supabase DB** | Semantic Search & Recommendation. |
-| **Article Body (Draft)** | **Object Storage** | `JSON` (Structured) | **Supabase Storage** (Private Bucket) | 執筆中データ。Auth/RLS保護。 |
-| **Article Body (Public)** | **Object Storage** | `JSON` (Structured) | **Cloudflare R2** (Public Bucket) | 公開用正本。10GB無料枠活用。 |
+| **Article Body (Draft)** | **Object Storage** | `MDX` (Text) | **Supabase Storage** (Private Bucket) | 執筆中データ。Auth/RLS保護。 |
+| **Article Body (Public)** | **Object Storage** | `MDX` (Text) | **Cloudflare R2** (Public Bucket) | 公開用正本。閲覧性に優れるMDXを採用。 |
 
 - **Supabase Database (Master Index):**
   - 記事メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
 - **Supabase Storage (Draft Store):**
   - 執筆中のドラフトデータを一時保存。Authとの連携を重視。
 - **Cloudflare R2 (Public Body Store):**
-  - **公開後の本文JSONの正本。**
+  - **公開後の本文MDXの正本。**
   - Supabaseの1GB制限 (900MB利用でほぼ満杯) を回避するため、10GB無料のR2を採用。
 - **GitHub (Code Repository):**
   - **Application Code Only.**
@@ -48,22 +48,20 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 - **Editor:** Tiptap / Lexical
 - **AI Integration:** Vercel AI SDK (Streaming edits).
 
-## 4. データ構造戦略 (JSONB Hybrid Model)
+## 4. データ構造戦略 (MDX Split-Storage Model)
+「執筆・レビューの容易性」と「配信パフォーマンス」を両立させるため、**Metadata in DB / Body in Storage (MDX)** の分離構成を採用します。
 
-「AIエージェントによる編集のしやすさ」と「配信パフォーマンス」を両立させるため、**PostgreSQL JSONB** を活用したハイブリッド構造を採用します。
-
-- **Normalized Tables:** `articles`, `works` 等の親エンティティ、および `translations` テーブル自体は正規化して管理。
-- **JSONB Content:** 記事本文のセクション構造（段落、楽譜、見出し）は、`translations` テーブル内の **`content_structure` (JSONB)** カラムに格納します。
-
-### Merits
-- **No JOINs:** 1レコード取得するだけで、その言語の記事構成要素が全て手に入る。
-- **Flexibility:** 「ここはテキスト」「次は楽譜」といった構造を配列順序として直感的に管理できる。
-- **AI-Friendly:** AIに対する「特定のセクションID (`intro`) のみを書き換えよ」という指示が容易。
+- **Normalized Metadata:** `articles`, `works` 等の親エンティティはDBで正規化して管理し、検索性と整合性を担保。
+- **MDX Body:** 記事本文はパース前の **Raw MDX** としてObject Storageに保存。
+  - **Why MDX?**
+    - **Human Readable:** JSON構造に変換せずそのまま保存することで、デバッグや簡易レビューが容易。
+    - **Standard Tooling:** `next-mdx-remote` 等の標準エコシステムを変換なしで利用可能。
+    - **Agent Friendly:** LLMはMarkdownの読み書きに長けており、JSON構造の制約を受けるよりも自由にかつ高精度に編集可能。
 
 ### 4.1 Storage Key Strategy (UUID vs Slug)
-Object Storage上のJSONファイル名は、Slugではなく **UUID (Record ID) を使用します。**
+Object Storage上のファイル名は、Slugではなく **UUID (Record ID) を使用します。**
 
-- **Format:** `content/{uuid}.json` (e.g. `content/550e8400-e29b-41d4-a716-446655440000.json`)
+- **Format:** `article/{uuid}.mdx` (e.g. `article/550e8400-e29b-41d4-a716-446655440000.mdx`)
 - **Reason:**
   - **Slug is Mutable:** URL変更によりSlugが変わった場合、Storage上のファイル移動（Copy+Delete）が発生し、整合性担保が困難になるため。
   - **UUID is Immutable:** 記事の親が移動したりタイトルが変わったりしても、コンテンツ実体へのリンクは不変に保たれる。
@@ -77,7 +75,7 @@ DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用�
 
 ### 5.2 Search Optimization
 JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離します。
-- **Storage:** 記事本文は `jsonb` カラム（またはStorage）。
+- **Storage:** 記事本文は `text/mdx` (Storage)。
 - **Index:** 保存時、検索対象テキストを抽出して `tsvector`カラム (Full Text Search) および `vector` カラム (Semantic Search) に保存。
 - **Query:** 検索時はインデックスのみを参照し、高速に応答する。
 

@@ -20,8 +20,8 @@ DB容量は「データそのもの(Table)」と「検索用索引(Index)」の�
 | :--- | :--- | :--- | :--- |
 | Metadata (ID, Slug) | 0.2 KB | **14 MB** | |
 | Summary (Text) | 1.0 KB | **70 MB** | |
-| Music Scores (JSONB) | 0.5 KB | **35 MB** | |
-| **Content Body (JSON)** | - | **0 MB** | **Split-Storage (R2へ除外)** |
+| Music Scores (Text) | 0.5 KB | **35 MB** | |
+| **Content Body (MDX)** | - | **0 MB** | **Split-Storage (R2へ除外)** |
 | **Table Total** | | **119 MB** | |
 
 ### 3.2 Index Size (Overhead)

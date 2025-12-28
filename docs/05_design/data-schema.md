@@ -144,7 +144,7 @@ export type ContentDetail = ContentSummary & {
 | | `name` | text | 表示名 (e.g., 'ヨハン・セバスチャン・バッハ') |
 | | `bio_summary` | text | 略歴要約 |
 | | `wikipedia_url` | text | Wikipediaリンク |
-| | **`content_storage_path`** | **text** | **記事本文JSONデータのStorageパス (`article/uuid.json`)** |
+| | **`content_storage_path`** | **text** | **記事本文MDXデータのStorageパス (`article/uuid.mdx`)** |
 
 ### 5.2. Works (Master)
 | Table | Column | Type | Description |
