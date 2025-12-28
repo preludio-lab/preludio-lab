@@ -38,6 +38,10 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
+    Works ||--o{ MediaResources : "has recordings"
+
+    %% Taxonomy
+    Tags ||--|{ TagTranslations : "has localized"
 ```
 
 ---
