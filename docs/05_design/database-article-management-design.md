@@ -1,4 +1,4 @@
-# データベース記事管理システム設計書 (feature-database-article-management.md)
+# データベース記事管理システム設計書 (database-article-management-design.md)
 
 ## 1. 概要
 本ドキュメントは、**Supabase Database** を記事の正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Article Application」の仕様を定義します。
@@ -17,13 +17,14 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
 ただし、アプリケーション(Admin)からは透過的に扱います。
 
-| 管理対象 | Master Source | Physical Location | Note |
-| :--- | :---: | :--- | :--- |
-| **Metadata** | **RDBMS** | `works`, `translations` tables | Searchable, Fast |
-| **Scores (ABC)** | **RDBMS** | `translations` (JSONB) | Lightweight (0.5KB), Searchable |
-| **Summary** | **RDBMS** | `translations` (JSONB) | For Search & List View |
-| **Content Body (Draft)** | **Supabase Storage** | **Private Bucket**. Auth/RLSで保護。 |
-| **Content Body (Public)** | **Cloudflare R2** | **Public Bucket**. 10GB Free. 900MBのデータも余裕。 |
+| Content Type | Data Format | Master Storage Strategy | Service (Physical Location) | Note |
+| :--- | :--- | :--- | :--- | :--- |
+| **Metadata (Key Fields)** | `Column` (UUID, String) | **RDBMS** | **Supabase DB** (`articles`, `works` tables) | 検索・結合・参照整合性用。 |
+| **Metadata (Flexible)** | `JSONB` | **RDBMS** | **Supabase DB** (`translations` table) | UI表示用テキスト、追加属性。 |
+| **Scores (Notation)** | `Text` (ABC / MusicXML) | **RDBMS** | **Supabase DB** (`music_scores` table) | 楽譜データ本体。共有リソース。 |
+| **Summary / Embeddings** | `Text` / `Vector (16-bit)` | **RDBMS** | **Supabase DB** (`embeddings` table) | Semantic Search & Recommendation. |
+| **Article Body (Draft)** | `JSON` (Structured) | **Object Storage** | **Supabase Storage** (Private Bucket) | 執筆中データ。Auth/RLS保護。 |
+| **Article Body (Public)** | `JSON` (Structured) | **Object Storage** | **Cloudflare R2** (Public Bucket) | 公開用正本。10GB無料枠活用。 |
 
 - **Supabase Database (Master Index):**
   - 記事メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
