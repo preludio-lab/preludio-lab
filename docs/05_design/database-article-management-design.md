@@ -38,8 +38,10 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
   - 70,000記事のMDXファイルは **Git管理しません** (Repo肥大化防止のため)。
   - ビルド時 (`generateStaticParams`) に Supabase から直接データを取得してページを生成します。
 
-### 3.2 Workflow: Direct DB Build Flow
-1.  **Edit:** 人間/AIがAdmin UIでDBを更新。
+41: ### 3.2 Workflow: Direct DB Build Flow
+42: 1.  **Edit:**
+    - **Human:** Admin UI (Visual Editor) で編集。
+    - **AI Agent:** DB直接接続 または API経由 (Headless) でデータを生成・更新。
 2.  **Publish:** ステータスを公開に変更。
 3.  **Revalidate:** On-demand ISR APIを叩き、Next.jsキャッシュを更新 (+ Pagefind Index更新)。
 
