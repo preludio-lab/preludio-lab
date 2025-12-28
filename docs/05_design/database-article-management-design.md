@@ -184,7 +184,7 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
       - **Relational Integrity:** 「18世紀の作曲家の作品（記事）だけを抽出」といったメタデータに基づく高度な絞り込みは、マスタが正規化されているからこそ可能です。
   - **Strategy: Read-Optimized Denormalization**
     - **Source of Truth:** 管理・編集・検索（フィルタリング）用としてRDBMSに正規化して保持。
-    - **No-JOIN Rendering:** 記事テーブルに `metadata_snapshot` (JSONB) を持ち、レンダリングに必要な最小限のマスタ情報（作曲家名、曲名等）を冗長に保持することで、閲覧時のJOINを **ゼロ** にします。
+    - **No-JOIN Rendering:** 記事テーブルに `metadata` (JSONB) を持ち、検索キー以外の属性（作曲家名、曲名、詳細メタデータ等）を冗長に保持することで、閲覧時のJOINを **ゼロ** にします。
     - **AI Manifest:** エージェントが参照しやすいよう、マスタデータの全容（ID, 正式名称, 表記ゆれリスト）を1つのJSONとして出力する「Knowledge Manifest (Glossary)」を提供します。
   - **AI Workflow: Glossary-Driven Production**
     - **Drafting:** AIエージェントは執筆開始前にこの「Knowledge Manifest (File)」を読み込み、記事内の固有名詞をマスタと完全一致させます。
