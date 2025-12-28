@@ -176,10 +176,10 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 - `articles`: 記事管理マスタ (Universal)
 - `article_translations`: 記事翻訳・コンテンツ (Localized)
 - `composers` / `works`: メタデータマスタ
-  - **Why Master Tables?**
-    - **Consistency:** 7万記事で「作曲家名の入力揺れ」を防ぎ、検索性を担保するため（DB正規化の基本）。
-    - **Advanced Search:** 「18世紀のドイツ人作曲家の作品一覧」といった、記事単体では不可能な横断検索を可能にするため。
-    - **Maintenance:** 生没年や作品番号などの「普遍的事実」を1箇所で修正すれば全記事に反映されるため。
+  - **Strategy: Read-Optimized Denormalization**
+    - **Source of Truth:** 管理・編集・検索（フィルタリング）用としてRDBMSに正規化して保持。
+    - **No-JOIN Rendering:** 記事テーブルに `metadata_snapshot` (JSONB) を持ち、レンダリングに必要な最小限のマスタ情報（作曲家名、曲名等）を冗長に保持することで、閲覧時のJOINを **ゼロ** にします。
+    - **AI Manifest:** エージェントが参照しやすいよう、マスタデータの全容を1つのJSONとして出力する「Knowledge Manifest」を提供し、参照の容易性を確保します。
 
 ## 8. Asset Delivery Strategy (Score SSG & R2)
 

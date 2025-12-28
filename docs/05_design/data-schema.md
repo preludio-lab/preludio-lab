@@ -172,6 +172,7 @@ export type ContentDetail = ContentSummary & {
 | | `status` | text | 'draft' | 'draft', 'published', 'private' |
 | | `published_at` | timestamptz | - | 公開日時 |
 | | `last_synced_at` | timestamptz | Git同期日時 |
+| | **`metadata_snapshot`** | **jsonb** | **作曲家・作品名のスナップショット (JOIN回避用)** |
 | | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
 | | **`content_storage_path`** | **text** | **記事本文MDXデータのStorageパス (`article/uuid.mdx`)** |
 
