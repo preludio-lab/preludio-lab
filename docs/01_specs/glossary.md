@@ -11,17 +11,20 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term (En) | Term (Ja) | Description | Context / Usage |
 | :--- | :--- | :--- | :--- |
-| **Article** | 記事 | URLを持つWeb上の１ページ単位。コンテンツ管理の最小親エンティティ。 | `/articles/[slug]` |
-| **Content** | コンテンツ/本文 | Articleを構成する中身全体の総称。Text, Score, Imageを含む。 | `content_structure` |
-| **Work** | 作品 | 楽曲そのもの（例：平均律クラヴィーア曲集 第1巻）。 | Metadata (Title, Op) |
-| **Movement** | 楽章/曲 | 作品の中の個別の曲（例：プレリュード）。 | `work_id` vs `movement_id` |
-| **Score** | 楽譜 | 視覚化された音符情報。ABC記法で記述される。 | `<ScoreRenderer />` |
+| Term (En) | Term (Ja) | Description | Context / Usage |
+| :--- | :--- | :--- | :--- |
+| **Article** | 記事 | URLを持つWeb上の１ページ単位。コンテンツ管理の最小親エンティティ。メタデータ（作曲家、作品、おすすめフラグ等）を持つコンテナ。 | `/works/[slug]` |
+| **Content** | 本文/コンテンツ | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。 | Storage (`.mdx`) |
+| **Work** | 作品 | 楽曲そのもの（例：平均律クラヴィーア曲集 第1巻）。言語に依存しない普遍的な作品（マスタ）情報。 | Metadata (Title, Op) |
+| **Score** | 楽譜データ | 楽曲の音楽情報を記述したデータ（例：ABC記法）。言語に依存しない「楽譜の原版」。 | Shared Asset |
+| **Sheet Music** | 譜例 | ユーザーに表示されるレンダリング済みの楽譜。Scoreデータと、言語ごとのキャプションを組み合わせたもの。 | UI Component |
+| **Media** | メディア | 記事や楽譜に関連付けられた音声・動画リソース（YouTube動画など）。 | `videoId` |
+| **Player** | プレイヤー | メディアを再生する機能。楽譜上の再生位置と同期（Sync）する機能を持つ。 | `<AudioPlayer />` |
 | **Analysis** | 分析 | 楽曲構造や理論的背景の解説テキスト。 | Agent Output |
-| **Opus (Op.)** | 作品番号 | 出版順に割り振られた番号。 | `Op. 18`, `Op. 57` |
-| **BWV** | BWV | バッハ作品番号 (Bach-Werke-Verzeichnis)。ジャンル別に整理されている。 | `BWV 846` |
+| **Opus (Op.)** | 作品番号 | 出版順に割り振られた番号。 | `Op. 18` |
+| **BWV** | BWV | バッハ作品番号 (Bach-Werke-Verzeichnis)。 | `BWV 846` |
 | **Motif** | 動機 | 楽曲を構成する最小単位のメロディ断片。 | Analysis |
 | **Voice** | 声部 | ポリフォニー音楽における独立した旋律線（ソプラノ、アルト、バス等）。 | Fugue Analysis |
-| **Texture** | テクスチャ | 音の重なり具合や質感を指す（モノフォニー、ポリフォニー等）。 | Analysis |
 | **Prelude** | 前奏曲 | 本編（フーガ等）の前に置かれる導入的な楽曲。 | Genre |
 | **Fugue** | フーガ | 1つの主題が複数の声部で模倣・追走する対位法的な楽曲形式。 | Genre |
 

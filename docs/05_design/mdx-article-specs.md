@@ -51,6 +51,52 @@ performer: "Lang Lang"
 ---
 ```
 
+### 2.1. Zod Schema Definition
+アプリケーション層でのバリデーションに使用するZodスキーマ定義は以下の通りです。
+
+```typescript
+import { z } from 'zod';
+
+export const ContentSchema = z.object({
+  // Metadata (メタデータ)
+  title: z.string().min(1),
+  description: z.string().optional(), // SEO用メタディスクリプション
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD
+  updated: z.string().optional(),
+
+  // Taxonomy (分類)
+  category: z.enum([
+    'Introduction',  // 楽曲紹介 (Work Analysis)
+    'Composer',      // 作曲家
+    'Theory',        // 音楽理論
+    'Era',           // 時代様式
+    'Instrument',    // 楽器
+    'Performer',     // 演奏家
+    'Terminology',   // 用語集
+    'Column',        // コラム
+    'Originals'      // オリジナル
+  ]),
+  tags: z.array(z.string()).optional(),
+  
+  // Series (Optional: シリーズ機能)
+  series: z.string().optional(), // シリーズのSlug
+  seriesOrder: z.number().optional(), // シリーズ内での順序
+
+  // Content Specific
+  composer: z.string().optional(), // 例: "Johann Sebastian Bach". Introductionカテゴリでは必須
+  work_id: z.string().optional(),  // 例: "BWV 846". Introductionカテゴリでは必須
+  key: z.string().optional(),      // 例: "C Major"
+  difficulty: z.number().min(1).max(5).optional(), // 1:初級 〜 5:超絶技巧
+
+  // Media (メディア連携)
+  thumbnail: z.string().optional(),    // OGP用画像パス
+  youtube_id: z.string().optional(),   // メイン動画ID
+  youtube_start: z.string().optional(),// 再生開始時間 (HH:MM:SS)
+  youtube_end: z.string().optional(),  // 再生終了時間 (HH:MM:SS)
+  ogp_excerpt: z.string().optional(),  // OGP生成用ABC譜面
+});
+```
+
 ---
 
 ## 3. 本文記述ルール (Markdown/MDX)
