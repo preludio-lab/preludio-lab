@@ -19,10 +19,10 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 | Content Type | Data Format | Master Storage Strategy | Service (Physical Location) | Note |
 | :--- | :--- | :--- | :--- | :--- |
-| **Metadata (Key Fields)** | `Column` (UUID, String) | **RDBMS** | **Supabase DB** (`articles`, `works` tables) | 検索・結合・参照整合性用。 |
-| **Metadata (Flexible)** | `JSONB` | **RDBMS** | **Supabase DB** (`translations` table) | UI表示用テキスト、追加属性。 |
-| **Scores (Notation)** | `Text` (ABC / MusicXML) | **RDBMS** | **Supabase DB** (`music_scores` table) | 楽譜データ本体。共有リソース。 |
-| **Summary / Embeddings** | `Text` / `Vector (16-bit)` | **RDBMS** | **Supabase DB** (`embeddings` table) | Semantic Search & Recommendation. |
+| **Metadata (Key Fields)** | `Column` (UUID, String) | **RDBMS** | **Supabase DB** | 検索・結合・参照整合性用。 |
+| **Metadata (Flexible)** | `JSONB` | **RDBMS** | **Supabase DB** | UI表示用テキスト、追加属性。 |
+| **Scores (Notation)** | `Text` (ABC / MusicXML) | **RDBMS** | **Supabase DB** | 楽譜データ本体。共有リソース。 |
+| **Summary / Embeddings** | `Text` / `Vector (16-bit)` | **RDBMS** | **Supabase DB** | Semantic Search & Recommendation. |
 | **Article Body (Draft)** | `JSON` (Structured) | **Object Storage** | **Supabase Storage** (Private Bucket) | 執筆中データ。Auth/RLS保護。 |
 | **Article Body (Public)** | `JSON` (Structured) | **Object Storage** | **Cloudflare R2** (Public Bucket) | 公開用正本。10GB無料枠活用。 |
 
