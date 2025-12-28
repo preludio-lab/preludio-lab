@@ -108,13 +108,13 @@ Object Storage上のファイル名は、Slugではなく **UUID (Record ID) を
 
 ### 5.1 ISR (Incremental Static Regeneration)
 DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用します。
-- **Read (Cache Hit):** ユーザーアクセス時は Vercel CDN (Edge) から静的HTMLを配信。DBアクセス・Storageアクセスは **ゼロ** です。
+- **Read (Cache Hit):** ユーザーアクセス時は **CDN (Vercel / Cloudflare 等)** から静的HTMLを配信。DBアクセス・Storageアクセスは **ゼロ** です。
 - **Read (Cache Miss / Revalidation):**
   1. **Next.js**: `slug` をキーにページ生成を開始。
   2. **DB (Lookup)**: `articles` テーブルを検索し、`slug` -> `uuid` を取得。
   3. **Storage (Fetch)**: `article/{uuid}.mdx` をR2から取得。
   4. **Render**: MDXをHTMLに変換し、ユーザーに返却。
-  5. **Cache**: 生成されたHTMLをVercel CDNにキャッシュ。
+  5. **Cache**: 生成されたHTMLを **CDN** にキャッシュ。
 - **Revalidate:** DB更新時、対象記事のパスのみを On-demand Revalidation で再構築。
 
 ### 5.2 Search Optimization
