@@ -54,11 +54,11 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 ### 4.1 Tiered Delivery Strategy
 コンテンツの性質（公開/非公開）とアクセス頻度に応じて、ビルドと配信経路を最適化する。
 
-| Tier | Target | Build Method | Delivery Path | Access Control |
+| Tier | Target | Build Method | Body Source | Delivery / Access |
 | :--- | :--- | :--- | :--- | :--- |
-| **Tier 1 (Top)** | **Top 1,000 Articles** | **SSG (Pre-build)** | CDN (R2) | Public |
-| **Tier 2 (Long-tail)** | **Remaining 70k+** | **ISR (On-demand)** | CDN (R2) | Public |
-| **Tier 3 (Protected)** | **Private / Paid** | **SSR (Dynamic)** | **Supabase RPC** | **RLS (Auth Required)** |
+| **Tier 1 (Top)** | Top 1,000 | SSG | R2 (Public) | CDN (Edge) / Public |
+| **Tier 2 (Long)** | 70k+ Articles | ISR | R2 (Public) | CDN (Edge) / Public |
+| **Tier 3 (Protected)** | Paid Content | **SSR** | **R2 (Private)** | **Next.js Server (Gatekeeper) / Auth Req.** |
 
 ### 4.2 Hybrid Search Strategy
 
