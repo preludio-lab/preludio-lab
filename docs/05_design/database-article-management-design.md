@@ -176,6 +176,12 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 - `articles`: 記事管理マスタ (Universal)
 - `article_translations`: 記事翻訳・コンテンツ (Localized)
 - `composers` / `works`: メタデータマスタ
+  - **Concept: Knowledge Graph vs. Categories**
+    - **Categories (タグ):** 単なる「分類」です。「この記事はバッハについて」というラベルに過ぎません。
+    - **Masters (音楽図鑑):** 作曲家の生没年、国籍、作品番号(BWV等)といった「普遍的な知識」を保持する**音楽百科事典**としての役割を担います。
+    - **Why separate?**
+      - **Rich Profiles:** 「楽曲分析記事」が1つもなくても、作曲家のプロフィールや作品リストをページとして公開し、SEOの入り口を広げることができます。
+      - **Relational Integrity:** 「18世紀の作曲家の作品（記事）だけを抽出」といったメタデータに基づく高度な絞り込みは、マスタが正規化されているからこそ可能です。
   - **Strategy: Read-Optimized Denormalization**
     - **Source of Truth:** 管理・編集・検索（フィルタリング）用としてRDBMSに正規化して保持。
     - **No-JOIN Rendering:** 記事テーブルに `metadata_snapshot` (JSONB) を持ち、レンダリングに必要な最小限のマスタ情報（作曲家名、曲名等）を冗長に保持することで、閲覧時のJOINを **ゼロ** にします。
