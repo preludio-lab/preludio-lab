@@ -12,6 +12,18 @@ DB容量は「データそのもの(Table)」と「検索用索引(Index)」の�
 | **B-Tree** | ID, Slug, Foreign Key | **~20%** (軽量) |
 | **GIN** | 全文検索 (Tag, Summary) | **~60-100%** (中量。単語数に比例) |
 | **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
+| **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
+
+### 2.1 ID Strategy (UUID vs Integer)
+「UUID (16-byte) は Int (4-byte) より大きく、圧迫するのではないか？」という懸念に対する検証。
+結論：**70,000件規模では誤差 (約1MBの差) であり、無視できます。**
+
+- **UUID (16 bytes):** 16B * 70,000 = **1.12 MB**
+- **Integer (4 bytes):** 4B * 70,000 = **0.28 MB**
+- **Difference:** **0.84 MB** (< 0.2% of 500MB Limit)
+
+**Architecture Decision:**
+セキュリティ（推測困難性）、分散採番（AI/StagingでのID生成）、およびSupabase Authとの親和性を優先し、**UUID**を採用します。
 
 ## 3. 詳細容量見積もり (Detailed Calculation)
 
