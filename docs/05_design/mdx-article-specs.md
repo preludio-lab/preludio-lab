@@ -2,24 +2,17 @@
 
 本プロジェクトにおける楽曲分析記事（MDX）の作成ルール、ディレクトリ構造、およびメタデータスキーマについて定義する。
 
-## 1. ディレクトリ構造とURL設計
+## 1. URL設計とストレージ構造
 
-### ファイル配置
-記事ファイルは以下のルールに従って配置する。
-`content/[language]/[category]/[composer]/[slug].mdx`
+### URL設計 (User Perspective)
+ユーザーがアクセスするURLは、SEOと可読性のために **Slug** をベースにします。
+`/[language]/works/[composer_slug]/[slug]`
 
-*   **language:** `en`, `ja` 等のISO言語コード。
-*   **category:** 現在は `works` のみ。
-*   **composer:** 作曲者名（スラッグ形式, e.g. `bach`, `mozart`）。フォルダ分けに使用。
-*   **slug:** 作品名（スラッグ形式, e.g. `prelude-1`）。
+- **Mapping:** アプリケーション層で Slug から UUID を逆引きし、実体データを取得します。
 
-### URLマッピング
-ファイルパスは自動的に以下のURLにマッピングされる。
-`/[language]/works/[composer]/[slug]`
-
-**例:**
-*   File: `content/en/works/bach/prelude-1.mdx`
-*   URL: `/en/works/bach/prelude-1`
+### ストレージ配置 (System Perspective)
+実体ファイルは、将来のSlug変更に耐性を持たせるため **UUID** で保存されます（Git管理はしません）。
+`Storage: article/[uuid].mdx`
 
 ---
 
@@ -104,8 +97,8 @@ MDX内では、Reactコンポーネントを直接使用することは（原則
 
 ---
 
-## 4. ワークフロー
-1.  **作成:** `content/[lang]/works/[composer]/` に `.mdx` ファイルを作成。
-2.  **Frontmatter記入:** 上記スキーマに従ってメタデータを埋める。
-3.  **本文執筆:** Markdownで記述。楽譜はABC記法で挿入。
-4.  **プレビュー:** `npm run dev` でローカルサーバーを立ち上げ、該当URL（`/[lang]/works/...`）にアクセスして確認。
+## 4. ワークフロー (Admin UI)
+1.  **作成:** Admin UI または エージェント経由でDBレコードを新規作成。
+2.  **執筆:** エディタで本文を記述。楽譜はABC記法で挿入。保存時に自動的に `article/[uuid].mdx` としてStorageに保存。
+3.  **公開:** ステータスを `published` に変更。
+4.  **反映:** On-demand ISRにより、URL（`/[lang]/works/...`）に即座に反映される。
