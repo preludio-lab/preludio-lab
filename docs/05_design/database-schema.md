@@ -169,6 +169,19 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
     *   `slug` (text): 英語ベースの識別子 (e.g. `deep-focus`, `sonata-form`)
 *   `tag_translations`: `id`, `tag_id`, `lang`, `name`
 
+### 5.4 `media_resources` (Audio / Video)
+楽曲に関連する推奨音源・動画リスト。
+演奏家（Performers）は独立したマスタテーブルにはせず、本テーブル内の `jsonb` カラムで管理することで、データ容量の抑制と入力の手間（Maintenance Cost）を最小化します。
+
+*   `media_resources`:
+    *   `id` (uuid): PK
+    *   `work_id` (uuid): FK. どの作品の演奏か。
+    *   `type` (text): `'youtube'`, `'spotify'`, `'apple_music'`
+    *   `provider_id` (text): YouTube Video ID 等
+    *   `display_title` (text): ユーザー表示用タイトル (e.g. "Gould (1981)")
+    *   `performers` (jsonb): 演奏者名の配列 (e.g. `["Glenn Gould", "Leonard Bernstein"]`). 検索用。
+    *   `is_recommended` (boolean): 代表的な音源かどうか。
+
 ---
 
 ## 6. RLS Policies (Security)
