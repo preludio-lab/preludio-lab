@@ -163,9 +163,17 @@ type ArticleMetadata = {
 *   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`, `nicknames` (text[])
 
 ### 5.3 `tags` (Normalized Taxonomy)
-Mood, Scenario, Genre などの分類タグを正規化し、多言語マッピングを実現します。
-*   `tags`: `id` (uuid), `type` ('mood', 'scene', 'genre'), `slug` (en-based)
-*   `tag_translations`: `id`, `tag_id`, `lang`, `name` (e.g. 'Deep Focus', '深い集中')
+ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
+[Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
+
+*   `tags`:
+    *   `id` (uuid): PK
+    *   **`category`** (text): タグの種類（厳密に管理します）
+        *   `'mood'`: 感情・雰囲気 (e.g. Sad, Uplifting, Epic)
+        *   `'situation'`: 利用シーン・機能 (e.g. Study, Sleep, Wedding)
+        *   `'terminology'`: 音楽理論・形式 (e.g. Sonata Form, Fugue, Cadenza)
+    *   `slug` (text): 英語ベースの識別子 (e.g. `deep-focus`, `sonata-form`)
+*   `tag_translations`: `id`, `tag_id`, `lang`, `name`
 
 ---
 
