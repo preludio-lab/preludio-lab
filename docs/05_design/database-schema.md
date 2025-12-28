@@ -38,12 +38,6 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-
-    classDetails {
-        %% Color Definitions
-        class Composers,Works,Articles,Scores master_table
-        class ComposerTranslations,WorkTranslations,ArticleTranslations,ScoreTranslations localized_table
-    }
 ```
 
 ---
