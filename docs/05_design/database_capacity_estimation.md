@@ -12,7 +12,6 @@ DB容量は「データそのもの(Table)」と「検索用索引(Index)」の�
 | **B-Tree** | ID, Slug, Foreign Key | **~20%** (軽量) |
 | **GIN** | 全文検索 (Tag, Summary) | **~60-100%** (中量。単語数に比例) |
 | **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
-| **HNSW** | ベクトル検索 (Semantic) | **~80-100%** (重量。高速化のためグラフ構造を持つ) |
 
 ### 2.1 ID Strategy (UUID vs Integer)
 「UUID (16-byte) は Int (4-byte) より大きく、圧迫するのではないか？」という懸念に対する検証。
