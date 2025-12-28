@@ -59,7 +59,7 @@ erDiagram
 | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK**. UUID v7 (Time-sortable) |
 | `work_id` | `uuid` | - | YES | FK to `works.id`. 記事に関連する主作品（あれば） |
-| `slug` | `text` | - | NO | **Universal Slug**. 英語ベース (`composer-work-catalog`) で生成し、全世界共通URLとします。例: `beethoven-symphony-no5` |
+| `slug` | `text` | - | NO | **Universal Slug**. 英語ベースの識別子。例: `symphony-no5` (Routing層で `beethoven/symphony-no5` のように組み立てる想定) |
 | `is_featured` | `boolean` | `false` | NO | おすすめ/キュレーション対象フラグ |
 | `created_at` | `timestamptz` | `now()` | NO | 作成日時 |
 | `updated_at` | `timestamptz` | `now()` | NO | 更新日時 (Trigger) |
