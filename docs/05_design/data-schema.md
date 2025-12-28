@@ -102,7 +102,6 @@ export type ContentDetail = ContentSummary & {
 | `lang` | text | - | Language Code |
 | `title` | text | - | Title |
 | `composer_id` | uuid | - | FK to composers |
-| `is_public` | boolean | false | 公開フラグ |
 | `last_synced_at` | timestamptz | - | Git同期日時 |
 
 ### 5.2 `sections` テーブル (Granular Content)
@@ -170,7 +169,8 @@ export type ContentDetail = ContentSummary & {
 | (Localized) | `article_id` | uuid | FK to articles |
 | | `lang` | text | ISO Lang Code |
 | | `title` | text | 記事タイトル |
-| | `is_public` | boolean | 公開フラグ |
+| | `status` | text | 'draft' | 'draft', 'published', 'private' |
+| | `published_at` | timestamptz | - | 公開日時 |
 | | `last_synced_at` | timestamptz | Git同期日時 |
 | | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
 | | **`content_storage_path`** | **text** | **記事本文MDXデータのStorageパス (`article/uuid.mdx`)** |
