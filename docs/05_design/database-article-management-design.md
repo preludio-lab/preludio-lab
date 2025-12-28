@@ -21,9 +21,11 @@
 ## 2. データ管理戦略 (Data Strategy)
 
 ### 2.1 Storage Key Strategy
-- **Internal (Storage):** **UUID** を使用 (`article/{uuid}.mdx`)。不変性（Immutability）を担保し、リンク切れを防ぐ。
+- **Internal (Storage):** **URL Safe Base64 (from UUID v7)** を使用。
+  - *Format:* `article/{base64_id}.mdx` (e.g., `article/VQ6EANKb....mdx`)
+  - *Reason:* UUID(36文字)よりも短縮(22文字)でき、かつUUIDのランダム性とソート順（v7採用時）を享受できるため。
 - **Public (URL):** **Slug** を使用 (`/works/bach/prelude`). SEOと可読性を優先。
-  - *Mapping:* アプリケーション層で Slug -> UUID の解決を行う。
+  - *Mapping:* アプリケーション層で Slug -> UUID -> Base64 の解決を行う。
 
 ### 2.2 Metadata Strategy (Read-Optimized)
 - **Source of Truth:** 正規化されたRDBMSテーブル (`composers` / `works`)。
