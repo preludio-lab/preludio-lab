@@ -28,7 +28,10 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 
 - **Why DB Status?**
   - **Listing (Build/ISR Time):** 記事一覧ページやサイトマップ生成時、R2を全スキャンするのは非効率です。DBへの `SELECT` が必須です。
-  - **Atomicity:** 「公開」アクションは、「DB更新」と「Storage移動」のトランザクションとして管理されます。
+  - **Atomicity & Consistency:** 
+    - 「公開」アクションは、「DB更新」と「Storage移動」のトランザクションとして構成します。
+    - **Sync Flag:** `storage_synced_at` カラムを保持し、同期成功時のみタイムスタンプを更新。**ビルド・検索対象は `storage_synced_at` がNULLでない記事のみ**とすることで、404エラーを防ぎます。
+    - **Idempotency:** 同期処理は冪等（何度実行しても同じ結果）に設計し、リトライを可能にします。
 
 ### 3.3 Runtime Access Strategy (Performance & Security)
 ユーザーからのアクセス時、記事タイプによって「DB参照の有無」を使い分け、パフォーマンスとセキュリティを両立させます。
@@ -108,10 +111,14 @@ Object Storage上のファイル名は、Slugではなく **UUID (Record ID) を
 
 ### 5.1 ISR (Incremental Static Regeneration)
 DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用します。
+
+- **Tiered Build (段階的ビルド):**
+  - **SSG (Pre-build):** アクセス頻度の高い **Top 1,000記事** のみをビルド時に生成。Vercelのビルド時間制限(6,000分/月)やタイムアウトを回避します。
+  - **ISR (On-demand):** 残りのロングテール記事（最大7万件）は、初回アクセス時に動的生成・キャッシュ。
 - **Read (Cache Hit):** ユーザーアクセス時は **CDN (Vercel / Cloudflare 等)** から静的HTMLを配信。DBアクセス・Storageアクセスは **ゼロ** です。
 - **Read (Cache Miss / Revalidation):**
   1. **Next.js**: `slug` をキーにページ生成を開始。
-  2. **DB (Lookup)**: `articles` テーブルを検索し、`slug` -> `uuid` を取得。
+  2. **DB (Lookup)**: `articles` テーブルを検索し、`slug` -> `uuid` を取得（`storage_synced_at` が有効なもののみ）。
   3. **Storage (Fetch)**: `article/{uuid}.mdx` をR2から取得。
   4. **Render**: MDXをHTMLに変換し、ユーザーに返却。
   5. **Cache**: 生成されたHTMLを **CDN** にキャッシュ。
@@ -142,6 +149,15 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 
 これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
 
+### 6.3 Slug Strategy (Universal vs Localized)
+本プロジェクトでは管理コストとリンクの不変性を優先し、**Universal Slug (言語共通)** を採用します。
+
+- **Structure:** `/[lang]/works/[composer_slug]/[slug]`
+- **Decision:** 
+  - `slug` は `articles` テーブル（Universal）で一元管理します。
+  - 言語ごとにSlugを変える（例: `/ja/daiku` vs `/en/symphony-9`）ことも技術的には可能ですが、同一コンテンツの言語切り替え（Language Switcher）の実装が複雑になり、リンク切れリスクが高まるため、現時点では採用しません。
+  - 必要に応じて、`article_translations` に `alias_slug` カラムを追加することで、将来的にSEOを強化する拡張性を残します。
+
 ## 7. 検索仕様 (Tiered Hybrid Search Strategy)
 
 「本文がDBにない」かつ「DB容量制限(500MB)」という条件下で、最高峰の検索体験を実現するための戦略。
@@ -153,6 +169,7 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 - **Mechanism:** ビルドされた静的HTML (SSG) からインデックスを生成し、ブラウザ上で検索を実行。
 - **Scope:** プリビルドされる Top 1,000 記事の**全文**。
 - **UX:** キーワード入力と同時に結果が表示される "Find-as-you-type" 体験。
+- **Scalability Note:** インデックスサイズが肥大化する場合は、Pagefindの `sub-results` 機能（分断インデックス）やカテゴリー単位の分割を実装します。
 
 ### 7.2 Tier 2: Server-Side Semantic Search (Long-tail Articles)
 ロングテール記事（全70,000件）に対しては、DBのメタデータと要約を用いた「概念検索」を提供します。
@@ -198,9 +215,9 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(CLS)を回避します。
 また、**ABC記法**（AI生成用）だけでなく、**MusicXML形式**（既存リポジトリ抜粋用）もサポートし、世界最高品質の譜例を提供します。
 
-- **Generation:** Admin UIでの保存時、フォーマットに応じて適切なエンジンを実行し、統一されたベクター画像 (**SVG**) を生成。
-  - **ABC:** `abcjs`を使用。
-  - **MusicXML:** **Verovio** を使用。学術レベルの高品質な浄書（Engraving）が可能。
+- **Generation (Background Task):** 
+  - Admin UIでの保存時、非同期ジョブとしてエンジン（abcjs/Verovio）を実行し、SVGを生成。
+  - レンダリング時のリアルタイム生成を避け、サーバー負荷とレスポンス遅延を防止します。
 - **Interactive Hydration:** 通常表示は軽量な `<img>` タグ。再生時のみ座標データ(JSON)をロードし、ハイライト表示等のインタラクションを実現する「Progressive Hydration」を採用。
 
 ### 8.2 Cloudflare R2 Integration

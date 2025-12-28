@@ -88,44 +88,6 @@ export type ContentDetail = ContentSummary & {
 };
 ```
 
-## 5. データベーススキーマ (Database-First Master)
-
-記事正本となるテーブル設計。AI編集の粒度に合わせた正規化を行う。
-
-### 5.1 `articles` テーブル
-記事の基本メタデータおよびSEO情報。
-
-| Column | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | PK |
-| `slug` | text | - | URL Slug (Unique) |
-| `lang` | text | - | Language Code |
-| `title` | text | - | Title |
-| `composer_id` | uuid | - | FK to composers |
-| `last_synced_at` | timestamptz | - | Git同期日時 |
-
-### 5.2 `sections` テーブル (Granular Content)
-記事を構成するセクションブロック。AIの部分編集単位。
-
-| Column | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | PK |
-| `article_id` | uuid | - | FK to articles |
-| `order_index` | int | 0 | 表示順序 |
-| `heading` | text | - | セクション見出し |
-| `content_body` | text | - | Markdown本文 |
-| `token_count` | int | - | トークン数（AI制御用） |
-| `embedding` | vector(768) | - | セクション単位のベクトル（要約セクションのみ生成推奨） |
-
-### 5.3 `music_scores` テーブル
-楽譜データのリポジトリ。
-
-| Column | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | uuid | uuid_generate_v4() | PK |
-| `title` | text | - | 譜例タイトル |
-| `format` | text | 'abc' | 'abc' or 'musicxml' |
-| `data` | text | - | 楽譜データ本体 |
 ## 5. データベーススキーマ (Translation Pattern)
 普遍的な事実(Universal)と言語固有情報(Localized)を分離した正規化スキーマ。
 
@@ -171,7 +133,7 @@ export type ContentDetail = ContentSummary & {
 | | `title` | text | 記事タイトル |
 | | `status` | text | 'draft' | 'draft', 'published', 'private' |
 | | `published_at` | timestamptz | - | 公開日時 |
-| | `last_synced_at` | timestamptz | Git同期日時 |
+| | **`storage_synced_at`** | **timestamptz** | **-** | **R2/Storage同期完了日時 (SSG対象フラグ)** |
 | | **`metadata`** | **jsonb** | **作曲家・作品名を含むメタデータ (JOIN回避用)** |
 | | **`content_structure`** | **jsonb** | **Summary & Scores (Lightweight)** |
 | | **`content_storage_path`** | **text** | **記事本文MDXデータのStorageパス (`article/uuid.mdx`)** |
