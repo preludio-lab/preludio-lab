@@ -1,7 +1,7 @@
 # データベーススキーマ設計 (Database Schema Design)
 
 本ドキュメントでは、PreludioLabのデータ永続化層（PostgreSQL on Supabase）の物理設計を定義します。
-[Search Requirements](./search-requirements.md) で定義された「Read-Optimized (Zero-JOIN)」戦略に基づき、検索パフォーマンスと開発者体験を最優先した設計となっています。
+[Search Requirements](../01_specs/search-requirements.md) で定義された「Read-Optimized (Zero-JOIN)」戦略に基づき、検索パフォーマンスと開発者体験を最優先した設計となっています。
 
 ## 1. Design Policy (設計方針)
 
