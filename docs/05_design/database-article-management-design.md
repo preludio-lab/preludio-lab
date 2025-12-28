@@ -32,10 +32,13 @@
   - **Result:** **Zero-JOIN Rendering** を実現。
 
 ### 2.3 Integration with AI (Knowledge Glossaries)
-AIエージェントの執筆精度を高めるため、以下のワークフローを採用する。
-1.  **Export:** DB上のマスタデータを **Knowledge Manifest (Glossary JSON)** として定期出力。
-2.  **Drafting:** エージェントはこのファイルを「辞書」として読み込み、表記揺れのないMDXを作成。
-3.  **Validation:** 保存時にシステムが用語チェックを行う。
+AIエージェントの執筆精度を高めるため、**「DBマスタ」と「ファイル用語集」を統合**したManifestを利用する。
+
+1.  **Source:**
+    - **DB Entity (Large Scale):** Composers, Works (PostgreSQLからエクスポート)。
+    - **File Glossary (Static):** 音楽用語, 楽器, 時代区分 (Git管理下のJSON/TS)。
+2.  **Export:** 上記をマージし、**Knowledge Manifest (JSON)** としてエージェントに提供。
+3.  **Drafting & Validation:** エージェントはこれを参照して執筆し、保存時に用語チェックを行う。
 
 ## 3. 信頼性と同期 (Reliability & Sync)
 
