@@ -67,3 +67,39 @@ AIエージェントを活用したメタデータの拡充。
 **Focus:** Priority 4 (Filtering)
 *   `Instrumentation`: 楽器構成の詳細化（ソロ、デュオ、カルテット等）。
 
+---
+
+## 4. Reference: Global Search Trends (グローバル検索調査)
+
+### 4.1 Global Search Priorities (英語圏・欧州・アジア)
+グローバル市場では、通称よりも「カタログ番号」「楽器」「機能性」の検索重要度が高まります。
+
+*   **Catalog Number:** 「Beethoven Symphony 5」や「Op. 67」が検索の絶対正解。
+*   **Instrument:** 「Best Piano Solos」など、楽器起点の検索が強力。
+*   **Functionality:** 「Focus」「Sleep」「Meditation」など、ツールとしての消費ニーズが巨大。
+
+### 4.2 Global Search Keywords Top 100 Clusters
+
+#### ① Composers (High Volume)
+Bach, Chopin, Mozart, Beethoven, Debussy, Tchaikovsky, Vivaldi, Rachmaninoff, Liszt, Satie.
+
+#### ② Masterpieces & Nicknames (Global Standards)
+| Rank | English Search Term | Original / Catalog |
+| :--- | :--- | :--- |
+| 1 | **Canon in D** | Pachelbel |
+| 2 | **Clair de Lune** | Debussy (Suite bergamasque) |
+| 3 | **Moonlight Sonata** | Beethoven (Op. 27 No. 2) |
+| 4 | **The Four Seasons** | Vivaldi (Le quattro stagioni) |
+| 5 | **Nocturne Op. 9 No. 2** | Chopin |
+| 6 | **Gymnopédie No. 1** | Erik Satie |
+| 7 | **Symphony No. 5** | Beethoven |
+| 8 | **Rhapsody in Blue** | Gershwin |
+| 9 | **Bolero** | Ravel |
+| 10 | **Swan Lake** | Tchaikovsky |
+
+#### ③ Context & Utility (High Conversion)
+*   **Study:** Deep focus, Concentration, Baroque for study.
+*   **Mood:** Sad, Epic, Romantic, Dark, Peaceful.
+*   **Difficulty:** Hardest piano pieces, Grades (ABRSM).
+*   **Era:** Baroque, Classical, Romantic, Impressionism.
+

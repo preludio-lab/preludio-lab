@@ -59,7 +59,7 @@ erDiagram
 | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK**. UUID v7 (Time-sortable) |
 | `work_id` | `uuid` | - | YES | FK to `works.id`. 記事に関連する主作品（あれば） |
-| `slug` | `text` | - | NO | **Universal Slug**. URLの一部 (`/works/[slug]`) |
+| `slug` | `text` | - | NO | **Universal Slug**. 英語ベース (`composer-work-catalog`) で生成し、全世界共通URLとします。例: `beethoven-symphony-no5` |
 | `is_featured` | `boolean` | `false` | NO | おすすめ/キュレーション対象フラグ |
 | `created_at` | `timestamptz` | `now()` | NO | 作成日時 |
 | `updated_at` | `timestamptz` | `now()` | NO | 更新日時 (Trigger) |
@@ -158,8 +158,14 @@ type ArticleMetadata = {
 *   `composer_translations`: `id`, `composer_id`, `lang`, `name` (Local Name), `bio`
 
 ### 5.2 `works` / `work_translations`
-*   `works`: `id`, `composer_id`, `catalogue_id` (Unified), `key_tonality`
-*   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`, **`nicknames` (text[])**
+*   `works`: `id`, `composer_id`, **`catalogue_prefix`** (BWV, Op.), **`catalogue_number`** (1001, 5), `key_tonality`
+    *   *Note:* `catalogue_id` はこれらを結合したGenerated ColumnまたはApp層での表現とします。分割することで "K. 448" と "K448" の揺らぎを吸収します。
+*   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`, `nicknames` (text[])
+
+### 5.3 `tags` (Normalized Taxonomy)
+Mood, Scenario, Genre などの分類タグを正規化し、多言語マッピングを実現します。
+*   `tags`: `id` (uuid), `type` ('mood', 'scene', 'genre'), `slug` (en-based)
+*   `tag_translations`: `id`, `tag_id`, `lang`, `name` (e.g. 'Deep Focus', '深い集中')
 
 ---
 
