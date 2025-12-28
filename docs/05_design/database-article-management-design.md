@@ -6,10 +6,15 @@
 
 **「管理は厳密に、配信は高速に、執筆は柔軟に」** を実現するため、以下の**Split-Storage Architecture**を採用する。
 
-| Component | Technology | Role | Persistence |
+**Constraints (設計制約):**
+- **Supabase DB Size:** Free Tier (500MB) 制限。70,000記事の本文をDBに格納することは不可。
+- **Build Time:** Vercel Build Timeoutの回避。全記事ビルドは不可。
+
+| Component | Technology | Role | Persistence / Policy |
 | :--- | :--- | :--- | :--- |
-| **Metadata** | **Supabase DB** | 検索インデックス、公開状態管理、リレーション | SQL (Relational) |
-| **Body (Content)** | **Object Storage (R2)** | 記事本文（MDX）。可読性と移植性を重視 | File (MDX/Text) |
+| **Metadata** | **Supabase DB** | 検索、状態管理、**Auth/RLS** | SQL / **500MB Limit** |
+| **Draft Body** | **Supabase Storage** | 執筆中の本文 (MDX) | **Private Bucket (Auth/RLS)** |
+| **Public Body** | **Cloudflare R2** | 公開済みの本文 (MDX) | **Public Bucket (CDN Cacheable)** |
 | **Delivery** | **CDN (Edge)** | 静的HTML配信 (SSG/ISR) | Cache |
 | **Search** | **Pagefind / pgvector** | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index |
 
@@ -43,13 +48,14 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 
 ## 4. 配信とパフォーマンス (Delivery & Performance)
 
-### 4.1 Tiered Build Strategy (SSG/ISR)
-Vercelのビルド制限(6,000分/月)を回避しつつ、高速化を図る。
+### 4.1 Tiered Delivery Strategy
+コンテンツの性質（公開/非公開）とアクセス頻度に応じて、ビルドと配信経路を最適化する。
 
-| Tier | Target | Method | Description |
-| :--- | :--- | :--- | :--- |
-| **Tier 1** | **Top 1,000 Articles** | **SSG (Pre-build)** | ビルド時に静的生成。Pagefindインデックス対象。 |
-| **Tier 2** | **Long-tail (70k+)** | **ISR (On-demand)** | 初回アクセス時に生成・キャッシュ。 |
+| Tier | Target | Build Method | Delivery Path | Access Control |
+| :--- | :--- | :--- | :--- | :--- |
+| **Tier 1 (Top)** | **Top 1,000 Articles** | **SSG (Pre-build)** | CDN (R2) | Public |
+| **Tier 2 (Long-tail)** | **Remaining 70k+** | **ISR (On-demand)** | CDN (R2) | Public |
+| **Tier 3 (Protected)** | **Private / Paid** | **SSR (Dynamic)** | **Supabase RPC** | **RLS (Auth Required)** |
 
 ### 4.2 Hybrid Search Strategy
 
@@ -60,6 +66,7 @@ Vercelのビルド制限(6,000分/月)を回避しつつ、高速化を図る。
 
 ### 4.3 Asset Delivery
 - **Score (ABC/MusicXML):** 保存時にサーバーサイドで **SVG** に変換し、R2に配置（非同期バックグラウンド処理）。
+  - **Technology:** **Verovio (MusicXML)** for Professional Engraving, **abcjs (ABC)** for Lightweight Rendering.
 - **Hydration:** 通常は `<img>` で表示し、再生時のみインタラクティブなプレイヤーコンポーネントにハイドレーションする。
 
 ## 5. 多言語対応 (Internationalization)
