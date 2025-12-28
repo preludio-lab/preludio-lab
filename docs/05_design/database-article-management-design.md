@@ -98,6 +98,8 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 Object Storage上のファイル名は、Slugではなく **UUID (Record ID) を使用します。**
 
 - **Format:** `article/{uuid}.mdx` (e.g. `article/550e8400-e29b-41d4-a716-446655440000.mdx`)
+- **Capacity Tip:** PostgreSQLの `uuid` 型は、内部的には **16 byte (固定長)** のバイナリデータとして保存されます。36文字の文字列として保存されるわけではないため、非常に省スペースです。
+- **URL Shortening:** URLの桁数を短くしたい場合は、アプリ層でBase62エンコード等を行うことで、22文字程度に短縮可能です（例: `7vY7...`）。
 - **Reason:**
   - **Slug is Mutable:** URL変更によりSlugが変わった場合、Storage上のファイル移動（Copy+Delete）が発生し、整合性担保が困難になるため。
   - **UUID is Immutable:** 記事の親が移動したりタイトルが変わったりしても、コンテンツ実体へのリンクは不変に保たれる。
