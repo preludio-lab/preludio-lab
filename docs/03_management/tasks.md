@@ -156,7 +156,7 @@ Status: `[/]` 進行中
         - [x] データベースプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
     - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
-        - [x] テーブル設計 (`works`, `composers`, `embeddings`)
+        - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
     - [ ] **[実装]** Database-First Admin UI
         - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装

@@ -51,7 +51,7 @@ Gitは、DBデータの「バックアップ」および「静的サイト生成
 ## 4. データ構造戦略 (MDX Split-Storage Model)
 「執筆・レビューの容易性」と「配信パフォーマンス」を両立させるため、**Metadata in DB / Body in Storage (MDX)** の分離構成を採用します。
 
-- **Normalized Metadata:** `articles`, `works` 等の親エンティティはDBで正規化して管理し、検索性と整合性を担保。
+- **Normalized Metadata:** `articles` テーブルで親エンティティを正規化して管理し、検索性と整合性を担保。
 - **MDX Body:** 記事本文はパース前の **Raw MDX** としてObject Storageに保存。
   - **Why MDX?**
     - **Human Readable:** JSON構造に変換せずそのまま保存することで、デバッグや簡易レビューが容易。
@@ -84,17 +84,17 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 「世界最高峰のデータベース設計」として、**Normalized Translation Pattern (正規化された翻訳パターン)** を採用します。
 「普遍的な事実（Universal Facts）」と「言語固有の表現（Localized Content）」をテーブルレベルで物理的に分離し、保守性と拡張性を最大化します。
 
-### 5.1 アーキテクチャ原則
+### 6.1 アーキテクチャ原則
 - **Separation of Concerns:** 
-  - `works` (Universal): 作曲年、作品番号、調性など、言語に依存しない事実は1箇所で管理。
-  - `work_translations` (Localized): タイトル、解説、要約など、言語ごとに変化する情報は翻訳テーブルで管理。
+  - `articles` (Universal): スラッグ、公開設定、共通メタデータなど、言語に依存しない事実は1箇所で管理。
+  - `article_translations` (Localized): タイトル、解説、要約など、言語ごとに変化する情報は翻訳テーブルで管理。
 - **Scalability:** 言語数が増えてもカラム追加（`title_ja`, `title_en`...）は不要。レコード追加のみで対応可能。
 
-### 5.2 Translation Table Pattern
-すべてのマスタデータおよび記事データに対して、対となる `_translations` テーブルを定義します。
+### 6.2 Translation Table Pattern
+すべての記事データに対して、対となる `_translations` テーブルを定義します。
 
 - **Master Entity:** `id`, `slug` (Canonical), `universal_attributes`...
-- **Translation Entity:** `entity_id` (FK), `lang` (ISO code), `localized_attributes`...
+- **Translation Entity:** `article_id` (FK), `lang` (ISO code), `localized_attributes`...
 
 これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
 
@@ -127,11 +127,11 @@ JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離
 2.  Enterキー押下、または「もっと見る」で **DB検索API** をコールし、全件から検索（Tier 2）。
 3.  結果を統合して表示。
 
-## 6. テーブル設計概要
+## 9. テーブル設計概要
 詳細は `docs/05_design/data-schema.md` を参照してください。
-- `composers`: 作曲家メタデータ
-- `works`: 楽曲・譜例メタデータ
-- `content_embeddings`: 検索用ベクトルデータ
+- `articles`: 記事管理マスタ (Universal)
+- `article_translations`: 記事翻訳・コンテンツ (Localized)
+- `composers` / `works`: メタデータマスタ
 
 ## 8. Asset Delivery Strategy (Score SSG & R2)
 
