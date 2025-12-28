@@ -1,241 +1,72 @@
-# データベース記事管理システム設計書 (database-article-management-design.md)
+# Database-First Article Management Design
 
-## 1. 概要
-本ドキュメントは、**Supabase Database** を記事の正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Article Application」の仕様を定義します。
-Gitは、DBデータの「バックアップ」および「静的サイト生成(SSG)ソース」として位置付けます。
+本ドキュメントは、**Supabase Database** を正本（Source of Truth）とし、AIエージェントによる効率的な制作・管理を行う「Database-First Article Application」の仕様を定義する。
 
-## 2. 前提条件と制約 (Constraints)
-- **Supabase Database:** 500MB Free Limit (Master).
-- **GitHub:** Output Target for Backup & Build.
-- **Scale:** 70,000 Articles (Granular Sections).
+## 1. 概要 (Architecture Overview)
 
-## 3. Database-First Configuration
+**「管理は厳密に、配信は高速に、執筆は柔軟に」** を実現するため、以下の**Split-Storage Architecture**を採用する。
 
-### 3.1 Status Management (Architecture Decision)
-記事の公開ステータス（Draft / Published / Archived）は **RDBMS (`article_translations` table)** で管理します。
-- **Reason:**
-  - **Filtering:** `WHERE status = 'published'` というクエリで即座に公開記事のみを取得するため。Object Storage内のFrontmatter管理ではリスティングや検索が低速になるため採用しません。
-  - **Security (RLS):** DBのRow Level Securityにより、非公開記事へのアクセスをAPIレベルで確実に遮断するため。
-
-### 3.2 Status & Storage Synchronization Logic
-「物理的なファイルの置き場所」と「DB上のステータス」は以下のルールで同期されます。DBが**正 (Source of Truth)** であり、Storageは従属します。
-
-| Status (DB) | Storage Location | Listing / Search | Access Control |
+| Component | Technology | Role | Persistence |
 | :--- | :--- | :--- | :--- |
-| **Draft** | **Supabase (Private)** | Hidden | Login Required (RLS) |
-| **Published** | **R2 (Public)** | Visible (`WHERE status='published'`) | Public |
-| **Archived** | **R2 (Public)** | Hidden | Public (Direct Link Only) |
+| **Metadata** | **Supabase DB** | 検索インデックス、公開状態管理、リレーション | SQL (Relational) |
+| **Body (Content)** | **Object Storage (R2)** | 記事本文（MDX）。可読性と移植性を重視 | File (MDX/Text) |
+| **Delivery** | **CDN (Edge)** | 静的HTML配信 (SSG/ISR) | Cache |
+| **Search** | **Pagefind / pgvector** | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index |
 
-- **Why DB Status?**
-  - **Listing (Build/ISR Time):** 記事一覧ページやサイトマップ生成時、R2を全スキャンするのは非効率です。DBへの `SELECT` が必須です。
-  - **Atomicity & Consistency:** 
-    - 「公開」アクションは、「DB更新」と「Storage移動」のトランザクションとして構成します。
-    - **Sync Flag:** `storage_synced_at` カラムを保持し、同期成功時のみタイムスタンプを更新。**ビルド・検索対象は `storage_synced_at` がNULLでない記事のみ**とすることで、404エラーを防ぎます。
-    - **Idempotency:** 同期処理は冪等（何度実行しても同じ結果）に設計し、リトライを可能にします。
+## 2. データ管理戦略 (Data Strategy)
 
-### 3.3 Runtime Access Strategy (Performance & Security)
-ユーザーからのアクセス時、記事タイプによって「DB参照の有無」を使い分け、パフォーマンスとセキュリティを両立させます。
+### 2.1 Storage Key Strategy
+- **Internal (Storage):** **UUID** を使用 (`article/{uuid}.mdx`)。不変性（Immutability）を担保し、リンク切れを防ぐ。
+- **Public (URL):** **Slug** を使用 (`/works/bach/prelude`). SEOと可読性を優先。
+  - *Mapping:* アプリケーション層で Slug -> UUID の解決を行う。
 
-| Article Type | Status | Delivery Method | Runtime DB Access | Latency |
-| :--- | :--- | :--- | :--- | :--- |
-| **Public Article** | `published` | **CDN (Static)** | **No (Zero)** | Low (Fastest) |
-| **Private/Paid** | `private` | **API (Dynamic)** | **Yes (RLS Check)** | Medium (Auth Required) |
+### 2.2 Metadata Strategy (Read-Optimized)
+- **Source of Truth:** 正規化されたRDBMSテーブル (`composers` / `works`)。
+- **Runtime Optimization:** 閲覧時のJOIN負荷をなくすため、記事レコード内に **`metadata` (JSONB)** カラムを持つ。
+  - 必要な表示用データ（作曲家名、作品名など）は保存時にこのJSONBへスナップショットとして書き込む。
+  - **Result:** **Zero-JOIN Rendering** を実現。
 
-1.  **Public Access (90%+):**
-    - R2上のPublicバケットにあるJSON/MDXを直接（またはNext.js経由で）参照します。
-    - **DB/RLSは経由しません。** そのための「R2への物理コピー」です。
-2.  **Private/Paid Access:**
-    - R2上のPublicファイルには「鍵アイコン付きの要約」のみを配置（または配置しない）。
-    - 閲覧時は `supabase.rpc` 経由でコンテンツをリクエストし、**DBのRLSで権限チェック**を行った上で、Signed URLまたはデータを返却します。
+### 2.3 Integration with AI (Knowledge Glossaries)
+AIエージェントの執筆精度を高めるため、以下のワークフローを採用する。
+1.  **Export:** DB上のマスタデータを **Knowledge Manifest (Glossary JSON)** として定期出力。
+2.  **Drafting:** エージェントはこのファイルを「辞書」として読み込み、表記揺れのないMDXを作成。
+3.  **Validation:** 保存時にシステムが用語チェックを行う。
 
-### 3.4 Data Source Roles & Persistence Matrix (Split-Storage)
+## 3. 信頼性と同期 (Reliability & Sync)
 
-**容量見積もり (1.2GB) に基づき、記事本文のみ外部Storageへ分離します。**
-詳細は `docs/05_design/database_capacity_estimation.md` を参照してください。
-ただし、アプリケーション(Admin)からは透過的に扱います。
+DBとStorage間の整合性を保つため、以下のルールを徹底する。
 
-| Data Category | Master Storage Strategy | Data Format | Service (Physical Location) | Note |
-| :--- | :--- | :--- | :--- | :--- |
-| **Metadata (Key Fields)** | **RDBMS** | `String` / `UUID` | **Supabase DB** | 検索・結合用（フィールド単位でカラム化） |
-| **Metadata (Flexible)** | **RDBMS** | `JSONB` | **Supabase DB** | UI表示用テキスト、追加属性。 |
-| **Scores (Notation)** | **RDBMS** | `Text` (ABC / MusicXML) | **Supabase DB** | 楽譜データ本体。共有リソース。 |
-| **Summary / Embeddings** | **RDBMS** | `Text` / `Vector (16-bit)` | **Supabase DB** | Semantic Search & Recommendation. |
-| **Article Body (Draft)** | **Object Storage** | `MDX` (Text) | **Supabase Storage** (Private Bucket) | 執筆中データ。Auth/RLS保護。 |
-| **Article Body (Public)** | **Object Storage** | `MDX` (Text) | **Cloudflare R2** (Public Bucket) | 公開用正本。閲覧性に優れるMDXを採用。 |
+- **Transaction:** 「公開」操作は DB更新とStorageアップロードのアトミックな処理とする。
+- **Sync Flag:** `article_translations` テーブルに **`storage_synced_at`** フラグを持つ。
+  - これが `NULL` の記事は「同期未完了」とみなし、ビルドおよび公開APIから除外する（404回避）。
+- **Idempotency:** 同期処理は冪等（何度実行しても同じ結果）に設計する。
 
-- **Supabase Database (Master Index):**
-  - 記事メタデータ、楽譜データ、要約を保持 (Total ~330MB < 500MB).
-- **Supabase Storage (Draft Store):**
-  - 執筆中のドラフトデータを一時保存。Authとの連携を重視。
-- **Cloudflare R2 (Public Body Store):**
-  - **公開後の本文MDXの正本。**
-  - Supabaseの1GB制限 (900MB利用でほぼ満杯) を回避するため、10GB無料のR2を採用。
-- **GitHub (Code Repository):**
-  - **Application Code Only.**
-  - 70,000記事のMDXファイルは **Git管理しません** (Repo肥大化防止のため)。
-  - ビルド時 (`generateStaticParams`) に Supabase から直接データを取得してページを生成します。
+## 4. 配信とパフォーマンス (Delivery & Performance)
 
-### 3.5 Workflow: Direct DB Build Flow
-1.  **Edit:**
-    - **Human:** Admin UI (Visual Editor) で編集。
-    - **AI Agent:** DB直接接続 または API経由 (Headless) でデータを生成・更新。
-2.  **Publish:** ステータスを公開に変更。
-3.  **Revalidate:** On-demand ISR APIを叩き、Next.jsキャッシュを更新 (+ Pagefind Index更新)。
+### 4.1 Tiered Build Strategy (SSG/ISR)
+Vercelのビルド制限(6,000分/月)を回避しつつ、高速化を図る。
 
-### 3.6 Editor Stack (Admin UI)
-- **Framework:** Next.js (App Router)
-- **Editor:** Tiptap / Lexical
-- **AI Integration:** Vercel AI SDK (Streaming edits).
+| Tier | Target | Method | Description |
+| :--- | :--- | :--- | :--- |
+| **Tier 1** | **Top 1,000 Articles** | **SSG (Pre-build)** | ビルド時に静的生成。Pagefindインデックス対象。 |
+| **Tier 2** | **Long-tail (70k+)** | **ISR (On-demand)** | 初回アクセス時に生成・キャッシュ。 |
 
-## 4. データ構造戦略 (MDX Split-Storage Model)
-「執筆・レビューの容易性」と「配信パフォーマンス」を両立させるため、**Metadata in DB / Body in Storage (MDX)** の分離構成を採用します。
+### 4.2 Hybrid Search Strategy
 
-- **Normalized Metadata:** `articles` テーブルで親エンティティを正規化して管理し、検索性と整合性を担保。
-- **MDX Body:** 記事本文はパース前の **Raw MDX** としてObject Storageに保存。
-  - **Why MDX?**
-    - **Human Readable:** JSON構造に変換せずそのまま保存することで、デバッグや簡易レビューが容易。
-    - **Standard Tooling:** `next-mdx-remote` 等の標準エコシステムを変換なしで利用可能。
-    - **Agent Friendly:** LLMはMarkdownの読み書きに長けており、JSON構造の制約を受けるよりも自由にかつ高精度に編集可能。
+| Type | Engine | Target | Description |
+| :--- | :--- | :--- | :--- |
+| **Fast Search** | **Pagefind** | Top 1,000 (SSG) | 通信不要のクライアントサイド検索。「Find-as-you-type」体験。 |
+| **Deep Search** | **Supabase** | All Articles | `pg_trgm` (キーワード) + `pgvector` (意味検索) による全件検索。 |
 
-### 4.1 Storage Key Strategy (UUID vs Slug)
-Object Storage上のファイル名は、Slugではなく **UUID (Record ID) を使用します。**
+### 4.3 Asset Delivery
+- **Score (ABC/MusicXML):** 保存時にサーバーサイドで **SVG** に変換し、R2に配置（非同期バックグラウンド処理）。
+- **Hydration:** 通常は `<img>` で表示し、再生時のみインタラクティブなプレイヤーコンポーネントにハイドレーションする。
 
-- **Format:** `article/{uuid}.mdx` (e.g. `article/550e8400-e29b-41d4-a716-446655440000.mdx`)
-- **Capacity Tip:** PostgreSQLの `uuid` 型は、内部的には **16 byte (固定長)** のバイナリデータとして保存されます。36文字の文字列として保存されるわけではないため、非常に省スペースです。
-- **URL Shortening:** URLの桁数を短くしたい場合は、アプリ層でBase62エンコード等を行うことで、22文字程度に短縮可能です（例: `7vY7...`）。
-- **Reason:**
-  - **Slug is Mutable:** URL変更によりSlugが変わった場合、Storage上のファイル移動（Copy+Delete）が発生し、整合性担保が困難になるため。
-  - **UUID is Immutable:** 記事の親が移動したりタイトルが変わったりしても、コンテンツ実体へのリンクは不変に保たれる。
+## 5. 多言語対応 (Internationalization)
+**Normalized Translation Pattern** を採用。
 
-## 5. Performance Strategy
+- `articles` (Universal): 言語共通のID、Slug管理。
+- `article_translations` (Localized): 言語ごとのタイトル、本文(MDX path)、ステータス。
+- **Slug:** 管理コスト低減のため **Universal Slug** (`/[lang]/works/[id]`) を採用。言語別Slugは実装しない。
 
-### 5.1 ISR (Incremental Static Regeneration)
-DBアクセスの負荷を最小化するため、Next.jsのISRを徹底活用します。
-
-- **Tiered Build (段階的ビルド):**
-  - **SSG (Pre-build):** アクセス頻度の高い **Top 1,000記事** のみをビルド時に生成。Vercelのビルド時間制限(6,000分/月)やタイムアウトを回避します。
-  - **ISR (On-demand):** 残りのロングテール記事（最大7万件）は、初回アクセス時に動的生成・キャッシュ。
-- **Read (Cache Hit):** ユーザーアクセス時は **CDN (Vercel / Cloudflare 等)** から静的HTMLを配信。DBアクセス・Storageアクセスは **ゼロ** です。
-- **Read (Cache Miss / Revalidation):**
-  1. **Next.js**: `slug` をキーにページ生成を開始。
-  2. **DB (Lookup)**: `articles` テーブルを検索し、`slug` -> `uuid` を取得（`storage_synced_at` が有効なもののみ）。
-  3. **Storage (Fetch)**: `article/{uuid}.mdx` をR2から取得。
-  4. **Render**: MDXをHTMLに変換し、ユーザーに返却。
-  5. **Cache**: 生成されたHTMLを **CDN** にキャッシュ。
-- **Revalidate:** DB更新時、対象記事のパスのみを On-demand Revalidation で再構築。
-
-### 5.2 Search Optimization
-JSONBへの検索クエリ負荷を避けるため、検索用カラムを分離します。
-- **Storage:** 記事本文は `text/mdx` (Storage)。
-- **Index:** 保存時、検索対象テキストを抽出して `tsvector`カラム (Full Text Search) および `vector` カラム (Semantic Search) に保存。
-- **Query:** 検索時はインデックスのみを参照し、高速に応答する。
-
-## 6. 多言語対応戦略 (Internationalization Strategy)
-
-「世界最高峰のデータベース設計」として、**Normalized Translation Pattern (正規化された翻訳パターン)** を採用します。
-「普遍的な事実（Universal Facts）」と「言語固有の表現（Localized Content）」をテーブルレベルで物理的に分離し、保守性と拡張性を最大化します。
-
-### 6.1 アーキテクチャ原則
-- **Separation of Concerns:** 
-  - `articles` (Universal): スラッグ、公開設定、共通メタデータなど、言語に依存しない事実は1箇所で管理。
-  - `article_translations` (Localized): タイトル、解説、要約など、言語ごとに変化する情報は翻訳テーブルで管理。
-- **Scalability:** 言語数が増えてもカラム追加（`title_ja`, `title_en`...）は不要。レコード追加のみで対応可能。
-
-### 6.2 Translation Table Pattern
-すべての記事データに対して、対となる `_translations` テーブルを定義します。
-
-- **Master Entity:** `id`, `slug` (Canonical), `universal_attributes`...
-- **Translation Entity:** `article_id` (FK), `lang` (ISO code), `localized_attributes`...
-
-これにより、「翻訳抜けの検知」や「AIへの特定言語のみの生成指示」がクエリレベルで極めて容易になります。
-
-### 6.3 Slug Strategy (Universal vs Localized)
-本プロジェクトでは管理コストとリンクの不変性を優先し、**Universal Slug (言語共通)** を採用します。
-
-- **Structure:** `/[lang]/works/[composer_slug]/[slug]`
-- **Decision:** 
-  - `slug` は `articles` テーブル（Universal）で一元管理します。
-  - 言語ごとにSlugを変える（例: `/ja/daiku` vs `/en/symphony-9`）ことも技術的には可能ですが、同一コンテンツの言語切り替え（Language Switcher）の実装が複雑になり、リンク切れリスクが高まるため、現時点では採用しません。
-  - 必要に応じて、`article_translations` に `alias_slug` カラムを追加することで、将来的にSEOを強化する拡張性を残します。
-
-## 7. 検索仕様 (Tiered Hybrid Search Strategy)
-
-「本文がDBにない」かつ「DB容量制限(500MB)」という条件下で、最高峰の検索体験を実現するための戦略。
-
-### 7.1 Tier 1: Client-Side Full-Text Search (Top 1,000 Articles)
-重要な人気記事に対しては、通信遅延ゼロの「爆速」検索を提供します。
-
-- **Technology:** **Pagefind**
-- **Mechanism:** ビルドされた静的HTML (SSG) からインデックスを生成し、ブラウザ上で検索を実行。
-- **Scope:** プリビルドされる Top 1,000 記事の**全文**。
-- **UX:** キーワード入力と同時に結果が表示される "Find-as-you-type" 体験。
-- **Scalability Note:** インデックスサイズが肥大化する場合は、Pagefindの `sub-results` 機能（分断インデックス）やカテゴリー単位の分割を実装します。
-
-### 7.2 Tier 2: Server-Side Semantic Search (Long-tail Articles)
-ロングテール記事（全70,000件）に対しては、DBのメタデータと要約を用いた「概念検索」を提供します。
-
-- **Technology:** **Supabase Database (PostgreSQL)**
-- **Mechanism:**
-  - **Keyword:** `pg_trgm` (Trigram) によるタイトル・作曲家名のあいまい検索。
-  - **Semantic:** `pgvector` (**halfvec/16-bit**) による要約文の意味検索。
-- **Scope:** 全記事のメタデータ、タグ、および **AI要約 (Summary)**。
-- **UX:** 「悲しい雰囲気の曲」「バッハのバイオリン」といった自然言語クエリに対応。
-
-### 7.3 Search UI Integration
-ユーザーには裏側の仕組み（Pagefind vs DB）を意識させない統合UIを提供します。
-
-1.  入力中は **Pagefind** が即座に候補を表示（Tier 1）。
-2.  Enterキー押下、または「もっと見る」で **DB検索API** をコールし、全件から検索（Tier 2）。
-3.  結果を統合して表示。
-
-## 9. テーブル設計概要
-詳細は `docs/05_design/data-schema.md` を参照してください。
-- `articles`: 記事管理マスタ (Universal)
-- `article_translations`: 記事翻訳・コンテンツ (Localized)
-- `composers` / `works`: メタデータマスタ
-  - **Concept: Knowledge Graph vs. Categories**
-    - **Categories (タグ):** 単なる「分類」です。「この記事はバッハについて」というラベルに過ぎません。
-    - **Masters (音楽図鑑):** 作曲家の生没年、国籍、作品番号(BWV等)といった「普遍的な知識」を保持する**音楽百科事典**としての役割を担います。
-    - **Why separate?**
-      - **Rich Profiles:** 「楽曲分析記事」が1つもなくても、作曲家のプロフィールや作品リストをページとして公開し、SEOの入り口を広げることができます。
-      - **Relational Integrity:** 「18世紀の作曲家の作品（記事）だけを抽出」といったメタデータに基づく高度な絞り込みは、マスタが正規化されているからこそ可能です。
-  - **Strategy: Read-Optimized Denormalization**
-    - **Source of Truth:** 管理・編集・検索（フィルタリング）用としてRDBMSに正規化して保持。
-    - **No-JOIN Rendering:** 記事テーブルに `metadata` (JSONB) を持ち、検索キー以外の属性（作曲家名、曲名、詳細メタデータ等）を冗長に保持することで、閲覧時のJOINを **ゼロ** にします。
-    - **AI Manifest:** エージェントが参照しやすいよう、マスタデータの全容（ID, 正式名称, 表記ゆれリスト）を1つのJSONとして出力する「Knowledge Manifest (Glossary)」を提供します。
-  - **AI Workflow: Glossary-Driven Production**
-    - **Drafting:** AIエージェントは執筆開始前にこの「Knowledge Manifest (File)」を読み込み、記事内の固有名詞をマスタと完全一致させます。
-    - **Validation:** 記事保存時、プログラム側で本文内の単語をマスタと照合し、不一致があれば警告/修正を促す仕組みを構築します。これにより、DB（管理用）とMDX（自由記述）の整合性を高精度に維持します。
-
-## 8. Asset Delivery Strategy (Score SSG & R2)
-
-「描画パフォーマンス」と「UX」を最大化するため、楽譜および画像アセットはサーバーサイドで事前に静的生成し、最適化された状態で配信します。
-
-### 8.1 Server-Side Score Rendering (ABC & MusicXML)
-Client-Side Rendering (`abcjs` on browser) の負荷とレイアウトシフト(CLS)を回避します。
-また、**ABC記法**（AI生成用）だけでなく、**MusicXML形式**（既存リポジトリ抜粋用）もサポートし、世界最高品質の譜例を提供します。
-
-- **Generation (Background Task):** 
-  - Admin UIでの保存時、非同期ジョブとしてエンジン（abcjs/Verovio）を実行し、SVGを生成。
-  - レンダリング時のリアルタイム生成を避け、サーバー負荷とレスポンス遅延を防止します。
-- **Interactive Hydration:** 通常表示は軽量な `<img>` タグ。再生時のみ座標データ(JSON)をロードし、ハイライト表示等のインタラクションを実現する「Progressive Hydration」を採用。
-
-### 8.2 Cloudflare R2 Integration
-- **Storage:** 生成されたSVGおよびアップロードされた画像は **Cloudflare R2** に保存。
-- **Delivery:** Vercel または Cloudflare CDN を通じてキャッシュ・配信。
-### 8.3 Asset Reference Strategy
-Supabase上の記事データとR2上のアセットは、**Asset ID (UUID)** によって疎結合にリンクさせます。
-MDX（JSONB構造）の中に直接URLを書き込むのではなく、ID指定を行うことで、ドメイン変更やストレージ移行に強い設計とします。
-
-- **Score Reference:**
-  - JSONB Data: `{ "type": "score", "score_id": "uuid-1234", ... }`
-  - Resolved URL: `https://assets.preludio.io/scores/{uuid-1234}.svg`
-- **Image Reference:**
-  - JSONB Data: `{ "type": "image", "image_id": "uuid-5678", ... }`
-  - Resolved URL: `https://assets.preludio.io/images/{uuid-5678}.webp`
-
-これにより、フロントエンドコンポーネント `<Score id="uuid" />` は、ビルド時または実行時にIDから正しいR2 URLを解決して表示します。
-
-#### ID vs Title Strategy
-- **ID (UUID):** システム内部の参照用。不変 (Immutable) であるため、ファイル名の変更やタイトルの修正を行ってもリンク切れが発生しません。
-- **Title (Metadata):** 管理画面での表示および検索用（`music_scores` テーブルの `title` カラム）。人間にとっての意味（例: "Main Theme", "第1主題"）はここで管理します。
+詳細は `data-schema.md` を参照。
