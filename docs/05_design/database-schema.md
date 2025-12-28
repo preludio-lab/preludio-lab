@@ -77,6 +77,7 @@ erDiagram
 | **`display_title`** | `text` | - | NO | **[Denormalized]** 一覧表示用タイトル |
 | **`sl_composer_name`** | `text` | - | YES | **[Denormalized]** 作曲家名 (Search Key) |
 | **`sl_catalogue_id`** | `text` | - | YES | **[Denormalized]** 作品番号 (Search Key) |
+| **`sl_nicknames`** | `text[]` | - | YES | **[Denormalized]** 通称リスト (JSONB/Array) for SEO |
 | **`sl_genre`** | `text` | - | YES | **[Denormalized]** ジャンル/カテゴリ |
 | **`sl_instrumentation`**| `text`| - | YES | **[Denormalized]** 楽器編成 |
 | **`sl_era`** | `text` | - | YES | **[Denormalized]** 時代区分 |
@@ -158,7 +159,7 @@ type ArticleMetadata = {
 
 ### 5.2 `works` / `work_translations`
 *   `works`: `id`, `composer_id`, `catalogue_id` (Unified), `key_tonality`
-*   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`
+*   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`, **`nicknames` (text[])**
 
 ---
 

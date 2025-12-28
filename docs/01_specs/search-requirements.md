@@ -7,29 +7,37 @@
 
 ビジネス要件（10,000記事、SEO、回遊率）に基づき、以下の優先順位で最適化を行います。
 
-### Priority: High (SEO / 新規流入 / 玄関口)
-Google等の検索エンジンからの流入や、明確な目的を持った検索に対応する必要不可欠な機能。
+## 1. Search Needs Clusters (検索ニーズの優先順位)
 
-| Need | Use Case | Query Example |
-| :--- | :--- | :--- |
-| **基本属性** | 曲名、作曲家名、作品番号での直接検索 | "ベートーヴェン 運命", "BWV 846" |
-| **ジャンル・楽器** | 交響曲、ピアノ、オペラなど大枠での探索 | "ピアノソナタ", "交響曲 名曲" |
-| **Curation** | 初心者向け、おすすめ、定番リスト | "クラシック 初心者 おすすめ" |
+ビジネス要件（10,000記事運用、SEO集客、サイト回遊）に基づき、以下の4クラスターに優先順位を設定します。
 
-### Priority: Medium (UX / 没入感 / 回遊)
-サイト内での回遊時間を延ばし、ユーザーの「感性」に訴求する機能。AIによるタグ付けを活用。
+### 1位：超有名曲・通称 (Famous Works & Nicknames)
+**[SEO / 最優先]**
+*   **Target:** `nicknames` (JSONB)
+*   **Use Case:** 「運命」「月の光」などのビッグワード、および「運命 聴きどころ」「月の光 難易度」などのロングテール。
+*   **Why:** 検索ボリュームが最大。最も明確な動機。
+*   **DB Strategy:** `work_translations` および `article_translations` に `nicknames` (JSONB/Array) を保持し、検索ヒット率を高める。
 
-| Need | Use Case | Query Example |
-| :--- | :--- | :--- |
-| **Mood/Situation** | 気分やシチュエーションでの探索 | "泣けるクラシック", "朝に聴きたい曲" |
-| **Era/Region** | 時代や地域に基づく文脈的な探索 | "バロック音楽", "ロシアの作曲家" |
+### 2位：作曲家名 (Composers)
+**[Trust / 回遊]**
+*   **Target:** `composers` (Normalized)
+*   **Use Case:** 特定の作曲家を掘り下げる。「バッハ」「ショパン」。
+*   **Why:** 滞在時間が長く、サイトの専門性(E-E-A-T)を高める「ハブ」となる。共通言語としての固有名詞。
+*   **DB Strategy:** `composers` テーブルの正規化と、記事からの効率的なリンク。
 
-### Priority: Low (Expert / 詳細 / 研究)
-専門的なニーズ。一部の熟練者向けであり、初期フェーズでは優先度を下げる。
+### 3位：シチュエーション・効能 (Situation & Mood)
+**[Differentiation / Affiliate]**
+*   **Target:** `tags` (Taxonomy)
+*   **Use Case:** 「泣ける」「集中できる」「朝に聴きたい」。
+*   **Why:** 競合(IMSLP等)が手薄な領域。アフィリエイト（Amazon Music等）への導線として親和性が高い。
+*   **DB Strategy:** AI自動生成によるタグ付け (`metadata -> tags`)。
 
-| Need | Use Case | Query Example |
-| :--- | :--- | :--- |
-| **Score/Theory** | 譜例の有無、楽曲構造、調性 | "ハ短調", "ソナタ形式", "楽譜あり" |
+### 4位：楽器・編成 × 楽曲形式 (Instrument & Context)
+**[Filtering / 補助]**
+*   **Target:** `instrumentation`, `genre`
+*   **Use Case:** 「ピアノ曲の中で泣ける曲」。
+*   **Why:** 単体検索よりは、絞り込み（ドリルダウン）機能として重要。
+*   **DB Strategy:** フィルタリング用カラム (`sl_instrumentation`) の用意。
 
 ---
 
@@ -39,13 +47,34 @@ Google等の検索エンジンからの流入や、明確な目的を持った�
 
 ### Zero-JOIN Strategy
 検索頻度の高い属性（High/Mediumの一部）は、正規化されたマスタテーブルから参照するのではなく、**検索対象となる `Articles` テーブル自体に直接カラムとして持ちます（非正規化）。**
-これにより、一覧表示や検索時の TABLE JOIN を回避し、単一テーブルへの単純かつ高速なクエリを実現します。
 
-| Priority | Need | Key | DB Implementation Strategy |
+| Cluster (Priority) | Need | Key | DB Implementation Strategy |
 | :--- | :--- | :--- | :--- |
-| **High** | **基本属性** | Title, Composer, Catalogue | **Denormalized Columns (Article Translations)**<br>`article_translations.display_title`<br>`article_translations.composer_name`<br>`article_translations.catalogue_id`<br>※ インデックス効率を最大化 |
-| **High** | **ジャンル・楽器** | Genre, Instrument | **Denormalized Columns**<br>`article_translations.genre` (Enum/Text)<br>`article_translations.instrumentation` |
-| **High** | **Curation** | Featured, Popular | **Article Column**<br>`articles.is_featured` (Boolean) |
-| **Med** | **Mood/Situation** | Tags (Mood) | **JSONB Index (GIN)**<br>`article_translations.metadata -> 'tags'`<br>※ 柔軟性を重視しJSONB配列で管理 |
-| **Med** | **Era/Region** | Era, Nationality | **Denormalized Columns (Derived)**<br>`article_translations.era` (e.g. 'Baroque')<br>`article_translations.nationality`<br>※ フィルタリング用としてカラム化 |
-| **Low** | **Score/Theory** | Structure, Key | **JSONB (No Index required initially)**<br>`article_translations.content_structure`<br>`article_translations.metadata -> 'key'` |
+| **1 (Top)** | **Works / Nicknames** | Title, Nicknames | **`article_translations.display_title`**<br>**`article_translations.nicknames` (JSONB/Array)** |
+| **1 (Top)** | **Composer** | Name | **`article_translations.composer_name`** |
+| **2 (High)** | **Attributes** | Catalogue, Key | `article_translations.catalogue_id` |
+| **3 (Mid)** | **Mood / Situation** | Tags | **`article_translations.metadata -> tags` (GIN Index)** |
+| **4 (Low)** | **Instrument** | Instrumentation | `article_translations.instrumentation` |
+
+---
+
+## 3. Data Design Roadmap (メタデータ構築ロードマップ)
+
+1万記事の運用効率を最大化するため、以下のフェーズでデータを構築します。
+
+### Phase 1: Foundation (土台構築)
+**Focus:** Priority 1 & 2 (SEO & Trust)
+マスタデータの整備と、正規化されたテーブル構造の確立。
+*   `Composers`: 氏名、生没年、国籍
+*   `Works`: 正式名称、**通称 (Nicknames)**、作品番号
+
+### Phase 2: Context (文脈付与)
+**Focus:** Priority 3 (Differentiation)
+AIエージェントを活用したメタデータの拡充。
+*   `Tags`: ムード（泣ける）、シーン（作業用）、専門用語のタグ付け。
+*   Geminiによる自動生成とDBへの流し込み。
+
+### Phase 3: Advanced Filtering (高度化)
+**Focus:** Priority 4 (Filtering)
+*   `Instrumentation`: 楽器構成の詳細化（ソロ、デュオ、カルテット等）。
+
