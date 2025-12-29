@@ -38,6 +38,7 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
+    Scores }o..|| MediaResources : "suggests"
     Works ||--o{ MediaResources : "has recordings"
 
     %% Taxonomy
@@ -154,6 +155,8 @@ type ArticleMetadata = {
 | `work_id` | `uuid` | FK to `works.id` |
 | `format` | `text` | 'abc', 'musicxml' |
 | `data` | `text` | 楽譜データ実体 (Text format) |
+| `data` | `text` | 楽譜データ実体 (Text format) |
+| `recommended_media_id` | `uuid` | FK to `media_resources.id`. この楽譜に対応する推奨音源（あれば）。MDXで `<Score>` を置くだけで音源も自動設定する場合に使用。 |
 | `created_at` | `timestamptz` | |
 
 ### 4.2 `score_translations` (Localized Metadata)
