@@ -67,6 +67,18 @@ AIエージェントを活用したメタデータの拡充。
 **Focus:** Priority 4 (Filtering)
 *   `Instrumentation`: 楽器構成の詳細化（ソロ、デュオ、カルテット等）。
 
+### Phase 4: Emotional Discovery (感性検索)
+**Focus:** Priority 3 (Situation/Mood) - Deep Dive
+定量的および意味的なアプローチでごく私的な「感性」による検索を実現します。
+
+1.  **Quantitative Mood (定量ムード):** 5つの感情軸 (-1.0 ~ +1.0) による精緻なフィルタリング。
+    *   **Brightness** (明るさ): Dark (-1) <-> Bright (+1)
+    *   **Vibrancy** (躍動感): Calm (-1) <-> Energetic (+1)
+    *   **Scale** (スケール): Intimate (-1) <-> Grand (+1)
+    *   **Depth** (聴きごたえ): Light (-1) <-> Deep (+1)
+    *   **Drama** (ドラマ性): Pure (-1) <-> Cinematic (+1)
+2.  **Semantic Search (ベクトル検索):** 「朝、コーヒーを飲みながら」のような文脈検索を `pgvector` で実現。
+
 ---
 
 ## 4. Reference: Global Search Trends (グローバル検索調査)

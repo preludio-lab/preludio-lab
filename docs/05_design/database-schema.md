@@ -50,6 +50,13 @@ erDiagram
 
 記事管理の中核テーブル。検索要件に基づき、多くの属性を非正規化して持ちます。
 
+### 3.0 Extensions
+ベクトル検索を有効化するため、`vector` 拡張機能を有効化します。
+
+```sql
+create extension if not exists vector;
+```
+
 ### 3.1 `articles` (Universal)
 言語に依存しない、記事の存在そのものを管理する親テーブル。
 
@@ -80,6 +87,8 @@ erDiagram
 | **`sl_instrumentation`**| `text`| - | YES | **[Denormalized]** 楽器編成 |
 | **`sl_era`** | `text` | - | YES | **[Denormalized]** 時代区分 |
 | **`sl_nationality`** | `text` | - | YES | **[Denormalized]** 地域/国籍 |
+| **`sl_mood_dimensions`**| `jsonb`| - | YES | **[Hybrid Search]** 5軸の感情定量値 (-1.0 ~ +1.0) |
+| **`embedding`** | `vector(1536)` | - | YES | **[Hybrid Search]** OpenAI/Gemini Embedding Vector |
 | `published_at` | `timestamptz` | - | YES | 公開日時 |
 | `storage_path` | `text` | - | YES | ストレージ上のMDXパス (`article/{uuid}.mdx`) |
 | `metadata` | `jsonb` | `{}` | NO | その他メタデータ (Tags, Key, Difficulty) |
@@ -106,6 +115,19 @@ type Section =
   | { id: string; type: 'text'; heading: string; level: 2 | 3 } // 目次用
   | { id: string; type: 'score'; work_id: string; caption?: string } // 譜例プレビュー用
   | { id: string; type: 'youtube'; videoId: string; start: number } // 動画プレビュー用
+```
+
+#### `sl_mood_dimensions` (Quantitative Mood)
+AIによってスコアリングされた5つの感情軸。内部的には `-1.0 ~ +1.0` のFloatで保持します。
+
+```typescript
+type MoodDimensions = {
+  brightness: number;  // Dark (-1) <-> Bright (+1)
+  vibrancy: number;    // Calm (-1) <-> Energetic (+1)
+  scale: number;       // Intimate (-1) <-> Grand (+1)
+  depth: number;       // Light (-1) <-> Deep (+1)
+  drama: number;       // Pure (-1) <-> Cinematic (+1)
+};
 ```
 
 #### `metadata` (Search Attributes)
