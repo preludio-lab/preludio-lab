@@ -107,10 +107,10 @@ create extension if not exists vector;
 *   `article_translations(lang, sl_genre)`: ジャンル検索
 *   `article_translations` GIN (`metadata`): タグ検索 (`metadata -> 'tags'`)
 
-### 3.3 JSONB Type Definitions (Application Layer)
-DB上の `jsonb` カラムに格納されるデータ構造のTypeScript定義（厳密なスキーマ）。
+#### JSONB Type Definitions
+これらのカラムに格納される TypeScript 型定義。
 
-#### `content_structure` (Visual Outline)
+##### `content_structure` (Visual Outline)
 記事の目次やプレビュー表示に使用される軽量な構造データ。
 ```typescript
 type ContentStructure = Section[];
@@ -121,9 +121,8 @@ type Section =
   | { id: string; type: 'youtube'; videoId: string; start: number } // 動画プレビュー用
 ```
 
-#### `sl_mood_dimensions` (Quantitative Mood)
-AIによってスコアリングされた5つの感情軸。内部的には `-1.0 ~ +1.0` のFloatで保持します。
-
+##### `sl_mood_dimensions` (Quantitative Mood)
+AIによってスコアリングされた5つの感情軸。
 ```typescript
 type MoodDimensions = {
   brightness: number;  // Dark (-1) <-> Bright (+1)
@@ -134,8 +133,7 @@ type MoodDimensions = {
 };
 ```
 
-#### `metadata` (Search Attributes)
-検索やフィルタリングに使用される補完的な属性群。
+##### `metadata` (Search Attributes)
 ```typescript
 type ArticleMetadata = {
   tags: string[];         // e.g. ["Sad", "Morning", "Baroque"]
@@ -162,9 +160,9 @@ type ArticleMetadata = {
 | `created_at` | `timestamptz` | `now()` | NO | - |
 | `updated_at` | `timestamptz` | `now()` | NO | - |
 
-### 4.2 JSONB Type Definitions (Asset Layer)
+#### JSONB Type Definitions
 
-#### `playback_samples` (Playback Binding)
+##### `playback_samples` (Playback Binding)
 1つの楽譜切片に対応する1つ以上の録音ソースと再生位置の定義。
 
 ```typescript
@@ -180,7 +178,7 @@ type PlaybackSample = {
 type PlaybackSamples = PlaybackSample[];
 ```
 
-### 4.3 `score_translations` (Localized Metadata)
+### 4.2 `score_translations` (Localized Metadata)
 楽譜のキャプションや説明文。
 | Column | Type | Default | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
