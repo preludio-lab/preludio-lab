@@ -157,12 +157,29 @@ type ArticleMetadata = {
 | `work_id` | `uuid` | - | NO | FK to `works.id` |
 | `format` | `text` | - | NO | 'abc', 'musicxml' |
 | `data` | `text` | - | NO | 楽譜データ実体 (Text format) |
-| `recommended_recording_id` | `uuid` | - | YES | FK to `recordings.id`. 推奨音源リンク |
-| `start_time` | `float` | - | YES | 再生開始時間（秒） |
-| `end_time` | `float` | - | YES | 再生終了時間（秒） |
+| **`playback_samples`**| `jsonb`| `[]` | NO | **[Playback Bindings]** 録音との紐付けと再生区間情報の配列 |
 | `created_at` | `timestamptz` | `now()` | NO | - |
+| `updated_at` | `timestamptz` | `now()` | NO | - |
 
-### 4.2 `score_translations` (Localized Metadata)
+### 4.2 JSONB Type Definitions (Asset Layer)
+
+#### `playback_samples` (Playback Binding)
+1つの楽譜切片に対応する1つ以上の録音ソースと再生位置の定義。
+
+```typescript
+type PlaybackSample = {
+  recording_id: string;  // FK to recordings.id
+  start_time: number;    // 再生開始時間（秒）
+  end_time: number;      // 再生終了時間（秒）
+  is_default: boolean;   // デフォルト再生用フラグ
+  label?: string;        // UI表示用 (e.g. "Gould (1981)")
+  offset_ms?: number;    // ソースごとの微調整用
+};
+
+type PlaybackSamples = PlaybackSample[];
+```
+
+### 4.3 `score_translations` (Localized Metadata)
 楽譜のキャプションや説明文。
 | Column | Type | Default | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
