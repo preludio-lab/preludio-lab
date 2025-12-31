@@ -141,6 +141,23 @@ type MoodDimensions = {
 };
 ```
 
+#### Indexes (Articles)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_articles_work_id` | `(work_id)` | B-Tree | FK Lookup |
+| `idx_articles_slug` | `(slug)` | B-Tree | Routing (Unique) |
+| `idx_articles_featured` | `(is_featured, created_at)` | B-Tree | Top Page Fetch |
+
+#### Indexes (Article Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_art_trans_article_lookup` | `(article_id, lang)` | B-Tree | Basic Fetch (Unique) |
+| `idx_art_trans_status_pub` | `(lang, status, published_at)` | B-Tree | Public / Latest List |
+| `idx_art_trans_search_genre` | `(lang, sl_genre)` | B-Tree | Filter by Genre |
+| `idx_art_trans_search_comp` | `(lang, sl_composer_name)` | B-Tree | Filter by Composer |
+| `idx_art_trans_meta_tags` | `(metadata)` | GIN | Tag Search (`metadata->'tags'`) |
+| `idx_art_trans_embedding` | `(embedding)` | HNSW | `halfvec_l2_ops` (Semantic Search) |
+
 ##### `metadata` (Search Attributes)
 ```typescript
 type ArticleMetadata = {
@@ -168,6 +185,12 @@ type ArticleMetadata = {
 | `created_at` | `timestamptz` | `now()` | NO | - |
 | `updated_at` | `timestamptz` | `now()` | NO | - |
 
+#### Indexes (Scores)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_scores_work_id` | `(work_id)` | B-Tree | FK Lookup |
+| `idx_scores_playback` | `(playback_samples)` | GIN | Reverse lookup (Source -> Score) |
+
 #### JSONB Type Definitions
 
 ##### `playback_samples` (Playback Binding)
@@ -175,7 +198,7 @@ type ArticleMetadata = {
 
 ```typescript
 type PlaybackSample = {
-  recording_id: string;  // FK to recordings.id
+  source_id: string;     // FK to recording_sources.id (Not recordings.id) - Source固有の時間軸のため
   start_time: number;    // 再生開始時間（秒）
   end_time: number;      // 再生終了時間（秒）
   is_default: boolean;   // デフォルト再生用フラグ
@@ -196,6 +219,11 @@ type PlaybackSamples = PlaybackSample[];
 | `caption` | `text` | - | NO | 譜例のタイトル (e.g. "第1主題") |
 | `description` | `text` | - | YES | 補足説明 |
 
+#### Indexes (Score Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_score_trans_lookup` | `(score_id, lang)` | B-Tree | Basic Fetch (Unique) |
+
 ### 4.3 `recordings` (Audio/Video Entity)
 「誰の、いつの演奏か」を管理する実体。
 
@@ -208,6 +236,12 @@ type PlaybackSamples = PlaybackSample[];
 | `is_recommended` | `boolean` | `false` | NO | おすすめフラグ |
 | `created_at` | `timestamptz` | `now()` | NO | - |
 
+#### Indexes (Recordings)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_recordings_work_id` | `(work_id)` | B-Tree | FK Lookup |
+| `idx_recordings_rec` | `(work_id, is_recommended)` | B-Tree | Recommended Filter |
+
 ### 4.4 `recording_sources` (Media Providers)
 1つの録音（Recording）に紐づく、具体的な再生手段。
 
@@ -219,6 +253,12 @@ type PlaybackSamples = PlaybackSample[];
 | `source_id` | `text` | - | NO | 外部ID/URI (e.g. Video ID) |
 | `quality` | `text` | - | YES | `'high'`, `'medium'` |
 | `created_at` | `timestamptz` | `now()` | NO | - |
+
+#### Indexes (Recording Sources)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_rec_src_rec_id` | `(recording_id)` | B-Tree | FK Lookup / Fetch Variations |
+| `idx_rec_src_unique` | `(provider, source_id)` | B-Tree | External ID Unique Check |
 
 ---
 
@@ -237,6 +277,11 @@ type PlaybackSamples = PlaybackSample[];
 | `died_at` | `date` | - | YES | 没年月日 |
 | `nationality_code` | `text` | - | YES | ISO Country Code |
 
+#### Indexes (Composers)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_composers_slug` | `(slug)` | B-Tree | URL Routing (Unique) |
+
 **`composer_translations`**
 | Column | Type | Default | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
@@ -245,6 +290,12 @@ type PlaybackSamples = PlaybackSample[];
 | `lang` | `text` | - | NO | `en`, `ja` |
 | `name` | `text` | - | NO | Localized Name (e.g. "バッハ") |
 | `bio` | `text` | - | YES | 人物伝記。作曲家の生涯、作風、歴史的意義などを記述。作曲家詳細ページのメインコンテンツ。 |
+
+#### Indexes (Composer Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_comp_trans_lookup` | `(composer_id, lang)` | B-Tree | Basic Fetch (Unique) |
+| `idx_comp_trans_name` | `(lang, name)` | GIN | `gin_trgm_ops` (Fuzzy Search) |
 
 ### 5.2 `works` / `work_translations`
 **`works`**
@@ -257,6 +308,13 @@ type PlaybackSamples = PlaybackSample[];
 | `catalogue_number` | `text` | - | YES | `67`, `1001` 等のカタログ番号 |
 | `key_tonality` | `text` | - | YES | `C Major`, `D Minor` |
 
+#### Indexes (Works)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_works_composer_id` | `(composer_id)` | B-Tree | FK Lookup / Filter |
+| `idx_works_slug` | `(composer_id, slug)` | B-Tree | URL Routing (Unique per Composer) |
+| `idx_works_catalogue` | `(composer_id, catalogue_number)` | B-Tree | Sort by Opus Number |
+
 **`work_translations`**
 | Column | Type | Default | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
@@ -266,6 +324,13 @@ type PlaybackSamples = PlaybackSample[];
 | `title` | `text` | - | NO | 正式名称 (e.g. "Symphony No. 5") |
 | `popular_title` | `text` | - | YES | **[Primary UI]** 一般的な通称。一覧やタイトルで使用 (e.g. "運命") |
 | `nicknames` | `text[]` | - | YES | **[Search Aliases]** 検索でヒットさせるための別名・揺らぎ (e.g. ["Schicksal", "Fate"]) |
+
+#### Indexes (Work Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_work_trans_lookup` | `(work_id, lang)` | B-Tree | Basic Fetch (Unique) |
+| `idx_work_trans_title` | `(lang, title)` | GIN | `gin_trgm_ops` (Fuzzy Search) |
+| `idx_work_trans_pops` | `(lang, popular_title)` | GIN | `gin_trgm_ops` (Fuzzy Search) |
 
 ### 5.3 `tags` (Normalized Taxonomy)
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
@@ -278,6 +343,11 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `category` | `text` | - | NO | `mood`, `situation`, `terminology` |
 | `slug` | `text` | - | NO | `deep-focus`, `sonata-form` |
 
+#### Indexes (Tags)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_tags_slug` | `(category, slug)` | B-Tree | Filter / Routing (Unique) |
+
 **`tag_translations`**
 | Column | Type | Default | Nullable | Description |
 | :--- | :--- | :--- | :--- | :--- |
@@ -285,6 +355,11 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `tag_id` | `uuid` | - | NO | FK |
 | `lang` | `text` | - | NO | `en`, `ja` |
 | `name` | `text` | - | NO | Display Name (e.g. "深い集中") |
+
+#### Indexes (Tag Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_tag_trans_lookup` | `(tag_id, lang)` | B-Tree | Basic Fetch (Unique) |
 
 ### 5.4 `media_assets` (Generic Assets)
 サイト内で使用する汎用的な静的ファイル（画像、PDF等）。

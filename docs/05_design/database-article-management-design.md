@@ -61,6 +61,11 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 | **Tier 1 (Top)** | Top 1,000 | SSG | R2 (Public) | CDN (Edge) / Public |
 | **Tier 2 (Long)** | 70k+ Articles | ISR | R2 (Public) | CDN (Edge) / Public |
 | **Tier 3 (Protected)** | Paid Content | **SSR** | **R2 (Private)** | **Next.js Server (Gatekeeper) / Auth Req.** |
+### 4.2 Self-Healing Mechanism (Availability)
+データ整合性と可用性を維持するための自動修復プロセス。
+
+*   **Link Rot Switch:** 外部音源（YouTube等）のリンク切れを検知した場合、`is_default` フラグを同一 `Recording` 内の別ソース、または推奨される別の `Recording` へと自動的にフェイルオーバーさせる。
+*   **Default Guarantee:** 1つの `Score`（`playback_samples`）において、常に1つだけ `is_default: true` が存在することをQAエージェントが定期監視し、違反があれば修正する。
 
 ### 4.2 Hybrid Search Strategy
 
