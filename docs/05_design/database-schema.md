@@ -108,6 +108,7 @@ erDiagram
 | **`sl_mood_dimensions`**| `jsonb`| - | YES | **[Hybrid Search]** 5軸の感情定量値 (-1.0 ~ +1.0) |
 | **`embedding`** | `halfvec(768)` | - | YES | **[Hybrid Search]** Embedding Vector (16-bit, 768 dimensions) |
 | `published_at` | `timestamptz` | - | YES | 公開日時 |
+| **`is_featured`** | `boolean` | `false` | NO | **[Snapshot]** おすすめフラグ（高速な一覧取得用） |
 | `mdx_uri` | `text` | - | YES | ストレージ上のMDXパス (`article/{uuid}.mdx`) |
 | `thumbnail_url` | `text` | - | YES | **[Snapshot]** 一覧表示用サムネイル画像URL |
 | `metadata` | `jsonb` | `{}` | NO | その他メタデータ (Tags, Key, Difficulty) |
@@ -120,6 +121,7 @@ erDiagram
 | :--- | :--- | :--- | :--- |
 | `idx_art_trans_article_lookup` | `(article_id, lang)` | B-Tree | 記事IDと言語による基本取得（ユニーク） |
 | `idx_art_trans_status_pub` | `(lang, status, published_at)` | B-Tree | 公開済み・最新記事一覧の取得 |
+| `idx_art_trans_featured` | `(lang, is_featured, published_at)` | B-Tree | おすすめ記事の高速取得・ソート |
 | `idx_art_trans_search_genre` | `(lang, sl_genre)` | B-Tree | ジャンルによる絞り込み検索 |
 | `idx_art_trans_search_comp` | `(lang, sl_composer_name)` | B-Tree | 作曲家による絞り込み検索 |
 | `idx_art_trans_meta_tags` | `(metadata)` | GIN | タグ検索 (`metadata->'tags'`) |
