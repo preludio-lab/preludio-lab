@@ -153,9 +153,9 @@ type ArticleMetadata = {
 
 ---
 
-## 4. Asset Tables: Scores
+## 4. Asset Tables: Scores & Recordings
 
-楽譜ビュワーで使用するデータ。
+楽譜ビュワーおよび再生プレイヤーで使用するデータ。
 
 ### 4.1 `scores` (Universal Asset)
 | Column | Type | Default | Nullable | Description |
@@ -195,6 +195,30 @@ type PlaybackSamples = PlaybackSample[];
 | `lang` | `text` | - | NO | 'ja', 'en'... |
 | `caption` | `text` | - | NO | 譜例のタイトル (e.g. "第1主題") |
 | `description` | `text` | - | YES | 補足説明 |
+
+### 4.3 `recordings` (Audio/Video Entity)
+「誰の、いつの演奏か」を管理する実体。
+
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `work_id` | `uuid` | - | NO | FK to `works.id` |
+| **`performer_name`** | `jsonb` | `{}` | NO | **[i18n]** 演奏家名 `{ "en": "...", "ja": "..." }` |
+| `recording_year` | `int` | - | YES | 録音年 |
+| `is_recommended` | `boolean` | `false` | NO | おすすめフラグ |
+| `created_at` | `timestamptz` | `now()` | NO | - |
+
+### 4.4 `recording_sources` (Media Providers)
+1つの録音（Recording）に紐づく、具体的な再生手段。
+
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `recording_id` | `uuid` | - | NO | FK to `recordings.id` |
+| `provider` | `text` | - | NO | `'youtube'`, `'spotify'` |
+| `source_id` | `text` | - | NO | 外部ID/URI (e.g. Video ID) |
+| `quality` | `text` | - | YES | `'high'`, `'medium'` |
+| `created_at` | `timestamptz` | `now()` | NO | - |
 
 ---
 
@@ -270,29 +294,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `media_type` | `text` | - | NO | `'image'`, `'document'` |
 | `url` | `text` | - | NO | Storage Public URL |
 | `alt_text` | `jsonb` | `{}` | YES | **[i18n]** Localized Alt Text `{ "ja": "...", "en": "..." }` |
-| `metadata` | `jsonb` | `{}` | NO | width, height, file_size |
-
-### 5.5 `recordings` (Domain Entity)
-「誰の、いつの演奏か」という音楽的なメタデータを管理する実体。
-| Column | Type | Default | Nullable | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
-| `work_id` | `uuid` | - | NO | FK to `works.id` |
-| `performer_name` | `text` | - | NO | 演奏者名（表示用）。e.g. "Herbert von Karajan" |
-| `recording_year` | `int` | - | YES | 録音年 |
-| `is_recommended` | `boolean` | `false` | NO | おすすめフラグ |
-
-*Note:* `performers` (jsonb) は `performer_name` と重複するため削除しました。構造化が必要になった場合はテーブル化を検討します。
-
-### 5.6 `recording_sources` (Media Providers)
-1つの録音（Recording）に紐づく、具体的な再生手段。
-| Column | Type | Default | Nullable | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
-| `recording_id` | `uuid` | - | NO | FK to `recordings.id` |
-| `provider` | `text` | - | NO | `'youtube'`, `'spotify'` |
-| `source_id` | `text` | - | NO | External ID / URI (e.g. Video ID) |
-| `quality` | `text` | - | YES | `'high'`, `'medium'` |
+| `metadata` | `jsonb` | `{}` | NO | **[Image Optimization]** 画像サイズ（width, height）やファイルサイズ。Lighthouse対策（Layout Shift防止）やプレースホルダ生成に利用。 |
 
 ---
 
