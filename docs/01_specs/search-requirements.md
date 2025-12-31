@@ -92,7 +92,7 @@ AIエージェントを活用したメタデータの拡充。
     - **Scale** (スケール): Intimate (-1) <-> Grand (+1)
     - **Depth** (聴きごたえ): Light (-1) <-> Deep (+1)
     - **Drama** (ドラマ性): Pure (-1) <-> Cinematic (+1)
-2.  **Semantic Search (ベクトル検索):** 「朝、コーヒーを飲みながら」のような文脈検索を `pgvector` で実現。
+2.  **Semantic Search (ベクトル検索):** 「朝、コーヒーを飲みながら」のような文脈検索を **Turso (libsql-vector)** で実現。
 
 ---
 
