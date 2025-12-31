@@ -38,8 +38,10 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Scores }o..|| MediaResources : "suggests"
-    Works ||--o{ MediaResources : "has recordings"
+    Scores ||--|{ ScoreTranslations : "has localized metadata"
+    Scores }o..|| Recordings : "suggests"
+    Works ||--o{ Recordings : "has recordings"
+    Recordings ||--|{ RecordingSources : "available on"
 
     %% Taxonomy
     Tags ||--|{ TagTranslations : "has localized"
@@ -156,7 +158,7 @@ type ArticleMetadata = {
 | `format` | `text` | 'abc', 'musicxml' |
 | `data` | `text` | 楽譜データ実体 (Text format) |
 | `data` | `text` | 楽譜データ実体 (Text format) |
-| `recommended_media_id` | `uuid` | FK to `media_resources.id`. この楽譜に対応する推奨音源（あれば）。MDXで `<Score>` を置くだけで音源も自動設定する場合に使用。 |
+| `recommended_recording_id` | `uuid` | FK to `recordings.id`. この楽譜に対応する推奨音源（あれば）。MDXで `<Score>` を置くだけで音源も自動設定する場合に使用。 |
 | `created_at` | `timestamptz` | |
 
 ### 4.2 `score_translations` (Localized Metadata)
@@ -198,18 +200,33 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
     *   `slug` (text): 英語ベースの識別子 (e.g. `deep-focus`, `sonata-form`)
 *   `tag_translations`: `id`, `tag_id`, `lang`, `name`
 
-### 5.4 `media_resources` (Audio / Video)
-楽曲に関連する推奨音源・動画リスト。
-演奏家（Performers）は独立したマスタテーブルにはせず、本テーブル内の `jsonb` カラムで管理することで、データ容量の抑制と入力の手間（Maintenance Cost）を最小化します。
-
-*   `media_resources`:
+### 5.4 `media_assets` (Generic Assets)
+サイト内で使用する汎用的な静的ファイル（画像、PDF等）。音楽的な意味を持ちません。
+*   `media_assets`:
     *   `id` (uuid): PK
-    *   `work_id` (uuid): FK. どの作品の演奏か。
-    *   `type` (text): `'youtube'`, `'spotify'`, `'apple_music'`
-    *   `provider_id` (text): YouTube Video ID 等
-    *   `display_title` (text): ユーザー表示用タイトル (e.g. "Gould (1981)")
-    *   `performers` (jsonb): 演奏者名の配列 (e.g. `["Glenn Gould", "Leonard Bernstein"]`). 検索用。
-    *   `is_recommended` (boolean): 代表的な音源かどうか。
+    *   `media_type` (text): `'image'`, `'document'`, `'audio_file'`
+    *   `url` (text): Storage Public URL
+    *   `alt_text` (text): アクセシビリティ用テキスト
+    *   `metadata` (jsonb): width, height, file_size等
+
+### 5.5 `recordings` (Domain Entity)
+「誰の、いつの演奏か」という音楽的なメタデータを管理する実体。
+*   `recordings`:
+    *   `id` (uuid): PK
+    *   `work_id` (uuid): FK. 楽曲へのリンク
+    *   `performer_name` (text): 演奏者名（表示用）
+    *   `performers` (jsonb): 演奏者ごとの構造化データ (e.g. `[{ name: "Karajan", role: "conductor" }]`)
+    *   `recording_year` (int): 録音年
+    *   `is_recommended` (boolean): おすすめフラグ
+
+### 5.6 `recording_sources` (Media Providers)
+1つの録音（Recording）に紐づく、具体的な再生手段。
+*   `recording_sources`:
+    *   `id` (uuid): PK
+    *   `recording_id` (uuid): FK
+    *   `provider` (text): `'youtube'`, `'spotify'`, `'apple_music'`, `'classic_manager'`
+    *   `external_id` (text): Video ID / URI
+    *   `quality` (text): `'high'`, `'medium'`
 
 ---
 
