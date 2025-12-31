@@ -151,9 +151,13 @@ Status: `[/]` 進行中
         - [x] 検索・絞り込みロジックを Custom Hook（`useFilter`）へ抽出し、保守性を向上
 
 - [ ] **5.5 データベース記事管理の構築 (Database Article Management)**
-    - [x] **[環境構築]** データベースプロジェクト設計とセットアップ
+    - [ ] **[環境構築]** データベース・インフラのセットアップ
+        - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
+        - [ ] **Turso**: 記事・ベクトルデータ用プロジェクトの作成
+            - [ ] Turso CLI のインストールと認証
+            - [ ] Production / Staging 用のデータベース作成
+            - [ ] APIキー・接続情報の管理（Vercel環境変数への連携）
         - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
-        - [x] データベースプロジェクトの作成とAPIキー管理（Vercel環境変数への連携）
     - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
