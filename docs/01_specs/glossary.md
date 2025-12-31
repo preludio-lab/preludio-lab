@@ -21,7 +21,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Audio** | 音声 | 映像を含まない音声のみのデータ形式（MP3, AAC等）。またはSpotify等の配信形態。 | Format / Source |
 | **Video** | 動画 | 映像を含むデータ形式（MP4, YouTube等）。 | Format / Source |
 | **Image** | 画像 | 静止画データ（OGP, アートワーク, 楽譜プレビュー画像）。 | Format |
-| **Player** | プレイヤー | 音源（Recording）を再生する機能。Audio/Videoの実装形式を隠蔽し、統一的な操作を提供する。 | `<FocusAudioPlayer />` |
+| **Player** | プレイヤー | 音源（Recording）を再生するコンポーネントの総称。AudioPlayer（音声）だけでなく、将来的なVideoPlayer（YouTube埋め込み等）も含む抽象概念。 | `<AudioPlayer />`, `<VideoPlayer />` |
 | **Analysis** | 分析 | 楽曲構造や理論的背景の解説テキスト。 | Agent Output |
 | **Opus (Op.)** | 作品番号 | 出版順に割り振られた番号。 | `Op. 18` |
 | **BWV** | BWV | バッハ作品番号 (Bach-Werke-Verzeichnis)。 | `BWV 846` |
