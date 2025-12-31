@@ -29,6 +29,13 @@ create extension if not exists pg_trgm;
 create extension if not exists vector;
 ```
 
+### 1.5 Domain Model Mapping (Clean Architecture)
+物理モデル（DB設計）をそのままドメイン層へ持ち込まず、以下の原則でマッピングします。
+
+*   **Single Entity Pattern:** 物理的には `translations` テーブルに分かれている情報も、ドメイン層では一つの統合されたエンティティ（例: `Work`）として定義します。
+*   **Encapsulation by Repository:** 永続化の詳細（テーブルの分割やJSONB構造）は Repository 層で隠蔽します。ドメイン層は「現在の言語でハイドレーションされた、使いやすいオブジェクト」のみを扱います。
+*   **Zero-JOIN Alignment:** 物理設計における「非正規化カラム（Snapshot）」は、このドメインエンティティを高速に生成するために最適化されています。
+
 ---
 
 ## 2. ER Diagram (Entity Relationship)
