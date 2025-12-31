@@ -80,6 +80,13 @@ erDiagram
 | `created_at` | `timestamptz` | `now()` | NO | 作成日時 |
 | `updated_at` | `timestamptz` | `now()` | NO | 更新日時 (Trigger) |
 
+#### Indexes (Articles)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_articles_work_id` | `(work_id)` | B-Tree | FK Lookup |
+| `idx_articles_slug` | `(slug)` | B-Tree | Routing (Unique) |
+| `idx_articles_featured` | `(is_featured, created_at)` | B-Tree | Top Page Fetch |
+
 ### 3.2 `article_translations` (Localized / Read-Optimized)
 言語ごとの記事データ。**検索用カラム（非正規化データ）をここに集約します。**
 
@@ -107,6 +114,16 @@ erDiagram
 | `content_structure` | `jsonb` | `{}` | NO | **[ToC/Search]** 目次構成データ。MDX本体をパースせずに目次生成やセクション検索を行うために使用。 |
 | `created_at` | `timestamptz` | `now()` | NO | - |
 | `updated_at` | `timestamptz` | `now()` | NO | - |
+
+#### Indexes (Article Translations)
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_art_trans_article_lookup` | `(article_id, lang)` | B-Tree | Basic Fetch (Unique) |
+| `idx_art_trans_status_pub` | `(lang, status, published_at)` | B-Tree | Public / Latest List |
+| `idx_art_trans_search_genre` | `(lang, sl_genre)` | B-Tree | Filter by Genre |
+| `idx_art_trans_search_comp` | `(lang, sl_composer_name)` | B-Tree | Filter by Composer |
+| `idx_art_trans_meta_tags` | `(metadata)` | GIN | Tag Search (`metadata->'tags'`) |
+| `idx_art_trans_embedding` | `(embedding)` | HNSW | `halfvec_l2_ops` (Semantic Search) |
 
 > **Naming Note:** 非正規化カラムには `sl_` (Snapshot / Search Layer) プレフィックスを付ける案もありましたが、開発者の利便性を考え、通常のカラム名 (`composer_name` 等) とし、API層で管理します。ここでは分かりやすく `sl_` と記述していますが、実際の実装では `composer_name` とします。
 
@@ -141,24 +158,7 @@ type MoodDimensions = {
 };
 ```
 
-#### Indexes (Articles)
-| Index Name | Columns | Type | Usage |
-| :--- | :--- | :--- | :--- |
-| `idx_articles_work_id` | `(work_id)` | B-Tree | FK Lookup |
-| `idx_articles_slug` | `(slug)` | B-Tree | Routing (Unique) |
-| `idx_articles_featured` | `(is_featured, created_at)` | B-Tree | Top Page Fetch |
-
-#### Indexes (Article Translations)
-| Index Name | Columns | Type | Usage |
-| :--- | :--- | :--- | :--- |
-| `idx_art_trans_article_lookup` | `(article_id, lang)` | B-Tree | Basic Fetch (Unique) |
-| `idx_art_trans_status_pub` | `(lang, status, published_at)` | B-Tree | Public / Latest List |
-| `idx_art_trans_search_genre` | `(lang, sl_genre)` | B-Tree | Filter by Genre |
-| `idx_art_trans_search_comp` | `(lang, sl_composer_name)` | B-Tree | Filter by Composer |
-| `idx_art_trans_meta_tags` | `(metadata)` | GIN | Tag Search (`metadata->'tags'`) |
-| `idx_art_trans_embedding` | `(embedding)` | HNSW | `halfvec_l2_ops` (Semantic Search) |
-
-##### `metadata` (Search Attributes)
+#### JSONB Type Definitions
 ```typescript
 type ArticleMetadata = {
   tags: string[];         // e.g. ["Sad", "Morning", "Baroque"]
@@ -203,7 +203,6 @@ type PlaybackSample = {
   end_time: number;      // 再生終了時間（秒）
   is_default: boolean;   // デフォルト再生用フラグ
   label?: string;        // UI表示用 (e.g. "Gould (1981)")
-  offset_ms?: number;    // ソースごとの微調整用
 };
 
 type PlaybackSamples = PlaybackSample[];
