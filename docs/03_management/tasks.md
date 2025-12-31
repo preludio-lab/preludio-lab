@@ -242,6 +242,14 @@ Status: `[/]` 進行中
         - [ ] GitHub Actionsによる定期実行ワークフローの実装
         - [ ] 異常検知時の通知・レポート機能
 
+- [ ] **6.7 AI-DB 連携基盤の構築 (AI-DB Integration Foundation)**
+    - [ ] **[実装] Knowledge Manifest (JSONエクスポート)**
+        - [ ] Tursoからマスタデータ（作曲家、楽曲、用語集等）をAIが読みやすいJSON形式でエクスポートするスクリプトの実装
+        - [ ] 生成AI（Gemini/Antigravity）へのコンテキスト注入パイプラインの確立
+    - [ ] **[実装] Vector-RAG による記事整合性管理**
+        - [ ] Tursoのベクトル検索を利用し、過去の記事や関連楽曲をコンテキストとして動的に取得するRAGシステムの構築
+        - [ ] 新規生成記事の既存コンテンツとの音楽整合性（Terminology, Context）の自動担保
+
 ## Phase 7: セキュリティテストとパフォーマンスチューニング
 - [ ] **7.1 セキュリティテストと脆弱性診断の自動化 (Security Analysis)**
     - [ ] **[SAST]** **GitHub CodeQL** のワークフロー統合（コードスキャン）
