@@ -91,7 +91,7 @@ create extension if not exists vector;
 | **`sl_era`** | `text` | - | YES | **[Denormalized]** 時代区分 |
 | **`sl_nationality`** | `text` | - | YES | **[Denormalized]** 地域/国籍 |
 | **`sl_mood_dimensions`**| `jsonb`| - | YES | **[Hybrid Search]** 5軸の感情定量値 (-1.0 ~ +1.0) |
-| **`embedding`** | `halfvec(1536)` | - | YES | **[Hybrid Search]** OpenAI/Gemini Embedding Vector (16-bit) |
+| **`embedding`** | `halfvec(768)` | - | YES | **[Hybrid Search]** Embedding Vector (16-bit, 768 dimensions) |
 | `published_at` | `timestamptz` | - | YES | 公開日時 |
 | `storage_path` | `text` | - | YES | ストレージ上のMDXパス (`article/{uuid}.mdx`) |
 | `metadata` | `jsonb` | `{}` | NO | その他メタデータ (Tags, Key, Difficulty) |
