@@ -93,3 +93,15 @@
 | **youtube_start** | `string` | No | YouTube再生開始時間（HH:MM:SS）。 | "00:00:00" |
 | **youtube_end** | `string` | No | YouTube再生終了時間（HH:MM:SS）。 | "00:00:00" |
 | **ogp_excerpt** | `string` | No | OGP画像生成用のABC譜面コード（短い重要モチーフ）。未指定の場合はデフォルト画像。 | "L:1/8 cdef gabc'" |
+## 7. Editorial Curation & Discovery
+プラットフォームとしてのアイデンティティを提示し、ユーザーの「発見」を支援するためのキュレーション指針。
+
+### [REQ-CONT-CURATION-001] Human-In-The-Loop Curation
+*   **[REQ-CONT-CURATION-001-01] is_featured (Articles):** PV数などの動的データとは別に、編集上の意図（特集、季節性、ブランド価値の象徴）に基づいて手動で付与する。
+*   **[REQ-CONT-CURATION-001-02] is_recommended (Recordings):** 音源が大量にある場合、Musicologist（またはAI）が「教育的・構造理解的に最適」と判断した音源を推奨盤として固定する。
+
+### [REQ-CONT-CURATION-002] Hybrid Recommendation Model
+UI/UX層では、以下の3層を組み合わせてコンテンツを提示する。
+1.  **Editorial:** `is_featured` 等に基づく、プラットフォーム側からのメッセージ。
+2.  **Popularity:** ユーザーのインタラクション（PV、滞在時間、Like数）に基づく動的なランキング。
+3.  **Discovery:** ベクトル埋め込み（`embedding`）に基づく、ユーザーの現在の文脈に沿った類似推薦。

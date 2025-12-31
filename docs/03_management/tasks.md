@@ -162,6 +162,7 @@ Status: `[/]` 進行中
         - [ ] 今回のエンティティ定義に基づき、既存の実装をアップデート
     - [ ] **[実装]** Database-First Admin UI
         - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
+        - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの簡易トグル管理機能の実装
         - [ ] **DB Sync**: 編集内容のDB更新およびObject StorageへのMDX保存の実装
         - [ ] **Direct Build**: SupabaseからMDXをDirect FetchしてビルドするSSGロジックの実装
     - [ ] **[検証]** AI編集支援とSSGビルドフローの動作確認
