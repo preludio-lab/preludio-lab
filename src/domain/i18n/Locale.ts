@@ -4,20 +4,20 @@
  */
 
 export const AppLocale = {
-    /** 英語 (デフォルト) - 国際的な主要言語 */
-    EN: 'en',
-    /** 日本語 - 開発者の母国語であり、主要なターゲット */
-    JA: 'ja',
-    /** スペイン語 */
-    ES: 'es',
-    /** ドイツ語 */
-    DE: 'de',
-    /** フランス語 */
-    FR: 'fr',
-    /** イタリア語 */
-    IT: 'it',
-    /** 中国語 */
-    ZH: 'zh',
+  /** 英語 (デフォルト) - 国際的な主要言語 */
+  EN: 'en',
+  /** 日本語 - 開発者の母国語であり、主要なターゲット */
+  JA: 'ja',
+  /** スペイン語 */
+  ES: 'es',
+  /** ドイツ語 */
+  DE: 'de',
+  /** フランス語 */
+  FR: 'fr',
+  /** イタリア語 */
+  IT: 'it',
+  /** 中国語 */
+  ZH: 'zh',
 } as const;
 
 /**
@@ -37,13 +37,13 @@ export const defaultLocale: AppLocale = AppLocale.EN;
  * ルーティングやミドルウェアの設定で使用されます。
  */
 export const supportedLocales: AppLocale[] = [
-    AppLocale.EN, // 世界標準
-    AppLocale.DE, // クラシック音楽の主要国 (バッハ、ベートーヴェン等)
-    AppLocale.FR, // クラシック音楽の主要国
-    AppLocale.IT, // 音楽用語の起源
-    AppLocale.ES, // 世界的な広がり
-    AppLocale.JA, // 親和性の高い市場 (開発者の拠点)
-    AppLocale.ZH, // 成長市場
+  AppLocale.EN, // 世界標準
+  AppLocale.DE, // クラシック音楽の主要国 (バッハ、ベートーヴェン等)
+  AppLocale.FR, // クラシック音楽の主要国
+  AppLocale.IT, // 音楽用語の起源
+  AppLocale.ES, // 世界的な広がり
+  AppLocale.JA, // 親和性の高い市場 (開発者の拠点)
+  AppLocale.ZH, // 成長市場
 ];
 
 /**
@@ -51,11 +51,11 @@ export const supportedLocales: AppLocale[] = [
  * 言語切り替えスイッチャーなどで使用されます。
  */
 export const localeLabels: Record<AppLocale, string> = {
-    [AppLocale.EN]: 'English',
-    [AppLocale.DE]: 'Deutsch',
-    [AppLocale.FR]: 'Français',
-    [AppLocale.IT]: 'Italiano',
-    [AppLocale.ES]: 'Español',
-    [AppLocale.JA]: '日本語',
-    [AppLocale.ZH]: '中文',
+  [AppLocale.EN]: 'English',
+  [AppLocale.DE]: 'Deutsch',
+  [AppLocale.FR]: 'Français',
+  [AppLocale.IT]: 'Italiano',
+  [AppLocale.ES]: 'Español',
+  [AppLocale.JA]: '日本語',
+  [AppLocale.ZH]: '中文',
 };

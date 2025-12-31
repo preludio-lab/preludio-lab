@@ -20,18 +20,20 @@ PreludioLabプロジェクトは、個人開発者とAIエージェントの協�
 
 以下の技術スタックを採用することを決定しました。
 
-*   **Framework:** Next.js (App Router)
-*   **Database / Auth:** Supabase (PostgreSQL)
-*   **Hosting:** Vercel
+- **Framework:** Next.js (App Router)
+- **Database / Auth:** Supabase (PostgreSQL)
+- **Hosting:** Vercel
 
 ## Consequences
 
 ### Positive (メリット)
-*   **Unified Type System:** TypeScriptを中心としたフルスタック開発が可能。Supabaseの型生成機能により、DBスキーマからTypeScript型を自動生成でき、整合性を保ちやすい。
-*   **Server Components:** React Server Components (RSC) により、セキュアにDBへアクセスでき、クライアントへのJS転送量を削減できる。
-*   **Zero Config Deployment:** VercelとNext.jsの親和性が高く、インフラ構築の手間がほぼゼロになる。
+
+- **Unified Type System:** TypeScriptを中心としたフルスタック開発が可能。Supabaseの型生成機能により、DBスキーマからTypeScript型を自動生成でき、整合性を保ちやすい。
+- **Server Components:** React Server Components (RSC) により、セキュアにDBへアクセスでき、クライアントへのJS転送量を削減できる。
+- **Zero Config Deployment:** VercelとNext.jsの親和性が高く、インフラ構築の手間がほぼゼロになる。
 
 ### Negative (デメリット / トレードオフ)
-*   **Vendor Lock-in:** Vercel固有の機能（Vercel Functions, Edge Middleware）に依存するため、他のホスティング（AWS, Google Cloud）への移行コストが高くなる。
-    *   *Mitigation:* ビジネスロジックをフレームワークから分離（Clean Architecture）することで、将来的な移行リスクを低減する。
-*   **Complexity:** App RouterやRSCは比較的新しい概念であり、学習コスト（およびAIへのコンテキスト共有コスト）が発生する。
+
+- **Vendor Lock-in:** Vercel固有の機能（Vercel Functions, Edge Middleware）に依存するため、他のホスティング（AWS, Google Cloud）への移行コストが高くなる。
+  - _Mitigation:_ ビジネスロジックをフレームワークから分離（Clean Architecture）することで、将来的な移行リスクを低減する。
+- **Complexity:** App RouterやRSCは比較的新しい概念であり、学習コスト（およびAIへのコンテキスト共有コスト）が発生する。

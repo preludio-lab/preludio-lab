@@ -11,6 +11,7 @@ Date: {YYYY-MM-DD}
 {The issue that we are seeing that is motivating this decision or change.}
 
 ## Decision
+
 {The change that we are proposing or have agreed to implement.}
 
 ## Consequences

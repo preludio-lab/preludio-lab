@@ -1,129 +1,129 @@
 {
-    "Metadata": {
-        "title": "Preludio Lab | クラシック音楽をもっと身近に、もっと楽しく",
-        "description": "「この曲、いいな」という感動を、もっと深く。インタラクティブな楽譜と音源で、名曲の心に触れる体験をお届けします。クラシック音楽があなたの人生に寄り添う、豊かな時間をご一緒に。"
+  "Metadata": {
+    "title": "Preludio Lab | クラシック音楽をもっと身近に、もっと楽しく",
+    "description": "「この曲、いいな」という感動を、もっと深く。インタラクティブな楽譜と音源で、名曲の心に触れる体験をお届けします。クラシック音楽があなたの人生に寄り添う、豊かな時間をご一緒に。"
+  },
+  "Common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "notFound": "ページが見つかりません",
+    "notFoundDesc": "お探しのページは削除されたか、名前が変更されたか、一時的に利用できない可能性があります。",
+    "backToHome": "ホームに戻る"
+  },
+  "Home": {
+    "hero": {
+      "title": "一生ものの「好き」と出会う、はじまりの場所。",
+      "description": "素敵な音楽との出会いは、人生をそっと彩る宝物になります。楽譜をなぞり、音の裏側にある物語を紐解く。Preludio Labは、あなたの毎日を豊かに変える「最高の一曲」への案内人です。",
+      "explore": "作品を探す",
+      "about": "Preludio Labとは"
     },
-    "Common": {
-        "loading": "読み込み中...",
-        "error": "エラーが発生しました",
-        "notFound": "ページが見つかりません",
-        "notFoundDesc": "お探しのページは削除されたか、名前が変更されたか、一時的に利用できない可能性があります。",
-        "backToHome": "ホームに戻る"
+    "discover": "コンテンツを探す",
+    "categories": {
+      "works": {
+        "name": "楽曲紹介",
+        "desc": "名曲の背景と、心を動かす聴きどころ"
+      },
+      "composers": {
+        "name": "作曲家",
+        "desc": "時代を彩った音楽家たちの生涯と想い"
+      },
+      "theory": {
+        "name": "音楽の仕組み",
+        "desc": "音の秘密を知れば、聴くのがもっと楽しくなる"
+      },
+      "eras": {
+        "name": "時代様式",
+        "desc": "時代の空気を感じて、音楽をより鮮やかに"
+      },
+      "instruments": {
+        "name": "楽器",
+        "desc": "音を紡ぐパートナー、楽器の歴史と魅力"
+      },
+      "performers": {
+        "name": "演奏家",
+        "desc": "心を揺さぶる、名演と表現者たちの記録"
+      },
+      "terminology": {
+        "name": "用語集",
+        "desc": "楽譜に込められた、作曲家からのメッセージ"
+      },
+      "columns": {
+        "name": "コラム",
+        "desc": "音楽のある毎日を彩る、多彩な読みもの"
+      },
+      "originals": {
+        "name": "オリジナル作品",
+        "desc": "Preludio Labが贈る、創作作品の紹介"
+      }
     },
-    "Home": {
-        "hero": {
-            "title": "一生ものの「好き」と出会う、はじまりの場所。",
-            "description": "素敵な音楽との出会いは、人生をそっと彩る宝物になります。楽譜をなぞり、音の裏側にある物語を紐解く。Preludio Labは、あなたの毎日を豊かに変える「最高の一曲」への案内人です。",
-            "explore": "作品を探す",
-            "about": "Preludio Labとは"
-        },
-        "discover": "コンテンツを探す",
-        "categories": {
-            "works": {
-                "name": "楽曲紹介",
-                "desc": "名曲の背景と、心を動かす聴きどころ"
-            },
-            "composers": {
-                "name": "作曲家",
-                "desc": "時代を彩った音楽家たちの生涯と想い"
-            },
-            "theory": {
-                "name": "音楽の仕組み",
-                "desc": "音の秘密を知れば、聴くのがもっと楽しくなる"
-            },
-            "eras": {
-                "name": "時代様式",
-                "desc": "時代の空気を感じて、音楽をより鮮やかに"
-            },
-            "instruments": {
-                "name": "楽器",
-                "desc": "音を紡ぐパートナー、楽器の歴史と魅力"
-            },
-            "performers": {
-                "name": "演奏家",
-                "desc": "心を揺さぶる、名演と表現者たちの記録"
-            },
-            "terminology": {
-                "name": "用語集",
-                "desc": "楽譜に込められた、作曲家からのメッセージ"
-            },
-            "columns": {
-                "name": "コラム",
-                "desc": "音楽のある毎日を彩る、多彩な読みもの"
-            },
-            "originals": {
-                "name": "オリジナル作品",
-                "desc": "Preludio Labが贈る、創作作品の紹介"
-            }
-        },
-        "featured": {
-            "title": "ピックアップ",
-            "readMore": "記事を読む",
-            "defaultDescription": "{composer}の作品。"
-        }
-    },
-    "Navigation": {
-        "home": "ホーム",
-        "works": "作品一覧",
-        "composers": "作曲家",
-        "about": "Preludio Labについて"
-    },
-    "Footer": {
-        "copyright": "© {year} Preludio Lab. All rights reserved.",
-        "tagline": "Beyond Listening. クラシック音楽を「構造」から理解する体験を。"
-    },
-    "Player": {
-        "invalidRequest": "再生リクエストが無効です"
-    },
-    "CategoryIndex": {
-        "title": "{category}一覧",
-        "searchPlaceholder": "キーワードで検索...",
-        "emptyState": "条件に一致するコンテンツが見つかりませんでした。",
-        "totalCount": "全 {count} 件",
-        "filter": {
-            "title": "フィルター",
-            "difficulty": "難易度",
-            "era": "時代",
-            "instrument": "楽器",
-            "all": "すべて"
-        },
-        "sort": {
-            "label": "並び替え",
-            "latest": "最新順",
-            "oldest": "古い順",
-            "title": "名前順",
-            "difficulty_asc": "難易度（易しい順）",
-            "difficulty_desc": "難易度（難しい順）",
-            "popular": "人気順",
-            "trending": "注目順"
-        },
-        "categories": {
-            "works": "楽曲紹介",
-            "composers": "作曲家",
-            "theory": "音楽の仕組み",
-            "eras": "時代様式",
-            "instruments": "楽器",
-            "performers": "演奏家",
-            "terminology": "用語集",
-            "columns": "コラム"
-        },
-        "difficulty": {
-            "Beginner": "初級",
-            "Intermediate": "中級",
-            "Advanced": "上級"
-        },
-        "readMore": "もっと見る"
-    },
-    "Error": {
-        "title": "予期せぬエラーが発生しました",
-        "description": "ご不便をおかけして申し訳ありません。エラーの内容はログに記録されました。",
-        "toastMessage": "ページの読み込み中に予期せぬエラーが発生しました。",
-        "retry": "再試行する"
-    },
-    "Consent": {
-        "title": "Cookieの使用について",
-        "message": "{siteName}では、お客様に最適な視聴体験を提供し、サイトの利用状況を把握するためにCookieを使用しています。",
-        "accept": "すべて同意",
-        "reject": "拒否"
+    "featured": {
+      "title": "ピックアップ",
+      "readMore": "記事を読む",
+      "defaultDescription": "{composer}の作品。"
     }
+  },
+  "Navigation": {
+    "home": "ホーム",
+    "works": "作品一覧",
+    "composers": "作曲家",
+    "about": "Preludio Labについて"
+  },
+  "Footer": {
+    "copyright": "© {year} Preludio Lab. All rights reserved.",
+    "tagline": "Beyond Listening. クラシック音楽を「構造」から理解する体験を。"
+  },
+  "Player": {
+    "invalidRequest": "再生リクエストが無効です"
+  },
+  "CategoryIndex": {
+    "title": "{category}一覧",
+    "searchPlaceholder": "キーワードで検索...",
+    "emptyState": "条件に一致するコンテンツが見つかりませんでした。",
+    "totalCount": "全 {count} 件",
+    "filter": {
+      "title": "フィルター",
+      "difficulty": "難易度",
+      "era": "時代",
+      "instrument": "楽器",
+      "all": "すべて"
+    },
+    "sort": {
+      "label": "並び替え",
+      "latest": "最新順",
+      "oldest": "古い順",
+      "title": "名前順",
+      "difficulty_asc": "難易度（易しい順）",
+      "difficulty_desc": "難易度（難しい順）",
+      "popular": "人気順",
+      "trending": "注目順"
+    },
+    "categories": {
+      "works": "楽曲紹介",
+      "composers": "作曲家",
+      "theory": "音楽の仕組み",
+      "eras": "時代様式",
+      "instruments": "楽器",
+      "performers": "演奏家",
+      "terminology": "用語集",
+      "columns": "コラム"
+    },
+    "difficulty": {
+      "Beginner": "初級",
+      "Intermediate": "中級",
+      "Advanced": "上級"
+    },
+    "readMore": "もっと見る"
+  },
+  "Error": {
+    "title": "予期せぬエラーが発生しました",
+    "description": "ご不便をおかけして申し訳ありません。エラーの内容はログに記録されました。",
+    "toastMessage": "ページの読み込み中に予期せぬエラーが発生しました。",
+    "retry": "再試行する"
+  },
+  "Consent": {
+    "title": "Cookieの使用について",
+    "message": "{siteName}では、お客様に最適な視聴体験を提供し、サイトの利用状況を把握するためにCookieを使用しています。",
+    "accept": "すべて同意",
+    "reject": "拒否"
+  }
 }

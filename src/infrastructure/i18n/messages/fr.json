@@ -1,123 +1,123 @@
 {
-    "Metadata": {
-        "title": "Preludio Lab | Plus proche des classiques, plus de joie dans chaque note",
-        "description": "Approfondissez cette étincelle de 'J'aime cette pièce'. Grâce à des partitions interactives et de l'audio, we vous apportons une expérience qui touche le cœur des chefs-d'œuvre. Rejoignez-nous pour des moments enrichissants où la musique classique devient un compagnon constant de votre vie."
+  "Metadata": {
+    "title": "Preludio Lab | Plus proche des classiques, plus de joie dans chaque note",
+    "description": "Approfondissez cette étincelle de 'J'aime cette pièce'. Grâce à des partitions interactives et de l'audio, we vous apportons une expérience qui touche le cœur des chefs-d'œuvre. Rejoignez-nous pour des moments enrichissants où la musique classique devient un compagnon constant de votre vie."
+  },
+  "Common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "notFound": "Page non trouvée",
+    "notFoundDesc": "La page que vous recherchez a peut-être été supprimée, renommée ou est temporairement indisponible.",
+    "backToHome": "Retour à l'accueil"
+  },
+  "Home": {
+    "hero": {
+      "title": "Là où vous trouvez la musique que vous aimerez pour toujours.",
+      "description": "Découvrir de la musique merveilleuse est un trésor qui colore doucement votre vie. Suivez la partition et démêlez les histoires derrière le son. Preludio Lab est votre guide vers cette 'pièce parfaite' qui transforme votre quotidien.",
+      "explore": "Explorer les œuvres",
+      "about": "À propos de nous"
     },
-    "Common": {
-        "loading": "Chargement...",
-        "error": "Une erreur est survenue",
-        "notFound": "Page non trouvée",
-        "notFoundDesc": "La page que vous recherchez a peut-être été supprimée, renommée ou est temporairement indisponible.",
-        "backToHome": "Retour à l'accueil"
+    "discover": "Découvrir",
+    "categories": {
+      "works": {
+        "name": "Œuvres",
+        "desc": "Les histoires derrière les chefs-d'œuvre et les moments qui émeuvent."
+      },
+      "composers": {
+        "name": "Compositeurs",
+        "desc": "Les vies et les passions des musiciens qui ont coloré leurs époques."
+      },
+      "theory": {
+        "name": "Théorie",
+        "desc": "Percez les secrets du son."
+      },
+      "eras": {
+        "name": "Époques",
+        "desc": "Ressentez l'atmosphère du temps."
+      },
+      "instruments": {
+        "name": "Instruments",
+        "desc": "Histoire et charme des instruments."
+      },
+      "performers": {
+        "name": "Interprètes",
+        "desc": "Enregistrements de performances émouvantes."
+      },
+      "terminology": {
+        "name": "Terminologie",
+        "desc": "Messages des compositeurs cachés dans la partition."
+      },
+      "columns": {
+        "name": "Chroniques",
+        "desc": "Lectures diverses."
+      },
+      "originals": {
+        "name": "Originals",
+        "desc": "Compositions originales présentées par Preludio Lab."
+      }
     },
-    "Home": {
-        "hero": {
-            "title": "Là où vous trouvez la musique que vous aimerez pour toujours.",
-            "description": "Découvrir de la musique merveilleuse est un trésor qui colore doucement votre vie. Suivez la partition et démêlez les histoires derrière le son. Preludio Lab est votre guide vers cette 'pièce parfaite' qui transforme votre quotidien.",
-            "explore": "Explorer les œuvres",
-            "about": "À propos de nous"
-        },
-        "discover": "Découvrir",
-        "categories": {
-            "works": {
-                "name": "Œuvres",
-                "desc": "Les histoires derrière les chefs-d'œuvre et les moments qui émeuvent."
-            },
-            "composers": {
-                "name": "Compositeurs",
-                "desc": "Les vies et les passions des musiciens qui ont coloré leurs époques."
-            },
-            "theory": {
-                "name": "Théorie",
-                "desc": "Percez les secrets du son."
-            },
-            "eras": {
-                "name": "Époques",
-                "desc": "Ressentez l'atmosphère du temps."
-            },
-            "instruments": {
-                "name": "Instruments",
-                "desc": "Histoire et charme des instruments."
-            },
-            "performers": {
-                "name": "Interprètes",
-                "desc": "Enregistrements de performances émouvantes."
-            },
-            "terminology": {
-                "name": "Terminologie",
-                "desc": "Messages des compositeurs cachés dans la partition."
-            },
-            "columns": {
-                "name": "Chroniques",
-                "desc": "Lectures diverses."
-            },
-            "originals": {
-                "name": "Originals",
-                "desc": "Compositions originales présentées par Preludio Lab."
-            }
-        },
-        "featured": {
-            "title": "Œuvre en vedette",
-            "readMore": "Lire l'article",
-            "defaultDescription": "Une œuvre de {composer}."
-        }
-    },
-    "Navigation": {
-        "home": "Accueil",
-        "works": "Œuvres",
-        "composers": "Compositeurs",
-        "about": "À propos"
-    },
-    "Footer": {
-        "copyright": "© {year} Preludio Lab. Tous droits réservés.",
-        "tagline": "Au-delà de l'écoute. Plongez plus profondément dans les classiques."
-    },
-    "Player": {
-        "invalidRequest": "Demande de lecture non valide"
-    },
-    "CategoryIndex": {
-        "title": "{category}",
-        "searchPlaceholder": "Rechercher par mot-clé...",
-        "emptyState": "Aucun contenu trouvé correspondant à vos critères.",
-        "totalCount": "{count} articles au total",
-        "filter": {
-            "title": "Filtrer",
-            "difficulty": "Difficulté",
-            "era": "Époque",
-            "instrument": "Instrument",
-            "all": "Tout"
-        },
-        "sort": {
-            "label": "Trier",
-            "latest": "Plus récents",
-            "oldest": "Plus anciens",
-            "title": "Nom",
-            "difficulty_asc": "Difficulté (Facile à Difficile)",
-            "difficulty_desc": "Difficulté (Difficile à Facile)",
-            "popular": "Les plus populaires",
-            "trending": "Tendances"
-        },
-        "categories": {
-            "works": "Œuvres",
-            "composers": "Compositeurs",
-            "theory": "Théorie musicale",
-            "eras": "Époques musicales",
-            "instruments": "Instruments",
-            "performers": "Interprètes",
-            "terminology": "Terminologie",
-            "columns": "Chroniques"
-        },
-        "difficulty": {
-            "Beginner": "Débutant",
-            "Intermediate": "Intermédiaire",
-            "Advanced": "Avancé"
-        },
-        "readMore": "En savoir plus"
-    },
-    "Consent": {
-        "title": "À propos de l'utilisation des cookies",
-        "message": "{siteName} utilise des cookies pour vous offrir une expérience d'écoute optimale et pour analyser l'utilisation du site.",
-        "accept": "Tout accepter",
-        "reject": "Refuser"
+    "featured": {
+      "title": "Œuvre en vedette",
+      "readMore": "Lire l'article",
+      "defaultDescription": "Une œuvre de {composer}."
     }
+  },
+  "Navigation": {
+    "home": "Accueil",
+    "works": "Œuvres",
+    "composers": "Compositeurs",
+    "about": "À propos"
+  },
+  "Footer": {
+    "copyright": "© {year} Preludio Lab. Tous droits réservés.",
+    "tagline": "Au-delà de l'écoute. Plongez plus profondément dans les classiques."
+  },
+  "Player": {
+    "invalidRequest": "Demande de lecture non valide"
+  },
+  "CategoryIndex": {
+    "title": "{category}",
+    "searchPlaceholder": "Rechercher par mot-clé...",
+    "emptyState": "Aucun contenu trouvé correspondant à vos critères.",
+    "totalCount": "{count} articles au total",
+    "filter": {
+      "title": "Filtrer",
+      "difficulty": "Difficulté",
+      "era": "Époque",
+      "instrument": "Instrument",
+      "all": "Tout"
+    },
+    "sort": {
+      "label": "Trier",
+      "latest": "Plus récents",
+      "oldest": "Plus anciens",
+      "title": "Nom",
+      "difficulty_asc": "Difficulté (Facile à Difficile)",
+      "difficulty_desc": "Difficulté (Difficile à Facile)",
+      "popular": "Les plus populaires",
+      "trending": "Tendances"
+    },
+    "categories": {
+      "works": "Œuvres",
+      "composers": "Compositeurs",
+      "theory": "Théorie musicale",
+      "eras": "Époques musicales",
+      "instruments": "Instruments",
+      "performers": "Interprètes",
+      "terminology": "Terminologie",
+      "columns": "Chroniques"
+    },
+    "difficulty": {
+      "Beginner": "Débutant",
+      "Intermediate": "Intermédiaire",
+      "Advanced": "Avancé"
+    },
+    "readMore": "En savoir plus"
+  },
+  "Consent": {
+    "title": "À propos de l'utilisation des cookies",
+    "message": "{siteName} utilise des cookies pour vous offrir une expérience d'écoute optimale et pour analyser l'utilisation du site.",
+    "accept": "Tout accepter",
+    "reject": "Refuser"
+  }
 }

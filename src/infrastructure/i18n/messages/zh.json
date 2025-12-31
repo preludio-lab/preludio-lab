@@ -1,129 +1,129 @@
 {
-    "Metadata": {
-        "title": "Preludio Lab | 走近经典，乐享每一个音符",
-        "description": "深化那一刻“我爱这首曲子”的感動。通过互动乐谱和音频，我们带给您触动杰作心灵的体验。加入我们，让古典音乐成为您生活中恒久的伴侣。"
+  "Metadata": {
+    "title": "Preludio Lab | 走近经典，乐享每一个音符",
+    "description": "深化那一刻“我爱这首曲子”的感動。通过互动乐谱和音频，我们带给您触动杰作心灵的体验。加入我们，让古典音乐成为您生活中恒久的伴侣。"
+  },
+  "Common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "notFound": "页面未找到",
+    "notFoundDesc": "您查找的页面可能已被删除、更名或暂时无法访问。",
+    "backToHome": "返回首页"
+  },
+  "Home": {
+    "hero": {
+      "title": "在这里，发现你会爱上一辈子的音乐。",
+      "description": "发现美妙的音乐是温柔点缀生活的宝藏。跟随乐谱，揭开声音背后的故事。Preludio Lab 是您通往改变日常生活的“完美乐曲”的向导。",
+      "explore": "探索作品",
+      "about": "关于我们"
     },
-    "Common": {
-        "loading": "加载中...",
-        "error": "发生错误",
-        "notFound": "页面未找到",
-        "notFoundDesc": "您查找的页面可能已被删除、更名或暂时无法访问。",
-        "backToHome": "返回首页"
+    "discover": "发现",
+    "categories": {
+      "works": {
+        "name": "作品",
+        "desc": "杰作背后的故事和动人心弦的时刻。"
+      },
+      "composers": {
+        "name": "作曲家",
+        "desc": "那些为时代增色的音乐家们的生活和激情。"
+      },
+      "theory": {
+        "name": "理论",
+        "desc": "解锁声音的秘密。"
+      },
+      "eras": {
+        "name": "时期",
+        "desc": "感受时代的氛围。"
+      },
+      "instruments": {
+        "name": "乐器",
+        "desc": "编织声音的伙伴的历史和魅力。"
+      },
+      "performers": {
+        "name": "演奏家",
+        "desc": "动人心魄的表演和表达的记录。"
+      },
+      "terminology": {
+        "name": "术语",
+        "desc": "隐藏在乐谱中的作曲家信息。"
+      },
+      "columns": {
+        "name": "专栏",
+        "desc": "丰富多彩的阅读。"
+      },
+      "originals": {
+        "name": "原创",
+        "desc": "Preludio Lab 呈现的原创作品。"
+      }
     },
-    "Home": {
-        "hero": {
-            "title": "在这里，发现你会爱上一辈子的音乐。",
-            "description": "发现美妙的音乐是温柔点缀生活的宝藏。跟随乐谱，揭开声音背后的故事。Preludio Lab 是您通往改变日常生活的“完美乐曲”的向导。",
-            "explore": "探索作品",
-            "about": "关于我们"
-        },
-        "discover": "发现",
-        "categories": {
-            "works": {
-                "name": "作品",
-                "desc": "杰作背后的故事和动人心弦的时刻。"
-            },
-            "composers": {
-                "name": "作曲家",
-                "desc": "那些为时代增色的音乐家们的生活和激情。"
-            },
-            "theory": {
-                "name": "理论",
-                "desc": "解锁声音的秘密。"
-            },
-            "eras": {
-                "name": "时期",
-                "desc": "感受时代的氛围。"
-            },
-            "instruments": {
-                "name": "乐器",
-                "desc": "编织声音的伙伴的历史和魅力。"
-            },
-            "performers": {
-                "name": "演奏家",
-                "desc": "动人心魄的表演和表达的记录。"
-            },
-            "terminology": {
-                "name": "术语",
-                "desc": "隐藏在乐谱中的作曲家信息。"
-            },
-            "columns": {
-                "name": "专栏",
-                "desc": "丰富多彩的阅读。"
-            },
-            "originals": {
-                "name": "原创",
-                "desc": "Preludio Lab 呈现的原创作品。"
-            }
-        },
-        "featured": {
-            "title": "精选作品",
-            "readMore": "阅读文章",
-            "defaultDescription": "{composer}的作品。"
-        }
-    },
-    "Error": {
-        "title": "发生错误！",
-        "description": "对于给您带来的不便，我们深表歉意。错误已记录。",
-        "toastMessage": "加载页面时发生错误。",
-        "retry": "重试"
-    },
-    "Consent": {
-        "title": "Cookies 使用说明",
-        "message": "{siteName} 使用 Cookie 旨在为您提供最佳的视听体验并分析网站使用情况。",
-        "accept": "全部接受",
-        "reject": "拒绝"
-    },
-    "Navigation": {
-        "home": "首页",
-        "works": "作品",
-        "composers": "作曲家",
-        "about": "关于"
-    },
-    "Footer": {
-        "copyright": "© {year} Preludio Lab. 版权所有。",
-        "tagline": "超越聆听。更深入地沉浸在经典中。"
-    },
-    "Player": {
-        "invalidRequest": "播放请求无效"
-    },
-    "CategoryIndex": {
-        "title": "{category}",
-        "searchPlaceholder": "通过关键词搜索...",
-        "emptyState": "未找到符合条件的內容。",
-        "totalCount": "共 {count} 条内容",
-        "filter": {
-            "title": "筛选",
-            "difficulty": "难度",
-            "era": "时期",
-            "instrument": "乐器",
-            "all": "全部"
-        },
-        "sort": {
-            "label": "排序",
-            "latest": "最新",
-            "oldest": "最早",
-            "title": "名称",
-            "difficulty_asc": "难度（从易到难）",
-            "difficulty_desc": "难度（从难到易）",
-            "popular": "最受欢迎",
-            "trending": "最热门"
-        },
-        "categories": {
-            "works": "作品",
-            "composers": "作曲家",
-            "theory": "音乐理论",
-            "eras": "音乐时期",
-            "instruments": "乐器",
-            "performers": "演奏家",
-            "terminology": "术语",
-            "columns": "专栏"
-        },
-        "difficulty": {
-            "Beginner": "初级",
-            "Intermediate": "中级",
-            "Advanced": "高级"
-        },
-        "readMore": "阅读更多"
+    "featured": {
+      "title": "精选作品",
+      "readMore": "阅读文章",
+      "defaultDescription": "{composer}的作品。"
     }
+  },
+  "Error": {
+    "title": "发生错误！",
+    "description": "对于给您带来的不便，我们深表歉意。错误已记录。",
+    "toastMessage": "加载页面时发生错误。",
+    "retry": "重试"
+  },
+  "Consent": {
+    "title": "Cookies 使用说明",
+    "message": "{siteName} 使用 Cookie 旨在为您提供最佳的视听体验并分析网站使用情况。",
+    "accept": "全部接受",
+    "reject": "拒绝"
+  },
+  "Navigation": {
+    "home": "首页",
+    "works": "作品",
+    "composers": "作曲家",
+    "about": "关于"
+  },
+  "Footer": {
+    "copyright": "© {year} Preludio Lab. 版权所有。",
+    "tagline": "超越聆听。更深入地沉浸在经典中。"
+  },
+  "Player": {
+    "invalidRequest": "播放请求无效"
+  },
+  "CategoryIndex": {
+    "title": "{category}",
+    "searchPlaceholder": "通过关键词搜索...",
+    "emptyState": "未找到符合条件的內容。",
+    "totalCount": "共 {count} 条内容",
+    "filter": {
+      "title": "筛选",
+      "difficulty": "难度",
+      "era": "时期",
+      "instrument": "乐器",
+      "all": "全部"
+    },
+    "sort": {
+      "label": "排序",
+      "latest": "最新",
+      "oldest": "最早",
+      "title": "名称",
+      "difficulty_asc": "难度（从易到难）",
+      "difficulty_desc": "难度（从难到易）",
+      "popular": "最受欢迎",
+      "trending": "最热门"
+    },
+    "categories": {
+      "works": "作品",
+      "composers": "作曲家",
+      "theory": "音乐理论",
+      "eras": "音乐时期",
+      "instruments": "乐器",
+      "performers": "演奏家",
+      "terminology": "术语",
+      "columns": "专栏"
+    },
+    "difficulty": {
+      "Beginner": "初级",
+      "Intermediate": "中级",
+      "Advanced": "高级"
+    },
+    "readMore": "阅读更多"
+  }
 }
