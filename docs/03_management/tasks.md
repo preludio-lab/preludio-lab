@@ -158,6 +158,8 @@ Status: `[/]` 進行中
         - [x] Master: MDX / Index & Vector: Database という役割分担の定義
         - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
         - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
+    - [ ] **[実装]** ドメインの更新とそれに伴うリファクタリング
+        - [ ] 今回のエンティティ定義に基づき、既存の実装をアップデート
     - [ ] **[実装]** Database-First Admin UI
         - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
         - [ ] **DB Sync**: 編集内容のDB更新およびObject StorageへのMDX保存の実装
