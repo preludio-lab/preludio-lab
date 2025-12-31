@@ -11,15 +11,17 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term (En) | Term (Ja) | Description | Context / Usage |
 | :--- | :--- | :--- | :--- |
-| Term (En) | Term (Ja) | Description | Context / Usage |
-| :--- | :--- | :--- | :--- |
 | **Article** | 記事 | URLを持つWeb上の１ページ単位。コンテンツ管理の最小親エンティティ。メタデータ（作曲家、作品、おすすめフラグ等）を持つコンテナ。 | `/works/[slug]` |
 | **Content** | 本文/コンテンツ | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。 | Storage (`.mdx`) |
 | **Work** | 作品 | 楽曲そのもの（例：平均律クラヴィーア曲集 第1巻）。言語に依存しない普遍的な作品（マスタ）情報。 | Metadata (Title, Op) |
 | **Score** | 楽譜データ | 楽曲の音楽情報を記述したデータ（例：ABC記法）。言語に依存しない「楽譜の原版」。 | Shared Asset |
 | **Sheet Music** | 譜例 | ユーザーに表示されるレンダリング済みの楽譜。Scoreデータと、言語ごとのキャプションを組み合わせたもの。 | UI Component |
-| **Media** | メディア | 記事や楽譜に関連付けられた音声・動画リソース（YouTube動画など）。 | `videoId` |
-| **Player** | プレイヤー | メディアを再生する機能。楽譜上の再生位置と同期（Sync）する機能を持つ。 | `<AudioPlayer />` |
+| **Media** | メディア | 記事や楽譜に関連付けられた非テキストリソースの総称（音声、動画、画像）。 | `media_resources` |
+| **Recording** | 音源 | 楽曲の演奏を記録したもの。ユーザーが「聴く」対象となる実体。VideoまたはAudio形式で提供される。 | Domain Concept |
+| **Audio** | 音声 | 映像を含まない音声のみのデータ形式（MP3, AAC等）。またはSpotify等の配信形態。 | Format / Source |
+| **Video** | 動画 | 映像を含むデータ形式（MP4, YouTube等）。 | Format / Source |
+| **Image** | 画像 | 静止画データ（OGP, アートワーク, 楽譜プレビュー画像）。 | Format |
+| **Player** | プレイヤー | 音源（Recording）を再生する機能。Audio/Videoの実装形式を隠蔽し、統一的な操作を提供する。 | `<FocusAudioPlayer />` |
 | **Analysis** | 分析 | 楽曲構造や理論的背景の解説テキスト。 | Agent Output |
 | **Opus (Op.)** | 作品番号 | 出版順に割り振られた番号。 | `Op. 18` |
 | **BWV** | BWV | バッハ作品番号 (Bach-Werke-Verzeichnis)。 | `BWV 846` |
