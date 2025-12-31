@@ -113,18 +113,18 @@ erDiagram
 | **`sl_instrumentation`** | `text`    | -       | NO       | -                                                        | 楽器編成                                               |
 | **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分                                               |
 | **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍                                              |
-| **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON)                                       |
+| **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON: `MoodDimensions`)                     |
 | **`embedding`**          | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ                                         |
-| `published_at`           | `text`    | -       | NO       | **`datetime(published_at) IS NOT NULL`**                 | 公開日時 (形式強制)                                    |
-| **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]**                                         |
+| `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
+| **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
 | `mdx_uri`                | `text`    | -       | NO       | -                                                        | MDXパス                                                |
 | `thumbnail_url`          | `text`    | -       | NO       | -                                                        | サムネイルURL                                          |
-| `metadata`               | `text`    | `{}`    | YES      | -                                                        | メタデータ (JSON)                                      |
-| `content_structure`      | `text`    | `{}`    | YES      | -                                                        | 目次構成 (JSON)                                        |
+| `metadata`               | `text`    | `{}`    | YES      | -                                                        | メタデータ (JSON: `ArticleMetadata`)                   |
+| `content_structure`      | `text`    | `{}`    | YES      | -                                                        | 目次構成 (JSON: `ContentStructure`)                    |
 | `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時 (形式強制)                                    |
 | `updated_at`             | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時 (形式強制)                                    |
 
-#### Indexes (Article Translations)
+#### インデックス (Article Translations)
 
 | Index Name                     | Columns                             | Type   | Usage                                  |
 | :----------------------------- | :---------------------------------- | :----- | :------------------------------------- |
@@ -135,13 +135,10 @@ erDiagram
 | `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
 | `idx_art_trans_embedding`      | `(embedding)`                       | HNSW   | セマンティック検索（`vector_l2_ops`）  |
 
-> **Naming Note:** 非正規化カラムには `sl_` (Snapshot / Search Layer) プレフィックスを付ける案もありましたが、開発者の利便性を考え、通常のカラム名 (`composer_name` 等) とし、API層で管理します。ここでは分かりやすく `sl_` と記述していますが、実際の実装では `composer_name` とします。
-
-**Indexes:**
-
-- `article_translations(lang, status)`: 基本フィルタリング
-- `article_translations(lang, sl_genre)`: ジャンル検索
-- `article_translations(metadata)`: タグ検索 (JSON内検索)
+> [!NOTE]
+> **命名規則 (`sl_` プレフィックス)**:
+> 非正規化カラムには `sl_` (Snapshot / Search Layer) プレフィックスを付与しています。
+> これにより、正規化されたマスタデータとの混同を防ぎ、検索・表示用に最適化されたスナップショット（Snapshot）であることを明示します。
 
 #### JSON Type Definitions
 
@@ -253,7 +250,7 @@ type PlaybackSamples = PlaybackSample[];
 | :------------------- | :-------- | :------ | :------- | :---------- | :-------------------------------- |
 | **`id`**             | `text`    | -       | YES      | -           | **PK**.                           |
 | `work_id`            | `text`    | -       | YES      | -           | FK to `works.id`                  |
-| **`performer_name`** | `text`    | `{}`    | YES      | -           | 演奏家名 (JSON)                    |
+| **`performer_name`** | `text`    | `{}`    | YES      | -           | 演奏家名 (JSON: `MultilingualString`)             |
 | `recording_year`     | `integer` | -       | NO       | -           | 録音年                            |
 | `is_recommended`     | `integer` | `0`     | YES      | `IN (0, 1)` | おすすめフラグ (0/1)               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)      |
@@ -352,7 +349,7 @@ type PlaybackSamples = PlaybackSample[];
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `title` | `text` | - | YES | - | 正式名称 (e.g. "Symphony No. 5") |
 | `popular_title` | `text` | - | NO | - | 一般的な通称 (e.g. "運命") |
-| `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON) |
+| `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON: `string[]`) |
 
 #### Indexes (Work Translations)
 
@@ -402,8 +399,29 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | **`id`** | `text` | - | YES | -                            | **PK**.                                   |
 | `media_type` | `text` | - | YES | `IN ('image', 'document')`   | メディア種別                              |
 | `url` | `text` | - | YES | -                            | ストレージの公開URL                       |
-| `alt_text` | `text` | `{}` | NO | -                            | **[i18n]** 代替テキスト (JSON)            |
+| `alt_text` | `text` | `{}` | NO | -                            | **[i18n]** 代替テキスト (JSON: `MultilingualString`) |
 | `metadata` | `text` | `{}` | YES | -                            | 画像サイズなどの付加情報 (JSON)           |
+
+---
+
+## 6. Shared JSON Type Definitions
+
+DB全体で使用される共通の JSON 構造。
+
+##### `MultilingualString`
+エージェントやアプリが多言語で扱う文字列コンテナ。
+
+```typescript
+type MultilingualString = {
+  en?: string;
+  ja?: string;
+  fr?: string;
+  de?: string;
+  it?: string;
+  es?: string;
+  zh?: string;
+};
+```
 
 ---
 
