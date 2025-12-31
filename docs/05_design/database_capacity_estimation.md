@@ -1,49 +1,45 @@
-# データベース容量試算 (Database Capacity Estimation) v3.0
+# データベース容量試算 (Database Capacity Estimation) v4.0
 
-**目的:** 70,000記事 × **7言語** (JA, EN, DE, FR, IT, ES, ZH) = 490,000エントリー を収容するための試算。
+**目的:** 70,000記事 × **7言語** (JA, EN, DE, FR, IT, ES, ZH) = 490,000エントリー を「Polyglot Architecture」で完全無料収容する。
 
-## 1. 結論: Free Tier (500MB) では不可能
-7言語展開を前提とした場合、テキストデータとインデックスだけで **約900MB** に達し、ベクトル検索を一切使わなくても無料枠を超過する。
-したがって、以下の **段階的拡張戦略 (Staged Growth Strategy)** を採用する。
+## 1. 結論: Zero-Cost 達成 (Turso 9GB 利用)
+Supabase単体では不可能だった7言語のデータ量（約1GB）を、**Content Warehouse (Turso)** にオフロードすることで、全てのサービスで無料枠内での運用が可能となる。
 
-### 戦略 A: "Pay to Grow" (推奨)
-7言語すべてを最初からリリースする場合、初月から **Supabase Pro Tier ($25/mo, 8GB)** を契約する。
-ビジネス規模（7万記事×7言語）を考えれば、月額$25は許容すべき必要経費である。
-
-### 戦略 B: "Lean Launch" (無料枠維持プラン)
-どうしても無料枠で開始する場合、以下の初期制限を設ける。
-1.  **Language Limit:** ローンチ時は **JA / EN の2言語のみ** とする（他言語はMDX生成のみ行いR2に保存、DBには入れない）。
-2.  **Content Limit:** DB化する記事を「主要1万作品」に絞る（Long-tailは静的HTMLのみで提供し、検索対象外とする）。
-
-**本ドキュメントでは「戦略 A（将来的なPro移行）」を前提としつつ、初期フェーズではJA/ENを中心に運用する想定で試算を残す。**
+| サービス | 格納データ | 推定容量 | 無料枠上限 | 判定 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Supabase** | User Auth, Profiles | < 50 MB | 500 MB | ✅ **Safe** (10%) |
+| **Turso** | Articles, Translations, Vectors | **~ 1.1 GB** | **9.0 GB** | ✅ **Safe** (12%) |
+| **Cloudflare** | Images, Audio (R2) | - | Egress $0 | ✅ **Safe** |
 
 ---
 
-## 2. 詳細内訳 (7 Languages / Full Scale check)
+## 2. 詳細内訳 (Turso Side)
 
-### 2.1 テーブルデータ (Row Data)
-前提: 70,000作品 × 7言語 = 490,000 翻訳レコード。
+### 2.1 テキストデータ & インデックス
+Turso (SQLite) は圧縮効率が高いため、Postgres試算と同等かそれ以下に収まる。
 
-| テーブル | 行数 | 単価 | 合計 |
+| 項目 | 件数 | 単価 | 合計 |
 | :--- | :--- | :--- | :--- |
-| **articles** | 70k | 100 B | **7 MB** |
-| **article_translations** | **490k** | 1.0 KB | **490 MB** |
-| **scores / recordings** | 70k | 0.5 KB | **35 MB** |
-| **Subtotal (Data)** | | | **532 MB** (既にOver) |
+| **Translation Rows** | 490k | 1.0 KB | **490 MB** |
+| **Indexes (B-Tree)** | 490k | 0.4 KB | **196 MB** |
 
-### 2.2 インデックス
-| 種類 | 件数 | 単価 | 合計 |
-| :--- | :--- | :--- | :--- |
-| **B-Tree / GIN** | **490k** | 0.4 KB | **196 MB** |
+### 2.2 ベクトルデータ (Full 7 Languages)
+9GBの余裕があるため、**全7言語のベクトル化**が可能になる。
+(Supabase案ではJAのみという妥協が必要だったが、Turso案なら妥協不要。)
 
-### 2.3 ベクトルデータ (JA only)
-| 種類 | 件数 | 単価 | 合計 |
-| :--- | :--- | :--- | :--- |
-| **HNSW (JA)** | 70k | 2.5 KB | **175 MB** |
+| 項目 | 件数 | 単価 | 合計 | 戦略 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Vectors (7 Langs)** | **490k** | 0.8 KB | **392 MB** | 768次元 Float32 |
+| **Vector Index** | - | - | **(incl)** | LibSQL Native |
 
-### 3. 総合計 (Full Scale)
-**合計推定: 約 900 MB ~ 1.0 GB**
--> Free Tier (500MB) の **約200%** となる。
+### 2.3 合計容量 (Turso)
+**推定合計: 約 1.08 GB**
+-> Turso無料枠 (9GB) の **約12%** しか消費しない。
+-> 将来的に記事数が10倍（70万記事）になっても無料枠内で耐えられるスケーラビリティを持つ。
+
+## 3. アクションプラン
+1.  **Schema Adaptation:** `database-schema.md` の設計を、実装時に SQLite (Turso) 用の型やインデックス定義に変換する（Prisma/Drizzle等を利用）。
+2.  **App-Layer RLS:** Next.js側での権限チェック実装を徹底する。
 
 ### 今後のアクションプラン
 1.  **監視 (Monitoring):** 運用開始後、ダッシュボードで容量推移を週次監視する。
