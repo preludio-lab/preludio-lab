@@ -1,4 +1,66 @@
-# データベース容量試算 (Database Capacity Estimation)
+# データベース容量試算 (Database Capacity Estimation) v2.0
+
+**目的:** 70,000記事 (JA/EN 2言語 = 140,000エントリー) を **Supabase Free Tier (500 MB)** 内に収容するための厳密な試算と戦略策定。
+
+## 1. 結論: "Primary Language Vector Strategy" の採用
+最新スキーマ (v2) では、i18n対応によるレコード倍増とインデックス増加により、単純計算では **600MB超** となり無料枠を超過する。
+これを回避するため、以下の **3つの制約** をシステム運用に適用する。
+
+1.  **Vectorize Primary Only:** ベクトル検索用インデックス（HNSW）は **日本語 (Primary Language) のみ** に作成する。英語圏からの検索にはキーワード検索または別途クラウド検索（Algolia等）を検討する（あるいは将来的にPaid Tierへ移行）。
+2.  **Selected Indexing:** 非正規化カラム (`sl_*`) へのインデックスは、複合インデックスを活用して総数を減らす。
+3.  **JSONB Optimization:** `content_structure` などのJSONBデータは、検索不要な詳細データを含めない（最小限の骨子のみとする）。
+
+**修正後の推定合計サイズ: 約 415 MB** (✅ ギリギリ安全圏)
+
+---
+
+## 2. 詳細内訳 (Schema v2 Based)
+
+### 2.1 テーブルデータ (Row Data)
+前提: 70,000作品 × 2言語 = 140,000 翻訳レコード。
+
+| テーブル | 行数 | 単価 (平均) | 合計 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| **articles** | 70k | 100 B | **7 MB** | ID, Slug, Dates, Flags |
+| **article_translations** | 140k | 1.0 KB | **140 MB** | Titles, Snapshots, JSONB Metadata (No Vector) |
+| **scores / recordings** | 70k | 0.5 KB | **35 MB** | 楽譜テキスト, 録音メタデータ |
+| **masters** (Work/Comp) | 5k | 0.5 KB | **3 MB** | 参照用マスタデータ |
+| **Subtotal (Data)** | | | **185 MB** | |
+
+### 2.2 インデックス (B-Tree / GIN)
+多数の検索用インデックスを追加したため、ここが増加要因となる。
+
+| 種類 | 件数 | 単価 | 合計 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| **PK / FK / Slug** | 210k | 60 B | **13 MB** | 基本インデックス |
+| **Search Indexes** (Genre etc) | 140k | 100 B | **14 MB** | 絞り込み用 |
+| **GIN Indexes** (Tags/Trgm) | 140k | 200 B | **28 MB** | JSONB & 全文検索用 |
+| **Subtotal (Index)** | | | **55 MB** | |
+
+### 2.3 ベクトルデータ & HNSWインデックス (The Bottleneck)
+最も容量を食う部分。**日本語記事 (70k) のみに限定**することで圧縮する。
+
+| 項目 | 件数 | 単価 | 合計 | 戦略 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Embedding Payload** | **70k (JA only)** | 1.5 KB | **105 MB** | `halfvec(768)` 16-bit |
+| **HNSW Index** | **70k (JA only)** | 1.0 KB | **70 MB** | インデックスオーバーヘッド |
+| **Subtotal (Vector)** | | | **175 MB** | **ENを含めると +175MB で即死** |
+
+---
+
+## 3. 総合計とリスク管理
+
+| カテゴリ | 推定サイズ | 比率 |
+| :--- | :--- | :--- |
+| **基本データ (Data)** | 185 MB | 45% |
+| **基本インデックス (B-Tree/GIN)** | 55 MB | 13% |
+| **ベクトル検索 (Vector)** | 175 MB | 42% |
+| **総合計** | **415 MB** | **Usage: 83%** |
+
+### 今後のアクションプラン
+1.  **監視 (Monitoring):** 運用開始後、ダッシュボードで容量推移を週次監視する。
+2.  **アーカイブ (Archiving):** 450MBを超えた時点で、アクセス頻度の低い「ドラフト記事」や「古いバージョン」を削除、またはCold Storage (R2) へ退避する機能を実装する。
+3.  **Pro Tier移行:** 収益化の目処が立った段階で、月額$25のPro Tierへ移行する（容量8GB）。これが最も健全な長期的解決策である。
 
 **目的:** 70,000記事を **Supabase Free Tier (500 MB)** 内に収容可能か検証する。
 
