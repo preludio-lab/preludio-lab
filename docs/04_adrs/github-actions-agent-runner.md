@@ -19,9 +19,11 @@ AIエージェント（コンテンツ生成スクリプト）を実行するた
 ## Consequences
 
 ### Positive
-*   **Zero Cost:** Public Repositoryであれば、GitHub Actionsの実行時間は無料（あるいは十分な枠がある）。
-*   **Integration:** ソースコードと同じ場所でスクリプトを管理・実行でき、PR作成などのGit操作が容易。
+
+- **Zero Cost:** Public Repositoryであれば、GitHub Actionsの実行時間は無料（あるいは十分な枠がある）。
+- **Integration:** ソースコードと同じ場所でスクリプトを管理・実行でき、PR作成などのGit操作が容易。
 
 ### Negative
-*   **Timeout:** 1ジョブあたりの実行時間に制限（通常6時間だが、Free枠等を考慮すると短めが安全）がある。大量生成時はバッチ分割が必要。
-*   **Ephemeral:** 実行ごとに環境がリセットされるため、永続データの保存にはGitコミットまたは外部ストレージ（Supabase/Drive）が必要。
+
+- **Timeout:** 1ジョブあたりの実行時間に制限（通常6時間だが、Free枠等を考慮すると短めが安全）がある。大量生成時はバッチ分割が必要。
+- **Ephemeral:** 実行ごとに環境がリセットされるため、永続データの保存にはGitコミットまたは外部ストレージ（Supabase/Drive）が必要。

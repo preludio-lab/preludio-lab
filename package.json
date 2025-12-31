@@ -17,6 +17,7 @@
   "dependencies": {
     "@sentry/nextjs": "^10.31.0",
     "@supabase/supabase-js": "^2.89.0",
+    "@swc/helpers": "^0.5.18",
     "@t3-oss/env-nextjs": "^0.13.10",
     "abcjs": "^6.5.2",
     "clsx": "^2.1.1",

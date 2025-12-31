@@ -1,182 +1,174 @@
 {
-    "meta": {
-        "description": "Multilingual Dictionary for AI Agents (Translator/Musicologist).",
-        "languages": [
-            "en",
-            "ja",
-            "es",
-            "fr",
-            "de",
-            "it",
-            "zh"
-        ],
-        "version": "1.1.0"
+  "meta": {
+    "description": "Multilingual Dictionary for AI Agents (Translator/Musicologist).",
+    "languages": ["en", "ja", "es", "fr", "de", "it", "zh"],
+    "version": "1.1.0"
+  },
+  "terms": [
+    {
+      "id": "term_article",
+      "context": "Web Page Unit (Entity)",
+      "en": "Article",
+      "ja": "記事",
+      "es": "Artículo",
+      "fr": "Article",
+      "de": "Artikel",
+      "it": "Articolo",
+      "zh": "文章"
     },
-    "terms": [
-        {
-            "id": "term_article",
-            "context": "Web Page Unit (Entity)",
-            "en": "Article",
-            "ja": "記事",
-            "es": "Artículo",
-            "fr": "Article",
-            "de": "Artikel",
-            "it": "Articolo",
-            "zh": "文章"
-        },
-        {
-            "id": "term_content",
-            "context": "Body / Payload",
-            "en": "Content",
-            "ja": "コンテンツ (本文)",
-            "es": "Contenido",
-            "fr": "Contenu",
-            "de": "Inhalt",
-            "it": "Contenuto",
-            "zh": "内容"
-        },
-        {
-            "id": "term_work",
-            "context": "Musical Composition",
-            "en": "Work",
-            "ja": "作品",
-            "es": "Obra",
-            "fr": "Œuvre",
-            "de": "Werk",
-            "it": "Opera",
-            "zh": "作品"
-        },
-        {
-            "id": "term_movement",
-            "context": "Section of a work",
-            "en": "Movement",
-            "ja": "楽章",
-            "es": "Movimiento",
-            "fr": "Mouvement",
-            "de": "Satz",
-            "it": "Movimento",
-            "zh": "乐章"
-        },
-        {
-            "id": "term_score",
-            "context": "Sheet Music",
-            "en": "Score",
-            "ja": "楽譜",
-            "es": "Partitura",
-            "fr": "Partition",
-            "de": "Partitur",
-            "it": "Partitura",
-            "zh": "乐谱"
-        },
-        {
-            "id": "term_key",
-            "context": "Tonality (e.g. C Major)",
-            "en": "Key",
-            "ja": "調",
-            "es": "Tonalidad",
-            "fr": "Tonalité",
-            "de": "Tonart",
-            "it": "Tonalità",
-            "zh": "调"
-        },
-        {
-            "id": "term_bar",
-            "context": "Measure",
-            "en": "Bar",
-            "ja": "小節",
-            "es": "Compás",
-            "fr": "Mesure",
-            "de": "Takt",
-            "it": "Battuta",
-            "zh": "小节"
-        },
-        {
-            "id": "term_composer",
-            "context": "Author of music",
-            "en": "Composer",
-            "ja": "作曲家",
-            "es": "Compositor",
-            "fr": "Compositeur",
-            "de": "Komponist",
-            "it": "Compositore",
-            "zh": "作曲家"
-        },
-        {
-            "id": "term_opus",
-            "context": "Work number",
-            "en": "Opus (Op.)",
-            "ja": "作品番号 (Op.)",
-            "es": "Opus (Op.)",
-            "fr": "Opus (Op.)",
-            "de": "Opus (Op.)",
-            "it": "Opus (Op.)",
-            "zh": "作品号 (Op.)"
-        },
-        {
-            "id": "term_bwv",
-            "context": "Bach-Werke-Verzeichnis",
-            "en": "BWV",
-            "ja": "BWV (バッハ作品番号)",
-            "es": "BWV",
-            "fr": "BWV",
-            "de": "BWV",
-            "it": "BWV",
-            "zh": "BWV"
-        },
-        {
-            "id": "term_motif",
-            "context": "Short musical idea",
-            "en": "Motif",
-            "ja": "動機 (モチーフ)",
-            "es": "Motivo",
-            "fr": "Motif",
-            "de": "Motiv",
-            "it": "Motivo",
-            "zh": "动机"
-        },
-        {
-            "id": "term_voice",
-            "context": "Polyphonic line (Soprano, etc.)",
-            "en": "Voice",
-            "ja": "声部",
-            "es": "Voz",
-            "fr": "Voix",
-            "de": "Stimme",
-            "it": "Voce",
-            "zh": "声部"
-        },
-        {
-            "id": "term_texture",
-            "context": "Musical texture",
-            "en": "Texture",
-            "ja": "テクスチャ (織り)",
-            "es": "Textura",
-            "fr": "Texture",
-            "de": "Textur",
-            "it": "Tessitura",
-            "zh": "织体"
-        },
-        {
-            "id": "term_prelude",
-            "context": "Musical form",
-            "en": "Prelude",
-            "ja": "前奏曲 (プレリュード)",
-            "es": "Preludio",
-            "fr": "Prélude",
-            "de": "Präludium",
-            "it": "Preludio",
-            "zh": "前奏曲"
-        },
-        {
-            "id": "term_fugue",
-            "context": "Musical form",
-            "en": "Fugue",
-            "ja": "フーガ (遁走曲)",
-            "es": "Fuga",
-            "fr": "Fugue",
-            "de": "Fuge",
-            "it": "Fuga",
-            "zh": "赋格"
-        }
-    ]
+    {
+      "id": "term_content",
+      "context": "Body / Payload",
+      "en": "Content",
+      "ja": "コンテンツ (本文)",
+      "es": "Contenido",
+      "fr": "Contenu",
+      "de": "Inhalt",
+      "it": "Contenuto",
+      "zh": "内容"
+    },
+    {
+      "id": "term_work",
+      "context": "Musical Composition",
+      "en": "Work",
+      "ja": "作品",
+      "es": "Obra",
+      "fr": "Œuvre",
+      "de": "Werk",
+      "it": "Opera",
+      "zh": "作品"
+    },
+    {
+      "id": "term_movement",
+      "context": "Section of a work",
+      "en": "Movement",
+      "ja": "楽章",
+      "es": "Movimiento",
+      "fr": "Mouvement",
+      "de": "Satz",
+      "it": "Movimento",
+      "zh": "乐章"
+    },
+    {
+      "id": "term_score",
+      "context": "Sheet Music",
+      "en": "Score",
+      "ja": "楽譜",
+      "es": "Partitura",
+      "fr": "Partition",
+      "de": "Partitur",
+      "it": "Partitura",
+      "zh": "乐谱"
+    },
+    {
+      "id": "term_key",
+      "context": "Tonality (e.g. C Major)",
+      "en": "Key",
+      "ja": "調",
+      "es": "Tonalidad",
+      "fr": "Tonalité",
+      "de": "Tonart",
+      "it": "Tonalità",
+      "zh": "调"
+    },
+    {
+      "id": "term_bar",
+      "context": "Measure",
+      "en": "Bar",
+      "ja": "小節",
+      "es": "Compás",
+      "fr": "Mesure",
+      "de": "Takt",
+      "it": "Battuta",
+      "zh": "小节"
+    },
+    {
+      "id": "term_composer",
+      "context": "Author of music",
+      "en": "Composer",
+      "ja": "作曲家",
+      "es": "Compositor",
+      "fr": "Compositeur",
+      "de": "Komponist",
+      "it": "Compositore",
+      "zh": "作曲家"
+    },
+    {
+      "id": "term_opus",
+      "context": "Work number",
+      "en": "Opus (Op.)",
+      "ja": "作品番号 (Op.)",
+      "es": "Opus (Op.)",
+      "fr": "Opus (Op.)",
+      "de": "Opus (Op.)",
+      "it": "Opus (Op.)",
+      "zh": "作品号 (Op.)"
+    },
+    {
+      "id": "term_bwv",
+      "context": "Bach-Werke-Verzeichnis",
+      "en": "BWV",
+      "ja": "BWV (バッハ作品番号)",
+      "es": "BWV",
+      "fr": "BWV",
+      "de": "BWV",
+      "it": "BWV",
+      "zh": "BWV"
+    },
+    {
+      "id": "term_motif",
+      "context": "Short musical idea",
+      "en": "Motif",
+      "ja": "動機 (モチーフ)",
+      "es": "Motivo",
+      "fr": "Motif",
+      "de": "Motiv",
+      "it": "Motivo",
+      "zh": "动机"
+    },
+    {
+      "id": "term_voice",
+      "context": "Polyphonic line (Soprano, etc.)",
+      "en": "Voice",
+      "ja": "声部",
+      "es": "Voz",
+      "fr": "Voix",
+      "de": "Stimme",
+      "it": "Voce",
+      "zh": "声部"
+    },
+    {
+      "id": "term_texture",
+      "context": "Musical texture",
+      "en": "Texture",
+      "ja": "テクスチャ (織り)",
+      "es": "Textura",
+      "fr": "Texture",
+      "de": "Textur",
+      "it": "Tessitura",
+      "zh": "织体"
+    },
+    {
+      "id": "term_prelude",
+      "context": "Musical form",
+      "en": "Prelude",
+      "ja": "前奏曲 (プレリュード)",
+      "es": "Preludio",
+      "fr": "Prélude",
+      "de": "Präludium",
+      "it": "Preludio",
+      "zh": "前奏曲"
+    },
+    {
+      "id": "term_fugue",
+      "context": "Musical form",
+      "en": "Fugue",
+      "ja": "フーガ (遁走曲)",
+      "es": "Fuga",
+      "fr": "Fugue",
+      "de": "Fuge",
+      "it": "Fuga",
+      "zh": "赋格"
+    }
+  ]
 }
