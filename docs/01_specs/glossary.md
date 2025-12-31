@@ -22,6 +22,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Video** | 動画 | 映像を含むデータ形式（MP4, YouTube等）。 | Format / Source |
 | **Image** | 画像 | 静止画データ（OGP, アートワーク, 楽譜プレビュー画像）。 | Format |
 | **Player** | プレイヤー | 音源（Recording）を再生するコンポーネントの総称。AudioPlayer（音声）だけでなく、将来的なVideoPlayer（YouTube埋め込み等）も含む抽象概念。 | `<AudioPlayer />`, `<VideoPlayer />` |
+| **Catalogue** | 作品番号/目録 | 楽曲を識別するための整理番号（Op., BWV, K. など）。DB上では `catalogue_prefix` と `catalogue_number` に分割管理される。 | `Works` マスタ |
 | **Analysis** | 分析 | 楽曲構造や理論的背景の解説テキスト。 | Agent Output |
 | **Opus (Op.)** | 作品番号 | 出版順に割り振られた番号。 | `Op. 18` |
 | **BWV** | BWV | バッハ作品番号 (Bach-Werke-Verzeichnis)。 | `BWV 846` |

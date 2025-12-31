@@ -38,7 +38,6 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Scores ||--|{ ScoreTranslations : "has localized metadata"
     Scores }o..|| Recordings : "suggests"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
@@ -54,9 +53,10 @@ erDiagram
 記事管理の中核テーブル。検索要件に基づき、多くの属性を非正規化して持ちます。
 
 ### 3.0 Extensions
-ベクトル検索を有効化するため、`vector` 拡張機能を有効化します。
+全文検索 (`pg_trgm`) およびベクトル検索 (`vector`) を有効化します。
 
 ```sql
+create extension if not exists pg_trgm;
 create extension if not exists vector;
 ```
 
@@ -93,9 +93,10 @@ create extension if not exists vector;
 | **`sl_mood_dimensions`**| `jsonb`| - | YES | **[Hybrid Search]** 5軸の感情定量値 (-1.0 ~ +1.0) |
 | **`embedding`** | `halfvec(768)` | - | YES | **[Hybrid Search]** Embedding Vector (16-bit, 768 dimensions) |
 | `published_at` | `timestamptz` | - | YES | 公開日時 |
-| `storage_path` | `text` | - | YES | ストレージ上のMDXパス (`article/{uuid}.mdx`) |
+| `mdx_uri` | `text` | - | YES | ストレージ上のMDXパス (`article/{uuid}.mdx`) |
+| `thumbnail_url` | `text` | - | YES | **[Snapshot]** 一覧表示用サムネイル画像URL |
 | `metadata` | `jsonb` | `{}` | NO | その他メタデータ (Tags, Key, Difficulty) |
-| `content_structure` | `jsonb` | `{}` | NO | 目次構成データ (Search/Preview用) |
+| `content_structure` | `jsonb` | `{}` | NO | **[ToC/Search]** 目次構成データ。MDX本体をパースせずに目次生成やセクション検索を行うために使用。 |
 | `created_at` | `timestamptz` | `now()` | NO | - |
 | `updated_at` | `timestamptz` | `now()` | NO | - |
 
@@ -213,7 +214,7 @@ type PlaybackSamples = PlaybackSample[];
 | `composer_id` | `uuid` | - | NO | FK |
 | `lang` | `text` | - | NO | `en`, `ja` |
 | `name` | `text` | - | NO | Localized Name (e.g. "バッハ") |
-| `bio` | `text` | - | YES | Biography |
+| `bio` | `text` | - | YES | 人物伝記。作曲家の生涯、作風、歴史的意義などを記述。作曲家詳細ページのメインコンテンツ。 |
 
 ### 5.2 `works` / `work_translations`
 **`works`**
@@ -221,8 +222,9 @@ type PlaybackSamples = PlaybackSample[];
 | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
 | `composer_id` | `uuid` | - | NO | FK |
-| `catalogue_prefix` | `text` | - | YES | `Op.`, `BWV` |
-| `catalogue_number` | `text` | - | YES | `67`, `1001` |
+| `slug` | `text` | - | NO | e.g. `symphony-no5`. URLの構成要素。 |
+| `catalogue_prefix` | `text` | - | YES | `Op.`, `BWV`, `D`, `K` 等のカタログ番号接頭辞 |
+| `catalogue_number` | `text` | - | YES | `67`, `1001` 等のカタログ番号 |
 | `key_tonality` | `text` | - | YES | `C Major`, `D Minor` |
 
 **`work_translations`**
@@ -231,16 +233,13 @@ type PlaybackSamples = PlaybackSample[];
 | **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
 | `work_id` | `uuid` | - | NO | FK |
 | `lang` | `text` | - | NO | `en`, `ja` |
-| `title` | `text` | - | NO | Official Title (e.g. "Symphony No. 5") |
-| `popular_title` | `text` | - | YES | Popular Title (e.g. "Fate") |
-| `nicknames` | `text[]` | - | YES | Search aliases |
+| `title` | `text` | - | NO | 正式名称 (e.g. "Symphony No. 5") |
+| `popular_title` | `text` | - | YES | **[Primary UI]** 一般的な通称。一覧やタイトルで使用 (e.g. "運命") |
+| `nicknames` | `text[]` | - | YES | **[Search Aliases]** 検索でヒットさせるための別名・揺らぎ (e.g. ["Schicksal", "Fate"]) |
 
 ### 5.3 `tags` (Normalized Taxonomy)
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 [Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
-
-### 5.3 `tags` (Normalized Taxonomy)
-ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 
 **`tags`**
 | Column | Type | Default | Nullable | Description |
