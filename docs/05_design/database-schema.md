@@ -22,6 +22,7 @@
 
 ### 1.4 Database Extensions
 全文検索 (`pg_trgm`) およびベクトル検索 (`vector`) を有効化します。
+※ 容量管理のため、`vector` の使用は `article_translations` テーブルに限定します。
 
 ```sql
 create extension if not exists pg_trgm;
