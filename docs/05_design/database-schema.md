@@ -151,25 +151,24 @@ type ArticleMetadata = {
 楽譜ビュワーで使用するデータ。
 
 ### 4.1 `scores` (Universal Asset)
-| Column | Type | Description |
-| :--- | :--- | :--- |
-| **`id`** | `uuid` | **PK** |
-| `work_id` | `uuid` | FK to `works.id` |
-| `format` | `text` | 'abc', 'musicxml' |
-| `data` | `text` | 楽譜データ実体 (Text format) |
-| `data` | `text` | 楽譜データ実体 (Text format) |
-| `recommended_recording_id` | `uuid` | FK to `recordings.id`. この楽譜に対応する推奨音源（あれば）。MDXで `<Score>` を置くだけで音源も自動設定する場合に使用。 |
-| `created_at` | `timestamptz` | |
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `work_id` | `uuid` | - | NO | FK to `works.id` |
+| `format` | `text` | - | NO | 'abc', 'musicxml' |
+| `data` | `text` | - | NO | 楽譜データ実体 (Text format) |
+| `recommended_recording_id` | `uuid` | - | YES | FK to `recordings.id`. 推奨音源リンク |
+| `created_at` | `timestamptz` | `now()` | NO | - |
 
 ### 4.2 `score_translations` (Localized Metadata)
 楽譜のキャプションや説明文。
-| Column | Type | Description |
-| :--- | :--- | :--- |
-| **`id`** | `uuid` | **PK** |
-| `score_id` | `uuid` | FK to `scores.id` |
-| `lang` | `text` | 'ja', 'en'... |
-| `caption` | `text` | 譜例のタイトル (e.g. "第1主題") |
-| `description` | `text` | 補足説明 |
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `score_id` | `uuid` | - | NO | FK to `scores.id` |
+| `lang` | `text` | - | NO | 'ja', 'en'... |
+| `caption` | `text` | - | NO | 譜例のタイトル (e.g. "第1主題") |
+| `description` | `text` | - | YES | 補足説明 |
 
 ---
 
@@ -179,54 +178,97 @@ type ArticleMetadata = {
 **Zero-JOIN戦略のため、ユーザーアクセス時にこのテーブルがJOINされることは基本ありません。**
 
 ### 5.1 `composers` / `composer_translations`
-*   `composers`: `id`, `slug`, `born_at`, `died_at`, `nationality_code`
-*   `composer_translations`: `id`, `composer_id`, `lang`, `name` (Local Name), `bio`
+**`composers`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `slug` | `text` | - | NO | e.g. `bach` |
+| `born_at` | `date` | - | YES | 生年月日 |
+| `died_at` | `date` | - | YES | 没年月日 |
+| `nationality_code` | `text` | - | YES | ISO Country Code |
+
+**`composer_translations`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `composer_id` | `uuid` | - | NO | FK |
+| `lang` | `text` | - | NO | `en`, `ja` |
+| `name` | `text` | - | NO | Localized Name (e.g. "バッハ") |
+| `bio` | `text` | - | YES | Biography |
 
 ### 5.2 `works` / `work_translations`
-*   `works`: `id`, `composer_id`, **`catalogue_prefix`** (BWV, Op.), **`catalogue_number`** (1001, 5), `key_tonality`
-    *   *Note:* `catalogue_id` はこれらを結合したGenerated ColumnまたはApp層での表現とします。分割することで "K. 448" と "K448" の揺らぎを吸収します。
-*   `work_translations`: `id`, `work_id`, `lang`, `title`, `popular_title`, `nicknames` (text[])
+**`works`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `composer_id` | `uuid` | - | NO | FK |
+| `catalogue_prefix` | `text` | - | YES | `Op.`, `BWV` |
+| `catalogue_number` | `text` | - | YES | `67`, `1001` |
+| `key_tonality` | `text` | - | YES | `C Major`, `D Minor` |
+
+**`work_translations`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `work_id` | `uuid` | - | NO | FK |
+| `lang` | `text` | - | NO | `en`, `ja` |
+| `title` | `text` | - | NO | Official Title (e.g. "Symphony No. 5") |
+| `popular_title` | `text` | - | YES | Popular Title (e.g. "Fate") |
+| `nicknames` | `text[]` | - | YES | Search aliases |
 
 ### 5.3 `tags` (Normalized Taxonomy)
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 [Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
 
-*   `tags`:
-    *   `id` (uuid): PK
-    *   **`category`** (text): タグの種類（厳密に管理します）
-        *   `'mood'`: 感情・雰囲気 (e.g. Sad, Uplifting, Epic)
-        *   `'situation'`: 利用シーン・機能 (e.g. Study, Sleep, Wedding)
-        *   `'terminology'`: 音楽理論・形式 (e.g. Sonata Form, Fugue, Cadenza)
-    *   `slug` (text): 英語ベースの識別子 (e.g. `deep-focus`, `sonata-form`)
-*   `tag_translations`: `id`, `tag_id`, `lang`, `name`
+### 5.3 `tags` (Normalized Taxonomy)
+ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
+
+**`tags`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `category` | `text` | - | NO | `mood`, `situation`, `terminology` |
+| `slug` | `text` | - | NO | `deep-focus`, `sonata-form` |
+
+**`tag_translations`**
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `tag_id` | `uuid` | - | NO | FK |
+| `lang` | `text` | - | NO | `en`, `ja` |
+| `name` | `text` | - | NO | Display Name (e.g. "深い集中") |
 
 ### 5.4 `media_assets` (Generic Assets)
-サイト内で使用する汎用的な静的ファイル（画像、PDF等）。音楽的な意味を持ちません。
-*   `media_assets`:
-    *   `id` (uuid): PK
-    *   `media_type` (text): `'image'`, `'document'`, `'audio_file'`
-    *   `url` (text): Storage Public URL
-    *   `alt_text` (text): アクセシビリティ用テキスト
-    *   `metadata` (jsonb): width, height, file_size等
+サイト内で使用する汎用的な静的ファイル（画像、PDF等）。
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `media_type` | `text` | - | NO | `'image'`, `'document'` |
+| `url` | `text` | - | NO | Storage Public URL |
+| `alt_text` | `jsonb` | `{}` | YES | **[i18n]** Localized Alt Text `{ "ja": "...", "en": "..." }` |
+| `metadata` | `jsonb` | `{}` | NO | width, height, file_size |
 
 ### 5.5 `recordings` (Domain Entity)
 「誰の、いつの演奏か」という音楽的なメタデータを管理する実体。
-*   `recordings`:
-    *   `id` (uuid): PK
-    *   `work_id` (uuid): FK. 楽曲へのリンク
-    *   `performer_name` (text): 演奏者名（表示用）
-    *   `performers` (jsonb): 演奏者ごとの構造化データ (e.g. `[{ name: "Karajan", role: "conductor" }]`)
-    *   `recording_year` (int): 録音年
-    *   `is_recommended` (boolean): おすすめフラグ
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `work_id` | `uuid` | - | NO | FK to `works.id` |
+| `performer_name` | `text` | - | NO | 演奏者名（表示用）。e.g. "Herbert von Karajan" |
+| `recording_year` | `int` | - | YES | 録音年 |
+| `is_recommended` | `boolean` | `false` | NO | おすすめフラグ |
+
+*Note:* `performers` (jsonb) は `performer_name` と重複するため削除しました。構造化が必要になった場合はテーブル化を検討します。
 
 ### 5.6 `recording_sources` (Media Providers)
 1つの録音（Recording）に紐づく、具体的な再生手段。
-*   `recording_sources`:
-    *   `id` (uuid): PK
-    *   `recording_id` (uuid): FK
-    *   `provider` (text): `'youtube'`, `'spotify'`, `'apple_music'`, `'classic_manager'`
-    *   `external_id` (text): Video ID / URI
-    *   `quality` (text): `'high'`, `'medium'`
+| Column | Type | Default | Nullable | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `uuid` | `uuid_generate_v7()` | NO | **PK** |
+| `recording_id` | `uuid` | - | NO | FK to `recordings.id` |
+| `provider` | `text` | - | NO | `'youtube'`, `'spotify'` |
+| `source_id` | `text` | - | NO | External ID / URI (e.g. Video ID) |
+| `quality` | `text` | - | YES | `'high'`, `'medium'` |
 
 ---
 
