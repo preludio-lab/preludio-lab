@@ -20,6 +20,14 @@
 **"Secure by Default"** を徹底します。
 すべてのテーブルで RLS (Row Level Security) を有効化し、明示的なポリシーがない限りアクセスを拒否します。
 
+### 1.4 Database Extensions
+全文検索 (`pg_trgm`) およびベクトル検索 (`vector`) を有効化します。
+
+```sql
+create extension if not exists pg_trgm;
+create extension if not exists vector;
+```
+
 ---
 
 ## 2. ER Diagram (Entity Relationship)
@@ -51,14 +59,6 @@ erDiagram
 ## 3. Core Tables: Articles (Application Data)
 
 記事管理の中核テーブル。検索要件に基づき、多くの属性を非正規化して持ちます。
-
-### 3.0 Extensions
-全文検索 (`pg_trgm`) およびベクトル検索 (`vector`) を有効化します。
-
-```sql
-create extension if not exists pg_trgm;
-create extension if not exists vector;
-```
 
 ### 3.1 `articles` (Universal)
 言語に依存しない、記事の存在そのものを管理する親テーブル。
