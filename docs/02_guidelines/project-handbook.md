@@ -79,7 +79,7 @@ preludio-lab/
 │   │   ├── use-cases/           # RegisterUserUseCase
 │   │   └── dtos/                # Data Transfer Objects
 │   ├── infrastructure/          # 【Infrastructure Layer】(Implementation)
-│   │   ├── database/            # Supabase Client
+│   │   ├── database/            # Supabase & Turso Clients
 │   │   ├── repositories/        # Repository Architecture (SupabaseUserRepository)
 │   │   └── external/            # External APIs (Gemini, Bandcamp)
 │   ├── lib/                     # 【Shared】Utilities (Logger, Date, MDX)
@@ -146,10 +146,10 @@ preludio-lab/
 | :------------ | :--------------------- | :------------------------------------------------ |
 | **Frontend**  | Next.js (App Router)   | TypeScript必須。Vercel Hobby Planで稼働。         |
 | **Auth**      | Supabase Auth          | **SSO Only** (Passwordless). RLSを徹底。          |
-| **Database**  | None (Git/MDX)         | コンテンツはGit管理。ユーザーデータのみSupabase。 |
-| **AI Model**  | Gemini 3.0 Pro         | Google AI Studio API **Free Tier** 内で利用。     |
-| **Agent Env** | GitHub Actions         | 定期実行やDispatchでエージェントを起動。          |
-| **Search**    | Supabase Hybrid Search | Full Text Search (pg_trgm) + Vector (pgvector)    |
+| **Database**  | Turso / Supabase       | コンテンツ・マスタはTurso。ユーザーデータはSupabase。 |
+| **AI Model**  | Gemini 3.0 Pro         | Google AI Studio API **Free Tier** 内で利用。         |
+| **Agent Env** | GitHub Actions         | 定期実行やDispatchでエージェントを起動。              |
+| **Search**    | Turso Hybrid Search    | Full Text Search (FTS5) + Vector (libsql-vector)      |
 | **Media**     | react-abc / YouTube    | 音源・画像のホスティングは外部に委譲。            |
 
 ---

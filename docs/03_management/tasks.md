@@ -173,17 +173,17 @@ Status: `[/]` 進行中
     - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
     - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの簡易トグル管理機能の実装
     - [ ] **DB Sync**: 編集内容のDB更新およびObject StorageへのMDX保存の実装
-    - [ ] **Direct Build**: SupabaseからMDXをDirect FetchしてビルドするSSGロジックの実装
+    - [ ] **Direct Build**: Turso/R2からMDXをDirect FetchしてビルドするSSGロジックの実装
   - [ ] **[検証]** AI編集支援とSSGビルドフローの動作確認
 
 - [ ] **5.6 検索機能の実装 (Tiered Hybrid Search)**
   - [ ] **[実装]** DB Semantic Search (Tier 2/Long-tail)
-    - [ ] Supabase `pgvector` & `tsvector` インデックス構築
+    - [ ] Turso `libsql-vector` & `FTS5` インデックス構築
     - [ ] API Route: Semantic Search & Keyword Search Implementation
   - [ ] **[実装]** Pagefind Full-Text Search (Tier 1/Top 1000)
     - [ ] Build Script: `pagefind` indexing after export
     - [ ] Client UI: Search Widget integration
-  - [ ] **[検証]** 検索レイテンシと精度の確認 (`pagefind` vs `db`)
+  - [ ] **[検証]** 検索レイテンシと精度の確認 (`pagefind` vs `Turso`)
 
 ## Phase 6: AIエージェント開発 ("Brain") & コンテンツ量産
 
@@ -300,7 +300,7 @@ Status: `[/]` 進行中
   - [ ] **[基盤]** **共通ウィジェット・フレームワーク**: サイドバー用の `ContentCard` 拡張 (Vertical/Horizontal) と、再利用可能なウィジェット配置基盤の構築
 
 - [ ] **8.3 AIレコメンド機能と発見的探索 (AI Recommendation & Discovery)**
-  - [ ] **[基盤]** Supabase pgvector を利用した、埋め込みベクトルによる類似楽曲の抽出の高度化
+  - [ ] **[基盤]** Turso `libsql-vector` を利用した、埋め込みベクトルによる類似楽曲の抽出の高度化
   - [ ] **[ロジック]** 同一作曲家・同一楽器・同一時代の「重み付け」アルゴリズムの実装
   - [ ] **[UI実装]** **推薦理由の可視化 (Explainable AI)**: 「なぜこの曲がおすすめなのか」を提示するUIの実装
   - [ ] **[実験的機能]** **AIキュレーション・コレクション**: 「雨の日に聴きたい」等の文脈に基づいた自動パッケージ化機能

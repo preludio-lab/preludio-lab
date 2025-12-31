@@ -8,40 +8,45 @@
 
 **Constraints (設計制約):**
 
-- **Supabase DB Size:** Free Tier (500MB) 制限。70,000記事の本文をDBに格納することは不可。
+- **Supabase DB Size:** Free Tier (500MB) 制限。70,000記事の本文や検索用インデックスを全て格納することは不可。
+- **Turso Capacity:** Free Tier (9GB) を確保。コンテンツ、翻訳、ベクトルデータを一括管理可能。
 - **Build Time:** Vercel Build Timeoutの回避。全記事ビルドは不可。
 
 | Component       | Technology              | Role                                    | Persistence / Policy              |
 | :-------------- | :---------------------- | :-------------------------------------- | :-------------------------------- |
-| **Metadata**    | **Supabase DB**         | 検索、状態管理、**Auth/RLS**            | SQL / **500MB Limit**             |
+| **Core & Auth** | **Supabase DB**         | ユーザー認証、基本プロファイル          | SQL / **500MB Limit**             |
+| **Metadata**    | **Turso (libSQL)**      | 記事・作品・作曲家メタデータ、検索      | SQL / **9GB Limit**               |
 | **Draft Body**  | **Supabase Storage**    | 執筆中の本文 (MDX)                      | **Private Bucket (Auth/RLS)**     |
 | **Public Body** | **Cloudflare R2**       | 公開済みの本文 (MDX)                    | **Public Bucket (CDN Cacheable)** |
 | **Delivery**    | **CDN (Edge)**          | 静的HTML配信 (SSG/ISR)                  | Cache                             |
-| **Search**      | **Pagefind / pgvector** | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index                      |
+| **Search**      | **Pagefind / Turso**    | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index                      |
 
 ## 2. データ管理戦略 (Data Strategy)
 
-### 2.1 Storage Key Strategy
+### 2.1 Identifier & Storage Key Strategy
 
+- **Database (ID):** **36文字 (Hex) の UUID v7** を使用。
+  - _Reason:_ SQLite上で `TEXT` 型として格納しても、辞書順（Lexicographical order）でソートするだけで「生成時間順」を維持でき、DB側のページネーションや最新順取得を高速化できるため。
 - **Internal (Storage):** **URL Safe Base64 (from UUID v7)** を使用。
   - _Format:_ `article/{base64_id}.mdx` (e.g., `article/VQ6EANKb....mdx`)
-  - _Reason:_ UUID(36文字)よりも短縮(22文字)でき、かつUUIDのランダム性とソート順（v7採用時）を享受できるため。
+  - _Reason:_ ソート順を必要とさないストレージ上のパスにおいて、UUID(36文字)をコンパクトな(22文字)に圧縮して可読性と効率を高めるため。
 - **Public (URL):** **Slug** を使用 (`/works/bach/prelude`). SEOと可読性を優先。
   - _Mapping:_ アプリケーション層で Slug -> UUID -> Base64 の解決を行う。
 
 ### 2.2 Metadata Strategy (Read-Optimized)
 
 - **Source of Truth:** 正規化されたRDBMSテーブル (`composers` / `works`)。
-- **Runtime Optimization:** 閲覧時のJOIN負荷をなくすため、記事レコード内に **`metadata` (JSONB)** カラムを持つ。
-  - 必要な表示用データ（作曲家名、作品名など）は保存時にこのJSONBへスナップショットとして書き込む。
+- **Runtime Optimization:** 閲覧時のJOIN負荷をなくすため、記事レコード内に **`metadata` (JSON)** カラムを持つ。
+  - 必要な表示用データ（作曲家名、作品名など）は保存時にこのJSONへスナップショットとして書き込む。
   - **Result:** **Zero-JOIN Rendering** を実現。
+- **Security:** TursoにはRLSがないため、アプリケーション層（Next.js）でアクセス制御を行う。
 
 ### 2.3 Integration with AI (Knowledge Glossaries)
 
 AIエージェントの執筆精度を高めるため、**「DBマスタ」と「ファイル用語集」を統合**したManifestを利用する。
 
 1.  **Source:**
-    - **DB Entity (Large Scale):** Composers, Works (PostgreSQLからエクスポート)。
+    - **DB Entity (Large Scale):** Composers, Works (Tursoからエクスポート)。
     - **File Glossary (Static):** 音楽用語, 楽器, 時代区分 (Git管理下のJSON/TS)。
 2.  **Export:** 上記をマージし、**Knowledge Manifest (JSON)** としてエージェントに提供。
 3.  **Drafting & Validation:** エージェントはこれを参照して執筆し、保存時に用語チェックを行う。
@@ -76,10 +81,10 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 
 ### 4.2 Hybrid Search Strategy
 
-| Type            | Engine       | Target          | Description                                                     |
-| :-------------- | :----------- | :-------------- | :-------------------------------------------------------------- |
-| **Fast Search** | **Pagefind** | Top 1,000 (SSG) | 通信不要のクライアントサイド検索。「Find-as-you-type」体験。    |
-| **Deep Search** | **Supabase** | All Articles    | `pg_trgm` (キーワード) + `pgvector` (意味検索) による全件検索。 |
+| Type            | Engine       | Target          | Description                                                        |
+| :-------------- | :----------- | :-------------- | :----------------------------------------------------------------- |
+| **Fast Search** | **Pagefind** | Top 1,000 (SSG) | 通信不要のクライアントサイド検索。「Find-as-you-type」体験。       |
+| **Deep Search** | **Turso**    | All Articles    | `FTS5` (キーワード) + `libsql-vector` (意味検索) による全件検索。 |
 
 ### 4.3 Asset Delivery
 
