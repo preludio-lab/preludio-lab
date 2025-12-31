@@ -75,10 +75,15 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 - **Hydration:** 通常は `<img>` で表示し、再生時のみインタラクティブなプレイヤーコンポーネントにハイドレーションする。
 
 ## 5. 多言語対応 (Internationalization)
-**Normalized Translation Pattern** を採用。
 
-- `articles` (Universal): 言語共通のID、Slug管理。
-- `article_translations` (Localized): 言語ごとのタイトル、本文(MDX path)、ステータス。
-- **Slug:** 管理コスト低減のため **Universal Slug** (`/[lang]/works/[id]`) を採用。言語別Slugは実装しない。
+データの性質とアクセス頻度に応じ、 **Hybrid Strategy** を採用する。
 
-詳細は `data-schema.md` を参照。
+### 5.1 Translation Table Pattern (for Primary Entities)
+*   **Target:** `Articles`, `Works`, `Composers`, `Tags`
+*   **Rationale:** アプリケーションの主役（Primary Entity）。「日本語の記事一覧」のように**言語によるフィルタリング（WHERE句）**が頻繁に発生するため、正規化された別テーブルで管理する。
+
+### 5.2 JSONB Attribute Pattern (for Subordinate Attributes)
+*   **Target:** `MediaAssets` (`alt_text`), `UI Config`
+*   **Rationale:** 親データに従属する脇役（Attribute）。ID指定でFetchされることが多く、都度 `JOIN` するコストを避けるため、親レコード内のJSONB (`{ "ja": "...", "en": "..." }`) で完結させる。
+
+詳細は `database-schema.md` を参照。
