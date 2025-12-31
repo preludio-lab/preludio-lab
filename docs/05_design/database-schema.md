@@ -158,6 +158,8 @@ type ArticleMetadata = {
 | `format` | `text` | - | NO | 'abc', 'musicxml' |
 | `data` | `text` | - | NO | 楽譜データ実体 (Text format) |
 | `recommended_recording_id` | `uuid` | - | YES | FK to `recordings.id`. 推奨音源リンク |
+| `start_time` | `float` | - | YES | 再生開始時間（秒） |
+| `end_time` | `float` | - | YES | 再生終了時間（秒） |
 | `created_at` | `timestamptz` | `now()` | NO | - |
 
 ### 4.2 `score_translations` (Localized Metadata)
