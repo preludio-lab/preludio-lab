@@ -156,7 +156,7 @@ type MoodDimensions = {
 };
 ```
 
-#### JSON Type Definitions
+##### 3.2.1.3 `metadata` (Article Metadata)
 
 ```typescript
 type ArticleMetadata = {
@@ -494,7 +494,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 
 DB全体で使用される共通の JSON 構造。
 
-##### 6.1 `MultilingualString`
+### 6.1 `MultilingualString`
 エージェントやアプリが多言語で扱う文字列コンテナ。
 
 ```typescript
