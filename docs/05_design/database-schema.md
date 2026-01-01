@@ -114,7 +114,7 @@ erDiagram
 | **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
 | **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
 | **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON: `MoodDimensions`)                     |
-| **`embedding`**          | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ                                         |
+| **`embedding`**          | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
 | `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
 | **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
 | `mdx_path`                | `text`    | -       | NO       | -                                                        | MDX相対パス (e.g. `works/bwv846.mdx`)                  |
