@@ -151,7 +151,25 @@ sequenceDiagram
     Agent->>DB: 記事本文 + ベクトルデータを保存
 ```
 
-##### 検索実行時のフロー (Search Flow)
+##### 3. ベクトル化の対象ソース (Vectorization Sources)
+
+検索精度を最大化するため、以下のカラムを結合して1つのテキスト塊（Passage）としてベクトル化します。
+
+| Priority | Source Column (Content) | Description |
+| :--- | :--- | :--- |
+| **High** | `title` | 記事タイトル（最強の識別子） |
+| **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
+| **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
+| **Mid** | `sl_genre`, `sl_instrumentation` | ジャンル・楽器 |
+| **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
+| **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
+
+> [!NOTE]
+> **連結フォーマット例**:
+> `passage: Title: 運命. Composer: Beethoven. Tags: Epic, Dramatic. Content: この交響曲は...`
+> このように意味のあるラベルを付けて連結することで、モデルが各要素の意味を正しく解釈できるようにします。
+
+##### 4. 検索実行時のフロー (Search Flow)
 
 ```mermaid
 sequenceDiagram
@@ -161,7 +179,7 @@ sequenceDiagram
 
     User->>Server: 検索クエリ送信
     Server->>Server: OSSモデルでベクトル化 (384 dims)
-    Note over Server: @xenova/transformers (Server-side)
+    Note over Server: prefix "query: " を付与
     Server->>DB: 近傍探索 (VSS) を実行
     DB-->>Server: 記事リストを返却
     Server->>User: 検索結果を表示
