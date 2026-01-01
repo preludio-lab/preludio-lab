@@ -126,49 +126,47 @@ erDiagram
 
 #### ベクトル検索 (Vector Search) の仕組み
 
-Gemini API等の外部有料APIのレートリミット（RPM制限）を回避し、Zero-Costかつ無制限のスケーラビリティを実現するため、**OSSモデルを用いたエッジ/クライアントサイド推論** を採用することを推奨します。
+`embedding` カラムは、キーワード検索（完全一致や部分一致）では到達できない **「感性による検索（セマンティック検索）」** を実現するために使用されます。
 
--   **Architecture**: **Edge/Client-Side Embedding**
-    -   **Model**: `intfloat/multilingual-e5-small` (推奨)
-        -   **理由**: 多言語対応、高精度、軽量、そして **384次元** とコンパクトなため、DB容量（Turso 9GB制限）の節約にも貢献します（OpenAIの1536次元と比較して1/4）。
-    -   **Execution**:
-        -   **Indexing (保存時)**: `onnxruntime` を用いた記事生成パイプライン内で実行（API不要）。
-        -   **Search (検索時)**: `Transformers.js` を用い、ユーザーのブラウザまたはEdge Functionsで実行（API不要）。
+-   **外部APIへの依存**: テキストを座標（ベクトル）に変換するために、Gemini (Text Embedding API) や OpenAI などの外部 AI モデルの使用が必須となります。
+-   **ベクトル化の対象 (Source)**: `title`, `sl_composer_name`, `sl_genre`, `metadata.tags`, および記事本文のダイジェスト。
+-   **RDBの実装**: Tursoの `libsql-vector` 拡張を使用。`F32BLOB` 型として格納し、`HNSW` インデックスにより「入力されたクエリと意味が近い項目」を高速に抽出します。
 
 ##### 記事生成・インデックス時のフロー (Indexing Flow)
+
+AIエージェントによる記事生成から、データベースへのベクトル保存までの流れです。
 
 ```mermaid
 sequenceDiagram
     participant Agent as Content Agent
-    participant LocalAI as Local Embedding (ONNX)
+    participant AI as Embedding API (Gemini等)
     participant DB as Turso (libSQL)
 
     Agent->>Agent: 記事（Text/Tags）を生成
-    Agent->>LocalAI: 検索用文字列を変換 (384 dims)
-    Note over LocalAI: APIコールなし (Local Execution)
-    LocalAI-->>Agent: ベクトルデータ
+    Agent->>AI: 検索用文字列（Title+Tags等）を送信
+    AI-->>Agent: ベクトルデータ（1536次元の数値配列等）を返却
     Agent->>DB: 記事本文 + ベクトルデータを保存
+    DB->>DB: HNSWインデックスを更新
 ```
 
 ##### 検索実行時のフロー (Search Flow)
 
+ユーザーの「曖昧な言葉」から、関連する記事を特定するまでの流れです。
+
 ```mermaid
 sequenceDiagram
     participant User as ユーザー
-    participant Client as Client Browser (Transformers.js)
+    participant UI as Next.js (App)
+    participant AI as Embedding API (Gemini等)
     participant DB as Turso (libSQL)
 
-    User->>Client: 検索クエリ入力
-    Client->>Client: ブラウザ内でベクトル化 (384 dims)
-    Note over Client: APIコールなし (Zero Latency / No Limit)
-    Client->>DB: 近傍探索 (VSS) を実行
-    DB-->>Client: 記事リストを返却
-    Client->>User: 検索結果を表示
+    User->>UI: 「集中できるバロック曲」と入力
+    UI->>AI: 検索クエリを送信
+    AI-->>UI: クエリのベクトルデータを返却
+    UI->>DB: ベクトルによる近傍探索 (VSS) を実行
+    DB-->>UI: 意味の近い記事リストを返却
+    UI->>User: 検索結果を表示
 ```
-
-> [!IMPORTANT]
-> **モデルの統一**: ベクトル検索を行うためには、**保存時（インデックス）と検索時（クエリ）で完全に同一のモデルを使用する必要があります。**
-> 初期段階でこのOSSモデルアーキテクチャを採用することで、将来的なAPIコストの増大やベンダーロックインを完全に防ぐことができます。
 
 #### インデックス (Article Translations)
 
