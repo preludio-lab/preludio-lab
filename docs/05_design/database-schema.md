@@ -124,6 +124,15 @@ erDiagram
 | `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時 (形式強制)                                    |
 | `updated_at`             | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時 (形式強制)                                    |
 
+#### ベクトル検索 (Vector Search) の仕組み
+
+`embedding` カラムは、キーワード検索（完全一致や部分一致）では到達できない **「感性による検索（セマンティック検索）」** を実現するために使用されます。
+
+-   **ベクトル化の対象 (Source)**: `title`, `sl_composer_name`, `sl_genre`, `metadata.tags`, および記事本文のダイジェスト。
+-   **生成方法**: AIモデル（OpenAI `text-embedding-3-small` 等）により、テキストの意味を多次元空間（1536次元等）の座標として数値化したもの。
+-   **RDBの実装**: Tursoの `libsql-vector` 拡張を使用。`F32BLOB` 型として格納し、`HNSW` インデックスにより「入力されたクエリと意味が近い記事」を高速に抽出します。
+-   **検索体験**: 「朝に聴きたい元気な曲」「映画のようなドラマチックなバロック音楽」といった、キーワードが記事内に直接含まれていない曖昧な指示による検索を可能にします。
+
 #### インデックス (Article Translations)
 
 | Index Name                     | Columns                             | Type   | Usage                                  |
