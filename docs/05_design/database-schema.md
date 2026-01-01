@@ -87,7 +87,7 @@ erDiagram
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
 | **`reading_time`** | `integer` | -       | NO       | `reading_time > 0`           | 読了目安時間（秒）                                 |
 
-#### Indexes (Articles)
+#### 3.1.1 Indexes (Articles)
 
 | Index Name              | Columns                     | Type   | Usage                              |
 | :---------------------- | :-------------------------- | :----- | :--------------------------------- |
@@ -125,106 +125,11 @@ erDiagram
 | `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時 (形式強制)                                    |
 | `updated_at`             | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時 (形式強制)                                    |
 
-#### ベクトル検索 (Vector Search) の仕組み
-
-PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を両立するため、**OSSモデルを用いたサーバーサイド推論** を採用します。
-
--   **Architecture**: **Server-Side OSS Embedding**
-    -   **Model**: `intfloat/multilingual-e5-small` (ONNX version via `Xenova/multilingual-e5-small`)
-        -   **理由**: 7ヶ国語対応、軽量（約110MB）、384次元（Turso容量節約）。Vercelのメモリ制限（512MB）内で安定動作し、コールドスタートも高速。
-    -   **Execution Strategy**:
-        -   **Indexing (保存時)**: テキストの文頭に `passage: ` を付与してベクトル化。
-        -   **Search (検索時)**: テキストの文頭に `query: ` を付与してベクトル化。
-        -   **Optimization**: Vercel Serverless Function 上では、モデルの再ロードを防ぐためインスタンスをシングルトンで保持し、ビルドプロセスにモデルファイルを含める構成を推奨。
-
-##### 記事生成・インデックス時のフロー (Indexing Flow)
-
-```mermaid
-sequenceDiagram
-    participant Agent as Content Agent (GitHub Actions)
-    participant LocalAI as OSS Model (e5-small)
-    participant DB as Turso (libSQL)
-
-    Agent->>Agent: 記事（Text/Tags）を生成 (Gemini Pro)
-    Agent->>LocalAI: 検索用文字列を変換 (384 dims)
-    Note over LocalAI: ローカル実行 (No API Limit)
-    LocalAI-->>Agent: ベクトルデータ
-    Agent->>DB: 記事本文 + ベクトルデータを保存
-```
-
-##### 3. ベクトル化の対象ソース (Vectorization Sources)
-
-検索精度を最大化するため、以下のカラムを結合して1つのテキスト塊（Passage）としてベクトル化します。
-**特に多言語検索（Cross-lingual Search）の精度を高めるため、各言語の翻訳記事であっても、共通言語である「英語のマスタデータ」を必ずPassageに含める戦略を採用します。**
-
-| Priority | Source Column (Content) | Description |
-| :--- | :--- | :--- |
-| **High** | `title` | 記事タイトル（最強の識別子） |
-| **High** | **`EN Title`** (System) | **英語タイトル** (from `work_translations` En). 日本語記事でも英語でヒットさせるために必須。 |
-| **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
-| **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
-| **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
-| **Mid** | `sl_genre`, `sl_instrumentation` | ジャンル・楽器 |
-| **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
-| **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
-| **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
-
-> [!NOTE]
-> **連結フォーマット例 (Cross-lingual Passage)**:
-> `passage: [JA Title: 運命] [EN Title: Symphony No.5] Composer: Beethoven. Era: Classical. Mood: High Energy. Content: ...`
-> このように英語情報を併記することで、E5モデルの多言語空間でのマッピング精度が劇的に向上します。
-
-##### 4. ハイブリッド検索戦略 (Hybrid Search Strategy)
-
-ベクトル検索は万能ではないため、Tursoの全文検索 (`FTS5`) と組み合わせた **ハイブリッド検索** を採用します。
-
--   **キーワード検索 (FTS5)**: 作品番号 (`BWV 846`)、作曲家名、固有の専門用語など、「正解」が明確な検索に強い。
--   **ベクトル検索 (Vector)**: 「朝に聴きたい」「ドラマチック」などの曖昧な感性検索に強い。
-
-**実装方針**:
-通常はベクトル検索の結果をベースにしつつ、キーワード一致度が高いものが存在する場合（FTSスコアが高い場合）はそれを上位にブーストするロジック（Reciprocal Rank Fusion等）をアプリケーション層で実装します。
-
-##### 5. 検索実行時のフロー (Search Flow)
-
-```mermaid
-sequenceDiagram
-    participant User as ユーザー
-    participant Server as Vercel Function (Node.js)
-    participant DB as Turso (libSQL)
-
-    User->>Server: 検索クエリ送信
-    Server->>Server: OSSモデルでベクトル化 (384 dims)
-    Note over Server: prefix "query: " を付与
-    Server->>DB: 近傍探索 (VSS) を実行
-    DB-->>Server: 記事リストを返却
-    Server->>User: 検索結果を表示
-```
-
-> [!IMPORTANT]
-> **接頭辞 (Prefix) の徹底**:
-> `multilingual-e5-small` の性能を最大限に引き出すため、インデックス時 (`passage: `) と検索時 (`query: `) で正しい接頭辞を付与してください。これを怠ると検索精度が著しく低下します。
-
-#### インデックス (Article Translations)
-
-| Index Name                     | Columns                             | Type   | Usage                                  |
-| :----------------------------- | :---------------------------------- | :----- | :------------------------------------- |
-| `idx_art_trans_article_lookup` | `(article_id, lang)`                | **UNIQUE** | 記事IDと言語による一意制約・基本取得   |
-| `idx_art_trans_status_pub`     | `(lang, status, published_at)`      | B-Tree | 公開済み・最新記事一覧の取得           |
-| `idx_art_trans_featured`       | `(lang, is_featured, published_at)` | B-Tree | おすすめ記事の高速取得・ソート         |
-| `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
-| `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
-| `idx_art_trans_embedding`      | `(embedding)`                       | HNSW   | セマンティック検索（`vector_l2_ops`）  |
-
-> [!NOTE]
-> **命名規則 (`sl_` プレフィックス)**:
-> 非正規化カラムには `sl_` (Snapshot / Search Layer) プレフィックスを付与しています。
-> これにより、正規化されたマスタデータとの混同を防ぎ、検索・表示用に最適化されたスナップショット（Snapshot）であることを明示します。
-
-#### JSON Type Definitions
+#### 3.2.1 JSON Type Definitions
 
 これらのカラムに格納される TypeScript 型定義。
 
-##### `content_structure` (Visual Outline)
+##### 3.2.1.1 `content_structure` (Visual Outline)
 
 記事の目次やプレビュー表示に使用される軽量な構造データ。
 
@@ -237,7 +142,7 @@ type Section =
   | { id: string; type: 'youtube'; videoId: string; start: number }; // 動画プレビュー用
 ```
 
-##### `sl_mood_dimensions` (Quantitative Mood)
+##### 3.2.1.2 `sl_mood_dimensions` (Quantitative Mood)
 
 AIによってスコアリングされた5つの感情軸。
 
@@ -262,6 +167,101 @@ type ArticleMetadata = {
 };
 ```
 
+#### 3.2.2 インデックス (Article Translations)
+
+| Index Name                     | Columns                             | Type   | Usage                                  |
+| :----------------------------- | :---------------------------------- | :----- | :------------------------------------- |
+| `idx_art_trans_article_lookup` | `(article_id, lang)`                | **UNIQUE** | 記事IDと言語による一意制約・基本取得   |
+| `idx_art_trans_status_pub`     | `(lang, status, published_at)`      | B-Tree | 公開済み・最新記事一覧の取得           |
+| `idx_art_trans_featured`       | `(lang, is_featured, published_at)` | B-Tree | おすすめ記事の高速取得・ソート         |
+| `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
+| `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
+| `idx_art_trans_embedding`      | `(embedding)`                       | HNSW   | セマンティック検索（`vector_l2_ops`）  |
+
+> [!NOTE]
+> **命名規則 (`sl_` プレフィックス)**:
+> 非正規化カラムには `sl_` (Snapshot / Search Layer) プレフィックスを付与しています。
+> これにより、正規化されたマスタデータとの混同を防ぎ、検索・表示用に最適化されたスナップショット（Snapshot）であることを明示します。
+
+#### 3.2.3 ベクトル検索 (Vector Search) の仕組み
+
+PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を両立するため、**OSSモデルを用いたサーバーサイド推論** を採用します。
+
+-   **Architecture**: **Server-Side OSS Embedding**
+    -   **Model**: `intfloat/multilingual-e5-small` (ONNX version via `Xenova/multilingual-e5-small`)
+        -   **理由**: 7ヶ国語対応、軽量（約110MB）、384次元（Turso容量節約）。Vercelのメモリ制限（512MB）内で安定動作し、コールドスタートも高速。
+    -   **Execution Strategy**:
+        -   **Indexing (保存時)**: テキストの文頭に `passage: ` を付与してベクトル化。
+        -   **Search (検索時)**: テキストの文頭に `query: ` を付与してベクトル化。
+        -   **Optimization**: Vercel Serverless Function 上では、モデルの再ロードを防ぐためインスタンスをシングルトンで保持し、ビルドプロセスにモデルファイルを含める構成を推奨。
+
+##### 3.2.3.1 記事生成・インデックス時のフロー (Indexing Flow)
+
+```mermaid
+sequenceDiagram
+    participant Agent as Content Agent (GitHub Actions)
+    participant LocalAI as OSS Model (e5-small)
+    participant DB as Turso (libSQL)
+
+    Agent->>Agent: 記事（Text/Tags）を生成 (Gemini Pro)
+    Agent->>LocalAI: 検索用文字列を変換 (384 dims)
+    Note over LocalAI: ローカル実行 (No API Limit)
+    LocalAI-->>Agent: ベクトルデータ
+    Agent->>DB: 記事本文 + ベクトルデータを保存
+```
+
+##### 3.2.3.2 ベクトル化の対象ソース (Vectorization Sources)
+
+検索精度を最大化するため、以下のカラムを結合して1つのテキスト塊（Passage）としてベクトル化します。
+**特に多言語検索（Cross-lingual Search）の精度を高めるため、各言語の翻訳記事であっても、共通言語である「英語のマスタデータ」を必ずPassageに含める戦略を採用します。**
+
+| Priority | Source Column (Content) | Description |
+| :--- | :--- | :--- |
+| **High** | `title` | 記事タイトル（最強の識別子） |
+| **High** | **`EN Title`** (System) | **英語タイトル** (from `work_translations` En). 日本語記事でも英語でヒットさせるために必須。 |
+| **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
+| **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
+| **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
+| **Mid** | `sl_genre`, `sl_instrumentation` | ジャンル・楽器 |
+| **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
+| **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
+| **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
+
+> [!NOTE]
+> **連結フォーマット例 (Cross-lingual Passage)**:
+> `passage: [JA Title: 運命] [EN Title: Symphony No.5] Composer: Beethoven. Era: Classical. Mood: High Energy. Content: ...`
+> このように英語情報を併記することで、E5モデルの多言語空間でのマッピング精度が劇的に向上します。
+
+##### 3.2.3.3 ハイブリッド検索戦略 (Hybrid Search Strategy)
+
+ベクトル検索は万能ではないため、Tursoの全文検索 (`FTS5`) と組み合わせた **ハイブリッド検索** を採用します。
+
+-   **キーワード検索 (FTS5)**: 作品番号 (`BWV 846`)、作曲家名、固有の専門用語など、「正解」が明確な検索に強い。
+-   **ベクトル検索 (Vector)**: 「朝に聴きたい」「ドラマチック」などの曖昧な感性検索に強い。
+
+**実装方針**:
+通常はベクトル検索の結果をベースにしつつ、キーワード一致度が高いものが存在する場合（FTSスコアが高い場合）はそれを上位にブーストするロジック（Reciprocal Rank Fusion等）をアプリケーション層で実装します。
+
+##### 3.2.3.4 検索実行時のフロー (Search Flow)
+
+```mermaid
+sequenceDiagram
+    participant User as ユーザー
+    participant Server as Vercel Function (Node.js)
+    participant DB as Turso (libSQL)
+
+    User->>Server: 検索クエリ送信
+    Server->>Server: OSSモデルでベクトル化 (384 dims)
+    Note over Server: prefix "query: " を付与
+    Server->>DB: 近傍探索 (VSS) を実行
+    DB-->>Server: 記事リストを返却
+    Server->>User: 検索結果を表示
+```
+
+> [!IMPORTANT]
+> **接頭辞 (Prefix) の徹底**:
+> `multilingual-e5-small` の性能を最大限に引き出すため、インデックス時 (`passage: `) と検索時 (`query: `) で正しい接頭辞を付与してください。これを怠ると検索精度が著しく低下します。
+
 ---
 
 ## 4. Asset Tables: Scores & Recordings
@@ -280,16 +280,16 @@ type ArticleMetadata = {
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
 
-#### Indexes (Scores)
+#### 4.1.1 Indexes (Scores)
 
 | Index Name            | Columns              | Type   | Usage                                |
 | :-------------------- | :------------------- | :----- | :----------------------------------- |
 | `idx_scores_work_id`  | `(work_id)`          | B-Tree | 外部キーによる検索                   |
 | `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
 
-#### JSON Type Definitions
+#### 4.1.2 JSON Type Definitions
 
-##### `playback_samples` (Playback Binding)
+##### 4.1.2.1 `playback_samples` (Playback Binding)
 
 1つの楽譜切片に対応する1つ以上の録音ソースと再生位置の定義。
 
@@ -316,7 +316,7 @@ type PlaybackSamples = PlaybackSample[];
 | `caption` | `text` | - | YES | - | 譜例のタイトル (e.g. "第1主題") |
 | `description` | `text` | - | NO | - | 補足説明 |
 
-#### Indexes (Score Translations)
+#### 4.2.1 Indexes (Score Translations)
 
 | Index Name               | Columns            | Type   | Usage                |
 | :----------------------- | :----------------- | :----- | :------------------- |
@@ -335,7 +335,7 @@ type PlaybackSamples = PlaybackSample[];
 | `is_recommended`     | `integer` | `0`     | YES      | `IN (0, 1)` | おすすめフラグ (0/1)               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)      |
 
-#### Indexes (Recordings)
+#### 4.3.1 Indexes (Recordings)
 
 | Index Name               | Columns                     | Type   | Usage                      |
 | :----------------------- | :-------------------------- | :----- | :------------------------- |
@@ -355,7 +355,7 @@ type PlaybackSamples = PlaybackSample[];
 | `quality`      | `text` | -       | NO       | -                                      | `'high'`, `'medium'`         |
 | `created_at`   | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制) |
 
-#### Indexes (Recording Sources)
+#### 4.4.1 Indexes (Recording Sources)
 
 | Index Name           | Columns                 | Type   | Usage                                  |
 | :------------------- | :---------------------- | :----- | :------------------------------------- |
@@ -380,7 +380,7 @@ type PlaybackSamples = PlaybackSample[];
 | `died_at` | `text` | - | NO | **`died_at IS NULL OR date(died_at) IS NOT NULL`** | 没年月日 (NULLまたはISO8601形式) |
 | `nationality_code` | `text` | - | NO | - | ISO Country Code |
 
-#### Indexes (Composers)
+#### 5.1.1 Indexes (Composers)
 
 | Index Name           | Columns  | Type   | Usage                      |
 | :------------------- | :------- | :----- | :------------------------- |
@@ -394,7 +394,7 @@ type PlaybackSamples = PlaybackSample[];
 | `name` | `text` | - | YES | - | Localized Name (e.g. "バッハ") |
 | `bio` | `text` | - | NO | - | 人物伝記 |
 
-#### Indexes (Composer Translations)
+#### 5.1.2 Indexes (Composer Translations)
 
 | Index Name              | Columns               | Type   | Usage                          |
 | :---------------------- | :-------------------- | :----- | :----------------------------- |
@@ -413,7 +413,7 @@ type PlaybackSamples = PlaybackSample[];
 | `catalogue_number` | `text` | - | NO | - | `67`, `1001` 等 |
 | `key_tonality` | `text` | - | NO | - | `C Major`, `D Minor` |
 
-#### Indexes (Works)
+#### 5.2.1 Indexes (Works)
 
 | Index Name              | Columns                           | Type   | Usage                                  |
 | :---------------------- | :-------------------------------- | :----- | :------------------------------------- |
@@ -431,7 +431,7 @@ type PlaybackSamples = PlaybackSample[];
 | `popular_title` | `text` | - | NO | - | 一般的な通称 (e.g. "運命") |
 | `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON: `string[]`) |
 
-#### Indexes (Work Translations)
+#### 5.2.2 Indexes (Work Translations)
 
 | Index Name              | Columns                 | Type   | Usage                          |
 | :---------------------- | :---------------------- | :----- | :----------------------------- |
@@ -457,7 +457,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 > AIは本マスタに存在する `slug` の中から適切なタグを選択し、記事の `metadata.tags` に格納します。
 > これにより多言語間でのタグの検索・フィルタリングの一貫性を担保します。
 
-#### Indexes (Tags)
+#### 5.3.1 Indexes (Tags)
 
 | Index Name      | Columns            | Type   | Usage                                  |
 | :-------------- | :----------------- | :----- | :------------------------------------- |
@@ -471,7 +471,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `name` | `text` | - | YES | - | 表示名 (e.g. "深い集中") |
 
-#### Indexes (Tag Translations)
+#### 5.3.2 Indexes (Tag Translations)
 
 | Index Name             | Columns          | Type   | Usage                |
 | :--------------------- | :--------------- | :----- | :------------------- |
@@ -494,7 +494,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 
 DB全体で使用される共通の JSON 構造。
 
-##### `MultilingualString`
+##### 6.1 `MultilingualString`
 エージェントやアプリが多言語で扱う文字列コンテナ。
 
 ```typescript
@@ -511,40 +511,40 @@ type MultilingualString = {
 
 ---
 
-## 6. Security (Access Control)
+## 7. Security (Access Control)
 
 Turso (libSQL) 自体には行単位セキュリティ (RLS) がないため、**アプリケーション層 (Next.js Server Actions)** が門番となり以下の権限を強制します。
 
-### 6.1 Read Access (閲覧権限)
+### 7.1 Read Access (閲覧権限)
 - **Public (全ユーザー):** 
   - **Articles:** `status = 'published'` かつ `published_at <= CURRENT_TIMESTAMP` のレコードのみ。
   - **Masters:** 全件取得可能。
 - **Admin (管理者):** 下書きを含むすべてのデータ。
 
-### 6.2 Write Access (変更権限: CUD)
+### 7.2 Write Access (変更権限: CUD)
 - **Restricted to Admin Only:** 
   - すべてのテーブルの作成 (Create)、更新 (Update)、削除 (Delete) は**管理者権限を持つユーザーのみ**が実行可能。
   - プログラム上では、書き込みトークンを持つ **Admin DB Client** インスタンスの使用を `server-only` な関数内に限定することで物理的に隔離します。
 
 ---
 
-## 7. Verification & Migration Strategy
+## 8. Verification & Migration Strategy
 
 本スキーマの実装と検証は、以下の戦略で進めます。
 
-### 7.1 Lifecycle
+### 8.1 Lifecycle
 
 1.  **Draft:** `docs/05_design/database-schema.md` (本ドキュメント) を正本とします。
 2.  **Generate:** Drizzle ORM の `drizzle-kit generate` によるマイグレーション管理。
 3.  **Apply:** `turso db shell` または Drizzle Kit による反映。
 
-### 7.2 Verification
+### 8.2 Verification
 
 - **Static Check:** Drizzle が生成する型定義とドメインエンティティの一致確認。
 - **Data Integrity:** サンプルデータを投入し、`zod` スキーマを通過することを確認。
 - **Performance:** `EXPLAIN QUERY PLAN` を使用し、Index が適切に活用されているか確認。
 
-### 7.3 Data Integrity Policy (Defensive Design)
+### 8.3 Data Integrity Policy (Defensive Design)
 
 SQLiteの柔軟な型システムを補完し、エンタープライズ品質の堅牢性を確保するため、以下の多層検証を適用します。
 
@@ -556,7 +556,7 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
 3.  **Type Mapping:**
     - SQLite 内部に閉じるのではなく、Drizzle が提供する `sqliteTable` の型定義を「唯一の正解」として管理し、物理層と論理層の乖離を排除します。
 
-### 7.4 Data Consistency Strategy (Synchronizer)
+### 8.4 Data Consistency Strategy (Synchronizer)
 
 非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
 
