@@ -160,16 +160,28 @@ sequenceDiagram
 | **High** | `title` | 記事タイトル（最強の識別子） |
 | **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
 | **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
+| **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
 | **Mid** | `sl_genre`, `sl_instrumentation` | ジャンル・楽器 |
+| **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
 | **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
 | **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
 
 > [!NOTE]
 > **連結フォーマット例**:
-> `passage: Title: 運命. Composer: Beethoven. Tags: Epic, Dramatic. Content: この交響曲は...`
-> このように意味のあるラベルを付けて連結することで、モデルが各要素の意味を正しく解釈できるようにします。
+> `passage: Title: 運命. Composer: Beethoven. Era: Classical. Mood: High Energy, Dramatic. Content: この交響曲は...`
+> これにより、単語の一致だけでなく、数値的な「曲の雰囲気」や「時代背景」もセマンティック検索に反映されます。
 
-##### 4. 検索実行時のフロー (Search Flow)
+##### 4. ハイブリッド検索戦略 (Hybrid Search Strategy)
+
+ベクトル検索は万能ではないため、Tursoの全文検索 (`FTS5`) と組み合わせた **ハイブリッド検索** を採用します。
+
+-   **キーワード検索 (FTS5)**: 作品番号 (`BWV 846`)、作曲家名、固有の専門用語など、「正解」が明確な検索に強い。
+-   **ベクトル検索 (Vector)**: 「朝に聴きたい」「ドラマチック」などの曖昧な感性検索に強い。
+
+**実装方針**:
+通常はベクトル検索の結果をベースにしつつ、キーワード一致度が高いものが存在する場合（FTSスコアが高い場合）はそれを上位にブーストするロジック（Reciprocal Rank Fusion等）をアプリケーション層で実装します。
+
+##### 5. 検索実行時のフロー (Search Flow)
 
 ```mermaid
 sequenceDiagram
