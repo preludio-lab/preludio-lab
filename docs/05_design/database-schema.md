@@ -85,6 +85,7 @@ erDiagram
 | `is_featured` | `integer` | `0`     | YES      | `IN (0, 1)`                  | おすすめフラグ                                     |
 | `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
+| **`reading_time`** | `integer` | -       | NO       | `reading_time > 0`           | 読了目安時間（秒）                                 |
 
 #### Indexes (Articles)
 
@@ -154,10 +155,12 @@ sequenceDiagram
 ##### 3. ベクトル化の対象ソース (Vectorization Sources)
 
 検索精度を最大化するため、以下のカラムを結合して1つのテキスト塊（Passage）としてベクトル化します。
+**特に多言語検索（Cross-lingual Search）の精度を高めるため、各言語の翻訳記事であっても、共通言語である「英語のマスタデータ」を必ずPassageに含める戦略を採用します。**
 
 | Priority | Source Column (Content) | Description |
 | :--- | :--- | :--- |
 | **High** | `title` | 記事タイトル（最強の識別子） |
+| **High** | **`EN Title`** (System) | **英語タイトル** (from `work_translations` En). 日本語記事でも英語でヒットさせるために必須。 |
 | **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
 | **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
 | **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
@@ -167,9 +170,9 @@ sequenceDiagram
 | **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
 
 > [!NOTE]
-> **連結フォーマット例**:
-> `passage: Title: 運命. Composer: Beethoven. Era: Classical. Mood: High Energy, Dramatic. Content: この交響曲は...`
-> これにより、単語の一致だけでなく、数値的な「曲の雰囲気」や「時代背景」もセマンティック検索に反映されます。
+> **連結フォーマット例 (Cross-lingual Passage)**:
+> `passage: [JA Title: 運命] [EN Title: Symphony No.5] Composer: Beethoven. Era: Classical. Mood: High Energy. Content: ...`
+> このように英語情報を併記することで、E5モデルの多言語空間でのマッピング精度が劇的に向上します。
 
 ##### 4. ハイブリッド検索戦略 (Hybrid Search Strategy)
 
@@ -205,7 +208,7 @@ sequenceDiagram
 
 | Index Name                     | Columns                             | Type   | Usage                                  |
 | :----------------------------- | :---------------------------------- | :----- | :------------------------------------- |
-| `idx_art_trans_article_lookup` | `(article_id, lang)`                | B-Tree | 記事IDと言語による基本取得（ユニーク） |
+| `idx_art_trans_article_lookup` | `(article_id, lang)`                | **UNIQUE** | 記事IDと言語による一意制約・基本取得   |
 | `idx_art_trans_status_pub`     | `(lang, status, published_at)`      | B-Tree | 公開済み・最新記事一覧の取得           |
 | `idx_art_trans_featured`       | `(lang, is_featured, published_at)` | B-Tree | おすすめ記事の高速取得・ソート         |
 | `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
@@ -552,3 +555,11 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
     - **Zod Validation:** 書き込み処理（Server Actions）の入り口で厳密なスキーマ検証を行い、不正な形式のデータが DB に到達することを防ぎます。
 3.  **Type Mapping:**
     - SQLite 内部に閉じるのではなく、Drizzle が提供する `sqliteTable` の型定義を「唯一の正解」として管理し、物理層と論理層の乖離を排除します。
+
+### 7.4 Data Consistency Strategy (Synchronizer)
+
+非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
+
+1.  **Maintenance Agent:** GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
+2.  **Bulk Update:** マスタデータ (`Composers`, `Works`) に変更があった場合、関連する `article_translations` の `sl_` カラムを一括更新します。
+3.  **Scope:** この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
