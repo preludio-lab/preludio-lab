@@ -129,11 +129,12 @@ erDiagram
 PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を両立するため、**OSSモデルを用いたサーバーサイド推論** を採用します。
 
 -   **Architecture**: **Server-Side OSS Embedding**
-    -   **Model**: `intfloat/multilingual-e5-small`
-        -   **理由**: 7ヶ国語対応の高精度モデルでありながら軽量（約100MB）で、Vercel Serverless Functionの無料枠で実行可能です。384次元のコンパクトなベクトルによりDB容量も節約可能です。
-    -   **Execution**:
-        -   **Indexing (保存時)**: 管理環境（GitHub Actions等）で `transformers` (Python/Node) を使用してベクトル化。
-        -   **Search (検索時)**: Vercel Serverless Functions (Node.js) 上で `@xenova/transformers` を使用してベクトル化。
+    -   **Model**: `intfloat/multilingual-e5-small` (ONNX version via `Xenova/multilingual-e5-small`)
+        -   **理由**: 7ヶ国語対応、軽量（約110MB）、384次元（Turso容量節約）。Vercelのメモリ制限（512MB）内で安定動作し、コールドスタートも高速。
+    -   **Execution Strategy**:
+        -   **Indexing (保存時)**: テキストの文頭に `passage: ` を付与してベクトル化。
+        -   **Search (検索時)**: テキストの文頭に `query: ` を付与してベクトル化。
+        -   **Optimization**: Vercel Serverless Function 上では、モデルの再ロードを防ぐためインスタンスをシングルトンで保持し、ビルドプロセスにモデルファイルを含める構成を推奨。
 
 ##### 記事生成・インデックス時のフロー (Indexing Flow)
 
@@ -167,8 +168,8 @@ sequenceDiagram
 ```
 
 > [!IMPORTANT]
-> **モデルの統一**: ベクトル検索の精度を担保するため、記事保存時（Indexing）と検索時（Searching）で必ず同一のモデル (`intfloat/multilingual-e5-small`) を使用します。
-> また、検索精度向上のため、クエリベクトル化時には `query: ` プレフィックスを付与する運用とします。
+> **接頭辞 (Prefix) の徹底**:
+> `multilingual-e5-small` の性能を最大限に引き出すため、インデックス時 (`passage: `) と検索時 (`query: `) で正しい接頭辞を付与してください。これを怠ると検索精度が著しく低下します。
 
 #### インデックス (Article Translations)
 
