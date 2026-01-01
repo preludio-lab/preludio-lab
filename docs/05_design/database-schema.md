@@ -126,47 +126,49 @@ erDiagram
 
 #### ベクトル検索 (Vector Search) の仕組み
 
-`embedding` カラムは、キーワード検索（完全一致や部分一致）では到達できない **「感性による検索（セマンティック検索）」** を実現するために使用されます。
+PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を両立するため、**OSSモデルを用いたサーバーサイド推論** を採用します。
 
--   **外部APIへの依存**: テキストを座標（ベクトル）に変換するために、Gemini (Text Embedding API) や OpenAI などの外部 AI モデルの使用が必須となります。
--   **ベクトル化の対象 (Source)**: `title`, `sl_composer_name`, `sl_genre`, `metadata.tags`, および記事本文のダイジェスト。
--   **RDBの実装**: Tursoの `libsql-vector` 拡張を使用。`F32BLOB` 型として格納し、`HNSW` インデックスにより「入力されたクエリと意味が近い項目」を高速に抽出します。
+-   **Architecture**: **Server-Side OSS Embedding**
+    -   **Model**: `intfloat/multilingual-e5-small`
+        -   **理由**: 7ヶ国語対応の高精度モデルでありながら軽量（約100MB）で、Vercel Serverless Functionの無料枠で実行可能です。384次元のコンパクトなベクトルによりDB容量も節約可能です。
+    -   **Execution**:
+        -   **Indexing (保存時)**: 管理環境（GitHub Actions等）で `transformers` (Python/Node) を使用してベクトル化。
+        -   **Search (検索時)**: Vercel Serverless Functions (Node.js) 上で `@xenova/transformers` を使用してベクトル化。
 
 ##### 記事生成・インデックス時のフロー (Indexing Flow)
 
-AIエージェントによる記事生成から、データベースへのベクトル保存までの流れです。
-
 ```mermaid
 sequenceDiagram
-    participant Agent as Content Agent
-    participant AI as Embedding API (Gemini等)
+    participant Agent as Content Agent (GitHub Actions)
+    participant LocalAI as OSS Model (e5-small)
     participant DB as Turso (libSQL)
 
-    Agent->>Agent: 記事（Text/Tags）を生成
-    Agent->>AI: 検索用文字列（Title+Tags等）を送信
-    AI-->>Agent: ベクトルデータ（1536次元の数値配列等）を返却
+    Agent->>Agent: 記事（Text/Tags）を生成 (Gemini Pro)
+    Agent->>LocalAI: 検索用文字列を変換 (384 dims)
+    Note over LocalAI: ローカル実行 (No API Limit)
+    LocalAI-->>Agent: ベクトルデータ
     Agent->>DB: 記事本文 + ベクトルデータを保存
-    DB->>DB: HNSWインデックスを更新
 ```
 
 ##### 検索実行時のフロー (Search Flow)
 
-ユーザーの「曖昧な言葉」から、関連する記事を特定するまでの流れです。
-
 ```mermaid
 sequenceDiagram
     participant User as ユーザー
-    participant UI as Next.js (App)
-    participant AI as Embedding API (Gemini等)
+    participant Server as Vercel Function (Node.js)
     participant DB as Turso (libSQL)
 
-    User->>UI: 「集中できるバロック曲」と入力
-    UI->>AI: 検索クエリを送信
-    AI-->>UI: クエリのベクトルデータを返却
-    UI->>DB: ベクトルによる近傍探索 (VSS) を実行
-    DB-->>UI: 意味の近い記事リストを返却
-    UI->>User: 検索結果を表示
+    User->>Server: 検索クエリ送信
+    Server->>Server: OSSモデルでベクトル化 (384 dims)
+    Note over Server: @xenova/transformers (Server-side)
+    Server->>DB: 近傍探索 (VSS) を実行
+    DB-->>Server: 記事リストを返却
+    Server->>User: 検索結果を表示
 ```
+
+> [!IMPORTANT]
+> **モデルの統一**: ベクトル検索の精度を担保するため、記事保存時（Indexing）と検索時（Searching）で必ず同一のモデル (`intfloat/multilingual-e5-small`) を使用します。
+> また、検索精度向上のため、クエリベクトル化時には `query: ` プレフィックスを付与する運用とします。
 
 #### インデックス (Article Translations)
 
