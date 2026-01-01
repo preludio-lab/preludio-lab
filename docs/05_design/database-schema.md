@@ -106,19 +106,19 @@ erDiagram
 | **`status`**             | `text`    | -       | YES      | `IN ('draft', 'published', 'private', 'archived')`       | ステータス                                             |
 | `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル                                           |
 | **`display_title`**      | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧用タイトル                      |
-| **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名                                               |
-| **`sl_catalogue_id`**    | `text`    | -       | NO       | -                                                        | 作品番号                                               |
-| **`sl_nicknames`**       | `text`    | -       | NO       | -                                                        | 通称リスト (JSON)                                      |
-| **`sl_genre`**           | `text`    | -       | NO       | -                                                        | ジャンル                                               |
-| **`sl_instrumentation`** | `text`    | -       | NO       | -                                                        | 楽器編成                                               |
-| **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分                                               |
-| **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍                                              |
+| **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
+| **`sl_catalogue_id`**    | `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
+| **`sl_nicknames`**       | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
+| **`sl_genre`**           | `text`    | -       | NO       | -                                                        | ジャンル (Source: `tags.slug` where category='genre')   |
+| **`sl_instrumentation`** | `text`    | -       | NO       | -                                                        | 楽器編成 (Source: `tags.slug` where category='instrument') |
+| **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
+| **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
 | **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON: `MoodDimensions`)                     |
 | **`embedding`**          | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ                                         |
 | `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
 | **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
-| `mdx_uri`                | `text`    | -       | NO       | -                                                        | MDXパス                                                |
-| `thumbnail_url`          | `text`    | -       | NO       | -                                                        | サムネイルURL                                          |
+| `mdx_path`                | `text`    | -       | NO       | -                                                        | MDX相対パス (e.g. `works/bwv846.mdx`)                  |
+| `thumbnail_path`          | `text`    | -       | NO       | -                                                        | サムネイル相対パス (e.g. `images/thumbs/bwv846.webp`)  |
 | `metadata`               | `text`    | `{}`    | YES      | -                                                        | メタデータ (JSON: `ArticleMetadata`)                   |
 | `content_structure`      | `text`    | `{}`    | YES      | -                                                        | 目次構成 (JSON: `ContentStructure`)                    |
 | `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時 (形式強制)                                    |
@@ -370,6 +370,12 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | **`id`** | `text` | - | YES | -                                               | **PK**.                   |
 | `category` | `text` | - | YES | `IN ('mood', 'situation', 'terminology')`       | タグの分類                |
 | `slug` | `text` | - | YES | -                                               | `deep-focus` 等の識別子   |
+
+> [!NOTE]
+> **AIエージェントの活用 (Knowledge Manifest)**:
+> 本テーブルは、生成AI（執筆・タグ付けエージェント）が記事を生成する際の「正解語彙集」として機能します。
+> AIは本マスタに存在する `slug` の中から適切なタグを選択し、記事の `metadata.tags` に格納します。
+> これにより多言語間でのタグの検索・フィルタリングの一貫性を担保します。
 
 #### Indexes (Tags)
 
