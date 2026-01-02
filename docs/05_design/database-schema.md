@@ -21,6 +21,7 @@
 - **Naming Convention:**
   - Table/Column: `snake_case` (Standard)
   - API Response: `CamelCase` (Application Layerで変換)
+- **Index Notation:** 物理設計表において、`UNIQUE` は一意制約を伴う B-Tree インデックス、`B-Tree` は非一意インデックスを指します。
 
 ### 1.3 Security (Access Control)
 
