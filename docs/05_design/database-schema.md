@@ -108,7 +108,7 @@ erDiagram
 | **`status`**             | `text`    | -       | YES      | `IN ('draft', 'published', 'private', 'archived')`       | ステータス                                             |
 | `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル（正式名称）                               |
 | **`display_title`**      | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み) |
-| **`summary`**            | `text`    | -       | NO       | -                                                        | **[SEO]** 記事概要・meta description (120文字程度)     |
+| **`excerpt`**            | `text`    | -       | NO       | -                                                        | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)           |
 | **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
 | **`sl_work_catalogue_id`**| `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
 | **`sl_work_nicknames`**  | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
