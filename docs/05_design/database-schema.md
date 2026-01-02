@@ -136,17 +136,16 @@ erDiagram
 
 これらのカラムに格納される TypeScript 型定義。
 
-##### 3.2.1.1 `content_structure` (Visual Outline)
+##### 3.2.1.1 `content_structure` (Visual Outline / TOC)
 
-記事の目次やプレビュー表示に使用される軽量な構造データ。
+記事の目次（Table of Contents）に使用される構造データ。
 
 ```typescript
 type ContentStructure = Section[];
 
 type Section =
-  | { id: string; type: 'text'; heading: string; level: 2 | 3 } // 目次用
-  | { id: string; type: 'score'; work_id: string; caption?: string } // 譜例プレビュー用
-  | { id: string; type: 'youtube'; videoId: string; start: number }; // 動画プレビュー用
+  | { id: string; type: 'heading'; text: string; level: 2 | 3 } // 目次（H2/H3）
+  | { id: string; type: 'recording'; label?: string }; // [Optional] 記事内の主要な録音セクション
 ```
 
 ##### 3.2.1.2 `sl_impression_dimensions` (Quantitative Impression)
