@@ -111,7 +111,7 @@ erDiagram
 | **`summary`**            | `text`    | -       | NO       | -                                                        | **[SEO]** 記事概要・meta description (120文字程度)     |
 | **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
 | **`sl_catalogue_id`**    | `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
-| **`sl_nicknames`**       | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
+| **`sl_work_nicknames`**  | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
 | **`sl_genre`**           | `text`    | -       | NO       | -                                                        | ジャンル (Source: `tags.slug` where category='genre')   |
 | **`sl_instrumentations`**| `text`    | -       | NO       | -                                                        | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
 | **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
@@ -227,7 +227,7 @@ sequenceDiagram
 | **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
 | **Mid** | `sl_genre`, `sl_instrumentations` | ジャンル・楽器 |
 | **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
-| **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
+| **Mid** | `sl_work_nicknames` | 楽曲の通称（"運命"など） |
 | **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
 
 > [!NOTE]
