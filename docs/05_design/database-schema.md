@@ -436,6 +436,7 @@ type PlaybackSamples = PlaybackSample[];
 | `catalogue_prefix` | `text` | - | NO | - | `Op.`, `BWV` 等 |
 | `catalogue_number` | `text` | - | NO | - | `67`, `1001` 等 |
 | `key_tonality` | `text` | - | NO | - | `C Major`, `D Minor` |
+| `composition_year` | `integer` | - | NO | - | 作曲年（代表値、ソート・検索用） |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
@@ -456,6 +457,7 @@ type PlaybackSamples = PlaybackSample[];
 | `title` | `text` | - | YES | - | 正式名称 (e.g. "Symphony No. 5") |
 | `popular_title` | `text` | - | NO | - | 日本語における代表的な通称 (e.g. "運命") |
 | `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON: `string[]`, e.g. ["Schicksal", "Fate"]) |
+| `composition_period` | `text` | - | NO | - | 作曲時期の表示用テキスト (e.g. "1804-1808", "1805年頃") |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
