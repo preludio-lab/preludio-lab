@@ -167,6 +167,9 @@ type ArticleMetadata = {
   key?: string; // e.g. "C Major"
   difficulty?: 1 | 2 | 3 | 4 | 5; // 1:Beginner, 2:Elementary, 3:Intermediate, 4:Advanced, 5:Virtuoso
   ogp_url?: string; // Generated OGP Image URL
+  ui_accent_color?: string; // HEX color for article theme (e.g. dominant color)
+  reading_style?: 'brief' | 'standard' | 'deep_dive'; // Intent for reading depth
+  target_audience?: 'listener' | 'performer' | 'both'; // Target user segment
 };
 ```
 
