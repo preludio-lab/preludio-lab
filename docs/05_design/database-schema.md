@@ -116,7 +116,7 @@ erDiagram
 | **`sl_instrumentations`**| `text`    | -       | NO       | -                                                        | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
 | **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
 | **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
-| **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON: `MoodDimensions`)                     |
+| **`sl_impression_dimensions`** | `text`    | -       | NO       | -                                                        | 6軸定量値 (JSON: `ImpressionDimensions`)               |
 | **`content_embedding`**  | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
 | `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
 | **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
@@ -144,17 +144,18 @@ type Section =
   | { id: string; type: 'youtube'; videoId: string; start: number }; // 動画プレビュー用
 ```
 
-##### 3.2.1.2 `sl_mood_dimensions` (Quantitative Mood)
+##### 3.2.1.2 `sl_impression_dimensions` (Quantitative Impression)
 
-AIによってスコアリングされた5つの感情軸。
+AIによってスコアリングされた6つの評価軸。**各値は -10 から +10 の整数（1刻み）**です。
 
 ```typescript
-type MoodDimensions = {
-  brightness: number; // Dark (-1) <-> Bright (+1)
-  vibrancy: number; // Calm (-1) <-> Energetic (+1)
-  scale: number; // Intimate (-1) <-> Grand (+1)
-  depth: number; // Light (-1) <-> Deep (+1)
-  drama: number; // Pure (-1) <-> Cinematic (+1)
+type ImpressionDimensions = {
+  brightness: number; // Dark (-10) <-> Bright (+10)
+  vibrancy: number;   // Calm (-10) <-> Energetic (+10)
+  scale: number;      // Intimate (-10) <-> Grand (+10)
+  depth: number;      // Light (-10) <-> Deep (+10)
+  drama: number;      // Pure (-10) <-> Cinematic (+10)
+  popularity: number; // Niche (-10) <-> Famous (+10)
 };
 ```
 
@@ -224,7 +225,7 @@ sequenceDiagram
 | **High** | **`EN Title`** (System) | **英語タイトル** (from `work_translations` En). 日本語記事でも英語でヒットさせるために必須。 |
 | **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
 | **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
-| **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
+| **High** | **`sl_impression_dimensions`** | 6軸印象値をテキスト化して埋め込み (e.g. "High Energy, Famous Piece") |
 | **Mid** | `sl_genre`, `sl_instrumentations` | ジャンル・楽器 |
 | **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
 | **Mid** | `sl_work_nicknames` | 楽曲の通称（"運命"など） |

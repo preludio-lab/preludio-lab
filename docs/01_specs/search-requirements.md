@@ -86,12 +86,13 @@ AIエージェントを活用したメタデータの拡充。
 **Focus:** Priority 3 (Situation/Mood) - Deep Dive
 定量的および意味的なアプローチでごく私的な「感性」による検索を実現します。
 
-1.  **Quantitative Mood (定量ムード):** 5つの感情軸 (-1.0 ~ +1.0) による精緻なフィルタリング。
-    - **Brightness** (明るさ): Dark (-1) <-> Bright (+1)
-    - **Vibrancy** (躍動感): Calm (-1) <-> Energetic (+1)
-    - **Scale** (スケール): Intimate (-1) <-> Grand (+1)
-    - **Depth** (聴きごたえ): Light (-1) <-> Deep (+1)
-    - **Drama** (ドラマ性): Pure (-1) <-> Cinematic (+1)
+1.  **Quantitative Impression (定量印象):** 6つの評価軸 (**-10 ~ +10 の整数、1刻み**) による精緻なフィルタリング。
+    - **Brightness** (明るさ): Dark (-10) <-> Bright (+10)
+    - **Vibrancy** (躍動感): Calm (-10) <-> Energetic (+10)
+    - **Scale** (スケール): Intimate (-10) <-> Grand (+10)
+    - **Depth** (聴きごたえ): Light (-10) <-> Deep (+10)
+    - **Drama** (ドラマ性): Pure (-10) <-> Cinematic (+10)
+    - **Popularity** (知名度): Niche (-10) <-> Famous (+10)
 2.  **Semantic Search (ベクトル検索):** 「朝、コーヒーを飲みながら」のような文脈検索を **Turso (libsql-vector)** で実現。
 
 ---
