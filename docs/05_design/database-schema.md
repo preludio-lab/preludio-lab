@@ -406,7 +406,7 @@ type PlaybackSamples = PlaybackSample[];
 | :------------------- | :------- | :----- | :------------------------- |
 | `idx_composers_slug` | `(slug)` | B-Tree | ルーティング用（ユニーク） |
 
-### 5.2 `composer_translations`
+#### 5.1.2 `composer_translations`
 
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -418,14 +418,14 @@ type PlaybackSamples = PlaybackSample[];
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 5.2.1 Indexes (Composer Translations)
+#### 5.1.3 Indexes (Composer Translations)
 
 | Index Name              | Columns               | Type   | Usage                          |
 | :---------------------- | :-------------------- | :----- | :----------------------------- |
 | `idx_comp_trans_lookup` | `(composer_id, lang)` | B-Tree | 基本取得（ユニーク） |
 | `idx_comp_trans_name`   | `(lang, name)`        | B-Tree | 名前による検索       |
 
-### 5.3 `works`
+### 5.2 `works`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -447,7 +447,7 @@ type PlaybackSamples = PlaybackSample[];
 | `idx_works_slug`        | `(composer_id, slug)`             | B-Tree | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_number)` | B-Tree | 作品番号順のソート                     |
 
-### 5.4 `work_translations`
+#### 5.2.2 `work_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -460,7 +460,7 @@ type PlaybackSamples = PlaybackSample[];
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 5.2.2 Indexes (Work Translations)
+#### 5.2.3 Indexes (Work Translations)
 
 | Index Name              | Columns                 | Type   | Usage                          |
 | :---------------------- | :---------------------- | :----- | :----------------------------- |
@@ -473,7 +473,6 @@ type PlaybackSamples = PlaybackSample[];
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 [Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
 
-#### 5.3.1 `tags`
 | Column | Type | Default | NOT NULL | CHECK                                           | Description               |
 | :--- | :--- | :--- | :--- | :---------------------------------------------- | :------------------------ |
 | **`id`** | `text` | - | YES | -                                               | **PK**.                   |
@@ -488,13 +487,13 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 > 2.  **Creation Mode (Database)**: DB の `tags` テーブルは、記事作成時の語彙統制（VALIDATION）および検索画面でのフィルター一覧生成のために使用されます。
 > 3.  **Read-Optimized Policy**: ユーザーの閲覧時には、`article_translations` に保存された **Snapshots (`sl_genre`等)** を参照するため、本テーブルへの JOIN は行いません。
 
-#### 5.5.1 Indexes (Tags)
+#### 5.3.1 Indexes (Tags)
 
 | Index Name      | Columns            | Type   | Usage                                  |
 | :-------------- | :----------------- | :----- | :------------------------------------- |
 | `idx_tags_slug` | `(category, slug)` | B-Tree | 絞り込み検索・ルーティング（ユニーク） |
 
-### 5.6 `tag_translations`
+### 5.4 `tag_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -504,13 +503,13 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 5.6.1 Indexes (Tag Translations)
+#### 5.4.1 Indexes (Tag Translations)
 
 | Index Name             | Columns          | Type   | Usage                |
 | :--------------------- | :--------------- | :----- | :------------------- |
 | `idx_tag_trans_lookup` | `(tag_id, lang)` | B-Tree | 基本取得（ユニーク） |
 
-### 5.7 `media_assets`
+### 5.5 `media_assets`
 
 サイト内で使用する汎用的な静的ファイル（画像、PDF等）。
 | Column | Type | Default | NOT NULL | CHECK                        | Description                               |
