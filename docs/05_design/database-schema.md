@@ -165,7 +165,7 @@ type ImpressionDimensions = {
 type ArticleMetadata = {
   tags: string[]; // e.g. ["Sad", "Morning", "Baroque"]
   key?: string; // e.g. "C Major"
-  difficulty?: 1 | 2 | 3 | 4 | 5;
+  difficulty?: 1 | 2 | 3 | 4 | 5; // 1:Beginner, 2:Elementary, 3:Intermediate, 4:Advanced, 5:Virtuoso
   ogp_url?: string; // Generated OGP Image URL
 };
 ```
