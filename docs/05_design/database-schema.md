@@ -17,6 +17,7 @@
 - **Data Integrity (Physical):**
   - カラムごとに **`NOT NULL`** 制約の有無を定義します。
   - 特定の値のみを許可する場合は **`CHECK`** 制約を適用します。
+  - **Foreign Keys:** Turso/SQLiteの外部キー制約機能 (`PRAGMA foreign_keys = ON`) を有効化し、物理レベルで参照整合性を担保します。
 - **Naming Convention:**
   - Table/Column: `snake_case` (Standard)
   - API Response: `CamelCase` (Application Layerで変換)
@@ -59,7 +60,7 @@ erDiagram
     %% Shared Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Scores }o..|| Recordings : "suggests"
+    Scores }o..|| RecordingSources : "suggests"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
 
@@ -105,17 +106,18 @@ erDiagram
 | `article_id`             | `text`    | -       | YES      | -                                                        | FK to `articles.id`                                    |
 | `lang`                   | `text`    | -       | YES      | -                                                        | ISO Language Code                                      |
 | **`status`**             | `text`    | -       | YES      | `IN ('draft', 'published', 'private', 'archived')`       | ステータス                                             |
-| `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル                                           |
-| **`display_title`**      | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧用タイトル                      |
+| `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル（正式名称）                               |
+| **`display_title`**      | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み) |
+| **`summary`**            | `text`    | -       | NO       | -                                                        | **[SEO]** 記事概要・meta description (120文字程度)     |
 | **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
 | **`sl_catalogue_id`**    | `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
 | **`sl_nicknames`**       | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
 | **`sl_genre`**           | `text`    | -       | NO       | -                                                        | ジャンル (Source: `tags.slug` where category='genre')   |
-| **`sl_instrumentation`** | `text`    | -       | NO       | -                                                        | 楽器編成 (Source: `tags.slug` where category='instrument') |
+| **`sl_instrumentations`**| `text`    | -       | NO       | -                                                        | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
 | **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
 | **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
 | **`sl_mood_dimensions`** | `text`    | -       | NO       | -                                                        | 5軸定量値 (JSON: `MoodDimensions`)                     |
-| **`embedding`**          | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
+| **`content_embedding`**  | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
 | `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
 | **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
 | `mdx_path`                | `text`    | -       | NO       | -                                                        | MDX相対パス (e.g. `works/bwv846.mdx`)                  |
@@ -175,8 +177,9 @@ type ArticleMetadata = {
 | `idx_art_trans_status_pub`     | `(lang, status, published_at)`      | B-Tree | 公開済み・最新記事一覧の取得           |
 | `idx_art_trans_featured`       | `(lang, is_featured, published_at)` | B-Tree | おすすめ記事の高速取得・ソート         |
 | `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
+| `idx_art_trans_search_era`     | `(lang, sl_era)`                    | B-Tree | 時代区分による絞り込み検索             |
 | `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
-| `idx_art_trans_embedding`      | `(embedding)`                       | HNSW   | セマンティック検索（`vector_l2_ops`）  |
+| `idx_art_trans_embedding`      | `(content_embedding)`               | HNSW   | セマンティック検索（`vector_l2_ops`）  |
 
 > [!NOTE]
 > **命名規則 (`sl_` プレフィックス)**:
@@ -222,7 +225,7 @@ sequenceDiagram
 | **High** | `sl_composer_name` | 作曲家名（主要な検索軸） |
 | **High** | `metadata.tags` | 感情・シチュエーションタグ（感性検索の核） |
 | **High** | **`sl_mood_dimensions`** | 5軸感情値をテキスト化して埋め込み (e.g. "High Energy, Bright Mood") |
-| **Mid** | `sl_genre`, `sl_instrumentation` | ジャンル・楽器 |
+| **Mid** | `sl_genre`, `sl_instrumentations` | ジャンル・楽器 |
 | **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
 | **Mid** | `sl_nicknames` | 楽曲の通称（"運命"など） |
 | **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
