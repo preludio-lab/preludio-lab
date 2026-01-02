@@ -86,7 +86,7 @@ erDiagram
 | `is_featured` | `integer` | `0`     | YES      | `IN (0, 1)`                  | おすすめフラグ                                     |
 | `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
-| **`reading_time`** | `integer` | -       | NO       | `reading_time > 0`           | 読了目安時間（秒）                                 |
+| **`reading_time_seconds`** | `integer` | -    | NO       | `reading_time_seconds > 0`   | 読了目安時間（秒）                                 |
 
 #### 3.1.1 Indexes (Articles)
 
