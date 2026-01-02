@@ -150,7 +150,7 @@ type Section =
 
 ##### 3.2.1.2 `sl_impression_dimensions` (Quantitative Impression)
 
-AIによってスコアリングされた6つの評価軸。**各値は -10 から +10 の整数（1刻み、0=中立/Neutral）**です。
+AIによってスコアリングされた6つの評価軸。詳細は [Search Requirements](../01_specs/search-requirements.md) を参照。**各値は -10 から +10 の整数（1刻み、0=中立/Neutral）**です。
 
 ```typescript
 type ImpressionDimensions = {
