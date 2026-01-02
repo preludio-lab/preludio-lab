@@ -86,7 +86,7 @@ AIエージェントを活用したメタデータの拡充。
 **Focus:** Priority 3 (Situation/Mood) - Deep Dive
 定量的および意味的なアプローチでごく私的な「感性」による検索を実現します。
 
-1.  **Quantitative Impression (定量印象):** 6つの評価軸 (**-10 ~ +10 の整数、1刻み**) による精緻なフィルタリング。
+1.  **Quantitative Impression (定量印象):** 6つの評価軸 (**-10 ~ +10 の整数、1刻み、0=中立**) による精緻なフィルタリング。
     - **Brightness** (明るさ): Dark (-10) <-> Bright (+10)
     - **Vibrancy** (躍動感): Calm (-10) <-> Energetic (+10)
     - **Scale** (スケール): Intimate (-10) <-> Grand (+10)
