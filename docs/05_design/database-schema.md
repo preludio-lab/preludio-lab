@@ -41,6 +41,10 @@ TursoにはネイティブのRLSがないため、アプリケーション層（
 - **Single Entity Pattern:** 物理的には `translations` テーブルに分かれている情報も、ドメイン層では一つの統合されたエンティティ（例: `Work`）として定義します。
 - **Encapsulation by Repository:** 永続化の詳細（テーブルの分割やJSONB構造）は Repository 層で隠蔽します。ドメイン層は「現在の言語でハイドレーションされた、使いやすいオブジェクト」のみを扱います。
 - **Zero-JOIN Alignment:** 物理設計における「非正規化カラム（Snapshot）」は、このドメインエンティティを高速に生成するために最適化されています。
+- **ID-Based Integrity with Slug-Based DX:**
+  - 内部的な参照（FK）は「不変性」を担保するため常に **UUID (id)** を起点とします。
+  - 開発者体験 (DX) やエージェントの操作、URL構築には **Slug** を使用します。
+  - アプリケーション層（Repository/Service）が Slug から ID への解決（Resolution）を責務として持ち、物理層の堅牢性と論理層の利便性を両立します。
 
 ---
 
@@ -281,6 +285,7 @@ sequenceDiagram
 | :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
 | **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
 | `work_id`              | `text` | -       | YES      | -     | FK to `works.id`                                           |
+| **`sl_work_slug`**     | `text` | -       | NO       | -     | **[Snapshot]** 可読性のための作品スラッグ (e.g. `beethoven-symphony-no5`) |
 | `slug`                 | `text` | -       | YES      | -     | **Slug**. 作品内ショートスラッグ (e.g. `1mov-1st-thema`)         |
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
 | `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
