@@ -408,6 +408,8 @@ type PlaybackSamples = PlaybackSample[];
 | :------------------- | :------- | :----- | :------------------------- |
 | `idx_composers_slug` | `(slug)` | B-Tree | ルーティング用（ユニーク） |
 
+#### 5.1.2 `composer_translations`
+
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -427,7 +429,7 @@ type PlaybackSamples = PlaybackSample[];
 
 ### 5.2 `works` / `work_translations`
 
-**`works`**
+#### 5.2.1 `works`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -449,7 +451,7 @@ type PlaybackSamples = PlaybackSample[];
 | `idx_works_slug`        | `(composer_id, slug)`             | B-Tree | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_number)` | B-Tree | 作品番号順のソート                     |
 
-### 5.2.2 `work_translations`
+#### 5.2.2 `work_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -475,7 +477,7 @@ type PlaybackSamples = PlaybackSample[];
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 [Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
 
-**`tags`**
+#### 5.3.1 `tags`
 | Column | Type | Default | NOT NULL | CHECK                                           | Description               |
 | :--- | :--- | :--- | :--- | :---------------------------------------------- | :------------------------ |
 | **`id`** | `text` | - | YES | -                                               | **PK**.                   |
@@ -485,18 +487,18 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`**           | 更新日時                  |
 
 > [!NOTE]
-> **AIエージェントの活用 (Knowledge Manifest)**:
-> 本テーブルは、生成AI（執筆・タグ付けエージェント）が記事を生成する際の「正解語彙集」として機能します。
-> AIは本マスタに存在する `slug` の中から適切なタグを選択し、記事の `metadata.tags` に格納します。
-> これにより多言語間でのタグの検索・フィルタリングの一貫性を担保します。
+> **AIエージェントの活用と Master Data as Code (運用方針)**:
+> 1.  **Source of Truth (Git)**: タグの正解データはリポジトリ内の JSON/YAML ファイルで管理し、エージェントはこれに基づいて記事を執筆します。
+> 2.  **Serving Mode (Database)**: DB の `tags` テーブルは、ユーザー閲覧時の「スラグ→表示名の解決」や「検索フィルターの生成」のための **Serving用ミラー** として機能します。
+> 3.  **Synchronization**: CI/CD パイプラインにおいて、Git 上の定義を DB へ反映（Upsert）することで、事実関係の一貫性を担保します。
 
-#### 5.3.1 Indexes (Tags)
+#### 5.3.2 Indexes (Tags)
 
 | Index Name      | Columns            | Type   | Usage                                  |
 | :-------------- | :----------------- | :----- | :------------------------------------- |
 | `idx_tags_slug` | `(category, slug)` | B-Tree | 絞り込み検索・ルーティング（ユニーク） |
 
-**`tag_translations`**
+#### 5.3.3 `tag_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
