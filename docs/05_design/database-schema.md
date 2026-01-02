@@ -98,7 +98,7 @@ erDiagram
 | Index Name              | Columns                     | Type   | Usage                              |
 | :---------------------- | :-------------------------- | :----- | :--------------------------------- |
 | `idx_articles_work_id`  | `(work_id)`                 | B-Tree | 外部キーによる検索                 |
-| `idx_articles_slug`     | `(slug)`                    | B-Tree | ルーティング用（ユニーク）         |
+| `idx_articles_slug`     | `(slug)`                    | **UNIQUE** | ルーティング用（ユニーク）         |
 | `idx_articles_featured` | `(is_featured, created_at)` | B-Tree | トップページ等でのピックアップ表示 |
 
 ### 3.2 `article_translations` (Localized / Read-Optimized)
@@ -340,7 +340,7 @@ type PlaybackSamples = PlaybackSample[];
 
 | Index Name               | Columns            | Type   | Usage                |
 | :----------------------- | :----------------- | :----- | :------------------- |
-| `idx_score_trans_lookup` | `(score_id, lang)` | B-Tree | 基本取得（ユニーク） |
+| `idx_score_trans_lookup` | `(score_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
 ### 4.3 `recordings` (Audio/Video Entity)
 
@@ -407,7 +407,7 @@ type PlaybackSamples = PlaybackSample[];
 
 | Index Name           | Columns  | Type   | Usage                      |
 | :------------------- | :------- | :----- | :------------------------- |
-| `idx_composers_slug` | `(slug)` | B-Tree | ルーティング用（ユニーク） |
+| `idx_composers_slug` | `(slug)` | **UNIQUE** | ルーティング用（ユニーク） |
 
 ### 5.2 `composer_translations`
 
@@ -425,7 +425,7 @@ type PlaybackSamples = PlaybackSample[];
 
 | Index Name              | Columns               | Type   | Usage                          |
 | :---------------------- | :-------------------- | :----- | :----------------------------- |
-| `idx_comp_trans_lookup` | `(composer_id, lang)` | B-Tree | 基本取得（ユニーク） |
+| `idx_comp_trans_lookup` | `(composer_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 | `idx_comp_trans_name`   | `(lang, name)`        | B-Tree | 名前による検索       |
 
 ### 5.3 `works`
@@ -447,7 +447,7 @@ type PlaybackSamples = PlaybackSample[];
 | Index Name              | Columns                           | Type   | Usage                                  |
 | :---------------------- | :-------------------------------- | :----- | :------------------------------------- |
 | `idx_works_composer_id` | `(composer_id)`                   | B-Tree | 作曲家による絞り込み検索               |
-| `idx_works_slug`        | `(composer_id, slug)`             | B-Tree | ルーティング用（作曲家ごとにユニーク） |
+| `idx_works_slug`        | `(composer_id, slug)`             | **UNIQUE** | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_number)` | B-Tree | 作品番号順のソート                     |
 
 ### 5.4 `work_translations`
@@ -467,7 +467,7 @@ type PlaybackSamples = PlaybackSample[];
 
 | Index Name              | Columns                 | Type   | Usage                          |
 | :---------------------- | :---------------------- | :----- | :----------------------------- |
-| `idx_work_trans_lookup` | `(work_id, lang)`       | B-Tree | 基本取得（ユニーク） |
+| `idx_work_trans_lookup` | `(work_id, lang)`       | **UNIQUE** | 基本取得（ユニーク） |
 | `idx_work_trans_title`  | `(lang, title)`         | B-Tree | タイトル検索         |
 | `idx_work_trans_pops`   | `(lang, popular_title)` | B-Tree | 通称検索             |
 
@@ -494,7 +494,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 
 | Index Name      | Columns            | Type   | Usage                                  |
 | :-------------- | :----------------- | :----- | :------------------------------------- |
-| `idx_tags_slug` | `(category, slug)` | B-Tree | 絞り込み検索・ルーティング（ユニーク） |
+| `idx_tags_slug` | `(category, slug)` | **UNIQUE** | 絞り込み検索・ルーティング（ユニーク） |
 
 ### 5.6 `tag_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
@@ -510,7 +510,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 
 | Index Name             | Columns          | Type   | Usage                |
 | :--------------------- | :--------------- | :----- | :------------------- |
-| `idx_tag_trans_lookup` | `(tag_id, lang)` | B-Tree | 基本取得（ユニーク） |
+| `idx_tag_trans_lookup` | `(tag_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
 ### 5.7 `media_assets`
 
