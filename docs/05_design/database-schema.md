@@ -281,7 +281,7 @@ sequenceDiagram
 | :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
 | **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
 | `work_id`              | `text` | -       | YES      | -     | FK to `works.id`                                           |
-| `slug`                 | `text` | -       | YES      | -     | **Slug**. MDX内での指定用 (e.g. `beethoven-piano-sonata-no5-1mov-1st-thema`) |
+| `slug`                 | `text` | -       | YES      | -     | **Slug**. 作品内ショートスラッグ (e.g. `1mov-1st-thema`)         |
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
 | `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
 | **`playback_samples`** | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
@@ -293,7 +293,7 @@ sequenceDiagram
 | Index Name            | Columns              | Type   | Usage                                |
 | :-------------------- | :------------------- | :----- | :----------------------------------- |
 | `idx_scores_work_id`  | `(work_id)`          | B-Tree | 外部キーによる検索                   |
-| `idx_scores_slug`     | `(slug)`             | **UNIQUE** | MDXからの直接指定用                 |
+| `idx_scores_slug`     | `(work_id, slug)`    | **UNIQUE** | 作品内でのスラッグ重複防止          |
 | `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
 
 > [!NOTE]
