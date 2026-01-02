@@ -311,9 +311,9 @@ sequenceDiagram
 
 ```typescript
 type PlaybackSample = {
-  source_id: string; // FK to recording_sources.id (Not recordings.id) - Source固有の時間軸のため
-  start_time: number; // 再生開始時間（秒）
-  end_time: number; // 再生終了時間（秒）
+  recording_source_id: string; // FK to recording_sources.id (Not recordings.id) - Source固有の時間軸のため
+  start_seconds: number; // 再生開始時間（秒）
+  end_seconds: number; // 再生終了時間（秒）
   is_default: boolean; // デフォルト再生用フラグ
   label?: string; // UI表示用 (e.g. "Gould (1981)")
 };
@@ -331,6 +331,8 @@ type PlaybackSamples = PlaybackSample[];
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `caption` | `text` | - | YES | - | 譜例のタイトル (e.g. "第1主題") |
 | `description` | `text` | - | NO | - | 音楽的な補足解説（詳細表示モーダル等で使用） |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 4.2.1 Indexes (Score Translations)
 
@@ -350,6 +352,7 @@ type PlaybackSamples = PlaybackSample[];
 | `recording_year`     | `integer` | -       | NO       | -           | 録音年                            |
 | `is_recommended`     | `integer` | `0`     | YES      | `IN (0, 1)` | おすすめフラグ (0/1)               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)      |
+| `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)      |
 
 #### 4.3.1 Indexes (Recordings)
 
@@ -362,21 +365,22 @@ type PlaybackSamples = PlaybackSample[];
 
 1つの録音（Recording）に紐づく、具体的な再生手段。
 
-| Column         | Type   | Default | NOT NULL | CHECK                                  | Description                  |
-| :------------- | :----- | :------ | :------- | :---                                   | :--------------------------- |
-| **`id`**       | `text` | -       | YES      | -                                      | **PK**.                      |
-| `recording_id` | `text` | -       | YES      | -                                      | FK to `recordings.id`        |
-| `provider`     | `text` | -       | YES      | -                                      | `'youtube'`, `'spotify'`     |
-| `source_id`    | `text` | -       | YES      | -                                      | 外部ID/URI                   |
-| `quality`      | `text` | -       | NO       | -                                      | `'high'`, `'medium'`         |
-| `created_at`   | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制) |
+| Column                   | Type   | Default | NOT NULL | CHECK                                  | Description                                |
+| :--------------------- | :----- | :------ | :------- | :---                                   | :----------------------------------------- |
+| **`id`**               | `text` | -       | YES      | -                                      | **PK**.                                    |
+| `recording_id`         | `text` | -       | YES      | -                                      | FK to `recordings.id`                      |
+| `provider`             | `text` | -       | YES      | -                                      | `'youtube'`, `'spotify'`                   |
+| `external_source_id`   | `text` | -       | YES      | -                                      | 外部ID/URI (e.g. YouTube動画ID: 'jNQXAC9IVRw') |
+| `quality`              | `text` | -       | NO       | -                                      | プロバイダ固有の値 (e.g. `'hd720'`, `'high'`) |
+| `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)               |
+| `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)               |
 
 #### 4.4.1 Indexes (Recording Sources)
 
 | Index Name           | Columns                 | Type   | Usage                                  |
 | :------------------- | :---------------------- | :----- | :------------------------------------- |
 | `idx_rec_src_rec_id` | `(recording_id)`        | B-Tree | 外部キーによる検索・バリエーション取得 |
-| `idx_rec_src_unique` | `(provider, source_id)` | B-Tree | 外部IDの重複チェック                   |
+| `idx_rec_src_lookup` | `(provider, external_source_id)` | B-Tree | 外部IDによる逆引き検索                 |
 
 ---
 
@@ -392,9 +396,11 @@ type PlaybackSamples = PlaybackSample[];
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
 | `slug` | `text` | - | YES | - | e.g. `bach` |
-| `born_at` | `text` | - | NO | **`born_at IS NULL OR date(born_at) IS NOT NULL`** | 生年月日 (NULLまたはISO8601形式) |
-| `died_at` | `text` | - | NO | **`died_at IS NULL OR date(died_at) IS NOT NULL`** | 没年月日 (NULLまたはISO8601形式) |
+| `birth_date` | `text` | - | NO | **`birth_date IS NULL OR date(birth_date) IS NOT NULL`** | 生年月日 (NULLまたはISO8601形式) |
+| `death_date` | `text` | - | NO | **`death_date IS NULL OR date(death_date) IS NOT NULL`** | 没年月日 (NULLまたはISO8601形式) |
 | `nationality_code` | `text` | - | NO | - | ISO Country Code |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 5.1.1 Indexes (Composers)
 
@@ -408,9 +414,11 @@ type PlaybackSamples = PlaybackSample[];
 | `composer_id` | `text` | - | YES | - | FK to `composers.id` |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `name` | `text` | - | YES | - | Localized Name (e.g. "バッハ") |
-| `bio` | `text` | - | NO | - | 人物伝記 |
+| `biography` | `text` | - | NO | - | 人物伝記 |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 5.1.2 Indexes (Composer Translations)
+#### 5.1.3 Indexes (Composer Translations)
 
 | Index Name              | Columns               | Type   | Usage                          |
 | :---------------------- | :-------------------- | :----- | :----------------------------- |
@@ -428,6 +436,8 @@ type PlaybackSamples = PlaybackSample[];
 | `catalogue_prefix` | `text` | - | NO | - | `Op.`, `BWV` 等 |
 | `catalogue_number` | `text` | - | NO | - | `67`, `1001` 等 |
 | `key_tonality` | `text` | - | NO | - | `C Major`, `D Minor` |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 5.2.1 Indexes (Works)
 
@@ -437,15 +447,17 @@ type PlaybackSamples = PlaybackSample[];
 | `idx_works_slug`        | `(composer_id, slug)`             | B-Tree | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_number)` | B-Tree | 作品番号順のソート                     |
 
-**`work_translations`**
+### 5.2.2 `work_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
 | `work_id` | `text` | - | YES | - | FK to `works.id` |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `title` | `text` | - | YES | - | 正式名称 (e.g. "Symphony No. 5") |
-| `popular_title` | `text` | - | NO | - | 一般的な通称 (e.g. "運命") |
-| `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON: `string[]`) |
+| `popular_title` | `text` | - | NO | - | 日本語における代表的な通称 (e.g. "運命") |
+| `nicknames` | `text` | - | NO | - | 検索用別名リスト (JSON: `string[]`, e.g. ["Schicksal", "Fate"]) |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 5.2.2 Indexes (Work Translations)
 
@@ -466,6 +478,8 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | **`id`** | `text` | - | YES | -                                               | **PK**.                   |
 | `category` | `text` | - | YES | `IN ('mood', 'situation', 'terminology')`       | タグの分類                |
 | `slug` | `text` | - | YES | -                                               | `deep-focus` 等の識別子   |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`**           | 作成日時                  |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`**           | 更新日時                  |
 
 > [!NOTE]
 > **AIエージェントの活用 (Knowledge Manifest)**:
@@ -486,6 +500,8 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `tag_id` | `text` | - | YES | - | FK to `tags.id` |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `name` | `text` | - | YES | - | 表示名 (e.g. "深い集中") |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 5.3.2 Indexes (Tag Translations)
 
@@ -499,10 +515,12 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | Column | Type | Default | NOT NULL | CHECK                        | Description                               |
 | :--- | :--- | :--- | :--- | :--------------------------- | :---------------------------------------- |
 | **`id`** | `text` | - | YES | -                            | **PK**.                                   |
-| `media_type` | `text` | - | YES | `IN ('image', 'document')`   | メディア種別                              |
+| `media_type` | `text` | - | YES | `IN ('image', 'document', 'audio', 'video', 'json')`   | メディア種別                              |
 | `url` | `text` | - | YES | -                            | ストレージの公開URL                       |
 | `alt_text` | `text` | `{}` | NO | -                            | **[i18n]** 代替テキスト (JSON: `MultilingualString`) |
 | `metadata` | `text` | `{}` | YES | -                            | 画像サイズなどの付加情報 (JSON)           |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 ---
 
