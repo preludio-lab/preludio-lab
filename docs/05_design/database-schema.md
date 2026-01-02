@@ -232,7 +232,7 @@ sequenceDiagram
 | **Mid** | `sl_genre`, `sl_instrumentations` | ジャンル・楽器 |
 | **Mid** | **`sl_era`** | 時代区分 (e.g. "Baroque Era") - 時代背景の検索に対応 |
 | **Mid** | `sl_work_nicknames` | 楽曲の通称（"運命"など） |
-| **Low** | *Body Digest* | 記事本文の要約（テキスト全文ではなく要約を使用） |
+| **Low** | *Body Digest* | 記事本文の要約（`excerpt` カラムのデータを使用） |
 
 > [!NOTE]
 > **連結フォーマット例 (Cross-lingual Passage)**:
@@ -281,6 +281,7 @@ sequenceDiagram
 | :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
 | **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
 | `work_id`              | `text` | -       | YES      | -     | FK to `works.id`                                           |
+| `slug`                 | `text` | -       | YES      | -     | **Slug**. MDX内での指定用 (e.g. `beethoven-piano-sonata-no5-1mov-1st-thema`) |
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
 | `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
 | **`playback_samples`** | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
@@ -292,7 +293,13 @@ sequenceDiagram
 | Index Name            | Columns              | Type   | Usage                                |
 | :-------------------- | :------------------- | :----- | :----------------------------------- |
 | `idx_scores_work_id`  | `(work_id)`          | B-Tree | 外部キーによる検索                   |
+| `idx_scores_slug`     | `(slug)`             | **UNIQUE** | MDXからの直接指定用                 |
 | `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
+
+> [!NOTE]
+> **JSONカラム (`playback_samples`) のインデックスについて**:
+> SQLite/libSQLの標準的なB-Treeインデックスは、JSON全体の一致には機能しますが、内部の要素（`source_id`等）による部分的な検索を高速化するものではありません。
+> 録音ソースIDからの逆引きが頻繁に発生し、パフォーマンスが問題となる場合は、仮想カラム (Generated Column) を用いた機能インデックス、または正規化された交差テーブルの導入を検討してください。
 
 #### 4.1.2 JSON Type Definitions
 
@@ -321,7 +328,7 @@ type PlaybackSamples = PlaybackSample[];
 | `score_id` | `text` | - | YES | - | FK to `scores.id` |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `caption` | `text` | - | YES | - | 譜例のタイトル (e.g. "第1主題") |
-| `description` | `text` | - | NO | - | 補足説明 |
+| `description` | `text` | - | NO | - | 音楽的な補足解説（詳細表示モーダル等で使用） |
 
 #### 4.2.1 Indexes (Score Translations)
 
