@@ -57,20 +57,23 @@ erDiagram
     Composers ||--|{ ComposerTranslations : "has localized"
     Composers ||--|{ Works : "composed"
     Works ||--|{ WorkTranslations : "has localized"
+    Tags ||--|{ TagTranslations : "has localized"
+    MediaAssets {
+        string id PK
+        string url
+    }
 
     %% Application Core (Zero-JOIN)
     Works ||--o{ Articles : "featured in"
     Articles ||--|{ ArticleTranslations : "has localized content"
+    Tags ||..o{ ArticleTranslations : "categorizes (snapshot)"
 
-    %% Shared Assets
+    %% Multimedia Assets
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Scores }o..|| RecordingSources : "suggests"
+    Scores }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
-
-    %% Taxonomy
-    Tags ||--|{ TagTranslations : "has localized"
 ```
 
 ---
