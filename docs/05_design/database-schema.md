@@ -371,7 +371,9 @@ sequenceDiagram
 | **`work_id`**          | `text` | -       | YES      | -     | **FK to `works.id`**                                       |
 | `slug`                 | `text` | -       | YES      | -     | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1mov-1st-theme`)      |
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
-| `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
+| `data_storage_path`    | `text` | -       | YES      | -     | **[R2]** ソースデータパス (e.g. `scores/uuid/source.abc`)  |
+| `svg_storage_path`     | `text` | -       | NO       | -     | **[R2]** レンダリング済みSVGパス (CDNキャッシュ用)         |
+| `layout_dimensions`    | `text` | -       | NO       | -     | **[UX]** 表示サイズ情報 (JSON: `ScoreLayout`)              |
 | `playback_samples`     | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
 | `repository_url`       | `text` | -       | NO       | -     | **[Asset Origin]** 楽譜リポジトリのソースURL (IMSLP/PDMX等) |
 | `is_repository_synced` | `integer` | `0`     | YES      | `IN (0, 1)` | 楽譜リポジトリ側との同期完了フラグ                         |
@@ -414,6 +416,18 @@ type PlaybackSample = {
 };
 
 type PlaybackSamples = PlaybackSample[];
+```
+
+##### 5.1.2.2 `layout_dimensions` (Score Layout)
+
+SVG等の楽譜を非同期で読み込む際のレイアウトシフト（CLS）を防止するための寸法情報。
+
+```typescript
+type ScoreLayout = {
+  aspectRatio: number; // e.g. 2.5 (width / height)
+  viewBox: string; // e.g. "0 0 800 300"
+  originalWidth?: number; // 原寸の幅 (px)
+};
 ```
 
 ### 5.2 `score_translations` (Localized Metadata)
