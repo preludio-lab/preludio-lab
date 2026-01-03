@@ -46,13 +46,13 @@ eras:
     label_en: Early Romantic
     start_year: 1815
     end_year: 1850
-    description: シューベルト、メンデルスゾーンなど。古典的な形式を維持しつつ、ロマン派的抒情性を導入。
+    description: シューベルト、メンデルスゾーン、ショパンなど。古典的な形式を維持しつつ、ロマン派的抒情性を導入。
   - id: high-romantic
     label_ja: 盛期ロマン派
     label_en: High Romantic
     start_year: 1850
     end_year: 1890
-    description: ショパン、リスト、ワーグナー。感情表現の極致、和声の拡張、ピアノ技法の発展。
+    description: リスト、ワーグナー、ブラームスなど。感情表現の極致、和声の拡張、ピアノ技法の発展。
   - id: late-romantic
     label_ja: 後期ロマン派 / 世紀末
     label_en: Late Romantic / Fin de siècle
