@@ -127,6 +127,10 @@ eras:
 #        - 印象評価軸（Impression Scales）の採点ロジック:
 #            - 楽曲全体で性質が大きく変化する場合（例：暗い開始から明るい結末へ）、平均値ではなく「楽曲の最終的なメッセージ」または「最も象徴的な印象」を代表値として採用せよ。
 #            - その際の性質の変化の激しさや物語性は、必ず `drama`（ドラマ性）のスコアに反映させ、代表値との矛盾を構造的に解消せよ（例：第九は Bright+9 × Drama+10）。
+#        - 国籍と帰属（Nationality & School）:
+#            - 国籍コード（nationality_code）は原則として「本人のアイデンティティ」または「現代の地図における該当国」を採用せよ。
+#            - 出生時の国名が現代と異なる場合（例：ショパン）、本文中で歴史的背景を必ず補足せよ。
+#            - 国を跨いだ音楽的潮流を捉えるため、`musical-school` タグを積極的に活用せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -1182,6 +1186,28 @@ tags:
         label_en: Cyclic Theme
         description: 全楽章を通じて共通の主題が現れる、強固な統一感を持つ形式。
 
+      # --- Musical Schools & Movements (楽派・グループ) ---
+      - id: viennese-classicism
+        label_ja: ウィーン古典派
+        label_en: First Viennese School
+        description: ハイドン、モーツァルト、ベートーヴェンに代表される、形式美と理性の調和。
+      - id: second-viennese-school
+        label_ja: 新ウィーン楽派
+        label_en: Second Viennese School
+        description: シェーンベルク、ベルク、ウェーベルンによる無調・十二音技法の探求。
+      - id: franco-belgian-school
+        label_ja: フランコ＝ベルギー派
+        label_en: Franco-Belgian School
+        description: フランク、イザイらの系譜。ヴァイオリンの華麗な奏法と重厚な和声。
+      - id: mighty-handful
+        label_ja: ロシア5人組
+        label_en: The Five (Holy Handful)
+        description: ムソルグスキー、リムスキー＝コルサコフらによるロシア独自の国民音楽の追求。
+      - id: les-six
+        label_ja: フランス6人組
+        label_en: Les Six
+        description: サティの影響下、多調やシンプルさを追求した20世紀フランスの革新。
+
   # ----------------------------------------
   # Duration: 演奏時間・規模感
   # ----------------------------------------
@@ -1560,11 +1586,11 @@ nationalities:
   - id: FR
     label_ja: フランス
     label_en: France
-    description: ドビュッシー、ラヴェル。色彩とエスプリ。
+    description: ドビュッシー、ラヴェル。色彩豊かな和声、繊細な情緒。
   - id: IT
     label_ja: イタリア
     label_en: Italy
-    description: ヴィヴァルディ、オペラ作曲家たち。歌心と情熱。
+    description: ヴィヴァルディ、ヴェルディ。ベルカントの伝統、オペラの聖地。
   - id: RU
     label_ja: ロシア
     label_en: Russia
@@ -1584,7 +1610,7 @@ nationalities:
   - id: GB
     label_ja: イギリス
     label_en: United Kingdom
-    description: エルガー、ホルスト。格調高さと民謡の融合。
+    description: エルガー、ホルスト。合唱の伝統、高潔なロマンティシズム。
   - id: US
     label_ja: アメリカ
     label_en: United States
@@ -1597,6 +1623,34 @@ nationalities:
     label_ja: フィンランド
     label_en: Finland
     description: シベリウス。北欧の冷たく透き通った空気。
+  - id: NO
+    label_ja: ノルウェー
+    label_en: Norway
+    description: グリーグ。北欧の自然と抒情、国民楽派の至宝。
+  - id: DK
+    label_ja: デンマーク
+    label_en: Denmark
+    description: ニールセン。力強い生命力と独自の交響曲体系。
+  - id: BE
+    label_ja: ベルギー
+    label_en: Belgium
+    description: フランク、イザイ。バイオリン演奏の伝統と重厚な和声。
+  - id: JP
+    label_ja: 日本
+    label_en: Japan
+    description: 武満徹。東洋の感性と西洋の技法を融合させた「音の河」。
+  - id: BR
+    label_ja: ブラジル
+    label_en: Brazil
+    description: ヴィラ＝ロボス。アマゾンの生命力とバロックの形式。
+  - id: AR
+    label_ja: アルゼンチン
+    label_en: Argentina
+    description: ヒナステラ、ピアソラ。パンパの熱狂とタンゴの革新。
+  - id: UA
+    label_ja: ウクライナ
+    label_en: Ukraine
+    description: 伝統的な正教音楽の系譜と、現代における深い祈り。
 
 # -----------------------------------------------------------------------------
 # 7. Difficulty / Reading Style (難易度レベル)
