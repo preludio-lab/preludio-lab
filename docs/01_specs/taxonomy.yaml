@@ -1,0 +1,543 @@
+# PreludioLab Music Taxonomy
+# ==========================
+# This file defines the categorization system for the PreludioLab database.
+# It serves as the Single Source of Truth for:
+# - UI Filter Options
+# - Auto-tagging suggestions for AI Agents
+# - Consistency checks in CI/CD pipeline
+#
+# Created based on:
+# - docs/01_specs/glossary.md
+# - docs/01_specs/search-requirements.md
+# - docs/05_design/database-schema.md
+
+# -----------------------------------------------------------------------------
+# 1. Eras (時代区分)
+# -----------------------------------------------------------------------------
+# 音楽史における主要な時代区分。
+# 境界線は曖昧だが、一般的に認知されている分類を採用する。
+eras:
+  - id: medieval
+    label_ja: 中世
+    label_en: Medieval
+    description: 500年頃から1400年頃まで。グレゴリオ聖歌や初期ポリフォニーなど。
+  - id: renaissance
+    label_ja: ルネサンス
+    label_en: Renaissance
+    description: 1400年頃から1600年頃まで。ジョスカン・デ・プレ、パレストリーナなど。
+  - id: baroque
+    label_ja: バロック
+    label_en: Baroque
+    description: 1600年頃から1750年頃まで。バッハ、ヘンデル、ヴィヴァルディ。通奏低音の時代。
+  - id: classical
+    label_ja: 古典派
+    label_en: Classical
+    description: 1750年頃から1820年頃まで。ハイドン、モーツァルト、ベートーヴェン。形式美の追求。
+  - id: romantic
+    label_ja: ロマン派
+    label_en: Romantic
+    description: 1820年頃から1900年頃まで。ショパン、シューベルト、ワーグナー。感情表現の拡大。
+  - id: late-romantic
+    label_ja: 後期ロマン派 / 世紀末
+    label_en: Late Romantic / Fin de siècle
+    description: 19世紀末から20世紀初頭。マーラー、R.シュトラウス。機能和声の限界と大規模化。
+  - id: impressionism
+    label_ja: 印象主義
+    label_en: Impressionism
+    description: ドビュッシー、ラヴェル。色彩豊かで曖昧な響き。
+  - id: modern
+    label_ja: 近代・現代
+    label_en: Modern / Contemporary
+    description: 20世紀以降。シェーンベルク、ストラヴィンスキー、プロコフィエフ。調性の崩壊と再構築。
+
+# -----------------------------------------------------------------------------
+# 2. Genres (ジャンル)
+# -----------------------------------------------------------------------------
+# 大分類 (id) > 中分類 (children.id) の階層構造。
+# AIエージェントは可能な限り中分類（Children）を選択すること。
+# IDはURLの一部としても使用可能な短いslugとする。
+genres:
+  - id: orchestral
+    label_ja: 管弦楽曲
+    label_en: Orchestral
+    children:
+      - id: symphony
+        label_ja: 交響曲
+        label_en: Symphony
+      - id: overture
+        label_ja: 序曲・前奏曲
+        label_en: Overture / Prelude
+      - id: tone-poem
+        label_ja: 交響詩
+        label_en: Tone Poem
+      - id: suite-orch
+        label_ja: 管弦楽組曲
+        label_en: Orchestral Suite
+      - id: ballet
+        label_ja: バレエ音楽
+        label_en: Ballet
+
+  - id: concerto
+    label_ja: 協奏曲
+    label_en: Concerto
+    children:
+      - id: piano-concerto
+        label_ja: ピアノ協奏曲
+        label_en: Piano Concerto
+      - id: violin-concerto
+        label_ja: ヴァイオリン協奏曲
+        label_en: Violin Concerto
+      - id: cello-concerto
+        label_ja: チェロ協奏曲
+        label_en: Cello Concerto
+      - id: wind-concerto
+        label_ja: 管楽器のための協奏曲
+        label_en: Wind Concerto
+
+  - id: chamber
+    label_ja: 室内楽曲
+    label_en: Chamber Music
+    children:
+      - id: string-quartet
+        label_ja: 弦楽四重奏曲
+        label_en: String Quartet
+      - id: piano-trio
+        label_ja: ピアノ三重奏曲
+        label_en: Piano Trio
+      - id: sonata-duo
+        label_ja: 器楽ソナタ（伴奏付）
+        label_en: Instrumental Sonata
+
+  - id: keyboard
+    label_ja: 鍵盤楽曲
+    label_en: Keyboard Music
+    children:
+      - id: piano-sonata
+        label_ja: ピアノソナタ
+        label_en: Piano Sonata
+      - id: piano-solo
+        label_ja: ピアノ小品・性格的小品
+        label_en: Piano Solo / Character Piece
+      - id: organ
+        label_ja: オルガン曲
+        label_en: Organ Music
+      - id: harpsichord
+        label_ja: チェンバロ曲
+        label_en: Harpsichord Music
+
+  - id: vocal
+    label_ja: 声楽曲
+    label_en: Vocal Music
+    children:
+      - id: opera
+        label_ja: オペラ
+        label_en: Opera
+      - id: lied
+        label_ja: 歌曲 (Lied)
+        label_en: Art Song / Lied
+      - id: religious-choral
+        label_ja: 宗教曲・合唱曲
+        label_en: Religious / Choral
+      - id: cantata
+        label_ja: カンタータ
+        label_en: Cantata
+
+# -----------------------------------------------------------------------------
+# 3. Instrumentations (楽器・編成)
+# -----------------------------------------------------------------------------
+# 楽曲の演奏リソース。検索の絞り込みキーとして使用。
+# ユーザーレベルに合わせて粒度を調整。
+instrumentations:
+  - id: solo-piano
+    label_ja: ピアノ独奏
+    label_en: Solo Piano
+    description: ピアノ一台での演奏。
+  
+  - id: solo-instrument
+    label_ja: 独奏楽器（無伴奏）
+    label_en: Solo Instrument (Unaccompanied)
+    description: ヴァイオリン、チェロ、フルートなどの無伴奏曲。
+  
+  - id: duo
+    label_ja: デュオ（二重奏）
+    label_en: Duo
+    description: ヴァイオリンソナタなど、独奏楽器とピアノ、あるいは二つの楽器。
+  
+  - id: trio
+    label_ja: トリオ（三重奏）
+    label_en: Trio
+    description: ピアノ三重奏、弦楽三重奏など。
+  
+  - id: quartet
+    label_ja: カルテット（四重奏）
+    label_en: Quartet
+    description: 弦楽四重奏を筆頭とする4人の編成。
+  
+  - id: chamber-ensemble
+    label_ja: 室内楽アンサンブル (5人以上)
+    label_en: Chamber Ensemble
+    description: 五重奏以上の小編成アンサンブル。
+  
+  - id: orchestra
+    label_ja: オーケストラ
+    label_en: Orchestra
+    description: フルオーケストラ。
+  
+  - id: string-orchestra
+    label_ja: 弦楽オーケストラ
+    label_en: String Orchestra
+    description: 弦楽器のみのオーケストラ。
+  
+  - id: choir
+    label_ja: 合唱
+    label_en: Choir
+    description: アカペラまたは伴奏付きの合唱。
+
+# -----------------------------------------------------------------------------
+# 4. Tags (タグ)
+# -----------------------------------------------------------------------------
+# 感情(Mood)、状況(Situation)、用語(Terminology)の3カテゴリ。
+# ユーザーの潜在的なニーズや、アフィリエイト・検索流入(SEO)をターゲットにする。
+
+tags:
+  # ----------------------------------------
+  # Mood: 記事の雰囲気を表す情緒的なラベル
+  # ----------------------------------------
+  - category: mood
+    items:
+      - id: serene
+        label_ja: 静謐な・穏やかな
+        label_en: Serene / Peaceful
+        description: 心を落ち着かせる、静かで澄んだ響き。
+      - id: melancholic
+        label_ja: 哀愁漂う・切ない
+        label_en: Melancholic / Sentimental
+        description: 胸を締め付けるような悲しみや郷愁。
+      - id: passionate
+        label_ja: 情熱的な
+        label_en: Passionate
+        description: 激しい感情のほとばしり、熱量のある音楽。
+      - id: majestic
+        label_ja: 荘厳な・高貴な
+        label_en: Majestic / Noble
+        description: 威厳があり、堂々とした王道的な響き。
+      - id: ethereal
+        label_ja: 幻想的な・天上の
+        label_en: Ethereal / Dreamy
+        description: 浮世離れした、夢見心地で神秘的な美しさ。
+      - id: gloomy
+        label_ja: 暗鬱な・深刻な
+        label_en: Gloomy / Dark
+        description: 深い絶望、重苦しい、あるいは内省的な闇。
+      - id: joyful
+        label_ja: 歓喜に満ちた
+        label_en: Joyful / Triumphant
+        description: 勝利、祝祭、突き抜けるような明るさ。
+      - id: playful
+        label_ja: 軽妙な・ユーモラスな
+        label_en: Playful / Humorous
+        description: スケルツォのような冗談っぽさ、ウィットに富んだ軽さ。
+      - id: healing
+        label_ja: 癒やされる
+        label_en: Healing / Soothing
+        description: 疲れた心を優しく包み込むような温かさ。
+      - id: dramatic
+        label_ja: ドラマチックな
+        label_en: Dramatic
+        description: 映画のワンシーンのような物語性と展開。
+      - id: nostalgic
+        label_ja: 懐かしい
+        label_en: Nostalgic
+        description: 遠い記憶を呼び覚ますような温かい追憶。
+      - id: tense
+        label_ja: 緊迫した・スリリングな
+        label_en: Tense / Thrilling
+        description: 手に汗握るようなスピード感や焦燥感。
+      - id: elegant
+        label_ja: 優雅な
+        label_en: Elegant / Graceful
+        description: 洗練された、貴族的な振る舞いを感じさせる美。
+      - id: pastoral
+        label_ja: 田園的な
+        label_en: Pastoral / Rustic
+        description: 自然の風景、鳥の声、のどかな田舎の情景。
+      - id: spiritual
+        label_ja: 崇高な・祈りの
+        label_en: Spiritual / Sacred
+        description: 宗教的あるいは精神的に高い次元へ導かれる感覚。
+
+  # ----------------------------------------
+  # Situation: ユーザーの利用シーン・文脈
+  # ----------------------------------------
+  - category: situation
+    items:
+      - id: morning
+        label_ja: 爽やかな朝に
+        label_en: Morning Refresh
+        description: 1日の始まりにエネルギーや清々しさを与える。
+      - id: night
+        label_ja: 静かな夜に
+        label_en: Night / Late Night
+        description: 深夜、孤独に浸りたい時や静寂を楽しみたい時。
+      - id: deep-focus
+        label_ja: 集中・作業用
+        label_en: Deep Focus / Study
+        description: 勉強や仕事のBGMとして、邪魔にならず集中力を高める。
+      - id: relax
+        label_ja: リラックスタイム
+        label_en: Relax / Chill
+        description: ソファでくつろぐ時、お風呂上がりなどの休息に。
+      - id: sleep
+        label_ja: 眠りのために
+        label_en: Sleep / Lullaby
+        description: 入眠を誘う、刺激の少ない安らかな音楽。
+      - id: coffee-break
+        label_ja: コーヒーブレイク
+        label_en: Coffee Break
+        description: カフェにいるような、お洒落で一息つける空間演出。
+      - id: commute
+        label_ja: 通勤・通学
+        label_en: Commute
+        description: 移動中の景色を彩る、適度な推進力のある音楽。
+      - id: reading
+        label_ja: 読書のお供に
+        label_en: Reading
+        description: 物語の世界への没入を助ける、主張しすぎない背景音楽。
+      - id: rainy-day
+        label_ja: 雨の日に聴きたい
+        label_en: Rainy Day
+        description: しとしと降る雨音と調和する、内省的な響き。
+      - id: energetic-start
+        label_ja: 元気を出したい時
+        label_en: Energy Boost
+        description: 落ち込んだ時や、気合を入れたい時のカンフル剤。
+      - id: romance
+        label_ja: ロマンチックな夜
+        label_en: Romance / Date Night
+        description: パートナーと過ごす時間や、愛を語るような甘い雰囲気。
+      - id: meditation
+        label_ja: 瞑想・マインドフルネス
+        label_en: Meditation
+        description: 思考を止めて、ただ音に身を委ねるための深い静寂。
+      - id: sunday-afternoon
+        label_ja: 日曜の午後に
+        label_en: Sunday Afternoon
+        description: 何もしない贅沢な休日、陽だまりのような暖かさ。
+      - id: autumn-evening
+        label_ja: 秋の夕暮れ
+        label_en: Autumn Evening
+        description: 枯葉が舞うような、少し寂しくて美しい季節感。
+      - id: winter-fireplace
+        label_ja: 冬・暖炉のそばで
+        label_en: Winter / Fireplace
+        description: 厳しい寒さと、家の中の暖かさを対比させるような音楽。
+
+  # ----------------------------------------
+  # Terminology: 特殊な音楽用語・検索キーワード
+  # ----------------------------------------
+  - category: terminology
+    items:
+      - id: counterpoint
+        label_ja: 対位法・フーガ
+        label_en: Counterpoint / Fugue
+        description: 複数の旋律が複雑に絡み合う知的遊戯。
+      - id: virtuoso
+        label_ja: 超絶技巧
+        label_en: Virtuoso
+        description: 人間離れした技術、圧倒的な指回りを堪能する。
+      - id: period-instrument
+        label_ja: 古楽器演奏
+        label_en: Period Instrument
+        description: 作曲当時の楽器による、素朴で刺激的な響き。
+      - id: minimalism
+        label_ja: ミニマル・ミュージック
+        label_en: Minimalism
+        description: 反復が生み出すトランス感と微細な変化。
+      - id: waltz
+        label_ja: ワルツ・舞曲
+        label_en: Waltz / Dance
+        description: 思わず身体が動くような3拍子のリズム。
+      - id: theme-and-variations
+        label_ja: 変奏曲
+        label_en: Theme and Variations
+        description: ひとつの主題が次々と姿を変えていく様を楽しむ。
+      - id: unfinished
+        label_ja: 未完成
+        label_en: Unfinished
+        description: 作曲家の死などにより、途絶えてしまった作品。
+      - id: program-music
+        label_ja: 標題音楽
+        label_en: Program Music
+        description: 物語や風景を具体的に描写した音楽。
+      - id: requiem
+        label_ja: レクイエム・鎮魂
+        label_en: Requiem
+        description: 死者のためのミサ曲、あるいは死を悼む音楽。
+      - id: transcription
+        label_ja: 編曲・トランスクリプション
+        label_en: Transcription
+        description: もともと別の楽器のために書かれた曲を移し替えたもの。
+      - id: cadenza
+        label_ja: カデンツァ
+        label_en: Cadenza
+        description: 協奏曲などで演奏家が即興的に技術を披露する独奏部分。
+      - id: pizzicato
+        label_ja: ピチカート
+        label_en: Pizzicato
+        description: 弦を指で弾く奏法。コミカルあるいは神秘的な効果。
+      - id: national-style
+        label_ja: 民族主義・国民楽派
+        label_en: Nationalism
+        description: その土地特有の民謡やリズムを色濃く反映した音楽。
+      - id: avant-garde
+        label_ja: 前衛的
+        label_en: Avant-garde
+        description: 既存の価値観を破壊する、実験的で衝撃的な響き。
+      - id: easy-listening
+        label_ja: イージーリスニング・BGM
+        label_en: Easy Listening
+        description: クラシックの枠を超えて親しまれる、聴きやすい名曲。
+
+# -----------------------------------------------------------------------------
+# 5. Impression Scales (印象評価軸)
+# -----------------------------------------------------------------------------
+# Search Requirements Phase 4 (Emotional Discovery) に基づく6軸評価。
+# スコア範囲: -10 (整数) 〜 +10 (整数), 0 = Neutral
+# 解説記事 (Article) 単位ではなく、楽曲 (Work) 自体の持つ性質とするのが基本。
+
+impression_scales:
+  - id: brightness
+    label_ja: 明るさ (Brightness)
+    description: 楽曲全体の色彩感。短調・長調だけでなく、音色の輝きを含む。
+    min_label: Dark (暗鬱・重厚)
+    max_label: Bright (明朗・輝き)
+    criteria: |
+      -10: 葬送行進曲、深刻な短調、低音重視、重苦しい (e.g. Mahler 6, Chopin Funeral March)
+      +10: 祝典的な長調、高音のきらめき、ファンファーレ (e.g. Mozart Jupiter, Merry Widow)
+      
+  - id: vibrancy
+    label_ja: 躍動感 (Vibrancy)
+    description: エネルギーレベルとリズムの活性度。
+    min_label: Calm (静寂・停滞)
+    max_label: Energetic (躍動・爆発)
+    criteria: |
+      -10: 動きの少ないアンビエント的な持続音、極端なスローテンポ (e.g. Satie Gymnopédie, Pärt Spiegel im Spiegel)
+      +10: 高速なパッセージ、激しいリズム、強烈なアクセント (e.g. Stravinsky Rite of Spring, Khachaturian Sabre Dance)
+
+  - id: scale
+    label_ja: スケール (Scale)
+    description: 空間的な広がりと編成の規模感。
+    min_label: Intimate (親密・個人的)
+    max_label: Grand (壮大・宇宙的)
+    criteria: |
+      -10: 独奏、ささやくような表現、個人的な告白 (e.g. Schumann Kinderszenen, Solo Bach)
+      +10: 大編成オーケストラ、合唱付き、宇宙的な広がり (e.g. Mahler 8, Holst Planets, Wagner Opera)
+
+  - id: depth
+    label_ja: 聴きごたえ (Depth)
+    description: 音楽の複雑さと、要求される聴取の集中度。
+    min_label: Light (軽快・BGM)
+    max_label: Deep (深遠・哲学的)
+    criteria: |
+      -10: 親しみやすいメロディ、単純明快な構成、サロン音楽 (e.g. Elgar Salut d'Amour, Strauss Waltz)
+      +10: 複雑な対位法、哲学的テーマ、精神的な深み (e.g. Bach Art of Fugue, Late Beethoven Quartets)
+
+  - id: drama
+    label_ja: ドラマ性 (Drama)
+    description: 物語的な展開や感情の起伏の激しさ。
+    min_label: Pure (純音楽的・抽象)
+    max_label: Cinematic (映画的・劇的)
+    criteria: |
+      -10: 絶対音楽、形式美重視、感情の露出を控えた美 (e.g. Bach Well-Tempered Clavier, Haydn Symphonies)
+      +10: 標題音楽、オペラ、激情、物語のような展開 (e.g. Tchaikovsky Pathétique, Berlioz Fantastique)
+
+  - id: popularity
+    label_ja: 知名度 (Popularity)
+    description: 一般社会における認知度。
+    min_label: Niche (通好み・隠れた名曲)
+    max_label: Famous (世界的定番)
+    criteria: |
+      -10: 音楽学者や愛好家しか知らない、発掘されたばかりの曲
+      +10: 誰もが一度は聴いたことがある曲 (e.g. Beethoven 5, Pachelbel Canon)
+
+# -----------------------------------------------------------------------------
+# 6. Nationalities (国・地域)
+# -----------------------------------------------------------------------------
+# 主要な音楽先進国（クラシック音楽史における主要拠点）。
+# composers.nationality_code (ISO 3166-1 alpha-2) に対応。
+nationalities:
+  - id: DE
+    label_ja: ドイツ
+    label_en: Germany
+    description: バッハ、ベートーヴェン、ブラームス。論理性と構築美。
+  - id: AT
+    label_ja: オーストリア
+    label_en: Austria
+    description: モーツァルト、シューベルト、ウィーン古典派。
+  - id: FR
+    label_ja: フランス
+    label_en: France
+    description: ドビュッシー、ラヴェル。色彩とエスプリ。
+  - id: IT
+    label_ja: イタリア
+    label_en: Italy
+    description: ヴィヴァルディ、オペラ作曲家たち。歌心と情熱。
+  - id: RU
+    label_ja: ロシア
+    label_en: Russia
+    description: チャイコフスキー、ラフマニノフ。広大な大地とメランコリー。
+  - id: PL
+    label_ja: ポーランド
+    label_en: Poland
+    description: ショパン。ピアノ音楽と民族の誇り。
+  - id: CZ
+    label_ja: チェコ
+    label_en: Czech Republic
+    description: ドヴォルザーク、スメタナ。ボヘミアの哀愁。
+  - id: HU
+    label_ja: ハンガリー
+    label_en: Hungary
+    description: リスト、バルトーク。独特のリズムと民俗色。
+  - id: GB
+    label_ja: イギリス
+    label_en: United Kingdom
+    description: エルガー、ホルスト。格調高さと民謡の融合。
+  - id: US
+    label_ja: アメリカ
+    label_en: United States
+    description: ガーシュウィン、バーバー。ジャズとの融合と現代性。
+  - id: ES
+    label_ja: スペイン
+    label_en: Spain
+    description: アルベニス、ファリャ。情熱的なリズムと情緒。
+  - id: FI
+    label_ja: フィンランド
+    label_en: Finland
+    description: シベリウス。北欧の冷たく透き通った空気。
+
+# -----------------------------------------------------------------------------
+# 7. Difficulty / Reading Style (難易度レベル)
+# -----------------------------------------------------------------------------
+# 記事を読む、あるいは楽曲を理解/習得するために必要なレベル感。
+# ArticleMetadata.difficulty に対応。
+difficulty_levels:
+  - id: 1
+    label_ja: Beginner (入門)
+    label_en: Beginner
+    description: クラシックを初めて聴く人向け。誰もが知る名曲や、親しみやすい小品。専門用語なしで楽しめる。
+  - id: 2
+    label_ja: Elementary (初級)
+    label_en: Elementary
+    description: 少し興味が出てきた人向け。代表的なジャンルや楽器の違いを楽しめるレベル。
+  - id: 3
+    label_ja: Intermediate (中級)
+    label_en: Intermediate
+    description: 時代背景や作曲家の意図に関心がある人向け。ソナタ形式などの基本的な用語が登場する。
+  - id: 4
+    label_ja: Advanced (上級)
+    label_en: Advanced
+    description: 愛好家向け。マニアックな作品や、演奏解釈の比較、音楽理論的な深い分析を含む。
+  - id: 5
+    label_ja: Virtuoso (専門的)
+    label_en: Virtuoso
+    description: 専門家・プロ奏者・研究者レベル。原典版の研究や高度な楽曲分析。
