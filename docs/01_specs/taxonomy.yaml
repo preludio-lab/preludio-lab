@@ -166,16 +166,16 @@ genres:
     label_ja: 室内楽曲
     label_en: Chamber Music
     items:
-      - id: string-quartet
-        label_ja: 弦楽四重奏曲
-        label_en: String Quartet
-        description: ヴァイオリン2、ヴィオラ、チェロの4人による古典的形式。
-      - id: piano-trio
-        label_ja: ピアノ三重奏曲
-        label_en: Piano Trio
-        description: ピアノ、ヴァイオリン、チェロによる室内楽。
+      - id: chamber-strings
+        label_ja: 弦楽重奏（弦楽二重奏、三重奏、四重奏等）
+        label_en: String Ensemble (Duo, Trio, Quartet, etc.)
+        description: 弦楽器のみによるアンサンブル（無伴奏ソナタを除く）。
+      - id: chamber-piano
+        label_ja: ピアノ重奏（ピアノ三重奏、四重奏、五重奏等）
+        label_en: Piano Ensemble (Trio, Quartet, Quintet, etc.)
+        description: 独奏楽器とピアノによるアンサンブル（独奏ソナタ、連弾を除く）。
       - id: sonata-duo
-        label_ja: 器楽ソナタ（伴奏付）
+        label_ja: 独奏ソナタ（伴奏付）
         label_en: Instrumental Sonata (with Piano)
         description: 独奏楽器とピアノのためのソナタ。
       - id: keyboard-ensemble
@@ -186,10 +186,10 @@ genres:
         label_ja: 管楽アンサンブル（木管五重奏等）
         label_en: Wind Ensemble
         description: 管楽器のみ、あるいは管楽器主体の室内楽編成。
-      - id: chamber-large
-        label_ja: 室内楽アンサンブル（五重奏以上の混合編成）
-        label_en: Mixed Large Ensemble
-        description: 五重奏、六重奏、八重奏などと比較的大規模な室内楽。
+      - id: chamber-mixed
+        label_ja: 混合・その他アンサンブル
+        label_en: Mixed / Other Ensemble
+        description: 上記に当てはまらない楽器構成、あるいは特殊な大規模室内楽。
 
   - category: solo
     label_ja: 独奏曲
