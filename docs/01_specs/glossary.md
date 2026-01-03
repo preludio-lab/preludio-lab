@@ -35,7 +35,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term (En)        | Term (Ja)    | Description                                                            | Context / Usage               |
 | :--------------- | :----------- | :--------------------------------------------------------------------- | :---------------------------- |
-| **Frontmatter**  | --           | MDXファイルの先頭にあるYAML形式のメタデータ領域。                      | Blog Post                     |
+| **Frontmatter**  | フロントマター | MDXファイルの先頭にあるYAML形式のメタデータ領域。                      | Blog Post                     |
 | **Agent**        | エージェント | 特定の役割（音楽学者、翻訳者）を持つAIプログラム。                     | `agents/`                     |
 | **Artifact**     | 成果物       | エージェントが出力する最終ファイル（記事、画像）。                     | `public/`, `content/`         |
 | **MDX**          | MDX          | Markdownファイル内でJSXコンポーネントを使用できるフォーマット。        | Content File                  |
@@ -43,3 +43,13 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **OGP**          | OGP画像      | Open Graph Protocol。SNSでのシェア時に表示されるサムネイル画像。       | Metadata                      |
 | **ABC Notation** | ABC記法      | テキストで楽譜情報を記述するフォーマット。                             | `<ScoreRenderer abc="..." />` |
 | **Token**        | トークン     | デザインシステムにおける最小単位の値（色、スペース、フォントサイズ）。 | Tailwind Config               |
+
+## Domain: Database & Infrastructure (データベース)
+
+| Term (En)        | Term (Ja)    | Description                                                            | Context / Usage               |
+| :--------------- | :----------- | :--------------------------------------------------------------------- | :---------------------------- |
+| **Zero-JOIN**    | ゼロ結合     | 検索時の結合（JOIN）を排除し、パフォーマンスを最適化する設計戦略。       | `database-schema.md`          |
+| **Snapshot**     | スナップショット | 検索・表示用に非正規化して保持されるデータの断面。`sl_` プレフィックスで管理。 | `database-schema.md`          |
+| **Turso**        | Turso        | libSQLベースの分散エッジデータベース。本プロジェクトの永続化層。         | Infrastructure                |
+| **Vector Search**| ベクトル検索 | 意味の近さに基づいた高度な検索機能。                                   | `libsql-vector`               |
+| **FTS5**         | 全文検索     | SQLite標準の全文検索エンジン。                                         | `Search Requirements`         |
