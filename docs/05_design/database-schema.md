@@ -373,8 +373,8 @@ sequenceDiagram
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
 | `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
 | `playback_samples`     | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
-| `source_url`           | `text` | -       | NO       | -     | **[Asset Origin]** 同期元URL (IMSLP/PDMX等)                |
-| `is_synced`            | `integer` | `0`     | YES      | `IN (0, 1)` | 外部ソースとの同期完了フラグ                               |
+| `repository_url`       | `text` | -       | NO       | -     | **[Asset Origin]** 楽譜リポジトリのソースURL (IMSLP/PDMX等) |
+| `is_repository_synced` | `integer` | `0`     | YES      | `IN (0, 1)` | 楽譜リポジトリ側との同期完了フラグ                         |
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
 
