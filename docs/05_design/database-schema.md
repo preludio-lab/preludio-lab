@@ -58,10 +58,7 @@ erDiagram
     Composers ||--|{ Works : "composed"
     Works ||--|{ WorkTranslations : "has localized"
     Tags ||--|{ TagTranslations : "has localized"
-    MediaAssets {
-        string id PK
-        string url
-    }
+    MediaAssets
 
     %% Application Core (Zero-JOIN)
     Works ||--o{ Articles : "featured in"
