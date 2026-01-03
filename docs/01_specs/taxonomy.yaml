@@ -98,6 +98,12 @@ eras:
 #    - 形式の重複（Overlap）判定：
 #        - 「パッサカリア」と「変奏曲」：構造が固執低音に基づいている場合は、より具体的な `passacaglia` を優先せよ。
 #        - 「標題音楽」と「性格的小品」：ドビュッシーの『前奏曲集』などのように、性格的小品としての形式を持ちつつ明確な標題がある場合は、両方のタグを付与せよ。
+#    - 協奏曲（Concerto）の判定プライオリティ:
+#        1. タイトルに基づく判定: 「Concerto」「Konzert」が含まれるか？
+#        2. 対峙構造の判定: 「Soloist(s)」と「Orchestra」の明確な役割分担があるか？
+#        3. 形式に基づく判定: 協奏的ソナタ形式（提示部の二重提示など）を持っているか？
+#    - 時代区分と編成の連動:
+#        - バロック時代の作品には、自動的に `basso-continuo`（通奏低音）のタグ付与を検討せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -179,13 +185,13 @@ genres:
     label_en: Chamber Music
     items:
       - id: chamber-strings
-        label_ja: 弦楽重奏（弦楽二重奏、三重奏、四重奏等）
-        label_en: String Ensemble (Duo, Trio, Quartet, etc.)
-        description: 弦楽器のみによるアンサンブル（無伴奏ソナタを除く）。
+        label_ja: 弦楽重奏
+        label_en: String Ensemble
+        description: 弦楽器のみによるアンサンブル。編成規模（Quartet等）は `instrumentations` 軸で指定する。
       - id: chamber-piano
-        label_ja: ピアノ重奏（ピアノ三重奏、四重奏、五重奏等）
-        label_en: Piano Ensemble (Trio, Quartet, Quintet, etc.)
-        description: 独奏楽器とピアノによるアンサンブル（独奏ソナタ、連弾を除く）。
+        label_ja: ピアノ重奏
+        label_en: Piano Ensemble
+        description: 独奏楽器とピアノによるアンサンブル。編成規模（Trio等）は `instrumentations` 軸で指定する。
       - id: sonata-duo
         label_ja: 独奏ソナタ（伴奏付）
         label_en: Instrumental Sonata (with Piano)
@@ -630,82 +636,204 @@ genres:
 # -----------------------------------------------------------------------------
 # 3. Instrumentations & Ensemble (編成)
 # -----------------------------------------------------------------------------
+# 「数」と「種別」に特化した編成定義。
 instrumentations:
+  # --- 規模・人数ベース (Scale) ---
   - id: solo
-    label_ja: 独奏
-    label_en: Solo
+    label_ja: 独奏（無伴奏）
+    label_en: Solo / Unaccompanied
   - id: duo
-    label_ja: デュオ（二重奏）
+    label_ja: 二重奏
     label_en: Duo
   - id: trio
-    label_ja: トリオ（三重奏）
+    label_ja: 三重奏
     label_en: Trio
   - id: quartet
-    label_ja: カルテット（四重奏）
+    label_ja: 四重奏
     label_en: Quartet
-  - id: quintet-larger
-    label_ja: 五重奏以上
-    label_en: Quintet or larger
-  - id: orchestra
-    label_ja: オーケストラ
-    label_en: Orchestra
-  - id: string-orchestra
-    label_ja: 弦楽オーケストラ
-    label_en: String Orchestra
+  - id: quintet
+    label_ja: 五重奏
+    label_en: Quintet
+  - id: sextet-larger
+    label_ja: 六重奏以上（大合奏室内楽）
+    label_en: Sextet or larger (Chamber Ensemble)
+
+  # --- 特殊・複合編成 (Specialized / Mixed) ---
+  - id: soloist-with-ensemble
+    label_ja: 独奏楽器とアンサンブル（協奏的）
+    label_en: Soloist(s) with Ensemble
+    description: 協奏曲や、独唱＋室内楽などの編成。
+  
+  # --- オーケストラ規模 (Orchestral Scale) ---
+  - id: full-orchestra
+    label_ja: フルオーケストラ
+    label_en: Full Orchestra
   - id: chamber-orchestra
     label_ja: 室内オーケストラ
     label_en: Chamber Orchestra
-  - id: choir
-    label_ja: 合唱
-    label_en: Choir
+  - id: string-orchestra
+    label_ja: 弦楽オーケストラ
+    label_en: String Orchestra
+  - id: wind-ensemble-band
+    label_ja: 吹奏楽・管楽合奏
+    label_en: Wind Ensemble / Concert Band
+
+  # --- 合唱・声楽 (Vocal / Choral) ---
+  - id: choir-unaccompanied
+    label_ja: 無伴奏合唱
+    label_en: Choir (A cappella)
+  - id: choir-with-instruments
+    label_ja: 合唱と器楽伴奏
+    label_en: Choir with Instruments
 
 # -----------------------------------------------------------------------------
 # 4. Instruments (楽器)
 # -----------------------------------------------------------------------------
-# 具体的な使用楽器のタグ。
+# 具体的な使用楽器を楽器族（Family）ごとに整理。
 instruments:
-  - id: piano
-    label_ja: ピアノ
-    label_en: Piano
-  - id: organ
-    label_ja: オルガン
-    label_en: Organ
-  - id: violin
-    label_ja: ヴァイオリン
-    label_en: Violin
-  - id: viola
-    label_ja: ヴィオラ
-    label_en: Viola
-  - id: cello
-    label_ja: チェロ
-    label_en: Cello
-  - id: flute
-    label_ja: フルート
-    label_en: Flute
-  - id: clarinet
-    label_ja: クラリネット
-    label_en: Clarinet
-  - id: oboe
-    label_ja: オーボエ
-    label_en: Oboe
-  - id: bassoon
-    label_ja: ファゴット
-    label_en: Bassoon
-  - id: horn
-    label_ja: ホルン
-    label_en: Horn
-  - id: trumpet
-    label_ja: トランペット
-    label_en: Trumpet
-  - id: voice
+  - category: keyboard
+    label_ja: 鍵盤楽器
+    label_en: Keyboard
+    items:
+      - id: piano
+        label_ja: ピアノ
+        label_en: Piano
+      - id: organ
+        label_ja: オルガン
+        label_en: Organ
+      - id: harpsichord
+        label_ja: チェンバロ
+        label_en: Harpsichord
+      - id: fortepiano
+        label_ja: フォルテピアノ
+        label_en: Fortepiano
+      - id: celesta
+        label_ja: チェレスタ
+        label_en: Celesta
+  - category: strings
+    label_ja: 弦楽器
+    label_en: Strings
+    items:
+      - id: violin
+        label_ja: ヴァイオリン
+        label_en: Violin
+      - id: viola
+        label_ja: ヴィオラ
+        label_en: Viola
+      - id: cello
+        label_ja: チェロ
+        label_en: Cello
+      - id: double-bass
+        label_ja: コントラバス
+        label_en: Double Bass
+      - id: viola-da-gamba
+        label_ja: ヴィオラ・ダ・ガンバ
+        label_en: Viola da Gamba
+  - category: woodwinds
+    label_ja: 木管楽器
+    label_en: Woodwinds
+    items:
+      - id: flute
+        label_ja: フルート
+        label_en: Flute
+      - id: piccolo
+        label_ja: ピッコロ
+        label_en: Piccolo
+      - id: oboe
+        label_ja: オーボエ
+        label_en: Oboe
+      - id: english-horn
+        label_ja: コーラングレ（イングリッシュホルン）
+        label_en: English Horn
+      - id: clarinet
+        label_ja: クラリネット
+        label_en: Clarinet
+      - id: bass-clarinet
+        label_ja: バスクラリネット
+        label_en: Bass Clarinet
+      - id: bassoon
+        label_ja: ファゴット
+        label_en: Bassoon
+      - id: contrabassoon
+        label_ja: コントラファゴット
+        label_en: Contrabassoon
+      - id: recorder
+        label_ja: リコーダー
+        label_en: Recorder
+  - category: brass
+    label_ja: 金管楽器
+    label_en: Brass
+    items:
+      - id: horn
+        label_ja: ホルン
+        label_en: Horn
+      - id: trumpet
+        label_ja: トランペット
+        label_en: Trumpet
+      - id: cornet
+        label_ja: コルネット
+        label_en: Cornet
+      - id: trombone
+        label_ja: トロンボーン
+        label_en: Trombone
+      - id: tuba
+        label_ja: チューバ
+        label_en: Tuba
+  - category: voice
     label_ja: 声楽
     label_en: Voice
-  - id: guitar
-    label_ja: ギター
-    label_en: Guitar
-  - id: harpsichord
-    label_ja: チェンバロ
-    label_en: Harpsichord
+    items:
+      - id: soprano
+        label_ja: ソプラノ
+        label_en: Soprano
+      - id: alto
+        label_ja: アルト
+        label_en: Alto
+      - id: countertenor
+        label_ja: カウンターテナー
+        label_en: Countertenor
+      - id: tenor
+        label_ja: テノール
+        label_en: Tenor
+      - id: baritone
+        label_ja: バリトン
+        label_en: Baritone
+      - id: bass
+        label_ja: バス
+        label_en: Bass
+  - category: percussion
+    label_ja: 打楽器
+    label_en: Percussion
+    items:
+      - id: timpani
+        label_ja: ティンパニ
+        label_en: Timpani
+      - id: percussion-general
+        label_ja: 打楽器（全般）
+        label_en: Percussion (General)
+  - category: plucked-strings
+    label_ja: 撥弦楽器
+    label_en: Plucked Strings
+    items:
+      - id: guitar
+        label_ja: ギター
+        label_en: Guitar
+      - id: lute
+        label_ja: リュート
+        label_en: Lute
+      - id: mandolin
+        label_ja: マンドリン
+        label_en: Mandolin
+      - id: harp
+        label_ja: ハープ
+        label_en: Harp
+  - category: historical-roles
+    label_ja: 歴史的役割・その他
+    label_en: Historical Roles / Others
+    items:
+      - id: basso-continuo
+        label_ja: 通奏低音
+        label_en: Basso Continuo
 
 # -----------------------------------------------------------------------------
 # 5. Tags (タグ)
