@@ -108,6 +108,8 @@ eras:
 #        - Duration (演奏時間): 楽曲の一般的な演奏時間を推定し（5分以内: short-piece, 45分以上: monumental-work等）、付与せよ。
 #        - Occasion (行事): 宗教曲なら `liturgical-calendar`、特定の季節感（クリスマス等）があれば付与せよ。
 #        - Heritage & Media: 映画、アニメ、CM等で使用された有名な文脈（のだめ、アマデウス、のだめ等）があれば積極的に付与せよ。
+#    - 情緒的ラベル（Mood）の抽出戦略:
+#        - 多楽章形式の作品においては、作品全体だけでなく、「楽章ごと」に異なるMoodタグの選定を検討せよ（例：月光ソナタの第1楽章は `serene`, 第3楽章は `passionate`）。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -851,66 +853,95 @@ tags:
   # ----------------------------------------
   - category: mood
     items:
-      - id: serene
-        label_ja: 静謐な・穏やかな
-        label_en: Serene / Peaceful
-        description: 心を落ち着かせる、静かで澄んだ響き。
-      - id: melancholic
-        label_ja: 哀愁漂う・切ない
-        label_en: Melancholic / Sentimental
-        description: 胸を締め付けるような悲しみや郷愁。
-      - id: passionate
-        label_ja: 情熱的な
-        label_en: Passionate
-        description: 激しい感情のほとばしり、熱量のある音楽。
-      - id: majestic
-        label_ja: 荘厳な・高貴な
-        label_en: Majestic / Noble
-        description: 威厳があり、堂々とした王道的な響き。
-      - id: ethereal
-        label_ja: 幻想的な・天上の
-        label_en: Ethereal / Dreamy
-        description: 浮世離れした、夢見心地で神秘的な美しさ。
-      - id: gloomy
-        label_ja: 暗鬱な・深刻な
-        label_en: Gloomy / Dark
-        description: 深い絶望、重苦しい、あるいは内省的な闇。
+      # --- 高揚・外向 (High Energy / Positive) ---
       - id: joyful
         label_ja: 歓喜に満ちた
         label_en: Joyful / Triumphant
         description: 勝利、祝祭、突き抜けるような明るさ。
-      - id: playful
-        label_ja: 軽妙な・ユーモラスな
-        label_en: Playful / Humorous
-        description: スケルツォのような冗談っぽさ、ウィットに富んだ軽さ。
-      - id: healing
-        label_ja: 癒やされる
-        label_en: Healing / Soothing
-        description: 疲れた心を優しく包み込むような温かさ。
+      - id: passionate
+        label_ja: 情熱的な
+        label_en: Passionate
+        description: 激しい感情のほとばしり、熱量のある音楽。
+      - id: brilliant
+        label_ja: 華麗な・輝かしい
+        label_en: Brilliant
+        description: 超絶技巧と結びついた、光り輝くような外向的な美しさ。
       - id: dramatic
         label_ja: ドラマチックな
         label_en: Dramatic
         description: 映画のワンシーンのような物語性と展開。
-      - id: nostalgic
-        label_ja: 懐かしい
-        label_en: Nostalgic
-        description: 遠い記憶を呼び覚ますような温かい追憶。
-      - id: tense
-        label_ja: 緊迫した・スリリングな
-        label_en: Tense / Thrilling
-        description: 手に汗握るようなスピード感や焦燥感。
-      - id: elegant
-        label_ja: 優雅な
-        label_en: Elegant / Graceful
-        description: 洗練された、貴族的な振る舞いを感じさせる美。
-      - id: pastoral
-        label_ja: 田園的な
-        label_en: Pastoral / Rustic
-        description: 自然の風景、鳥の声、のどかな田舎の情景。
+
+      # --- 鎮静・内向 (Low Energy / Spiritual) ---
+      - id: serene
+        label_ja: 静謐な・穏やかな
+        label_en: Serene / Peaceful
+        description: 心を落ち着かせる、静かで澄んだ響き。
+      - id: healing
+        label_ja: 癒やされる
+        label_en: Healing / Soothing
+        description: 疲れた心を優しく包み込むような温かさ。
       - id: spiritual
         label_ja: 崇高な・祈りの
         label_en: Spiritual / Sacred
         description: 宗教的あるいは精神的に高い次元へ導かれる感覚。
+      - id: ethereal
+        label_ja: 幻想的な・天上の
+        label_en: Ethereal / Dreamy
+        description: 浮世離れした、夢見心地で神秘的な美しさ。
+
+      # --- 洗練・情景 (Elegant / Pastoral) ---
+      - id: elegant
+        label_ja: 優雅な
+        label_en: Elegant / Graceful
+        description: 洗練された、貴族的な「洗練」を感じさせる美。
+      - id: majestic
+        label_ja: 荘厳な・高貴な
+        label_en: Majestic / Noble
+        description: 威厳があり、堂々とした王道的な響き。
+      - id: pastoral
+        label_ja: 田園的な
+        label_en: Pastoral / Rustic
+        description: 自然の風景、鳥の声、のどかな田舎の情景。
+      - id: nostalgic
+        label_ja: 懐かしい
+        label_en: Nostalgic
+        description: 遠い記憶を呼び覚ますような温かい追憶。
+
+      # --- 悲哀・深刻 (Dark / Negative) ---
+      - id: melancholic
+        label_ja: 哀愁漂う・切ない
+        label_en: Melancholic / Sentimental
+        description: 個人的な、甘美さを伴う「切なさ」。胸を締め付けるような悲しみや郷愁。
+      - id: gloomy
+        label_ja: 暗鬱な・深刻な
+        label_en: Gloomy / Dark
+        description: より重く、深い絶望、出口のない「暗さ」。内省的な闇。
+      - id: tragic
+        label_ja: 悲劇的な
+        label_en: Tragic
+        description: 避けられない運命や、激しく打ちひしがれるような悲劇性。運命に抗う激しさ。
+      - id: tense
+        label_ja: 緊迫した・スリリングな
+        label_en: Tense / Thrilling
+        description: 手に汗握るようなスピード感や焦燥感。
+
+      # --- 知性・特殊 (Intellectual / Unique) ---
+      - id: playful
+        label_ja: 軽妙な・ユーモラスな
+        label_en: Playful / Humorous
+        description: スケルツォのような冗談っぽさ、遊び心、ウィットに富んだ軽さ。
+      - id: ironic
+        label_ja: 皮肉な・風刺的な
+        label_en: Ironic
+        description: 単なる遊び心に留まらない、近代特有の毒やパロディ、屈折したユーモア。
+      - id: austere
+        label_ja: 峻厳な・ストイックな
+        label_en: Austere
+        description: 装飾を削ぎ落とした、厳格で理性的な響き。
+      - id: grotesque
+        label_ja: 奇怪な・不気味な
+        label_en: Grotesque
+        description: 幻想的だが不気味さを伴う、恐ろしさや奇妙さを感じさせる響き。
 
   # ----------------------------------------
   # Situation: ユーザーの利用シーン・文脈
