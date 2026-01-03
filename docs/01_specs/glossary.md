@@ -14,6 +14,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
 | **Composer** | `Composer` | 作曲家。生涯・国籍・マスタデータを管理。 | 「人物」ではなく「芸術家」として敬意を払う。一意な `slug` (e.g., `bach`) で識別される。 |
+| **Performer** | `Performer` | 演奏家・団体。指揮者、奏者、オーケストラ等。 | `Recording` の主体。単なるラベルではなく、独自の `slug` を持つエンティティ。 |
 | **Work** | `Work` | 楽曲の実体（例：運命）。不変のメタデータを持つ親エンティティ。 | 「曲」ではなく「作品」と呼称する。言語普遍的なIDを持つ。 |
 | **Article** | `Article` | `Metadata` と `Content` で構成される、解説記事の最小単位。 | 単なる「ページ」ではなく、特定の楽曲（Work）に対する音楽的知見をパッケージ化したもの。 |
 | **Article Metadata** | `ArticleMetadata` | 記事に紐付く構造化データ（作曲家、ジャンル、6軸印象値、タグ、Slug等）。 | 検索エンジンやAIエージェントが「記事を理解・分類」するために使用する情報の総称。 |
