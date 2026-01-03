@@ -95,6 +95,9 @@ eras:
 #        - 雰囲気での判定: 6/8拍子で穏やかなら `barcarolle-berceuse`、静かで抒情的なら `nocturne` を検討せよ。
 #    - 舞曲（Dance）の解釈:
 #        - 実用的（Practical）か様式化（Stylized）かの判別に留意せよ。バロック組曲やショパンのマズルカ等は「聴くための芸術曲（Stylized）」としての側面が強い。
+#    - 形式の重複（Overlap）判定：
+#        - 「パッサカリア」と「変奏曲」：構造が固執低音に基づいている場合は、より具体的な `passacaglia` を優先せよ。
+#        - 「標題音楽」と「性格的小品」：ドビュッシーの『前奏曲集』などのように、性格的小品としての形式を持ちつつ明確な標題がある場合は、両方のタグを付与せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -502,22 +505,63 @@ genres:
         description: 2/4拍子の非常に速い舞曲。社交界のフィナーレや喜歌劇で多用された。
         examples: ["Offenbach: Orpheus in the Underworld - Infernal Galop (Can-can)"]
       - id: pavane-galliard
-        label_ja: パヴァーヌ・ガリアルド
         label_en: Pavane / Galliard
         description: 荘厳な2拍子（パヴァーヌ）と快活な3拍子（ガリアルド）のペア。
         examples: ["Ravel: Pavane pour une infante défunte", "Dowland: Lachrimae Pavane"]
 
-      # --- 固執低音・変奏（Ground Bass Forms） ---
-      - id: chaconne-passacaglia
-        label_ja: シャコンヌ・パッサカリア
-        label_en: Chaconne / Passacaglia
-        description: 低音部の繰り返される主題（バッソ・オスティナート）に基づく変奏形式。
+      # --- 固執低音・変奏（Ground Bass / Ostinato Forms） ---
+      - id: passacaglia
+        label_ja: パッサカリア
+        label_en: Passacaglia
+        description: 3拍子の重厚な低音主題（バッソ・オスティナート）に基づく変奏形式。主題が上声部に移動することもある。
+        examples: ["Bach: Passacaglia and Fugue in C minor", "Brahms: Symphony No.4 - 4th Mvt"]
+      - id: chaconne
+        label_ja: シャコンヌ
+        label_en: Chaconne
+        description: パッサカリアに近いが、特定の旋律というより「和声進行の繰り返し」に重点を置いた変奏形式。
+        examples: ["Bach: Chaconne from Violin Partita No.2", "Vitali: Chaconne"]
+      - id: basso-ostinato
+        label_ja: バッソ・オスティナート（固執低音）
+        label_en: Basso Ostinato / Ground
+        description: 楽曲全体、あるいは一部で同じ低音音型を繰り返す技法。バロックの歌曲やアリアで多用される。
+        examples: ["Purcell: Dido's Lament", "Pachelbel: Canon in D"]
+      - id: folia
+        label_ja: フォリア
+        label_en: Folía
+        description: スペイン・ポルトガル起源の特定の和声進行を持つ舞曲。多くの作曲家が変奏の題材とした。
+        examples: ["Corelli: La Folia", "Rachmaninoff: Variations on a Theme of Corelli"]
 
-      # --- 詩的・標題的（Programmatic / Narrative） ---
-      - id: program-narrative
-        label_ja: 標題音楽・物語的楽曲
-        label_en: Programmatic / Narrative
-        description: 音楽以外の物語、詩、風景などを具体的に描写する形式やスタイルの総称。
+      # --- 標題・物語的構造（Programmatic / Narrative Structures） ---
+      - id: symphonic-poem-structure
+        label_ja: 交響詩的構造
+        label_en: Symphonic Poem Structure
+        description: 単一楽章の中で文学的な物語や風景の推移を音楽的に記述する構造。リストやR.シュトラウスが確立。
+        examples: ["Liszt: Les Préludes", "R.Strauss: Also sprach Zarathustra"]
+      - id: program-symphony-form
+        label_ja: 標題交響曲形式
+        label_en: Program Symphony Form
+        description: 複数の楽章を持ちながら、各楽章に明確な標題と物語性が与えられた形式。
+        examples: ["Berlioz: Symphonie fantastique", "Beethoven: Symphony No.6 'Pastoral'"]
+      - id: leitmotif-system
+        label_ja: ライトモティーフ体系
+        label_en: Leitmotif System
+        description: 特定の概念を象徴する短い動機（導機）を変容・結合させ物語を進行させる構造。
+        examples: ["Wagner: Der Ring des Nibelungen", "R.Strauss: Salome"]
+      - id: idee-fixe
+        label_ja: 固定観念（イデー・フィクス）
+        label_en: Idée fixe
+        description: 全曲を通じて変容しながら現れる主導的なテーマ。循環形式の先駆けとなる物語的統一技法。
+        examples: ["Berlioz: Symphonie fantastique"]
+      - id: melodrame
+        label_ja: メロドラマ
+        label_en: Mélodrame
+        description: 朗読と音楽が組み合わさった形式。物語の進行を直接的な言葉と音楽の描写で支える。
+        examples: ["Schumann: Manfred", "Strauss: Enoch Arden"]
+      - id: word-painting
+        label_ja: 語画法（マドリガリズム）
+        label_en: Word Painting
+        description: 歌詞の具体的な意味（「高い」「低い」等）を音型で直接的に描写する伝統的技法。
+        examples: ["Bach: St Matthew Passion", "Purcell: Music for a While"]
 
 # -----------------------------------------------------------------------------
 # 3. Instrumentations & Ensemble (編成)
