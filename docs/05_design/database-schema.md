@@ -53,24 +53,24 @@ TursoにはネイティブのRLSがないため、アプリケーション層（
 
 ```mermaid
 erDiagram
-    %% Masters (Reference)
-    Composers ||--|{ ComposerTranslations : "has localized"
-    Composers ||--|{ Works : "composed"
-    Works ||--|{ WorkTranslations : "has localized"
-    Tags ||--|{ TagTranslations : "has localized"
-    MediaAssets
-
-    %% Application Core (Zero-JOIN)
+    %% Core Tables: Articles
     Works ||--o{ Articles : "featured in"
     Articles ||--|{ ArticleTranslations : "has localized content"
     Tags ||..o{ ArticleTranslations : "categorizes (snapshot)"
 
-    %% Multimedia Assets
+    %% Asset Tables: Scores & Recordings
     Works ||--o{ Scores : "has sheet music"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
     Scores }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
+
+    %% Master Tables: Composers & Works
+    Composers ||--|{ ComposerTranslations : "has localized"
+    Composers ||--|{ Works : "composed"
+    Works ||--|{ WorkTranslations : "has localized"
+    Tags ||--|{ TagTranslations : "has localized"
+    MediaAssets
 ```
 
 ---
