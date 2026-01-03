@@ -274,10 +274,14 @@ genres:
         label_ja: ロンド
         label_en: Rondo
         description: 共通の主題（ロンド主題）が, 異なるエピソードを挟んで繰り返される形式。
-      - id: ternary-binary
-        label_ja: 三部形式・二部形式
-        label_en: Ternary / Binary Form
-        description: A-B-A（三部）やA-B（二部）、および複合三部形式などの対称的な構造。多くの小品や舞曲の基本単位。
+      - id: ternary-form
+        label_ja: 三部形式
+        label_en: Ternary Form
+        description: A-B-Aの三部構造。対照的な中間部（B）を持ち、冒頭が回帰する。夜想曲、スケルツォ、複合三部形式など。
+      - id: binary-form
+        label_ja: 二部形式
+        label_en: Binary Form
+        description: A-Bの二部構造。バロック時代の舞曲に多く見られ、後のソナタ形式へと発展する基礎となった形式。
       - id: strophic
         label_ja: 有節形式
         label_en: Strophic Form
