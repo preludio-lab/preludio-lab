@@ -370,7 +370,7 @@ sequenceDiagram
 | **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
 | **`work_id`**          | `text` | -       | YES      | -     | **FK to `works.id`**                                       |
 | `slug`                 | `text` | -       | YES      | -     | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1mov-1st-theme`)      |
-| `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
+| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | 'abc', 'musicxml'                                          |
 | `data_storage_path`    | `text` | -       | YES      | -     | **[R2]** ソースデータパス (e.g. `scores/uuid/source.abc`)  |
 | `svg_storage_path`     | `text` | -       | NO       | -     | **[R2]** レンダリング済みSVGパス (CDNキャッシュ用)         |
 | `layout_dimensions`    | `text` | -       | NO       | -     | **[UX]** 表示サイズ情報 (JSON: `ScoreLayout`)              |
