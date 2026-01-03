@@ -82,10 +82,10 @@ eras:
 # 2. Genres (ジャンル)
 # -----------------------------------------------------------------------------
 # カテゴリ (category) > アイテム (items) の構造。
-# AIエージェントへの指示:
-# 1. 1つの作品(Work)に対し、複数のアイテムを割り当てることを推奨（マルチカテゴリ許容）。
-#    例：ベートーヴェン『第九』 -> orchestral/symphony, vocal-choral/choral-others
-# 2. カテゴリはUIのグルーピングに使用し、ID(slug)は検索フィルターに使用する。
+# 戦略的指示:
+# 1. 「ジャンル」「形式」「楽器」を完全に分けて管理し、直交的にタグ付けすること。
+#    例：ショパン『英雄ポロネーズ』 -> genre: piano-solo, form: dance, instrument: piano
+# 2. 1つの作品(Work)に対し、複数のアイテムを割り当てることを推奨（マルチカテゴリ許容）。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -93,22 +93,16 @@ genres:
     items:
       - id: symphony
         label_ja: 交響曲
-        label_en: Symphony
       - id: overture
         label_ja: 序曲・前奏曲
-        label_en: Overture / Prelude
       - id: tone-poem
         label_ja: 交響詩
-        label_en: Tone Poem
       - id: suite-orch
         label_ja: 管弦楽組曲
-        label_en: Orchestral Suite
       - id: serenade-divertimento
         label_ja: セレナード・ディヴェルティメント
-        label_en: Serenade / Divertimento
       - id: incidental-music
         label_ja: 劇付随音楽
-        label_en: Incidental Music
 
   - category: stage
     label_ja: 舞台音楽
@@ -116,13 +110,10 @@ genres:
     items:
       - id: opera
         label_ja: オペラ
-        label_en: Opera
       - id: operetta
         label_ja: オペレッタ
-        label_en: Operetta
       - id: ballet
         label_ja: バレエ音楽
-        label_en: Ballet Music
 
   - category: concerto
     label_ja: 協奏曲
@@ -130,19 +121,16 @@ genres:
     items:
       - id: piano-concerto
         label_ja: ピアノ協奏曲
-        label_en: Piano Concerto
       - id: violin-concerto
         label_ja: ヴァイオリン協奏曲
-        label_en: Violin Concerto
       - id: cello-concerto
         label_ja: チェロ協奏曲
-        label_en: Cello Concerto
       - id: wind-concerto
         label_ja: 管楽器のための協奏曲
-        label_en: Wind Concerto
       - id: concerto-grosso
         label_ja: 合奏協奏曲（コンチェルト・グロッソ）
-        label_en: Concerto Grosso
+      - id: concerted-work
+        label_ja: 協奏的楽曲（変奏曲形式の協奏曲等）
 
   - category: chamber
     label_ja: 室内楽曲
@@ -150,36 +138,40 @@ genres:
     items:
       - id: string-quartet
         label_ja: 弦楽四重奏曲
-        label_en: String Quartet
       - id: piano-trio
         label_ja: ピアノ三重奏曲
-        label_en: Piano Trio
       - id: sonata-duo
         label_ja: 器楽ソナタ（伴奏付）
-        label_en: Instrumental Sonata (with Piano)
-      - id: chamber-ensemble
-        label_ja: 室内楽アンサンブル（五重奏以上等）
-        label_en: Chamber Ensemble
+      - id: chamber-wind
+        label_ja: 管楽アンサンブル（木管五重奏等）
+      - id: chamber-large
+        label_ja: 室内楽アンサンブル（五重奏以上の混合編成）
 
-  - category: solo-instrument
-    label_ja: 器楽独奏・鍵盤楽曲
-    label_en: Solo / Keyboard
+  - category: solo-keyboard
+    label_ja: 鍵盤楽曲
+    label_en: Keyboard Music
     items:
       - id: piano-sonata
         label_ja: ピアノソナタ
-        label_en: Piano Sonata
       - id: piano-solo
-        label_ja: ピアノ小品・性格的小品
-        label_en: Piano Solo / Character Piece
+        label_ja: ピアノ独奏曲（小品等）
+      - id: piano-duo
+        label_ja: 連弾・2台ピアノ
       - id: organ
         label_ja: オルガン曲
-        label_en: Organ Music
       - id: harpsichord
-        label_ja: チェンバロ曲
-        label_en: Harpsichord / Clavier Music
-      - id: solo-other
-        label_ja: 無伴奏楽器曲（ヴァイオリン・チェロ等）
-        label_en: Unaccompanied Instrumental Solo
+        label_ja: チェンバロ・クラヴィーア曲
+
+  - category: solo-other
+    label_ja: 器楽独奏（非鍵盤）
+    label_en: Instrumental Solo
+    items:
+      - id: solo-violin
+        label_ja: 無伴奏ヴァイオリン曲
+      - id: solo-cello
+        label_ja: 無伴奏チェロ曲
+      - id: solo-other-inst
+        label_ja: その他無伴奏楽器曲（フルート・ギター等）
 
   - category: vocal-choral
     label_ja: 声楽・合唱曲
@@ -187,74 +179,122 @@ genres:
     items:
       - id: lied
         label_ja: 歌曲 (Lied / Art Song)
-        label_en: Art Song / Lied
-      - id: cantata
-        label_ja: カンタータ
-        label_en: Cantata
+      - id: song-cycle
+        label_ja: 連作歌曲
       - id: mass-requiem
         label_ja: ミサ曲・レクイエム
-        label_en: Mass / Requiem
-      - id: oratorio
-        label_ja: オラトリオ
-        label_en: Oratorio
+      - id: oratorio-passion
+        label_ja: オラトリオ・受難曲
+      - id: cantata
+        label_ja: カンタータ
+      - id: early-vocal
+        label_ja: 古楽声楽曲（マドリガル、モテット、グレゴリオ聖歌等）
       - id: choral-others
         label_ja: その他合唱曲
-        label_en: Other Choral Works
+
+  - category: musical-form
+    label_ja: 楽曲形式（メタジャンル）
+    label_en: Musical Form
+    items:
+      - id: variations
+        label_ja: 変奏曲
+      - id: fugue
+        label_ja: フーガ・対位法
+      - id: rhapsody
+        label_ja: 狂詩曲（ラプソディ）
+      - id: march
+        label_ja: 行進曲
+      - id: dance
+        label_ja: 舞曲（ワルツ・ポロネーズ等）
+      - id: fantasia
+        label_ja: 幻想曲（ファンタジア）
+      - id: suite
+        label_ja: 組曲
 
 # -----------------------------------------------------------------------------
-# 3. Instrumentations (楽器・編成)
+# 3. Instrumentations & Ensemble (編成)
 # -----------------------------------------------------------------------------
-# 楽曲の演奏リソース。検索の絞り込みキーとして使用。
-# ユーザーレベルに合わせて粒度を調整。
 instrumentations:
-  - id: solo-piano
-    label_ja: ピアノ独奏
-    label_en: Solo Piano
-    description: ピアノ一台での演奏。
-  
-  - id: solo-instrument
-    label_ja: 独奏楽器（無伴奏）
-    label_en: Solo Instrument (Unaccompanied)
-    description: ヴァイオリン、チェロ、フルートなどの無伴奏曲。
-  
+  - id: solo
+    label_ja: 独奏
+    label_en: Solo
   - id: duo
     label_ja: デュオ（二重奏）
     label_en: Duo
-    description: ヴァイオリンソナタなど、独奏楽器とピアノ、あるいは二つの楽器。
-  
   - id: trio
     label_ja: トリオ（三重奏）
     label_en: Trio
-    description: ピアノ三重奏、弦楽三重奏など。
-  
   - id: quartet
     label_ja: カルテット（四重奏）
     label_en: Quartet
-    description: 弦楽四重奏を筆頭とする4人の編成。
-  
-  - id: chamber-ensemble
-    label_ja: 室内楽アンサンブル (5人以上)
-    label_en: Chamber Ensemble
-    description: 五重奏以上の小編成アンサンブル。
-  
+  - id: quintet-larger
+    label_ja: 五重奏以上
+    label_en: Quintet or larger
   - id: orchestra
     label_ja: オーケストラ
     label_en: Orchestra
-    description: フルオーケストラ。
-  
   - id: string-orchestra
     label_ja: 弦楽オーケストラ
     label_en: String Orchestra
-    description: 弦楽器のみのオーケストラ。
-  
+  - id: chamber-orchestra
+    label_ja: 室内オーケストラ
+    label_en: Chamber Orchestra
   - id: choir
     label_ja: 合唱
     label_en: Choir
-    description: アカペラまたは伴奏付きの合唱。
 
 # -----------------------------------------------------------------------------
-# 4. Tags (タグ)
+# 4. Instruments (楽器)
 # -----------------------------------------------------------------------------
+# 具体的な使用楽器のタグ。
+instruments:
+  - id: piano
+    label_ja: ピアノ
+    label_en: Piano
+  - id: organ
+    label_ja: オルガン
+    label_en: Organ
+  - id: violin
+    label_ja: ヴァイオリン
+    label_en: Violin
+  - id: viola
+    label_ja: ヴィオラ
+    label_en: Viola
+  - id: cello
+    label_ja: チェロ
+    label_en: Cello
+  - id: flute
+    label_ja: フルート
+    label_en: Flute
+  - id: clarinet
+    label_ja: クラリネット
+    label_en: Clarinet
+  - id: oboe
+    label_ja: オーボエ
+    label_en: Oboe
+  - id: bassoon
+    label_ja: ファゴット
+    label_en: Bassoon
+  - id: horn
+    label_ja: ホルン
+    label_en: Horn
+  - id: trumpet
+    label_ja: トランペット
+    label_en: Trumpet
+  - id: voice
+    label_ja: 声楽
+    label_en: Voice
+  - id: guitar
+    label_ja: ギター
+    label_en: Guitar
+  - id: harpsichord
+    label_ja: チェンバロ
+    label_en: Harpsichord
+
+# -----------------------------------------------------------------------------
+# 5. Tags (タグ)
+# -----------------------------------------------------------------------------
+# 感情(Mood)、状況(Situation)、用語(Terminology)の3カテゴリ。
 # 感情(Mood)、状況(Situation)、用語(Terminology)の3カテゴリ。
 # ユーザーの潜在的なニーズや、アフィリエイト・検索流入(SEO)をターゲットにする。
 
