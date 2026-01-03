@@ -35,10 +35,18 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
-| **Engagement** | `Engagement` | ユーザーの反応（Read, Scroll, Click等）の総称。 | ユーザーの音楽的嗜好（Vector）を形成するためのシグナルとなる。 |
-| **Like** | `Like` | 記事や楽曲への明示的な「お気に入り」。 | ユーザーが能動的に保存したアクション。 |
-| **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも「書斎」的で知的なニュアンス。 |
-| **Impressions** | `ImpressionDimensions` | ユーザーが楽曲から受ける印象を複数の指標で数値化したもの。 | -10 から +10 の整数値で表現される。詳細は Taxonomy を参照。 |
+| **Engagement** | `Engagement` | ユーザーの反応（Read, Scroll, Click等）の総称。 | 嗜好分析のため `passive`（滞在）/ `active`（クリック）に分類される。 |
+| **Audition** | `Audition` | 譜例や音源の再生実行アクション。 | 単なるページ閲覧（PV）より強い関心シグナル。 |
+| **Like** | `Like` | 記事や楽曲への明示的な「お気に入り」。 | ユーザーが能動的に保存したポジティブな反応。 |
+| **Resonance** | `Resonance` | 楽曲に対する短い感想やメモの投稿。 | 単なる「Comment」ではなく、音楽との共鳴を記録するニュアンス。 |
+| **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも個人の「書斎（Library）」的な趣。 |
+| **Mastery** | `Mastery` | 楽曲詳細を読み、音源も聴了して理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
+| **Impressions** | `Impressions` | 楽曲から受ける印象を複数の指標で数値化したもの（-10 〜 +10）。 | セマンティック・ディファレンシャル法による多次元評価。 |
+| **Maestro** | `Maestro` | Google SSOによる認証済みユーザー。 | サイトの「正会員」。永続的なCollectionやResonanceを保持できる。 |
+| **Listener** | `Listener` | 非ログイン（ゲスト）ユーザー。 | 匿名だが、セッションベースで一時的なEngagementを保持。 |
+| **Persona** | `Persona` | 行動ログからAIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
+| **Overture** | `Overture` | AIが生成する、特定ユーザーにパーソナライズされた楽曲紹介文。 | サイト名「Preludio」に呼応。体験の「序曲」。 |
+| **Trace** | `Trace` | ユーザーが楽曲間を遷移した軌跡。 | 「この曲の次はこれ」という相関関係の自動生成に使用。 |
 
 ## 3. Editorial & Curation (編集・キュレーション)
 
