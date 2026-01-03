@@ -266,6 +266,15 @@ genres:
         label_ja: 組曲・パルティータ
         label_en: Suite / Partita
         description: 複数の舞曲や楽曲を組み合わせた形式。バロック組曲から近代組曲まで。
+      # --- 合唱・声楽形式（Vocal Forms） ---
+      - id: aria
+        label_ja: アリア（詠唱）
+        label_en: Aria / Air
+        description: オペラやオラトリオ、カンタータの中の、独唱者による叙情的な歌。独立したコンサート・アリアも含む。
+      - id: recitative
+        label_ja: レチタティーヴォ（叙唱）
+        label_en: Recitative
+        description: 話すようなテンポとリズムで、物語の状況や感情を説明する歌唱形式。
       - id: rondo
         label_ja: ロンド
         label_en: Rondo
