@@ -1740,11 +1740,11 @@ performance_difficulty:
     examples: ベートーヴェン「熱情ソナタ」、ショパン「革命のエチュード」
   - id: 4
     label_ja: プロ級
-    label_en: Professional / Virtuoso
+    label_en: Professional
     description: コンサート・ピアニスト等のレパートリー。極めて高度な肉体的・音楽的な熟練を要する。
     examples: リスト「ラ・カンパネラ」、ラフマニノフ「ピアノ協奏曲第3番」
   - id: 5
     label_ja: 超絶技巧
-    label_en: Legendary / Extreme
+    label_en: Virtuoso
     description: 音楽史上最も困難とされる領域。極限の技巧と持久力を要求する。
     examples: リスト「超絶技巧練習曲（第4曲マゼッパ等）」、バラキレフ「イスラメイ」
