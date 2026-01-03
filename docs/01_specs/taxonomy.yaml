@@ -113,7 +113,9 @@ eras:
 #    - 利用シーン（Situation）の提案戦略:
 #        - 記事生成時、AIは「その曲を聴くのに最適な具体的なシーン」を100文字程度のストーリーで描写し、タグと連動させよ。
 #    - 歴史と発見（History & Discovery）の抽出戦略:
-#        - 単にジャンルを特定するだけでなく、「誰に捧げられたか（愛の捧げもの）」「初演時のスキャンダル」「政治的背景」「自然描写」などのエピソードを検索し、該当すれば `terminology` タグを付与せよ。
+#        - 単にジャンルを特定するだけでなく、「誰に捧げられたか（愛の捧げもの）」「初演時のスキャンスダル」「政治的背景」「自然描写」などのエピソードを検索し、該当すれば `terminology` タグを付与せよ。
+#    - 教育・分析的視点（Pedagogy）の活用戦略:
+#        - `analysis-focus` 等のタグを付与する場合、ソナタ形式の構造的な境界線や、対位法の重要な箇所を特定し、譜例（SVG）やポイント解説の生成を優先せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -1231,18 +1233,47 @@ tags:
   # ----------------------------------------
   - category: pedagogy
     items:
+      # --- Theory & Composition (理論・作法) ---
       - id: analysis-focus
         label_ja: 楽曲分析（アナリーゼ）向け
         label_en: For Analysis / Study
-        description: 形式や対位法、和声の構造が明確で、学習に適した名作。
+        description: 形式や構造が明確で、音楽理論の学習や楽曲分析の素材として適した名作。
+      - id: counterpoint-mastery
+        label_ja: 対位法の学習・手本
+        label_en: Mastery of Counterpoint
+        description: フーガやカノンなど、複数の旋律が絡み合う対位法技法の学習に最適な楽曲。
+      - id: harmonic-innovation
+        label_ja: 和声の革新・変遷
+        label_en: Harmonic Innovation
+        description: 伝統的な和声から、特殊な転調、無調への移行など、和声学的な転換点となる作品。
+
+      # --- Performance & Orchestration (演奏・管弦楽法) ---
       - id: orchestration-gem
         label_ja: 管弦楽法の至宝
         label_en: Orchestration Masterpiece
-        description: オーケストレーションの模範とされる色彩豊かな楽曲。
+        description: オーケストレーションの模範とされる色彩豊かな楽曲。楽器の組み合わせの妙を学ぶ。
       - id: piano-technique-ext
         label_ja: ピアノ奏法の発展
         label_en: Development of Piano Technique
-        description: 特定の技法や物理的な奏法の進化を象徴する作品。
+        description: 特定の技法や物理的な奏法の進化を象徴する作品。ピアノ学習者にとっての重要な指標。
+      - id: idiomatic-writing
+        label_ja: 楽器特有の書法の研究
+        label_en: Idiomatic Writing Study
+        description: その楽器特有の響きや強みを最大限に活かした「楽器らしい」書法の研究に資する作品。
+      - id: chamber-interaction
+        label_ja: アンサンブルの対話と調和
+        label_en: Ensemble Interaction & Balance
+        description: 奏者同士の掛け合い、バランス、アイコンタクトなどの室内楽的スキルの模範となる作品。
+
+      # --- Style & Voice (様式・声楽) ---
+      - id: historical-performance
+        label_ja: 時代様式・演奏慣習の研究
+        label_en: Historical Performance Practice
+        description: 時代ごとの装飾音、アーティキュレーション、様式美を学ぶための基準となる楽曲。
+      - id: vocal-diction-phrasing
+        label_ja: 声楽のディクションと歌唱法
+        label_en: Vocal Diction & Phrasing
+        description: 言葉の扱い（各言語のディクション）や、フレーズの処理に優れた声楽の手本。
 
   # ----------------------------------------
   # Heritage & Media: 文化的背景・メディア露出
