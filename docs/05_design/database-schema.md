@@ -53,11 +53,9 @@ TursoにはネイティブのRLSがないため、アプリケーション層（
 
 ```mermaid
 erDiagram
-    %% Core Tables: Articles
+    %% Core Tables: Articles & Series
     Works ||--o{ Articles : "featured in"
     Articles ||--|{ ArticleTranslations : "has localized content"
-
-    %% Series Tables (Structural Decorator)
     Articles ||--o| Series : "is the header of"
     Series ||--o{ SeriesArticles : "contains"
     Articles ||--o{ SeriesArticles : "is member of"
@@ -79,7 +77,7 @@ erDiagram
 
 ---
 
-## 3. Core Tables: Articles (Application Data)
+## 3. Core Tables: Articles & Series
 
 記事管理の中核テーブル。検索要件に基づき、多くの属性を非正規化して持ちます。
 
@@ -302,12 +300,7 @@ sequenceDiagram
 
 ---
 
-## 4. Series Tables (Collections)
-
-複数の記事をテーマで束ねる「シリーズ」を管理します。
-**「シリーズもまた一つの記事である」** という定義に基づき、シリーズ自体のタイトル、キャッチコピー、解説本文などの多言語コンテンツはすべて `articles` / `article_translations` テーブルを再利用します。
-
-### 4.1 `series` (Structure Decorator)
+### 3.3 `series` (Structure Decorator)
 
 ある記事を「シリーズの親（ヘッダー）」として定義し、子記事を束ねるためのメタデータ。
 
@@ -318,13 +311,13 @@ sequenceDiagram
 | `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                          |
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                          |
 
-#### 4.1.1 Indexes (Series)
+#### 3.3.1 Indexes (Series)
 
 | Index Name              | Columns           | Type   | Usage                |
 | :---------------------- | :---------------- | :----- | :------------------- |
 | `idx_series_article_id` | `(article_id)`    | **UNIQUE** | 記事1つにつき1シリーズ |
 
-### 4.2 `series_articles` (Membership Relationship)
+### 3.4 `series_articles` (Membership Relationship)
 
 シリーズと所属する子記事を紐付ける中間テーブル。
 
@@ -336,7 +329,7 @@ sequenceDiagram
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 4.2.1 Indexes (Series Articles)
+#### 3.4.1 Indexes (Series Articles)
 
 | Index Name              | Columns                       | Type   | Usage                                  |
 | :---------------------- | :---------------------------- | :----- | :------------------------------------- |
@@ -348,7 +341,7 @@ sequenceDiagram
 > **動的なソートの扱い**:
 > 「作曲年順」「作曲家順」などの動的なソートは、アプリケーション層で `article_translations` 等と JOIN を行うことで対応します（コレクション表示などの動的クエリは Zero-JOIN ポリシーの例外として許容します）。
 
-#### 4.2.2 i18n Robustness (多言語への対応)
+#### 3.4.2 i18n Robustness (多言語への対応)
 
 シリーズの子記事一覧を取得する際、特定の言語で翻訳が存在しない異常系は、アプリケーション（Repository層）の責務として **「Filter（翻訳が存在する記事のみを表示）」を原則** とします。
 
@@ -359,11 +352,11 @@ sequenceDiagram
 
 ---
 
-## 5. Asset Tables: Scores & Recordings
+## 4. Asset Tables: Scores & Recordings
 
 楽譜ビュワーおよび再生プレイヤーで使用するデータ。
 
-### 5.1 `scores` (Universal Asset)
+### 4.1 `scores` (Universal Asset)
 
 | Column                 | Type   | Default | NOT NULL | CHECK | Description                                                |
 | :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
@@ -387,7 +380,7 @@ sequenceDiagram
 > 2. **Integrity**: 取得した楽譜データが破損しておらず、楽曲マスタとの関連付けが完了している。
 > 3. **Version Match**: 同期元が提供するメタデータ（ハッシュ値や最終更新日時）と DB 側の記録が一致している。
 
-#### 5.1.1 Indexes (Scores)
+#### 4.1.1 Indexes (Scores)
 
 | Index Name            | Columns              | Type   | Usage                                |
 | :-------------------- | :------------------- | :----- | :----------------------------------- |
@@ -400,9 +393,9 @@ sequenceDiagram
 > SQLite/libSQLの標準的なB-Treeインデックスは、JSON全体の一致には機能しますが、内部の要素（`source_id`等）による部分的な検索を高速化するものではありません。
 > 録音ソースIDからの逆引きが頻繁に発生し、パフォーマンスが問題となる場合は、仮想カラム (Generated Column) を用いた機能インデックス、または正規化された交差テーブルの導入を検討してください。
 
-#### 5.1.2 JSON Type Definitions
+#### 4.1.2 JSON Type Definitions
 
-##### 5.1.2.1 `playback_samples` (Playback Binding)
+##### 4.1.2.1 `playback_samples` (Playback Binding)
 
 1つの楽譜切片に対応する1つ以上の録音ソースと再生位置の定義。
 
@@ -418,7 +411,7 @@ type PlaybackSample = {
 type PlaybackSamples = PlaybackSample[];
 ```
 
-##### 5.1.2.2 `layout_dimensions` (Score Layout)
+##### 4.1.2.2 `layout_dimensions` (Score Layout)
 
 SVG等の楽譜を非同期で読み込む際のレイアウトシフト（CLS）を防止するための寸法情報。
 
@@ -430,7 +423,7 @@ type ScoreLayout = {
 };
 ```
 
-### 5.2 `score_translations` (Localized Metadata)
+### 4.2 `score_translations` (Localized Metadata)
 
 楽譜のキャプションや説明文。
 
@@ -444,13 +437,13 @@ type ScoreLayout = {
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 5.2.1 Indexes (Score Translations)
+#### 4.2.1 Indexes (Score Translations)
 
 | Index Name               | Columns            | Type   | Usage                |
 | :----------------------- | :----------------- | :----- | :------------------- |
 | `idx_score_trans_lookup` | `(score_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
-### 5.3 `recordings` (Audio/Video Entity)
+### 4.3 `recordings` (Audio/Video Entity)
 
 「誰の、いつの演奏か」を管理する実体。
 
@@ -464,14 +457,14 @@ type ScoreLayout = {
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)      |
 | `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)      |
 
-#### 5.3.1 Indexes (Recordings)
+#### 4.3.1 Indexes (Recordings)
 
 | Index Name               | Columns                     | Type   | Usage                      |
 | :----------------------- | :-------------------------- | :----- | :------------------------- |
 | `idx_recordings_work_id` | `(work_id)`                 | B-Tree | 外部キーによる検索         |
 | `idx_recordings_rec`     | `(work_id, is_recommended)` | B-Tree | おすすめ音源による絞り込み |
 
-### 5.4 `recording_sources` (Media Providers)
+### 4.4 `recording_sources` (Media Providers)
 
 1つの録音（Recording）に紐づく、具体的な再生手段。
 
@@ -485,7 +478,7 @@ type ScoreLayout = {
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)               |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)               |
 
-#### 5.4.1 Indexes (Recording Sources)
+#### 4.4.1 Indexes (Recording Sources)
 
 | Index Name           | Columns                 | Type   | Usage                                  |
 | :------------------- | :---------------------- | :----- | :------------------------------------- |
@@ -494,12 +487,12 @@ type ScoreLayout = {
 
 ---
 
-## 6. Master Tables: Composers & Works
+## 5. Master Tables: Composers & Works
 
 正規化された参照用データ（信頼できる情報源）。記事作成時の入力補助や、Batch処理によるデータ整合性チェックに使用します。
 **Zero-JOIN戦略のため、ユーザーアクセス時にこのテーブルがJOINされることは基本ありません。**
 
-### 6.1 `composers`
+### 5.1 `composers`
 
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -511,13 +504,13 @@ type ScoreLayout = {
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 6.1.1 Indexes (Composers)
+#### 5.1.1 Indexes (Composers)
 
 | Index Name           | Columns  | Type   | Usage                      |
 | :------------------- | :------- | :----- | :------------------------- |
 | `idx_composers_slug` | `(slug)` | **UNIQUE** | ルーティング用（ユニーク） |
 
-### 6.2 `composer_translations`
+### 5.2 `composer_translations`
 
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -529,14 +522,14 @@ type ScoreLayout = {
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 6.2.1 Indexes (Composer Translations)
+#### 5.2.1 Indexes (Composer Translations)
 
 | Index Name              | Columns               | Type   | Usage                          |
 | :---------------------- | :-------------------- | :----- | :----------------------------- |
 | `idx_comp_trans_lookup` | `(composer_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 | `idx_comp_trans_name`   | `(lang, name)`        | B-Tree | 名前による検索       |
 
-### 6.3 `works`
+### 5.3 `works`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -550,7 +543,7 @@ type ScoreLayout = {
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 6.3.1 Indexes (Works)
+#### 5.3.1 Indexes (Works)
 
 | Index Name              | Columns                           | Type   | Usage                                  |
 | :---------------------- | :-------------------------------- | :----- | :------------------------------------- |
@@ -558,7 +551,7 @@ type ScoreLayout = {
 | `idx_works_slug`        | `(composer_id, slug)`             | **UNIQUE** | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_number)` | B-Tree | 作品番号順のソート                     |
 
-### 6.4 `work_translations`
+### 5.4 `work_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -571,7 +564,7 @@ type ScoreLayout = {
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 6.4.1 Indexes (Work Translations)
+#### 5.4.1 Indexes (Work Translations)
 
 | Index Name              | Columns                 | Type   | Usage                          |
 | :---------------------- | :---------------------- | :----- | :----------------------------- |
@@ -579,7 +572,7 @@ type ScoreLayout = {
 | `idx_work_trans_title`  | `(lang, title)`         | B-Tree | タイトル検索         |
 | `idx_work_trans_pops`   | `(lang, popular_title)` | B-Tree | 通称検索             |
 
-### 6.5 `tags` (Normalized Taxonomy)
+### 5.5 `tags` (Normalized Taxonomy)
 
 ComposerやWork、Instrumentといった**「構造化された属性」に当てはまらない、横断的な検索軸（Cross-cutting Dimensions）**を管理します。
 [Search Requirements](../01_specs/search-requirements.md) の Cluster 3 (Mood/Situation) および Cluster 4 の一部をカバーします。
@@ -598,13 +591,13 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 > 2.  **Creation Mode (Database)**: DB の `tags` テーブルは、記事作成時の語彙統制（VALIDATION）および検索画面でのフィルター一覧生成のために使用されます。
 > 3.  **Read-Optimized Policy**: ユーザーの閲覧時には、`article_translations` に保存された **Snapshots (`sl_genre`等)** を参照するため、本テーブルへの JOIN は行いません。
 
-#### 6.5.1 Indexes (Tags)
+#### 5.5.1 Indexes (Tags)
 
 | Index Name      | Columns            | Type   | Usage                                  |
 | :-------------- | :----------------- | :----- | :------------------------------------- |
 | `idx_tags_slug` | `(category, slug)` | **UNIQUE** | 絞り込み検索・ルーティング（ユニーク） |
 
-### 6.6 `tag_translations`
+### 5.6 `tag_translations`
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
@@ -614,13 +607,13 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 6.6.1 Indexes (Tag Translations)
+#### 5.6.1 Indexes (Tag Translations)
 
 | Index Name             | Columns          | Type   | Usage                |
 | :--------------------- | :--------------- | :----- | :------------------- |
 | `idx_tag_trans_lookup` | `(tag_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
-### 6.7 `media_assets`
+### 5.7 `media_assets`
 
 サイト内で使用する汎用的な静的ファイル（画像、PDF等）。
 | Column | Type | Default | NOT NULL | CHECK                        | Description                               |
@@ -635,11 +628,11 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 
 ---
 
-## 7. Shared JSON Type Definitions
+## 6. Shared JSON Type Definitions
 
 DB全体で使用される共通の JSON 構造。
 
-### 7.1 `MultilingualString`
+### 6.1 `MultilingualString`
 エージェントやアプリが多言語で扱う文字列コンテナ。
 
 ```typescript
@@ -656,52 +649,52 @@ type MultilingualString = {
 
 ---
 
-## 8. Security (Access Control)
+## 7. Security (Access Control)
 
 Turso (libSQL) 自体には行単位セキュリティ (RLS) がないため、**アプリケーション層 (Next.js Server Actions)** が門番となり以下の権限を強制します。
 
-### 8.1 Read Access (閲覧権限)
+### 7.1 Read Access (閲覧権限)
 - **Public (全ユーザー):** 
   - **Articles:** `status = 'published'` かつ `published_at <= CURRENT_TIMESTAMP` のレコードのみ。
   - **Masters:** 全件取得可能。
 - **Admin (管理者):** 下書きを含むすべてのデータ。
 
-### 8.2 Write Access (変更権限: CUD)
+### 7.2 Write Access (変更権限: CUD)
 - **Restricted to Admin Only:** 
   - すべてのテーブルの作成 (Create)、更新 (Update)、削除 (Delete) は**管理者権限を持つユーザーのみ**が実行可能。
   - プログラム上では、書き込みトークンを持つ **Admin DB Client** インスタンスの使用を `server-only` な関数内に限定することで物理的に隔離します。
 
 ---
 
-## 9. Verification & Migration Strategy
+## 8. Verification & Migration Strategy
 
 本スキーマの実装と検証は、以下の戦略で進めます。
 
-### 9.1 Lifecycle
+### 8.1 Lifecycle
 
 1.  **Draft:** `docs/05_design/database-schema.md` (本ドキュメント) を正本とします。
 2.  **Generate:** Drizzle ORM の `drizzle-kit generate` によるマイグレーション管理。
 3.  **Apply:** `turso db shell` または Drizzle Kit による反映。
 
-### 9.2 Verification
+### 8.2 Verification
 
 - **Static Check:** Drizzle が生成する型定義とドメインエンティティの一致確認。
 - **Data Integrity:** サンプルデータを投入し、`zod` スキーマを通過することを確認。
 - **Performance:** `EXPLAIN QUERY PLAN` を使用し、Index が適切に活用されているか確認。
 
-### 9.3 Data Integrity Policy (Defensive Design)
+### 8.3 Data Integrity Policy (Defensive Design)
 
 SQLiteの柔軟な型システムを補完し、エンタープライズ品質の堅牢性を確保するため、以下の多層検証を適用します。
 
 1.  **Primitive Integrity (DB Layer):**
     - **NOT NULL:** 必須項目にはすべて `NOT NULL` 制約を付与します。
-    - **Domain Constraints:** Drizzle を通じて、`CHECK (is_featured IN (0, 1))` などの制約を SQL レベルで埋め込みます。
+    - **Domain Constraints:** Drizzle を通を通じて、`CHECK (is_featured IN (0, 1))` などの制約を SQL レベルで埋め込みます。
 2.  **Structural Integrity (Application Layer):**
     - **Zod Validation:** 書き込み処理（Server Actions）の入り口で厳密なスキーマ検証を行い、不正な形式のデータが DB に到達することを防ぎます。
 3.  **Type Mapping:**
     - SQLite 内部に閉じるのではなく、Drizzle が提供する `sqliteTable` の型定義を「唯一の正解」として管理し、物理層と論理層の乖離を排除します。
 
-### 9.4 Data Consistency Strategy (Synchronizer)
+### 8.4 Data Consistency Strategy (Synchronizer)
 
 非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
 
