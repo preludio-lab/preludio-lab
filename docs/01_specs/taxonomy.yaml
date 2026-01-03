@@ -299,23 +299,87 @@ genres:
         label_en: Cyclic Form
         description: 特定の主題や動機を全楽章に登場させ、作品全体に有機的な統一感と一貫性を与える手法。
 
-      # --- 合唱・声楽形式（Vocal Forms） ---
+      # --- 合唱・声楽形式（Vocal / Choral Forms） ---
+      # 1. 劇的・叙述的構造（Dramatic / Narrative Elements）
       - id: aria
         label_ja: アリア（詠唱）
         label_en: Aria / Air
-        description: オペラやオラトリオ、カンタータの中の、独唱者による叙情的な歌。独立したコンサート・アリアも含む。
+        description: オペラやオラトリオの中で、独唱者が感情を吐露する旋律的な楽曲。ダ・カーポ・アリア等の形式を含む。
+        examples: ["Mozart: Queen of the Night Aria", "Handel: Ombra mai fu"]
       - id: recitative
         label_ja: レチタティーヴォ（叙唱）
         label_en: Recitative
-        description: 話すようなテンポとリズムで、物語の状況や感情を説明する歌唱形式。
+        description: 言葉のイントネーションを重視した、語るような歌唱形式。物語の進行（状況説明）を担う。
+        examples: ["Mozart: Don Giovanni - Recitatives", "Bach: St Matthew Passion - Evangelist"]
+      - id: vocal-ensemble
+        label_ja: 重唱（アンサンブル）
+        label_en: Vocal Ensemble
+        description: 二重唱、三重唱など、複数の独唱者が異なる歌詞や感情を同時に歌う形式。
+        examples: ["Mozart: Marriage of Figaro - Sull'aria", "Verdi: Rigoletto - Quartet"]
+      - id: chorus-piece
+        label_ja: 合唱曲（劇中・独立）
+        label_en: Chorus
+        description: オペラやオラトリオにおける群衆の表現、または独立した合唱作品。
+        examples: ["Handel: Hallelujah Chorus", "Verdi: Va, pensiero"]
+
+      # 2. 典礼・大規模宗教形式（Liturgical / Large-scale Religious）
+      - id: mass-ordinary
+        label_ja: ミサ通常文（キリエ等）
+        label_en: Ordinary of the Mass
+        description: キリエ、グロリア、クレド、サンクトゥス、アニュス・デイからなる、カトリック典礼の基本構造。
+        examples: ["Bach: Mass in B minor", "Beethoven: Missa Solemnis"]
+      - id: requiem-form
+        label_ja: レクイエム（死者のためのミサ）
+        label_en: Requiem
+        description: 怒りの日（Dies Irae）などの固有文を含む、追悼のための多楽章形式。
+        examples: ["Mozart: Requiem", "Fauré: Requiem", "Verdi: Requiem"]
+      - id: passion-structure
+        label_ja: 受難曲構造
+        label_en: Passion
+        description: 福音書記者の朗読（レチタティーヴォ）、コラール、アリア等で構成される、キリストの受難を扱った形式。
+        examples: ["Bach: St Matthew Passion", "Bach: St John Passion"]
+      - id: chorale
+        label_ja: コラール
+        label_en: Chorale
+        description: プロテスタント教会で歌われる賛美歌。バロック期宗教曲（カンタータ等）の重要な構成要素。
+        examples: ["Bach: Cantata BWV 147 - Jesu, Joy of Man's Desiring"]
+      - id: motet
+        label_ja: モテット
+        label_en: Motet
+        description: ポリフォニーによる宗教声楽曲。ルネサンスからバロック期を代表する形式。
+        examples: ["Palestrina: Sicut cervus", "Bach: Jesu, meine Freude"]
+      - id: madrigal
+        label_ja: マドリガル
+        label_en: Madrigal
+        description: ルネサンス期の世俗声楽曲。高度な対位法と「語画法（Word Painting）」が特徴。
+        examples: ["Monteverdi: Lamento d'Arianna", "Gesualdo: Moro, lasso"]
+
+      # 3. 歌曲・親密な形式（Art Song / Intimate Forms）
+      - id: lied-song
+        label_ja: 歌曲・リート
+        label_en: Lied / Art Song
+        description: 詩と音楽が密接に結びついた、主に独唱とピアノのための形式。
+        examples: ["Schubert: Erlkönig", "Schumann: Dichterliebe"]
+      - id: song-cycle-structure
+        label_ja: 連作歌曲（歌曲集）
+        label_en: Song Cycle
+        description: 共通の詩人や物語的テーマによって結ばれた、一連の歌曲の集合体。
+        examples: ["Schubert: Winterreise", "Mahler: Kindertotenlieder"]
       - id: strophic
         label_ja: 有節形式
         label_en: Strophic Form
-        description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲（Lied）における最も基本的な形式。
+        description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲における最も基本的な構造。
+        examples: ["Schubert: Heidenröslein"]
       - id: through-composed
         label_ja: 通奏形式
         label_en: Through-composed
-        description: 反復を排し、歌詞や楽想の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
+        description: 反復を排し、歌詞の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
+        examples: ["Schubert: Erlkönig"]
+      - id: vocalise
+        label_ja: ヴォカリーズ
+        label_en: Vocalise
+        description: 歌詞を持たず、母音のみで歌われる楽曲。技巧的、あるいは叙情的な表現に用いられる。
+        examples: ["Rachmaninoff: Vocalise", "Ravel: Pièce en forme de Habañera"]
 
       # --- 性格的小品（Character Pieces） ---
       - id: prelude
