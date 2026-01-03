@@ -1355,23 +1355,28 @@ impression_scales:
     max_label: Bright (明朗・輝き)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 絶望・葬送
+        label_en: Despair / Funeral
         definition: 葬送行進曲や、深い絶望を感じさせる深刻な短調。
         examples: Mahler 6, Chopin "Funeral March", Tchaikovsky 6
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 哀愁・静謐
+        label_en: Melancholy / Serene
         definition: 穏やかな哀愁、沈み込んだ雰囲気、または抑えられた色彩。
         examples: Sibelius "Valse Triste", Rachmaninoff "Vocalise"
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
+        label_ja: 標準
+        label_en: Neutral
         definition: 偏りのない安定感、古典派の標準的な長調・短調のバランス。
         examples: Haydn Symphonies, Mozart Piano Sonatas
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 優雅・躍動
+        label_en: Elegant / Lively
         definition: はつらつとした明るさ、活力、前向きなエネルギー。
         examples: Schubert "Trout" Quintet, Rossini Overtures
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 祝祭・光輝
+        label_en: Triumphant / Radiant
         definition: 圧倒的な祝典感、光溢れる長調、最高音域の輝き。
         examples: Mozart 41 "Jupiter", Handel "Hallelujah", Beethoven 9
       
@@ -1382,23 +1387,28 @@ impression_scales:
     max_label: Energetic (躍動・爆発)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 静止・無
+        label_en: Stillness / Void
         definition: 時間が停止したような静止感、極端なスローテンポ。
         examples: Satie "Gymnopédies", Pärt "Spiegel im Spiegel"
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 瞑想・平穏
+        label_en: Meditative / Calm
         definition: 穏やかな流れ、瞑想的、または抑制された動き。
         examples: Debussy "Clair de Lune", Bach "Air on the G String"
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
+        label_ja: 標準
+        label_en: Moderate
         definition: 安定した歩み、極端な速さも遅さもない標準的なテンポ。
         examples: Mozart "Eine kleine Nachtmusik", Bach Inventions
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 活気・舞踏
+        label_en: Vibrant / Dancing
         definition: はっきりとしたリズミカルな推進力、軽快な躍動。
         examples: Brahms "Hungarian Dances", Dvořák "Slavonic Dances"
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 爆発・狂喜
+        label_en: Explosive / Ecstatic
         definition: 爆発的な熱量、超高速パッセージ、原始的なリズムの衝撃。
         examples: Stravinsky "Rite of Spring", Khachaturian "Sabre Dance"
 
@@ -1409,23 +1419,28 @@ impression_scales:
     max_label: Grand (壮大・宇宙的)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 極微・私小説
+        label_en: Minimal / Intimate
         definition: 最小限の編成、ささやくような極小の表現、個人的な独白。
         examples: Webern "Bagatelles", Mompou "Musica Callada"
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 室内楽・親密
+        label_en: Chamber / Personal
         definition: ソロ楽器、親密な室内音楽、限られた空間での響き。
         examples: Bach Cello Suites, Schumann "Kinderszenen"
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
+        label_ja: 標準
+        label_en: Standard
         definition: 標準的な室内楽（四重奏など）や、中規模の管弦楽。
         examples: Haydn String Quartets, Mozart Symphonies
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 壮麗・広大
+        label_en: Grand / Extensive
         definition: 豊かな広がりを持つ管弦楽、厚みのあるサウンド。
         examples: Brahms Symphonies, Strauss "Don Juan"
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 宇宙的・極大
+        label_en: Cosmic / Monumental
         definition: 巨大編成、合唱付きの超大作、宇宙的な広がり。
         examples: Mahler 8 "Symphony of a Thousand", Holst "Planets", Wagner "Ring"
 
@@ -1436,23 +1451,28 @@ impression_scales:
     max_label: Deep (深遠・哲学的)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 軽快・愉快
+        label_en: Light / Playful
         definition: 非常に分かりやすい、キャッチー、娯楽としての純粋な楽しさ。
         examples: Pachelbel "Canon", Offenbach "Galop"
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 優美・気楽
+        label_en: Graceful / Easy
         definition: 親しみやすいメロディ、分かりやすい構成。
         examples: Elgar "Salut d'Amour", Strauss "Blue Danube"
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
-        definition: 音楽的ロジックと娯楽性のバランスが良い、標準的な作品。
+        label_ja: 標準
+        label_en: Balanced
+        definition: 音楽적ロジックと娯楽性のバランスが良い、標準的な作品。
         examples: Vivaldi "Four Seasons", Mozart "K.545"
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 思索・重厚
+        label_en: Reflective / Profound
         definition: 知的な構築、複雑な和声、聴き込みを要する展開。
         examples: Brahms 4th Symphony, Debussy "La Mer"
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 深遠・哲学的
+        label_en: Abyssal / Philosophical
         definition: 深遠な対位法、哲学的テーマ、精神的な極致にある難曲。
         examples: Bach "Art of Fugue", Late Beethoven Quartets
 
@@ -1463,23 +1483,28 @@ impression_scales:
     max_label: Cinematic (映画的・劇的)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 数理的・極北
+        label_en: Mathematical / Purest
         definition: 徹底した絶対音楽、数理的美、感情の表出を極限まで排除。
         examples: Bach "Goldberg Variations", Webern Symphony
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 構成美・静的
+        label_en: Constructive / Static
         definition: 形式美を重んじる美学、客観的で冷静な構造美。
         examples: Haydn Symphonies, Mozart Clarinet Concerto
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
+        label_ja: 標準
+        label_en: Standard
         definition: 感情豊かな表現と、形式への尊重が共存する中立状態。
         examples: Schubert "Unfinished", Mendelssohn "Songs without Words"
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 叙情的・物語的
+        label_en: Lyric / Narrative
         definition: 標題、激しい起伏、感情の吐露、物語るような旋律。
         examples: Liszt "Les Préludes", Rimsky-Korsakov "Scheherazade"
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 激情・劇的
+        label_en: Passionate / Cinematic
         definition: 圧倒的な人間ドラマ、激情、死と再生、映画のような劇性。
         examples: Tchaikovsky 6 "Pathétique", Berlioz "Symphonie Fantastique"
 
@@ -1490,23 +1515,28 @@ impression_scales:
     max_label: Famous (世界的定番)
     criteria:
       - score_range: [-10, -7]
-        label: 強い負 (Extreme Negative)
+        label_ja: 秘匿・新発見
+        label_en: Esoteric / Newly Discovered
         definition: 専門家や熱狂的愛好家のみが知る、発掘されたばかりの超ニッチ作。
         examples: obscure manuscript findings
       - score_range: [-6, -3]
-        label: 弱い負 (Notable Negative)
+        label_ja: 通好み・専門的
+        label_en: Connoisseur / Specialist
         definition: 通好みの名曲、あるいは特定の国や楽器の熱烈な支持層のみに有名。
         examples: Alkan, Medtner, Suk
       - score_range: [-2, 2]
-        label: 中立 (Neutral)
+        label_ja: 標準
+        label_en: Standard
         definition: コンサートの定番（レパートリー）だが、一般社会では認知が限定的。
         examples: Brahms "Horn Trio", Mendelssohn "Octet"
       - score_range: [3, 6]
-        label: 弱い正 (Notable Positive)
+        label_ja: 定番・有名
+        label_en: Classic / Well-known
         definition: クラシックファンならずとも、聞き馴染みのある準定番。
         examples: Chopin Nocturne Op.9-2, Vivaldi "Spring"
       - score_range: [7, 10]
-        label: 強い正 (Extreme Positive)
+        label_ja: 不朽・万国共通
+        label_en: Iconic / Universal
         definition: 人類の遺産。イントロだけで誰でも分かる、説明不要の世界的大定番。
         examples: Beethoven 5 "Fate", "Ode to Joy", Pachelbel "Canon"
 
