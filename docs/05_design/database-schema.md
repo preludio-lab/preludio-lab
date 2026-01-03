@@ -378,6 +378,13 @@ sequenceDiagram
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
 
+> [!NOTE]
+> **`is_repository_synced` の同期判定基準**:
+> 以下の条件がすべて満たされた場合に `1` (True) と見なします。それ以外（更新待機中、またはエラー発生時）は `0` です。
+> 1. **Data Presence**: `repository_url` からの取得データが `data` カラム（または外部ストレージ）に正常に保存されている。
+> 2. **Integrity**: 取得した楽譜データが破損しておらず、楽曲マスタとの関連付けが完了している。
+> 3. **Version Match**: 同期元が提供するメタデータ（ハッシュ値や最終更新日時）と DB 側の記録が一致している。
+
 #### 5.1.1 Indexes (Scores)
 
 | Index Name            | Columns              | Type   | Usage                                |
@@ -385,13 +392,6 @@ sequenceDiagram
 | `idx_scores_work_id`  | `(work_id)`          | B-Tree | 外部キーによる検索                   |
 | `idx_scores_slug`     | `(work_id, slug)`    | **UNIQUE** | 楽曲内でのスラグ一意性・基本取得     |
 | `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
-
-> [!NOTE]
-> **`is_repository_synced` の同期判定基準**:
-> 以下の条件がすべて満たされた場合に `1` (True) と見なします。それ以外（更新待機中、またはエラー発生時）は `0` です。
-> 1. **Data Presence**: `repository_url` からの取得データが `data` カラム（または外部ストレージ）に正常に保存されている。
-> 2. **Integrity**: 取得した楽譜データが破損しておらず、楽曲マスタとの関連付けが完了している。
-> 3. **Version Match**: 同期元が提供するメタデータ（ハッシュ値や最終更新日時）と DB 側の記録が一致している。
 
 #### 5.1.2 JSON Type Definitions
 
