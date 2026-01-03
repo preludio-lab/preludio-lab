@@ -112,6 +112,8 @@ eras:
 #        - 多楽章形式の作品においては、作品全体だけでなく、「楽章ごと」に異なるMoodタグの選定を検討せよ（例：月光ソナタの第1楽章は `serene`, 第3楽章は `passionate`）。
 #    - 利用シーン（Situation）の提案戦略:
 #        - 記事生成時、AIは「その曲を聴くのに最適な具体的なシーン」を100文字程度のストーリーで描写し、タグと連動させよ。
+#    - 歴史と発見（History & Discovery）の抽出戦略:
+#        - 単にジャンルを特定するだけでなく、「誰に捧げられたか（愛の捧げもの）」「初演時のスキャンダル」「政治的背景」「自然描写」などのエピソードを検索し、該当すれば `terminology` タグを付与せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -1069,42 +1071,95 @@ tags:
   # ----------------------------------------
   - category: terminology
     items:
+      # --- Technical & Sound (技術・音響的特徴) ---
       - id: virtuoso
         label_ja: 超絶技巧
         label_en: Virtuoso
-        description: 人間離れした技術、圧倒的な指回りを堪能する。
+        description: 人間離れした技術、圧倒的な指回りを堪能する作品。
       - id: period-instrument
         label_ja: 古楽器演奏
         label_en: Period Instrument
-        description: 作曲当時の楽器による、素朴で刺激的な響き。
-      - id: minimalism
-        label_ja: ミニマル・ミュージック
-        label_en: Minimalism
-        description: 反復が生み出すトランス感と微細な変化。
-      - id: unfinished
-        label_ja: 未完成
-        label_en: Unfinished
-        description: 作曲家の死などにより、途絶えてしまった作品。
+        description: 作曲当時の楽器（ピリオド楽器）による、素朴で刺激的な響き。
       - id: transcription
         label_ja: 編曲・トランスクリプション
         label_en: Transcription
-        description: もともと別の楽器のために書かれた曲を移し替えたもの。
+        description: 他の楽器のために書かれた曲を、異なる楽器のために移し替えたもの。
       - id: pizzicato
         label_ja: ピチカート
         label_en: Pizzicato
-        description: 弦を指で弾く奏法。コミカルあるいは神秘的な効果。
+        description: 弦を指で弾く奏法が印象的、あるいは全体を支配する楽曲。
+
+      # --- History & Story (歴史・エピソード) ---
+      - id: premiere-scandal
+        label_ja: 初演のスキャンダル
+        label_en: Premiere Scandal
+        description: 初演時に物議を醸し、音楽史を塗り替えた衝撃作。
+      - id: dedication-love
+        label_ja: 献呈と愛の物語
+        label_en: Dedication & Love
+        description: 特定の人物への思慕や愛着、恋心から生まれた私的な背景。
+      - id: unfinished-beauty
+        label_ja: 未完成の美
+        label_en: Unfinished
+        description: 作曲家の死などにより途絶えたが、その欠落ゆえに愛される作品。
+      - id: rediscovered
+        label_ja: 再発見された傑作
+        label_en: Rediscovered Masterpiece
+        description: 長らく忘れられていたが、近年その価値が再認識された楽曲。
+      - id: posthumous-work
+        label_ja: 遺作
+        label_en: Posthumous Work
+        description: 作曲家の死後に発見・発表された、最後の手記のような作品。
+      - id: political-influence
+        label_ja: 時代・政治の荒波
+        label_en: Political Influence
+        description: 戦争、革命、検閲などの社会的情勢から強い影響を受けた曲。
+
+      # --- Cultural & Artistic Context (文化的・芸術的文脈) ---
+      - id: minimalism
+        label_ja: ミニマル・ミュージック
+        label_en: Minimalism
+        description: 反復が生み出すトランス感と、微細な変化を味わう。
       - id: national-style
         label_ja: 民族主義・国民楽派
         label_en: Nationalism
-        description: その土地特有の民謡やリズムを色濃く反映した音楽。
+        description: その土地特有の民謡、リズム、伝説を色濃く反映した音楽。
+      - id: nature-depiction
+        label_ja: 自然の描写
+        label_en: Depiction of Nature
+        description: 嵐、水、鳥の声など、自然界の現象を音楽で鮮やかに描いた作品。
+      - id: literary-inspired
+        label_ja: 文学との対話
+        label_en: Literary Inspired
+        description: 詩、小説、神話などの文学から直接的なインスピレーションを受けた作品。
       - id: avant-garde
         label_ja: 前衛的
         label_en: Avant-garde
-        description: 既存の価値観を破壊する、実験的で衝撃的な響き。
-      - id: easy-listening
-        label_ja: イージーリスニング・BGM
-        label_en: Easy Listening
-        description: クラシックの枠を超えて親しまれる、聴きやすい名曲。
+        description: 既存の価値観を破壊し、新たな響きを追求する実験的・挑戦的な作品。
+      - id: accessible-classics
+        label_ja: 親しみやすい名曲（BGM）
+        label_en: Accessible Classics / BGM
+        description: クラシックの枠を超えて親しまれる、メロディが美しく聴きやすい楽曲。
+
+      # --- Curated Selections (選定・評価) ---
+      - id: standard-repertoire
+        label_ja: 世界標準の名曲（王道）
+        label_en: Standard Repertoire
+        description: 音楽史上、最も重要かつ頻繁に演奏される「王道中の王道」。
+      - id: hidden-gem
+        label_ja: 隠れた名曲
+        label_en: Hidden Gem
+        description: 知名度は高くないが、音楽的クオリティが非常に高く愛好家に好まれる。
+
+      # --- Expert Perspectives (専門的視点) ---
+      - id: manuscript-urtext
+        label_ja: 自筆譜・原典版の探求
+        label_en: Manuscript / Urtext Focus
+        description: 校訂や自筆譜の研究を通じ、作曲家の真の意図に迫る視点。
+      - id: cyclic-theme
+        label_ja: 循環主題・統一構造
+        label_en: Cyclic Theme
+        description: 全楽章を通じて共通の主題が現れる、強固な統一感を持つ形式。
 
   # ----------------------------------------
   # Duration: 演奏時間・規模感
