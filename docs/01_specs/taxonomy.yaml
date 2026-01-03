@@ -249,42 +249,113 @@ genres:
     label_ja: 楽曲形式（メタジャンル）
     label_en: Musical Form
     items:
+      # --- 基本構造（Structural Forms） ---
       - id: sonata
         label_ja: ソナタ
         label_en: Sonata
-        description: ソナタ形式の楽章を含む多楽章構成。
+        description: 提示部・展開部・再現部を持つ「ソナタ形式」を核とする多楽章形式。
       - id: variations
         label_ja: 変奏曲
         label_en: Variations
-        description: 一つの主題を様々に変形させていく形式。
-      - id: fugue
+        description: 主題（Theme）をリズム、メロディ、和声面で変形させていく形式。
+      - id: fugue-counterpoint
         label_ja: フーガ・対位法
         label_en: Fugue / Counterpoint
-        description: 高度な模倣技術に基づくポリフォニー作品。
-      - id: rhapsody
-        label_ja: 狂詩曲（ラプソディ）
-        label_en: Rhapsody
-        description: 自由な形式で幻想的な民族色を持つ作品。
-      - id: march
-        label_ja: 行進曲
-        label_en: March
-        description: 四分の二拍子や四分の四拍子の強いリズムを持つ実用曲。
-      - id: dance
-        label_ja: 舞曲（ワルツ・ポロネーズ等）
-        label_en: Dance (Waltz, Polonaise, etc.)
-        description: 特定のリズムを持つ踊りのための、あるいは踊りを模した音楽。
+        description: 模倣対位法に基づく形式。カノン、インヴェンション、リチェルカーレを含む。
+      - id: suite-partita
+        label_ja: 組曲・パルティータ
+        label_en: Suite / Partita
+        description: 複数の舞曲や楽曲を組み合わせた形式。バロック組曲から近代組曲まで。
+      - id: rondo
+        label_ja: ロンド
+        label_en: Rondo
+        description: 共通の主題（ロンド主題）が、異なるエピソードを挟んで繰り返される形式。
+
+      # --- 性格的小品（Character Pieces） ---
+      - id: prelude
+        label_ja: 前奏曲
+        label_en: Prelude
+        description: 導入的な性格、あるいは自由な即興的性格を持つ独立した小品。
+      - id: nocturne
+        label_ja: 夜想曲（ノクターン）
+        label_en: Nocturne
+        description: 夜の静寂を思わせる、抒情的な旋律を主軸とした楽曲。
+      - id: impromptu
+        label_ja: 即興曲（アンプロンプチュ）
+        label_en: Impromptu
+        description: 即興演奏の自由さを持ちながら、一定の形式（三部形式等）を備えた楽曲。
+      - id: scherzo
+        label_ja: スケルツォ
+        label_en: Scherzo
+        description: 「冗談」を意味し、急速なテンポと三拍子、対照的な中間部を持つ形式。
+      - id: ballade
+        label_ja: バラード（叙事詩）
+        label_en: Ballade
+        description: 物語的な展開を持つ、規模の大きな器楽曲。ショパン、ブラームス等。
       - id: fantasia
         label_ja: 幻想曲（ファンタジア）
         label_en: Fantasia
-        description: 形式に縛られない即興的な性格を持つ作品。
-      - id: suite
-        label_ja: 組曲
-        label_en: Suite
-        description: 複数の関連する楽曲を順に演奏する多楽章形式。
+        description: 形式の制約が少なく、作曲家の自由な楽想の展開を優先した作品。
+      - id: intermezzo
+        label_ja: 間奏曲
+        label_en: Intermezzo
+        description: 楽章間やオペラの幕間に演奏される、または独立した叙情的な小品。
+
+      # --- 技術・華麗（Virtuosic Forms） ---
       - id: etude
         label_ja: 練習曲（エチュード）
         label_en: Étude
-        description: 特定の演奏技術の習得、あるいは芸術的な表現を目的とした楽曲。
+        description: 特定の演奏技法の修練、あるいはその技法を芸術的に昇華させた楽曲。
+      - id: toccata
+        label_ja: トッカータ
+        label_en: Toccata
+        description: 鍵盤楽器の速いパッセージや打鍵の技巧を誇示する、即興的な形式。
+      - id: caprice-capriccio
+        label_ja: 奇想曲（カプリッチョ）
+        label_en: Caprice / Capriccio
+        description: 気まぐれで自由な形式、または技巧的な性格の強い楽曲。
+      - id: rhapsody
+        label_ja: 狂詩曲（ラプソディ）
+        label_en: Rhapsody
+        description: 民族的・叙事的な主題を自由な構成で繋ぎ合わせた、幻想的な楽曲。
+
+      # --- 舞曲（Dances） ---
+      - id: waltz
+        label_ja: ワルツ
+        label_en: Waltz
+        description: 三拍子の舞曲。19世紀以降、舞踏用から芸術曲まで幅広く発展。
+      - id: polonaise
+        label_ja: ポロネーズ
+        label_en: Polonaise
+        description: ポーランド起源の、威厳ある独特のリズムを持つ三拍子の舞曲。
+      - id: mazurka
+        label_ja: マズルカ
+        label_en: Mazurka
+        description: ポーランドの民族舞踊。三拍子の第2、3拍にアクセントを持つ。
+      - id: march
+        label_ja: 行進曲
+        label_en: March
+        description: 四分の二拍子や四分の四拍子の、歩調を合わせるための規則的な音楽。
+      - id: minuet
+        label_ja: メヌエット
+        label_en: Minuet
+        description: 古典派の交響曲や組曲によく含まれる、優雅な三拍子の宮廷舞曲。
+      - id: baroque-dance-others
+        label_ja: バロック舞曲（その他）
+        label_en: Baroque Dances
+        description: サラバンド、ガヴォット、ジーグ、アルマンド等。
+
+      # --- 固執低音・変奏（Ground Bass Forms） ---
+      - id: chaconne-passacaglia
+        label_ja: シャコンヌ・パッサカリア
+        label_en: Chaconne / Passacaglia
+        description: 低音部の繰り返される主題（バッソ・オスティナート）に基づく変奏形式。
+
+      # --- 詩的・標題的（Programmatic / Narrative） ---
+      - id: program-narrative
+        label_ja: 標題音楽・物語的楽曲
+        label_en: Programmatic / Narrative
+        description: 音楽以外の物語、詩、風景などを具体的に描写する形式やスタイルの総称。
 
 # -----------------------------------------------------------------------------
 # 3. Instrumentations & Ensemble (編成)
@@ -511,10 +582,6 @@ tags:
   # ----------------------------------------
   - category: terminology
     items:
-      - id: counterpoint
-        label_ja: 対位法・フーガ
-        label_en: Counterpoint / Fugue
-        description: 複数の旋律が複雑に絡み合う知的遊戯。
       - id: virtuoso
         label_ja: 超絶技巧
         label_en: Virtuoso
@@ -527,26 +594,10 @@ tags:
         label_ja: ミニマル・ミュージック
         label_en: Minimalism
         description: 反復が生み出すトランス感と微細な変化。
-      - id: waltz
-        label_ja: ワルツ・舞曲
-        label_en: Waltz / Dance
-        description: 思わず身体が動くような3拍子のリズム。
-      - id: theme-and-variations
-        label_ja: 変奏曲
-        label_en: Theme and Variations
-        description: ひとつの主題が次々と姿を変えていく様を楽しむ。
       - id: unfinished
         label_ja: 未完成
         label_en: Unfinished
         description: 作曲家の死などにより、途絶えてしまった作品。
-      - id: program-music
-        label_ja: 標題音楽
-        label_en: Program Music
-        description: 物語や風景を具体的に描写した音楽。
-      - id: requiem
-        label_ja: レクイエム・鎮魂
-        label_en: Requiem
-        description: 死者のためのミサ曲、あるいは死を悼む音楽。
       - id: transcription
         label_ja: 編曲・トランスクリプション
         label_en: Transcription
