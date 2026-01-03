@@ -266,7 +266,7 @@ genres:
     label_en: Vocal / Choral
     items:
       - id: lied
-        label_ja: 歌曲 (Lied / Art Song)
+        label_ja: 歌曲
         label_en: Art Song / Lied
         description: 独唱とピアノのための叙情的作品。
       - id: song-cycle
@@ -1382,7 +1382,8 @@ tags:
 
 impression_scales:
   - id: brightness
-    label_ja: 明るさ (Brightness)
+    label_ja: 明るさ
+    label_en: Brightness
     description: 楽曲全体の色彩感。短調・長調だけでなく、音色の輝きを含む。
     min_label: Dark (暗鬱・重厚)
     max_label: Bright (明朗・輝き)
@@ -1414,7 +1415,8 @@ impression_scales:
         examples: Mozart 41 "Jupiter", Handel "Hallelujah", Beethoven 9
       
   - id: vibrancy
-    label_ja: 躍動感 (Vibrancy)
+    label_ja: 躍動感
+    label_en: Vibrancy
     description: エネルギーレベルとリズムの活性度。
     min_label: Calm (静寂・停滞)
     max_label: Energetic (躍動・爆発)
@@ -1446,7 +1448,8 @@ impression_scales:
         examples: Stravinsky "Rite of Spring", Khachaturian "Sabre Dance"
 
   - id: scale
-    label_ja: スケール (Scale)
+    label_ja: スケール
+    label_en: Scale
     description: 空間的な広がりと編成の規模感。
     min_label: Intimate (親密・個人的)
     max_label: Grand (壮大・宇宙的)
@@ -1478,7 +1481,8 @@ impression_scales:
         examples: Mahler 8 "Symphony of a Thousand", Holst "Planets", Wagner "Ring"
 
   - id: depth
-    label_ja: 聴きごたえ (Depth)
+    label_ja: 聴きごたえ
+    label_en: Depth
     description: 音楽の複雑さと、要求される聴取の集中度。
     min_label: Light (軽快・BGM)
     max_label: Deep (深遠・哲学的)
@@ -1496,7 +1500,7 @@ impression_scales:
       - score_range: [-2, 2]
         label_ja: 標準
         label_en: Balanced
-        definition: 音楽적ロジックと娯楽性のバランスが良い、標準的な作品。
+        definition: 音楽的ロジックと娯楽性のバランスが良い、標準的な作品。
         examples: Vivaldi "Four Seasons", Mozart "K.545"
       - score_range: [3, 6]
         label_ja: 思索・重厚
@@ -1510,7 +1514,8 @@ impression_scales:
         examples: Bach "Art of Fugue", Late Beethoven Quartets
 
   - id: drama
-    label_ja: ドラマ性 (Drama)
+    label_ja: ドラマ性
+    label_en: Drama
     description: 物語的な展開や感情の起伏の激しさ。
     min_label: Pure (純音楽的・抽象)
     max_label: Cinematic (映画的・劇的)
@@ -1542,7 +1547,8 @@ impression_scales:
         examples: Tchaikovsky 6 "Pathétique", Berlioz "Symphonie Fantastique"
 
   - id: popularity
-    label_ja: 知名度 (Popularity)
+    label_ja: 知名度
+    label_en: Popularity
     description: 一般社会における認知度。
     min_label: Niche (通好み・隠れた名曲)
     max_label: Famous (世界的定番)
@@ -1678,31 +1684,31 @@ nationalities:
 # ArticleMetadata.difficulty に対応。
 reading_levels:
   - id: 1
-    label_ja: はじめての1曲 (Beginner)
+    label_ja: はじめての1曲
     label_en: Beginner
     description: |
       初めてクラシックを聴く人向け。感情、イメージ、有名なメロディ、映画・CM等の利用例を中心に構成。
       **AI制約:** 音楽用語（ソナタ、和声等）は原則禁止。日常の言葉で「音の体験」を語る。
   - id: 2
-    label_ja: 一歩踏み込む (Elementary)
+    label_ja: 一歩踏み込む
     label_en: Elementary
     description: |
       楽器や編成に興味が出た人向け。楽器名、楽章構成、主旋律と伴奏の役割を解説。
       **AI制約:** 基本的な楽器知識を前提とするが、形式名などの専門用語は最小限に留める。
   - id: 3
-    label_ja: 構造を知る (Intermediate)
+    label_ja: 構造を知る
     label_en: Intermediate
     description: |
       時代背景や作曲家の意図に関心がある人向け。作品の「型（ソナタ形式、対位法等）」の解説。
       **AI制約:** 主要な音楽用語、調性、基本的な楽式を用いた構造的・歴史的な分析を含む。
   - id: 4
-    label_ja: 深く探求する (Advanced)
+    label_ja: 深く探求する
     label_en: Advanced
     description: |
       愛好家・学習者向け。演奏解釈の変遷、詳細な和声分析、主題の変容プロセスを紹介。
       **AI制約:** スコアを読める読者を想定。複雑な動機分析や、特定の演奏版の比較議論を行う。
   - id: 5
-    label_ja: 叡智の極致 (Virtuoso)
+    label_ja: 叡智の極致
     label_en: Virtuoso
     description: |
       研究者・専門家レベル。自筆譜の研究、最新の校訂報告、哲学的・数理的な深い洞察。
