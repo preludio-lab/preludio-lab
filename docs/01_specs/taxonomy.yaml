@@ -86,6 +86,10 @@ eras:
 # 1. 「ジャンル」「形式」「楽器」を完全に分けて管理し、直交的にタグ付けすること。
 #    例：ショパン『英雄ポロネーズ』 -> genre: piano-solo, form: dance, instrument: piano
 # 2. 1つの作品(Work)に対し、複数のアイテムを割り当てることを推奨（マルチカテゴリ許容）。
+# 3. AIエージェントへの判定プライオリティ指示:
+#    - Symphony等: `form: sonata` を基本としつつ、中間楽章の形式（ternary-binaryやvariations等）も適宜抽出せよ。
+#    - Lied: `form: strophic`（有節）か `form: through-composed`（通奏）かを最優先で判別せよ。
+#    - Piano Solo小品: 構造的に `form: ternary-binary` に該当しないか、まず検討せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -270,6 +274,22 @@ genres:
         label_ja: ロンド
         label_en: Rondo
         description: 共通の主題（ロンド主題）が, 異なるエピソードを挟んで繰り返される形式。
+      - id: ternary-binary
+        label_ja: 三部形式・二部形式
+        label_en: Ternary / Binary Form
+        description: A-B-A（三部）やA-B（二部）、および複合三部形式などの対称的な構造。多くの小品や舞曲の基本単位。
+      - id: strophic
+        label_ja: 有節形式
+        label_en: Strophic Form
+        description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲（Lied）における最も基本的な形式。
+      - id: through-composed
+        label_ja: 通奏形式
+        label_en: Through-composed
+        description: 反復を排し、歌詞や楽想の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
+      - id: cyclic-form
+        label_ja: 循環形式
+        label_en: Cyclic Form
+        description: 特定の主題や動機を全楽章に登場させ、作品全体に有機的な統一感と一貫性を与える手法。
 
       # --- 合唱・声楽形式（Vocal Forms） ---
       - id: aria
