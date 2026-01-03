@@ -393,6 +393,11 @@ sequenceDiagram
 | `idx_scores_slug`     | `(work_id, slug)`    | **UNIQUE** | 楽曲内でのスラグ一意性・基本取得     |
 | `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
 
+> [!NOTE]
+> **JSONカラム (`playback_samples`) のインデックスについて**:
+> SQLite/libSQLの標準的なB-Treeインデックスは、JSON全体の一致には機能しますが、内部の要素（`source_id`等）による部分的な検索を高速化するものではありません。
+> 録音ソースIDからの逆引きが頻繁に発生し、パフォーマンスが問題となる場合は、仮想カラム (Generated Column) を用いた機能インデックス、または正規化された交差テーブルの導入を検討してください。
+
 #### 5.1.2 JSON Type Definitions
 
 ##### 5.1.2.1 `playback_samples` (Playback Binding)
