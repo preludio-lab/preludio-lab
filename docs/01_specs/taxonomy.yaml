@@ -1184,24 +1184,47 @@ tags:
   # ----------------------------------------
   - category: occasion
     items:
+      # --- Seasonal (四季) ---
+      - id: seasonal-spring
+        label_ja: 春の訪れ・芽吹き
+        label_en: Spring / Awakening
+      - id: seasonal-summer
+        label_ja: 夏の夜・野外・情熱
+        label_en: Summer / Evening Selection
+      - id: seasonal-autumn
+        label_ja: 秋の夜長・郷愁
+        label_en: Autumn / Nostalgia
+      - id: seasonal-winter
+        label_ja: 冬の静寂・ぬくもり
+        label_en: Winter / Solitude
+
+      # --- Liturgical & Annual (典礼・恒例行事) ---
       - id: christmas
         label_ja: クリスマス・待降節
         label_en: Christmas / Advent
-      - id: easter-passion
-        label_ja: 復活祭・受難
-        label_en: Easter / Passion
-      - id: memorial-solemn
-        label_ja: 追悼・厳粛な儀式
-        label_en: Memorial / Solemn Ceremonies
       - id: new-year-celebration
         label_ja: 新年・祝祭
         label_en: New Year / Celebration
-      - id: seasonal-spring
-        label_ja: 春の訪れ
-        label_en: Spring / Awakening
-      - id: seasonal-summer
-        label_ja: 夏の夜・野外
-        label_en: Summer / Evening Selection
+      - id: easter-passion
+        label_ja: 復活祭・受難
+        label_en: Easter / Passion
+      - id: halloween-spooky
+        label_ja: ハロウィン・怪奇
+        label_en: Halloween / Spooky
+
+      # --- Life Events (人生の節目) ---
+      - id: wedding-celebration
+        label_ja: 結婚式・披露宴
+        label_en: Wedding Celebration
+      - id: memorial-solemn
+        label_ja: 追悼・厳粛な儀式
+        label_en: Memorial / Solemn Ceremonies
+      - id: graduation-departure
+        label_ja: 卒業・門出・別れ
+        label_en: Graduation / Farewell / Departure
+      - id: birthday-anniversary
+        label_ja: 誕生日・記念日
+        label_en: Birthday / Anniversary
 
   # ----------------------------------------
   # Pedagogy: 学習・分析・教育的視点
