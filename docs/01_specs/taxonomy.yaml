@@ -81,14 +81,13 @@ eras:
 # -----------------------------------------------------------------------------
 # 2. Genres (ジャンル)
 # -----------------------------------------------------------------------------
-# 大分類 (id) > 中分類 (children.id) の階層構造。
-# AIエージェントは可能な限り中分類（Children）を選択すること。
-# IDはURLの一部としても使用可能な短いslugとする。
+# カテゴリ (category) > アイテム (items) の構造。
+# AIエージェントはカテゴリを確認し、その中のアイテムから最適なものを選択すること。
 genres:
-  - id: orchestral
+  - category: orchestral
     label_ja: 管弦楽曲
     label_en: Orchestral
-    children:
+    items:
       - id: symphony
         label_ja: 交響曲
         label_en: Symphony
@@ -105,10 +104,10 @@ genres:
         label_ja: バレエ音楽
         label_en: Ballet
 
-  - id: concerto
+  - category: concerto
     label_ja: 協奏曲
     label_en: Concerto
-    children:
+    items:
       - id: piano-concerto
         label_ja: ピアノ協奏曲
         label_en: Piano Concerto
@@ -122,10 +121,10 @@ genres:
         label_ja: 管楽器のための協奏曲
         label_en: Wind Concerto
 
-  - id: chamber
+  - category: chamber
     label_ja: 室内楽曲
     label_en: Chamber Music
-    children:
+    items:
       - id: string-quartet
         label_ja: 弦楽四重奏曲
         label_en: String Quartet
@@ -136,10 +135,10 @@ genres:
         label_ja: 器楽ソナタ（伴奏付）
         label_en: Instrumental Sonata
 
-  - id: keyboard
+  - category: keyboard
     label_ja: 鍵盤楽曲
     label_en: Keyboard Music
-    children:
+    items:
       - id: piano-sonata
         label_ja: ピアノソナタ
         label_en: Piano Sonata
@@ -153,10 +152,10 @@ genres:
         label_ja: チェンバロ曲
         label_en: Harpsichord Music
 
-  - id: vocal
+  - category: vocal
     label_ja: 声楽曲
     label_en: Vocal Music
-    children:
+    items:
       - id: opera
         label_ja: オペラ
         label_en: Opera
