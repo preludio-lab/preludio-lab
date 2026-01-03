@@ -371,18 +371,42 @@ genres:
         label_ja: 練習曲（エチュード）
         label_en: Étude
         description: 特定の演奏技法の修練、あるいはその技法を芸術的に昇華させた楽曲。
+        examples: ["Chopin: Études", "Liszt: Transcendental Études"]
       - id: toccata
         label_ja: トッカータ
         label_en: Toccata
         description: 鍵盤楽器の速いパッセージや打鍵の技巧を誇示する、即興的な形式。
+        examples: ["Bach: Toccata and Fugue in D minor", "Schumann: Toccata"]
       - id: caprice-capriccio
         label_ja: 奇想曲（カプリッチョ）
         label_en: Caprice / Capriccio
         description: 気まぐれで自由な形式、または技巧的な性格の強い楽曲。
+        examples: ["Paganini: 24 Caprices", "Brahms: 7 Fantasies (Capriccios)"]
       - id: rhapsody
         label_ja: 狂詩曲（ラプソディ）
         label_en: Rhapsody
-        description: 民族的・叙事的な主題を自由な構成で繋ぎ合わせた、幻想的な楽曲。
+        description: 民族的・叙事的な主題を自由な構成で繋ぎ合わせた、幻想的かつ技巧的な楽曲。
+        examples: ["Liszt: Hungarian Rhapsodies", "Rachmaninoff: Rhapsody on a Theme of Paganini"]
+      - id: transcription-paraphrase
+        label_ja: パラフレーズ・編曲
+        label_en: Transcription / Paraphrase
+        description: 他の楽曲の主題を、特定の楽器のために技巧的に再構成・装飾した作品。
+        examples: ["Liszt: Rigoletto Paraphrase", "Busoni: Chaconne (Bach)"]
+      - id: concert-piece
+        label_ja: 演奏会用楽曲（コンツェルトシュテュック）
+        label_en: Concert Piece / Konzertstück
+        description: 独奏楽器と管弦楽のための、華麗な技巧を特徴とする単一楽章の作品。
+        examples: ["Weber: Konzertstück in F minor", "Saint-Saëns: Morceau de Concert"]
+      - id: cadenza
+        label_ja: カデンツァ
+        label_en: Cadenza
+        description: 協奏曲などで、独奏者が無伴奏で高度な技巧を披露する即興的（または記述された）部分。
+        examples: ["Beethoven: Cadenzas for Mozart's Piano Concerto No.20"]
+      - id: style-brillant
+        label_ja: 華麗なる様式（スタイル・ブリラン）
+        label_en: Style Brillant
+        description: 19世紀前半に流行した、技巧的で華やかな装飾を特徴とする様式。様々な形式と組み合わされる。
+        examples: ["Chopin: Grande valse brillante", "Weber: Rondo brillante"]
 
       # --- 舞曲（Dances） ---
       - id: waltz
@@ -667,10 +691,6 @@ tags:
         label_ja: 編曲・トランスクリプション
         label_en: Transcription
         description: もともと別の楽器のために書かれた曲を移し替えたもの。
-      - id: cadenza
-        label_ja: カデンツァ
-        label_en: Cadenza
-        description: 協奏曲などで演奏家が即興的に技術を披露する独奏部分。
       - id: pizzicato
         label_ja: ピチカート
         label_en: Pizzicato
