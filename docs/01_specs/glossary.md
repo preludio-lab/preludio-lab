@@ -35,18 +35,25 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
-| **Engagement** | `Engagement` | ユーザーの反応（Read, Scroll, Click等）の総称。 | 嗜好分析のため `passive`（滞在）/ `active`（クリック）に分類される。 |
-| **Audition** | `Audition` | 譜例や音源の再生実行アクション。 | 単なるページ閲覧（PV）より強い関心シグナル。 |
+| **Engagement** | `Engagement` | ユーザーの反応。没入やアクションの総称。 | 内部的に `passive` / `active` に分類して分析。 |
+| **Immersion** | `Immersion` | ユーザーの没入度を示す統合指標。 | `PageView`, `TimeOnPage`, `Audition` 等から算出される体験の質。 |
+| **PageView** | `PageView` | 記事が閲覧された回数。 | 単なるカウントではなく、楽曲が「発見」された機会。 |
+| **TimeOnPage** | `TimeOnPage` | 記事の滞在（没入）時間。 | 音楽を聴き、譜面を追う「質の高い時間」を計測。 |
+| **Audition** | `Audition` | 譜例や音源の再生実行アクション。 | 単なる閲覧より強い関心を示す重要シグナル。 |
 | **Like** | `Like` | 記事や楽曲への明示的な「お気に入り」。 | ユーザーが能動的に保存したポジティブな反応。 |
-| **Resonance** | `Resonance` | 楽曲に対する短い感想やメモの投稿。 | 単なる「Comment」ではなく、音楽との共鳴を記録するニュアンス。 |
+| **Resonance** | `Resonance` | 楽曲に対する短い感想やメモの投稿。 | 単なるコメントではなく、音楽との共鳴を記録する概念。 |
 | **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも個人の「書斎（Library）」的な趣。 |
-| **Mastery** | `Mastery` | 楽曲詳細を読み、音源も聴了して理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
-| **Impressions** | `Impressions` | 楽曲から受ける印象を複数の指標で数値化したもの（-10 〜 +10）。 | セマンティック・ディファレンシャル法による多次元評価。 |
-| **Member** | `Member` | 認証プロバイダーによる認証済みユーザー。 | サイトの「正会員」。UI上の呼称は「Maestro」。永続的なCollection等を保持できる。 |
-| **Guest** | `Guest` | 非ログイン（ゲスト）ユーザー。 | UI上の呼称は「Listener」。セッションベースで一時的なEngagementを保持。 |
-| **Persona** | `Persona` | 行動ログからAIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
-| **Personalized Intro** | `PersonalizedIntro` | AIが生成する、特定ユーザーにパーソナライズされた楽曲紹介文。 | サイト内での役割を重視した命名。UI上の呼称は「Overture（序曲）」。 |
-| **Navigation Flow** | `NavigationFlow` | ユーザーが楽曲間を遷移した軌跡。 | 「この曲の次はこれ」という相関関係の自動生成に使用。 |
+| **Mastery** | `Mastery` | 楽曲を聴了し、理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
+| **Impressions** | `Impressions` | 楽曲から受ける多次元評価（-10 〜 +10）。 | セマンティック・ディファレンシャル法による感性指標。 |
+| **AffiliateClick** | `AffiliateClick` | 外部販売サイト（楽譜・CD等）への遷移。 | ユーザー体験と収益性のバランスを測る重要指標。 |
+| **Exit** | `Exit` | 記事からの離脱。 | 離脱ポイントを特定し、AIによる改善（LPO）の根拠とする。 |
+| **SocialShare** | `SocialShare` | SNS等へのシェアアクション。 | 知見が外部へ波及したシグナル。 |
+| **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
+| **Member** | `Member` | 認証済みユーザー。 | UI上の呼称は「Maestro」。Collection等を保持できる。 |
+| **Guest** | `Guest` | 非ログイン（ゲスト）ユーザー。 | UI上の呼称は「Listener」。セッションベースで計測。 |
+| **Persona** | `Persona` | AIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
+| **PersonalizedIntro** | `PersonalizedIntro` | パーソナライズされた楽曲紹介文。 | UI上の呼称は「Overture（序曲）」。 |
+| **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係や流入ステップの分析に使用。 |
 
 ## 3. Editorial & Curation (編集・キュレーション)
 
