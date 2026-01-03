@@ -286,14 +286,6 @@ genres:
         label_ja: 二部形式
         label_en: Binary Form
         description: A-Bの二部構造。バロック時代の舞曲に多く見られ、後のソナタ形式へと発展する基礎となった形式。
-      - id: strophic
-        label_ja: 有節形式
-        label_en: Strophic Form
-        description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲（Lied）における最も基本的な形式。
-      - id: through-composed
-        label_ja: 通奏形式
-        label_en: Through-composed
-        description: 反復を排し、歌詞や楽想の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
       - id: cyclic-form
         label_ja: 循環形式
         label_en: Cyclic Form
@@ -308,6 +300,14 @@ genres:
         label_ja: レチタティーヴォ（叙唱）
         label_en: Recitative
         description: 話すようなテンポとリズムで、物語の状況や感情を説明する歌唱形式。
+      - id: strophic
+        label_ja: 有節形式
+        label_en: Strophic Form
+        description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲（Lied）における最も基本的な形式。
+      - id: through-composed
+        label_ja: 通奏形式
+        label_en: Through-composed
+        description: 反復を排し、歌詞や楽想の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
 
       # --- 性格的小品（Character Pieces） ---
       - id: prelude
