@@ -191,14 +191,10 @@ genres:
     label_ja: 鍵盤楽曲
     label_en: Keyboard Music
     items:
-      - id: piano-sonata
-        label_ja: ピアノソナタ
-        label_en: Piano Sonata
-        description: ピアノ一台のためのソナタ形式に基づく多楽章作品。
       - id: piano-solo
-        label_ja: ピアノ独奏曲（小品等）
-        label_en: Piano Solo (Character Piece)
-        description: 練習曲、夜想曲、前奏曲などのピアノ独奏用小品。
+        label_ja: ピアノ独奏曲（ソナタ・小品等）
+        label_en: Piano Solo (Sonata, Character Piece, etc.)
+        description: ピアノ一台のための独奏作品。ソナタ、練習曲、夜想曲などのあらゆる形式を含む。
       - id: piano-duo
         label_ja: 連弾・2台ピアノ
         label_en: Piano Duo (4-hands / 2 Pianos)
@@ -266,6 +262,10 @@ genres:
     label_ja: 楽曲形式（メタジャンル）
     label_en: Musical Form
     items:
+      - id: sonata
+        label_ja: ソナタ
+        label_en: Sonata
+        description: ソナタ形式の楽章を含む多楽章構成。
       - id: variations
         label_ja: 変奏曲
         label_en: Variations
@@ -294,6 +294,10 @@ genres:
         label_ja: 組曲
         label_en: Suite
         description: 複数の関連する楽曲を順に演奏する多楽章形式。
+      - id: etude
+        label_ja: 練習曲（エチュード）
+        label_en: Étude
+        description: 特定の演奏技術の習得、あるいは芸術的な表現を目的とした楽曲。
 
 # -----------------------------------------------------------------------------
 # 3. Instrumentations & Ensemble (編成)
