@@ -93,7 +93,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Compact Player** | `CompactPlayer` | 画面下部などに常駐し、再生制御を行うバー形式のプレイヤー。 | ユーザーが記事を読みながら操作するメインのコントロール。 (旧: Mini Player) |
 | **Immersive Player** | `ImmersivePlayer` | 作品の世界に没入するための、全画面表示の再生装置。 | 譜面、楽曲解説、音源が1つの画面に統合され、切り替えなしで深く鑑賞できる最高位のモード。 (旧: Focus Player) |
 | **Video Player** | `VideoPlayer` | YouTube等の動画コンテンツを埋め込み・再生する装置。 | 視覚的な演奏情報を含む Recording を表示する際に使用。 |
-| **Asset Pipeline** | `AssetPipeline` | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。 | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。 |
+| **Musical Media Pipeline** | `MusicalMediaPipeline` | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。 | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。 |
 | **Token** | `DesignToken` | デザインシステムにおける色、余白、フォントサイズ等の最小単位。 | Tailwind Config で定義される値を正とする。 |
 
 ## 5. Database & Infrastructure (データベース)
