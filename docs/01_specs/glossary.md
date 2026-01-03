@@ -42,7 +42,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも個人の「書斎（Library）」的な趣。 |
 | **Mastery** | `Mastery` | 楽曲詳細を読み、音源も聴了して理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
 | **Impressions** | `Impressions` | 楽曲から受ける印象を複数の指標で数値化したもの（-10 〜 +10）。 | セマンティック・ディファレンシャル法による多次元評価。 |
-| **Member** | `Member` | Google SSOによる認証済みユーザー。 | サイトの「正会員」。UI上の呼称は「Maestro」。永続的なCollection等を保持できる。 |
+| **Member** | `Member` | 認証プロバイダーによる認証済みユーザー。 | サイトの「正会員」。UI上の呼称は「Maestro」。永続的なCollection等を保持できる。 |
 | **Guest** | `Guest` | 非ログイン（ゲスト）ユーザー。 | UI上の呼称は「Listener」。セッションベースで一時的なEngagementを保持。 |
 | **Persona** | `Persona` | 行動ログからAIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
 | **Personalized Intro** | `PersonalizedIntro` | AIが生成する、特定ユーザーにパーソナライズされた楽曲紹介文。 | サイト内での役割を重視した命名。UI上の呼称は「Overture（序曲）」。 |
