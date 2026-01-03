@@ -87,9 +87,12 @@ eras:
 #    例：ショパン『英雄ポロネーズ』 -> genre: piano-solo, form: dance, instrument: piano
 # 2. 1つの作品(Work)に対し、複数のアイテムを割り当てることを推奨（マルチカテゴリ許容）。
 # 3. AIエージェントへの判定プライオリティ指示:
-#    - Symphony等: `form: sonata` を基本としつつ、中間楽章の形式（ternary-binaryやvariations等）も適宜抽出せよ。
+#    - Symphony等: `form: sonata` を基本としつつ、中間楽章の形式（ternary-formやvariations等）も適宜抽出せよ。
 #    - Lied: `form: strophic`（有節）か `form: through-composed`（通奏）かを最優先で判別せよ。
-#    - Piano Solo小品: 構造的に `form: ternary-binary` に該当しないか、まず検討せよ。
+#    - Character Pieces (小品):
+#        - 長さでの判定: `bagatelle`, `prelude` は比較的短く、`ballade`, `fantasia` は単一楽章でも規模が大きい。
+#        - 対照性での判定: `scherzo`, `humoresque` は中間に大きな気分の変化（Trio等）がある。
+#        - 雰囲気での判定: 6/8拍子で穏やかなら `barcarolle-berceuse`、静かで抒情的なら `nocturne` を検討せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -329,7 +332,7 @@ genres:
       - id: ballade
         label_ja: バラード（叙事詩）
         label_en: Ballade
-        description: 物語的な展開を持つ、規模の大きな器楽曲。ショパン、ブラームス等。
+        description: 物語的な展開を持つ、規模の大きな器楽曲。
       - id: fantasia
         label_ja: 幻想曲（ファンタジア）
         label_en: Fantasia
@@ -337,7 +340,31 @@ genres:
       - id: intermezzo
         label_ja: 間奏曲
         label_en: Intermezzo
-        description: 楽章間やオペラの幕間に演奏される、または独立した叙情的な小品。
+        description: 楽章間やオペラの幕間に演奏される、または独立した抒情的な小品。
+      - id: bagatelle
+        label_ja: バガテル
+        label_en: Bagatelle
+        description: 「些細なもの」を意味し、簡潔な形式の中に凝縮された楽想を持つ小品。
+      - id: humoresque
+        label_ja: ユモレスク
+        label_en: Humoresque
+        description: 気まぐれで、しばしばユーモラスな対照性を持つ。気分の急激な変化が特徴。
+      - id: romance
+        label_ja: ロマンス
+        label_en: Romance
+        description: 抒情的で親密な性格を持ち、器楽で「歌」を模したような旋律が主導する小品。
+      - id: arabesque
+        label_ja: アラベスク
+        label_en: Arabesque
+        description: 唐草模様のような装飾的な旋律線と、流動的なテクスチャを持つ優美な作品。
+      - id: barcarolle-berceuse
+        label_ja: 舟歌・子守歌
+        label_en: Barcarolle / Berceuse
+        description: 舟歌（6/8拍子の揺れ）や子守歌など、特定の情景やリズム定型に基づく抒情詩。
+      - id: elegy
+        label_ja: 悲歌（エレジー）
+        label_en: Elegy
+        description: 哀悼や悲しみを表現した楽曲。ゆったりとしたテンポと抒情性が特徴。
 
       # --- 技術・華麗（Virtuosic Forms） ---
       - id: etude
