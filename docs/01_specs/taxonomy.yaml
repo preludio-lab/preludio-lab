@@ -270,6 +270,7 @@ genres:
         label_ja: ロンド
         label_en: Rondo
         description: 共通の主題（ロンド主題）が, 異なるエピソードを挟んで繰り返される形式。
+
       # --- 合唱・声楽形式（Vocal Forms） ---
       - id: aria
         label_ja: アリア（詠唱）
