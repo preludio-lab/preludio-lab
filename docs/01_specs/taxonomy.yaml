@@ -1353,72 +1353,162 @@ impression_scales:
     description: 楽曲全体の色彩感。短調・長調だけでなく、音色の輝きを含む。
     min_label: Dark (暗鬱・重厚)
     max_label: Bright (明朗・輝き)
-    criteria: |
-      -10 ~ -7 (強い負): 葬送行進曲や、深い絶望を感じさせる深刻な短調。 (e.g. Mahler 6, Chopin "Funeral March", Tchaikovsky 6)
-      -6 ~ -3 (弱い負): 穏やかな哀愁、沈み込んだ雰囲気、または抑えられた色彩。 (e.g. Sibelius "Valse Triste", Rachmaninoff "Vocalise")
-      -2 ~ +2 (中立): 偏りのない安定感、古典派の標準的な長調・短調のバランス。 (e.g. Haydn Symphonies, Mozart Piano Sonatas)
-      +3 ~ +6 (弱い正): はつらつとした明るさ、活力、前向きなエネルギー。 (e.g. Schubert "Trout" Quintet, Rossini Overtures)
-      +7 ~ +10 (強い正): 圧倒的な祝典感、光溢れる長調、最高音域の輝き。 (e.g. Mozart 41 "Jupiter", Handel "Hallelujah", Beethoven 9)
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 葬送行進曲や、深い絶望を感じさせる深刻な短調。
+        examples: Mahler 6, Chopin "Funeral March", Tchaikovsky 6
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: 穏やかな哀愁、沈み込んだ雰囲気、または抑えられた色彩。
+        examples: Sibelius "Valse Triste", Rachmaninoff "Vocalise"
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: 偏りのない安定感、古典派の標準的な長調・短調のバランス。
+        examples: Haydn Symphonies, Mozart Piano Sonatas
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: はつらつとした明るさ、活力、前向きなエネルギー。
+        examples: Schubert "Trout" Quintet, Rossini Overtures
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 圧倒的な祝典感、光溢れる長調、最高音域の輝き。
+        examples: Mozart 41 "Jupiter", Handel "Hallelujah", Beethoven 9
       
   - id: vibrancy
     label_ja: 躍動感 (Vibrancy)
     description: エネルギーレベルとリズムの活性度。
     min_label: Calm (静寂・停滞)
     max_label: Energetic (躍動・爆発)
-    criteria: |
-      -10 ~ -7 (強い負): 時間が停止したような静止感、極端なスローテンポ。 (e.g. Satie "Gymnopédies", Pärt "Spiegel im Spiegel")
-      -6 ~ -3 (弱い負): 穏やかな流れ、瞑想的、または抑制された動き。 (e.g. Debussy "Clair de Lune", Bach "Air on the G String")
-      -2 ~ +2 (中立): 安定した歩み、極端な速さも遅さもない標準的なテンポ。 (e.g. Mozart "Eine kleine Nachtmusik", Bach Inventions)
-      +3 ~ +6 (弱い正): はっきりとしたリズミカルな推進力、軽快な躍動。 (e.g. Brahms "Hungarian Dances", Dvořák "Slavonic Dances")
-      +7 ~ +10 (強い正): 爆発的な熱量、超高速パッセージ、原始的なリズムの衝撃。 (e.g. Stravinsky "Rite of Spring", Khachaturian "Sabre Dance")
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 時間が停止したような静止感、極端なスローテンポ。
+        examples: Satie "Gymnopédies", Pärt "Spiegel im Spiegel"
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: 穏やかな流れ、瞑想的、または抑制された動き。
+        examples: Debussy "Clair de Lune", Bach "Air on the G String"
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: 安定した歩み、極端な速さも遅さもない標準的なテンポ。
+        examples: Mozart "Eine kleine Nachtmusik", Bach Inventions
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: はっきりとしたリズミカルな推進力、軽快な躍動。
+        examples: Brahms "Hungarian Dances", Dvořák "Slavonic Dances"
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 爆発的な熱量、超高速パッセージ、原始的なリズムの衝撃。
+        examples: Stravinsky "Rite of Spring", Khachaturian "Sabre Dance"
 
   - id: scale
     label_ja: スケール (Scale)
     description: 空間的な広がりと編成の規模感。
     min_label: Intimate (親密・個人的)
     max_label: Grand (壮大・宇宙的)
-    criteria: |
-      -10 ~ -7 (強い負): 最小限の編成、ささやくような極小の表現、個人的な独白。 (e.g. Webern "Bagatelles", Mompou "Musica Callada")
-      -6 ~ -3 (弱い負): ソロ楽器、親密な室内音楽、限られた空間での響き。 (e.g. Bach Cello Suites, Schumann "Kinderszenen")
-      -2 ~ +2 (中立): 標準的な室内楽（四重奏など）や、中規模の管弦楽。 (e.g. Haydn String Quartets, Mozart Symphonies)
-      +3 ~ +6 (弱い正): 豊かな広がりを持つ管弦楽、厚みのあるサウンド。 (e.g. Brahms Symphonies, Strauss "Don Juan")
-      +7 ~ +10 (強い正): 巨大編成、合唱付きの超大作、宇宙的な広がり。 (e.g. Mahler 8 "Symphony of a Thousand", Holst "Planets", Wagner "Ring")
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 最小限の編成、ささやくような極小の表現、個人的な独白。
+        examples: Webern "Bagatelles", Mompou "Musica Callada"
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: ソロ楽器、親密な室内音楽、限られた空間での響き。
+        examples: Bach Cello Suites, Schumann "Kinderszenen"
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: 標準的な室内楽（四重奏など）や、中規模の管弦楽。
+        examples: Haydn String Quartets, Mozart Symphonies
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: 豊かな広がりを持つ管弦楽、厚みのあるサウンド。
+        examples: Brahms Symphonies, Strauss "Don Juan"
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 巨大編成、合唱付きの超大作、宇宙的な広がり。
+        examples: Mahler 8 "Symphony of a Thousand", Holst "Planets", Wagner "Ring"
 
   - id: depth
     label_ja: 聴きごたえ (Depth)
     description: 音楽の複雑さと、要求される聴取の集中度。
     min_label: Light (軽快・BGM)
     max_label: Deep (深遠・哲学的)
-    criteria: |
-      -10 ~ -7 (強い負): 非常に分かりやすい、キャッチー、娯楽としての純粋な楽しさ。 (e.g. Pachelbel "Canon", Offenbach "Galop")
-      -6 ~ -3 (弱い負): 親しみやすいメロディ、分かりやすい構成。 (e.g. Elgar "Salut d'Amour", Strauss "Blue Danube")
-      -2 ~ +2 (中立): 音楽的ロジックと娯楽性のバランスが良い、標準的な作品。 (e.g. Vivaldi "Four Seasons", Mozart "K.545")
-      +3 ~ +6 (弱い正): 知的な構築、複雑な和声、聴き込みを要する展開。 (e.g. Brahms 4th Symphony, Debussy "La Mer")
-      +7 ~ +10 (強い正): 深遠な対位法、哲学的テーマ、精神的な極致にある難曲。 (e.g. Bach "Art of Fugue", Late Beethoven Quartets)
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 非常に分かりやすい、キャッチー、娯楽としての純粋な楽しさ。
+        examples: Pachelbel "Canon", Offenbach "Galop"
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: 親しみやすいメロディ、分かりやすい構成。
+        examples: Elgar "Salut d'Amour", Strauss "Blue Danube"
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: 音楽的ロジックと娯楽性のバランスが良い、標準的な作品。
+        examples: Vivaldi "Four Seasons", Mozart "K.545"
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: 知的な構築、複雑な和声、聴き込みを要する展開。
+        examples: Brahms 4th Symphony, Debussy "La Mer"
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 深遠な対位法、哲学的テーマ、精神的な極致にある難曲。
+        examples: Bach "Art of Fugue", Late Beethoven Quartets
 
   - id: drama
     label_ja: ドラマ性 (Drama)
     description: 物語的な展開や感情の起伏の激しさ。
     min_label: Pure (純音楽的・抽象)
     max_label: Cinematic (映画的・劇的)
-    criteria: |
-      -10 ~ -7 (強い負): 徹底した絶対音楽、数理的美、感情の表出を極限まで排除。 (e.g. Bach "Goldberg Variations", Webern Symphony)
-      -6 ~ -3 (弱い負): 形式美を重んじる美学、客観的で冷静な構造美。 (e.g. Haydn Symphonies, Mozart Clarinet Concerto)
-      -2 ~ +2 (中立): 感情豊かな表現と、形式への尊重が共存する中立状態。 (e.g. Schubert "Unfinished", Mendelssohn "Songs without Words")
-      +3 ~ +6 (弱い正): 標題、激しい起伏、感情の吐露、物語るような旋律。 (e.g. Liszt "Les Préludes", Rimsky-Korsakov "Scheherazade")
-      +7 ~ +10 (強い正): 圧倒的な人間ドラマ、激情、死と再生、映画のような劇性。 (e.g. Tchaikovsky 6 "Pathétique", Berlioz "Symphonie Fantastique")
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 徹底した絶対音楽、数理的美、感情の表出を極限まで排除。
+        examples: Bach "Goldberg Variations", Webern Symphony
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: 形式美を重んじる美学、客観的で冷静な構造美。
+        examples: Haydn Symphonies, Mozart Clarinet Concerto
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: 感情豊かな表現と、形式への尊重が共存する中立状態。
+        examples: Schubert "Unfinished", Mendelssohn "Songs without Words"
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: 標題、激しい起伏、感情の吐露、物語るような旋律。
+        examples: Liszt "Les Préludes", Rimsky-Korsakov "Scheherazade"
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 圧倒的な人間ドラマ、激情、死と再生、映画のような劇性。
+        examples: Tchaikovsky 6 "Pathétique", Berlioz "Symphonie Fantastique"
 
   - id: popularity
     label_ja: 知名度 (Popularity)
     description: 一般社会における認知度。
     min_label: Niche (通好み・隠れた名曲)
     max_label: Famous (世界的定番)
-    criteria: |
-      -10 ~ -7 (強い負): 専門家や熱狂的愛好家のみが知る、発掘されたばかりの超ニッチ作。 (e.g. obscure manuscript findings)
-      -6 ~ -3 (弱い負): 通好みの名曲、あるいは特定の国や楽器の熱烈な支持層のみに有名。 (e.g. Alkan, Medtner, Suk)
-      -2 ~ +2 (中立): コンサートの定番（レパートリー）だが、一般社会では認知が限定的。 (e.g. Brahms "Horn Trio", Mendelssohn "Octet")
-      +3 ~ +6 (弱い正): クラシックファンならずとも、聞き馴染みのある準定番。 (e.g. Chopin Nocturne Op.9-2, Vivaldi "Spring")
-      +7 ~ +10 (強い正): 人類の遺産。イントロだけで誰でも分かる、説明不要の世界的大定番。 (e.g. Beethoven 5 "Fate", "Ode to Joy", Pachelbel "Canon")
+    criteria:
+      - score_range: [-10, -7]
+        label: 強い負 (Extreme Negative)
+        definition: 専門家や熱狂的愛好家のみが知る、発掘されたばかりの超ニッチ作。
+        examples: obscure manuscript findings
+      - score_range: [-6, -3]
+        label: 弱い負 (Notable Negative)
+        definition: 通好みの名曲、あるいは特定の国や楽器の熱烈な支持層のみに有名。
+        examples: Alkan, Medtner, Suk
+      - score_range: [-2, 2]
+        label: 中立 (Neutral)
+        definition: コンサートの定番（レパートリー）だが、一般社会では認知が限定的。
+        examples: Brahms "Horn Trio", Mendelssohn "Octet"
+      - score_range: [3, 6]
+        label: 弱い正 (Notable Positive)
+        definition: クラシックファンならずとも、聞き馴染みのある準定番。
+        examples: Chopin Nocturne Op.9-2, Vivaldi "Spring"
+      - score_range: [7, 10]
+        label: 強い正 (Extreme Positive)
+        definition: 人類の遺産。イントロだけで誰でも分かる、説明不要の世界的大定番。
+        examples: Beethoven 5 "Fate", "Ode to Joy", Pachelbel "Canon"
 
 # -----------------------------------------------------------------------------
 # 6. Nationalities (国・地域)
