@@ -56,12 +56,11 @@ erDiagram
     %% Core Tables: Articles
     Works ||--o{ Articles : "featured in"
     Articles ||--|{ ArticleTranslations : "has localized content"
-    Tags ||..o{ ArticleTranslations : "categorizes (snapshot)"
 
-    %% Series Tables
-    Series ||--|{ SeriesTranslations : "has localized content"
+    %% Series Tables (Structural Decorator)
+    Articles ||--o| Series : "is the header of"
     Series ||--o{ SeriesArticles : "contains"
-    Articles ||--o{ SeriesArticles : "included in"
+    Articles ||--o{ SeriesArticles : "is member of"
 
     %% Asset Tables: Scores & Recordings
     Works ||--o{ Scores : "has sheet music"
@@ -185,14 +184,15 @@ type ArticleMetadata = {
 
 ##### 3.2.1.4 `sl_series_assignments` (Series Membership Snapshot)
 
-この記事が所属するシリーズの情報。記事詳細ページでの「シリーズ導線」描画に使用します。
+この記事が所属するシリーズの情報。記事詳細ページでの「シリーズ導線（前後の記事へのリンク等）」描画に使用します。
+Read-Optimizedポリシーに基づき、URL生成に必要な **`series_slug`** を冗長に保持することで、遷移時のSlug解決クエリを排除します。
 
 ```typescript
 type SeriesAssignment = {
-  series_id: string;
-  series_slug: string;
-  series_title: string;
-  sort_order: number;
+  series_id: string; // Series ID
+  series_slug: string; // Series (Article) Slug
+  series_title: string; // Localized Title
+  sort_order: number; // Order within this series
 };
 ```
 ```
@@ -295,69 +295,60 @@ sequenceDiagram
 
 ---
 
+---
+
 ## 4. Series Tables (Collections)
 
-複数の記事を特定のテーマでまとめた「シリーズ」を管理するテーブル群。
+複数の記事をテーマで束ねる「シリーズ」を管理します。
+**「シリーズもまた一つの記事である」** という定義に基づき、シリーズ自体のタイトル、キャッチコピー、解説本文などの多言語コンテンツはすべて `articles` / `article_translations` テーブルを再利用します。
 
-### 4.1 `series` (Collection Master)
+### 4.1 `series` (Structure Decorator)
 
-シリーズの実体を管理する親テーブル。
+ある記事を「シリーズの親（ヘッダー）」として定義し、子記事を束ねるためのメタデータ。
 
 | Column        | Type      | Default | NOT NULL | CHECK                        | Description                                       |
 | :------------ | :-------- | :------ | :------- | :--------------------------- | :------------------------------------------------ |
 | **`id`**      | `text`    | -       | YES      | -                            | **PK**. UUID v7                                   |
-| `slug`        | `text`    | -       | YES      | -                            | **Universal Slug** (SEO用)                         |
-| `is_featured` | `integer` | `0`     | YES      | `IN (0, 1)`                  | おすすめフラグ                                     |
+| `article_id`  | `text`    | -       | YES      | -                            | **FK to `articles.id`**. このシリーズの「顔」となる記事 |
 | `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                          |
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                          |
 
 #### 4.1.1 Indexes (Series)
 
-| Index Name              | Columns                     | Type   | Usage                              |
-| :---------------------- | :-------------------------- | :----- | :--------------------------------- |
-| `idx_series_slug`       | `(slug)`                    | **UNIQUE** | ルーティング用                     |
-| `idx_series_featured`   | `(is_featured, created_at)` | B-Tree | ピックアップ表示                   |
+| Index Name              | Columns           | Type   | Usage                |
+| :---------------------- | :---------------- | :----- | :------------------- |
+| `idx_series_article_id` | `(article_id)`    | **UNIQUE** | 記事1つにつき1シリーズ |
 
-### 4.2 `series_translations` (Localized Metadata)
+### 4.2 `series_articles` (Membership Relationship)
 
-シリーズの多言語コンテンツ。
-
-| Column | Type | Default | NOT NULL | CHECK | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **`id`** | `text` | - | YES | - | **PK**. |
-| `series_id` | `text` | - | YES | - | FK to `series.id` |
-| `lang` | `text` | - | YES | - | ISO Language Code |
-| `title` | `text` | - | YES | - | シリーズ正味タイトル |
-| **`display_title`** | `text` | - | YES | - | 一覧表示用タイトル |
-| **`catchcopy`** | `text` | - | NO | - | サムネイル用キャッチコピー |
-| `description` | `text` | - | NO | - | シリーズの解説・プレフィックス文 |
-| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
-| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
-
-#### 4.2.1 Indexes (Series Translations)
-
-| Index Name                  | Columns              | Type   | Usage                |
-| :-------------------------- | :------------------- | :----- | :------------------- |
-| `idx_series_trans_lookup`   | `(series_id, lang)`  | **UNIQUE** | 取得用               |
-
-### 4.3 `series_articles` (Membership Relationship)
-
-シリーズと記事を紐付ける中間テーブル。リレーションシップの堅牢性と並び順管理を担保します。
+シリーズと所属する子記事を紐付ける中間テーブル。
 
 | Column      | Type      | Default | NOT NULL | CHECK | Description |
 | :---------- | :-------- | :------ | :------- | :---- | :---------- |
 | **`series_id`** | `text` | - | YES | - | FK to `series.id` |
-| **`article_id`** | `text` | - | YES | - | FK to `articles.id` |
-| `sort_order` | `integer` | `0` | YES | - | 並び順 (10, 20... で管理) |
+| **`article_id`** | `text` | - | YES | - | FK to `articles.id` (子記事) |
+| `sort_order` | `integer` | `0` | YES | - | シリーズ内での順番。管理UI側で10刻み等で制御 |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
-#### 4.3.1 Indexes (Series Articles)
+#### 4.2.1 Indexes (Series Articles)
 
 | Index Name              | Columns                       | Type   | Usage                                  |
 | :---------------------- | :---------------------------- | :----- | :------------------------------------- |
 | `idx_ser_art_lookup`    | `(series_id, article_id)`      | **UNIQUE** | 重複登録防止                           |
-| `idx_ser_art_order`     | `(series_id, sort_order)`      | B-Tree | シリーズ内での記事取得・ソート         |
-| `idx_ser_art_article`   | `(article_id)`                 | B-Tree | 記事側からの所属シリーズ逆引き         |
+| `idx_ser_art_order`     | `(series_id, sort_order)`      | B-Tree | 基本の並び順による取得                 |
+| `idx_ser_art_article`   | `(article_id)`                 | B-Tree | 子記事側からの所属シリーズ逆引き       |
+
+> [!TIP]
+> **動的なソートの扱い**:
+> 「作曲年順」「作曲家順」などの動的なソートは、アプリケーション層で `article_translations` 等と JOIN を行うことで対応します（コレクション表示などの動的クエリは Zero-JOIN ポリシーの例外として許容します）。
+
+#### 4.2.2 i18n Robustness (多言語への対応)
+
+シリーズの子記事一覧を取得する際、特定の言語で翻訳が存在しない異常系は、アプリケーション（Repository層）の責務として以下のいずれかで対応します：
+1. **Fallback**: デフォルト言語（Englishなど）の記事情報を表示。
+2. **Filter**: 翻訳が存在する記事のみを一覧に表示。
+マスタの `article_translations` の存在有無を起点とした LEFT JOIN による制御、または `sl_series_assignments` の有効性をアプリケーション側で検証します。
 
 ---
 
@@ -683,6 +674,7 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
 
 非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
 
-1.  **Maintenance Agent:** GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
-2.  **Bulk Update:** マスタデータ (`Composers`, `Works`) に変更があった場合、関連する `article_translations` の `sl_` カラムを一括更新します。
-3.  **Scope:** この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
+1.  **Maintenance Agent**: GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
+2.  **Snapshot Update**: マスタデータ (`Composers`, `Works`) またはシリーズ構成 (`SeriesArticles`) に変更があった場合、関連する `article_translations` の `sl_` カラムを一括更新します。
+3.  **Consistency Guarantee**: シリーズに追加された記事は、独自の `sl_series_assignments` 列を更新することで、記事単体のフェッチのみで「シリーズ導線」を完結させます。
+4.  **Scope**: この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
