@@ -255,9 +255,13 @@ genres:
     items:
       # --- 基本構造（Structural Forms） ---
       - id: sonata
-        label_ja: ソナタ
-        label_en: Sonata
-        description: 提示部・展開部・再現部を持つ「ソナタ形式」を核とする多楽章形式。
+        label_ja: ソナタ（多楽章構成）
+        label_en: Sonata (Multi-movement)
+        description: 急ー緩ー（舞曲）ー急などの楽章配置を持つ多楽章形式。ソナタ、交響曲、室内楽曲などの全体的な枠組み。
+      - id: sonata-form
+        label_ja: ソナタ形式
+        label_en: Sonata Form
+        description: 提示部・展開部・再現部の構成原理。単一楽章（序曲や交響曲の第1楽章など）の内的な形式を指す。
       - id: variations
         label_ja: 変奏曲
         label_en: Variations
