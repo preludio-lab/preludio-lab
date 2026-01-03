@@ -181,6 +181,7 @@ type ArticleMetadata = {
   reading_style?: 'brief' | 'standard' | 'deep_dive'; // Intent for reading depth
   target_audience?: 'listener' | 'performer' | 'both'; // Target user segment
 };
+```
 
 ##### 3.2.1.4 `sl_series_assignments` (Series Membership Snapshot)
 
@@ -194,7 +195,6 @@ type SeriesAssignment = {
   series_title: string; // Localized Title
   sort_order: number; // Order within this series
 };
-```
 ```
 
 #### 3.2.2 インデックス (Article Translations)
@@ -345,9 +345,11 @@ sequenceDiagram
 
 #### 4.2.2 i18n Robustness (多言語への対応)
 
-シリーズの子記事一覧を取得する際、特定の言語で翻訳が存在しない異常系は、アプリケーション（Repository層）の責務として以下のいずれかで対応します：
-1. **Fallback**: デフォルト言語（Englishなど）の記事情報を表示。
-2. **Filter**: 翻訳が存在する記事のみを一覧に表示。
+シリーズの子記事一覧を取得する際、特定の言語で翻訳が存在しない異常系は、アプリケーション（Repository層）の責務として **「Filter（翻訳が存在する記事のみを表示）」を原則** とします。
+
+1. **Filter (Standard)**: 翻訳が存在する記事のみを一覧に表示。
+2. **Fallback (Optional)**: デフォルト言語（Englishなど）の記事情報を表示。
+
 マスタの `article_translations` の存在有無を起点とした LEFT JOIN による制御、または `sl_series_assignments` の有効性をアプリケーション側で検証します。
 
 ---
