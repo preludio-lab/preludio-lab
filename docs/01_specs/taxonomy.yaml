@@ -178,6 +178,10 @@ genres:
         label_ja: 器楽ソナタ（伴奏付）
         label_en: Instrumental Sonata (with Piano)
         description: 独奏楽器とピアノのためのソナタ。
+      - id: keyboard-ensemble
+        label_ja: 鍵盤アンサンブル（連弾・2台ピアノ）
+        label_en: Keyboard Ensemble (4-hands / 2 Pianos)
+        description: 複数人によるピアノ演奏などの鍵盤アンサンブル曲。
       - id: chamber-wind
         label_ja: 管楽アンサンブル（木管五重奏等）
         label_en: Wind Ensemble
@@ -187,43 +191,26 @@ genres:
         label_en: Mixed Large Ensemble
         description: 五重奏、六重奏、八重奏などと比較的大規模な室内楽。
 
-  - category: solo-keyboard
-    label_ja: 鍵盤楽曲
-    label_en: Keyboard Music
+  - category: solo
+    label_ja: 独奏曲
+    label_en: Solo Music
     items:
-      - id: piano-solo
-        label_ja: ピアノ独奏曲（ソナタ・小品等）
-        label_en: Piano Solo (Sonata, Character Piece, etc.)
-        description: ピアノ一台のための独奏作品。ソナタ、練習曲、夜想曲などのあらゆる形式を含む。
-      - id: piano-duo
-        label_ja: 連弾・2台ピアノ
-        label_en: Piano Duo (4-hands / 2 Pianos)
-        description: 複数人によるピアノ演奏作品。
-      - id: organ
-        label_ja: オルガン曲
-        label_en: Organ Works
-        description: オルガンのための独奏曲、コラール前奏曲など。
-      - id: harpsichord
-        label_ja: チェンバロ・クラヴィーア曲
-        label_en: Harpsichord / Clavier Works
-        description: チェンバロ、あるいは初期鍵盤楽器のための作品。
-
-  - category: solo-other
-    label_ja: 器楽独奏（非鍵盤）
-    label_en: Instrumental Solo
-    items:
-      - id: solo-violin
-        label_ja: 無伴奏ヴァイオリン曲
-        label_en: Unaccompanied Violin Solo
-        description: ヴァイオリン一台のみでの演奏。
-      - id: solo-cello
-        label_ja: 無伴奏チェロ曲
-        label_en: Unaccompanied Cello Solo
-        description: チェロ一台のみでの演奏。
+      - id: keyboard-solo
+        label_ja: 鍵盤独奏
+        label_en: Keyboard Solo
+        description: ピアノ、オルガン、チェンバロ等の鍵盤楽器一台のための作品。
+      - id: string-solo
+        label_ja: 弦楽器独奏
+        label_en: String Solo
+        description: ヴァイオリン、チェロ等の弦楽器一台のみによる作品（無伴奏）。
+      - id: wind-solo
+        label_ja: 管楽器独奏
+        label_en: Wind Solo
+        description: フルート、クラリネット等の管楽器一台のみによる作品（無伴奏）。
       - id: solo-other-inst
-        label_ja: その他無伴奏楽器曲（フルート・ギター等）
-        label_en: Other Unaccompanied Solos
-        description: 鍵盤以外の楽器による独奏曲。
+        label_ja: その他独奏
+        label_en: Other Instrumental Solo
+        description: ギター、打楽器など、上記以外の一台の楽器による作品。
 
   - category: vocal-choral
     label_ja: 声楽・合唱曲
