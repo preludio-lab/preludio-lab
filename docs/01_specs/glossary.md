@@ -63,14 +63,15 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Exit** | `Exit` | 記事からの離脱。 | 離脱ポイントを特定し、AIによる改善（LPO）の根拠とする。 |
 | **SocialShare** | `SocialShare` | SNS等へのシェアアクション。 | 知見が外部へ波及したシグナル。 |
 | **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
-| **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係や流入ステップの分析に使用。 |
+| **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係の分析や、AIによる次楽曲推薦（Next-to-Play）の学習用データとして使用。 |
 
 ## 3. Editorial & Curation (編集・キュレーション)
 
-運営・編集上の意図や管理状態に関する定義です。
+運営・編集上の意図や管理状態に関する定義。
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
+| **Source Attribution** | `SourceAttribution` | 記事生成や楽曲解説に使用した参考文献や一次情報の根拠。 | 10,000記事の信頼性を担保するため、IMSLPやWikipedia等のソースを明示する。 |
 | **Featured** | `is_featured` | トップページ等で優先的に紹介される「おすすめ記事」の状態。 | 単なる新着ではなく、サイトの「顔」として編集部がキュレートした記事。 |
 | **Recommended** | `is_recommended` | 1つの作品（Work）に対し、特に鑑賞を推奨する録音（Recording）。 | 膨大な録音の中から、入門者や深掘りしたいユーザーにまず勧めるべき「名盤」。 |
 | **Status** | `ContentStatus` | 記事の公開・管理状態（Draft, Published 等）。 | ユーザーへの公開可否を制御する基本的なライフサイクル。 |
@@ -90,8 +91,9 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Playback Binding** | `PlaybackBinding` | 譜例（Musical Example）と音源の特定の時間（秒数）を紐付ける定義。 | 譜例の再生ボタンが録音の「どこ」から再生されるかを司る連携ロジック。 |
 | **Player** | `Player` | 音源（Recording）を再生するUIコンポーネントの総称。 | 以下の `Compact`, `Immersive`, `Video` の各プレイヤーを包含する抽象概念。 |
 | **Compact Player** | `CompactPlayer` | 画面下部などに常駐し、再生制御を行うバー形式のプレイヤー。 | ユーザーが記事を読みながら操作するメインのコントロール。 (旧: Mini Player) |
-| **Immersive Player** | `ImmersivePlayer` | 作品の世界に没入するための、全画面表示の再生装置。 | 譜面や楽曲解説をより詳細に、集中して閲覧・試聴するためのモード。 (旧: Focus Player) |
+| **Immersive Player** | `ImmersivePlayer` | 作品の世界に没入するための、全画面表示の再生装置。 | 譜面、楽曲解説、音源が1つの画面に統合され、切り替えなしで深く鑑賞できる最高位のモード。 (旧: Focus Player) |
 | **Video Player** | `VideoPlayer` | YouTube等の動画コンテンツを埋め込み・再生する装置。 | 視覚的な演奏情報を含む Recording を表示する際に使用。 |
+| **Asset Pipeline** | `AssetPipeline` | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。 | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。 |
 | **Token** | `DesignToken` | デザインシステムにおける色、余白、フォントサイズ等の最小単位。 | Tailwind Config で定義される値を正とする。 |
 
 ## 5. Database & Infrastructure (データベース)
