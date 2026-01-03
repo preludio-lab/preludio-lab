@@ -1725,7 +1725,7 @@ reading_levels:
 performance_difficulty:
   - id: 1
     label_ja: 初級
-    label_en: Basic / Elementary
+    label_en: Beginner
     description: 子供や趣味の初心者が数ヶ月〜1年程度で弾けるレベル。基本的な音階と単純なリズム。
     examples: バッハ「メヌエット」、ブルグミュラー「素直な心」
   - id: 2
