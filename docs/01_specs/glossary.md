@@ -29,30 +29,39 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Era** | `Era` | 音楽史における時代区分（例：Baroque, Romantic）。 | `Category='era'` のタグとして管理される。 |
 | **Instrumentation** | `Instrumentation` | その作品を演奏するために必要な楽器の構成（例：ピアノ独奏、弦楽四重奏）。 | 楽曲の検索・分類における最重要軸の一つ。具体的な項目は Taxonomy にて定義される。 |
 
-## 2. User & Interaction (ユーザーサイド)
+## 2. User & Interaction (ユーザー)
 
-ユーザーの行動や状態に関する定義です。
+### 2.1. Interaction & User Concepts (行動・ユーザー概念)
+
+ユーザーの直接的なアクションや、サイト上での状態・役割に関する定義。
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
 | **Engagement** | `Engagement` | ユーザーの反応。没入やアクションの総称。 | 内部的に `passive` / `active` に分類して分析。 |
-| **Immersion** | `Immersion` | ユーザーの没入度を示す統合指標。 | `PageView`, `TimeOnPage`, `Audition` 等から算出される体験の質。 |
-| **PageView** | `PageView` | 記事が閲覧された回数。 | 単なるカウントではなく、楽曲が「発見」された機会。 |
-| **TimeOnPage** | `TimeOnPage` | 記事の滞在（没入）時間。 | 音楽を聴き、譜面を追う「質の高い時間」を計測。 |
 | **Audition** | `Audition` | 譜例や音源の再生実行アクション。 | 単なる閲覧より強い関心を示す重要シグナル。 |
 | **Like** | `Like` | 記事や楽曲への明示的な「お気に入り」。 | ユーザーが能動的に保存したポジティブな反応。 |
 | **Resonance** | `Resonance` | 楽曲に対する短い感想やメモの投稿。 | 単なるコメントではなく、音楽との共鳴を記録する概念。 |
 | **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも個人の「書斎（Library）」的な趣。 |
 | **Mastery** | `Mastery` | 楽曲を聴了し、理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
 | **Impressions** | `Impressions` | 楽曲から受ける多次元評価（-10 〜 +10）。 | セマンティック・ディファレンシャル法による感性指標。 |
-| **AffiliateClick** | `AffiliateClick` | 外部販売サイト（楽譜・CD等）への遷移。 | ユーザー体験と収益性のバランスを測る重要指標。 |
-| **Exit** | `Exit` | 記事からの離脱。 | 離脱ポイントを特定し、AIによる改善（LPO）の根拠とする。 |
-| **SocialShare** | `SocialShare` | SNS等へのシェアアクション。 | 知見が外部へ波及したシグナル。 |
-| **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
 | **Member** | `Member` | 認証済みユーザー。 | UI上の呼称は「Maestro」。Collection等を保持できる。 |
 | **Guest** | `Guest` | 非ログイン（ゲスト）ユーザー。 | UI上の呼称は「Listener」。セッションベースで計測。 |
 | **Persona** | `Persona` | AIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
 | **PersonalizedIntro** | `PersonalizedIntro` | パーソナライズされた楽曲紹介文。 | UI上の呼称は「Overture（序曲）」。 |
+
+### 2.2. Activity & Growth Metrics (分析指標・グロース)
+
+サイトの成長やユーザーの没入度を客観的に計測するための指標。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Immersion** | `Immersion` | ユーザーの没入度を示す統合指標。 | `PageView`, `TimeOnPage`, `Audition` 等から算出される体験の質。 |
+| **PageView** | `PageView` | 記事が閲覧された回数。 | 単なるカウントではなく、楽曲が「発見」された機会。 |
+| **TimeOnPage** | `TimeOnPage` | 記事の滞在（没入）時間。 | 音楽を聴き、譜面を追う「質の高い時間」を計測。 |
+| **AffiliateClick** | `AffiliateClick` | 外部販売サイト（楽譜・CD等）への遷移。 | ユーザー体験と収益性のバランスを測る重要指標。 |
+| **Exit** | `Exit` | 記事からの離脱。 | 離脱ポイントを特定し、AIによる改善（LPO）の根拠とする。 |
+| **SocialShare** | `SocialShare` | SNS等へのシェアアクション。 | 知見が外部へ波及したシグナル。 |
+| **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
 | **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係や流入ステップの分析に使用。 |
 
 ## 3. Editorial & Curation (編集・キュレーション)
