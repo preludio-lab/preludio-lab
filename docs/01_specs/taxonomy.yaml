@@ -110,6 +110,8 @@ eras:
 #        - Heritage & Media: 映画、アニメ、CM等で使用された有名な文脈（のだめ、アマデウス、のだめ等）があれば積極的に付与せよ。
 #    - 情緒的ラベル（Mood）の抽出戦略:
 #        - 多楽章形式の作品においては、作品全体だけでなく、「楽章ごと」に異なるMoodタグの選定を検討せよ（例：月光ソナタの第1楽章は `serene`, 第3楽章は `passionate`）。
+#    - 利用シーン（Situation）の提案戦略:
+#        - 記事生成時、AIは「その曲を聴くのに最適な具体的なシーン」を100文字程度のストーリーで描写し、タグと連動させよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -948,18 +950,47 @@ tags:
   # ----------------------------------------
   - category: situation
     items:
+      # --- Time of Day (1日のリズム) ---
       - id: morning
         label_ja: 爽やかな朝に
         label_en: Morning Refresh
         description: 1日の始まりにエネルギーや清々しさを与える。
+      - id: afternoon-tea
+        label_ja: 午後のティータイム
+        label_en: Afternoon Tea / Break
+        description: 日中のひと息、お茶菓子と共に楽しむ優雅な時間。
+      - id: sunset-evening
+        label_ja: 夕暮れ時に
+        label_en: Sunset / Evening
+        description: 1日の終わりが近づく、穏やかで少しセンチメンタルな時間。
       - id: night
         label_ja: 静かな夜に
         label_en: Night / Late Night
         description: 深夜、孤独に浸りたい時や静寂を楽しみたい時。
+      - id: sunday-afternoon
+        label_ja: 日曜の午後に
+        label_en: Sunday Afternoon
+        description: 何もしない贅沢な休日、陽だまりのような暖かさ。
+
+      # --- Work & Study (集中と効率) ---
       - id: deep-focus
         label_ja: 集中・作業用
-        label_en: Deep Focus / Study
+        label_en: Deep Focus
         description: 勉強や仕事のBGMとして、邪魔にならず集中力を高める。
+      - id: study-exam
+        label_ja: 試験勉強・知的好奇心
+        label_en: Study for Exam
+        description: 脳を活性化させ、論理的思考や記憶をサポートする（バロック音楽など）。
+      - id: reading
+        label_ja: 読書のお供に
+        label_en: Reading
+        description: 物語の世界への没入を助ける、主張しすぎない背景音楽。
+      - id: artistic-creation
+        label_ja: 創作・インスピレーション
+        label_en: Creative Flow
+        description: アイデアを刺激し、没入感を高めるクリエイティブな時間。
+
+      # --- Relax & Health (心身のケア) ---
       - id: relax
         label_ja: リラックスタイム
         label_en: Relax / Chill
@@ -968,18 +999,50 @@ tags:
         label_ja: 眠りのために
         label_en: Sleep / Lullaby
         description: 入眠を誘う、刺激の少ない安らかな音楽。
+      - id: meditation
+        label_ja: 瞑想・マインドフルネス
+        label_en: Meditation
+        description: 思考を止めて、ただ音に身を委ねるための深い静寂。
+      - id: yoga-stretching
+        label_ja: ヨガ・ストレッチ
+        label_en: Yoga & Stretching
+        description: 深い呼吸と身体の動きをサポートする、流動的な響き。
+      - id: beauty-selfcare
+        label_ja: 美容・セルフケア
+        label_en: Beauty & Self-care
+        description: スキンケアやバスタイムなど、自分を労わる美容の時間。
+      - id: mental-refresh
+        label_ja: ストレス解消・心のデトックス
+        label_en: Mental Refresh
+        description: 感情を浄化し、心をリセットしたい時のための音楽。
+
+      # --- Social & Lifestyle (社交・趣味) ---
+      - id: dinner-party
+        label_ja: 優雅なディナー
+        label_en: Elegant Dining
+        description: 贅沢な食事の時間や、ゲストを招いた食卓を彩る。
+      - id: wine-pairing
+        label_ja: ワインと共に
+        label_en: Wine Pairing
+        description: 豊かな香りと味わいを引き立てる、重厚または洗練された音楽。
       - id: coffee-break
         label_ja: コーヒーブレイク
         label_en: Coffee Break
         description: カフェにいるような、お洒落で一息つける空間演出。
-      - id: commute
-        label_ja: 通勤・通学
-        label_en: Commute
-        description: 移動中の景色を彩る、適度な推進力のある音楽。
-      - id: reading
-        label_ja: 読書のお供に
-        label_en: Reading
-        description: 物語の世界への没入を助ける、主張しすぎない背景音楽。
+      - id: driving-roadtrip
+        label_ja: ドライブ・旅の供
+        label_en: Driving / Road Trip
+        description: 景色の変化にマッチする、推進力や開放感のある音楽。
+      - id: parenting-kids
+        label_ja: 子供の感性を育む
+        label_en: For Kids & Family
+        description: 親子で楽しめ、子供の豊かな情操を養う選曲。
+      - id: maternity-classic
+        label_ja: マタニティ・胎教
+        label_en: Maternity Classic
+        description: 妊婦さんと赤ちゃんがリラックスできる穏やかな響き。
+
+      # --- Special Contexts (天気・季節・気分) ---
       - id: rainy-day
         label_ja: 雨の日に聴きたい
         label_en: Rainy Day
@@ -992,14 +1055,6 @@ tags:
         label_ja: ロマンチックな夜
         label_en: Romance / Date Night
         description: パートナーと過ごす時間や、愛を語るような甘い雰囲気。
-      - id: meditation
-        label_ja: 瞑想・マインドフルネス
-        label_en: Meditation
-        description: 思考を止めて、ただ音に身を委ねるための深い静寂。
-      - id: sunday-afternoon
-        label_ja: 日曜の午後に
-        label_en: Sunday Afternoon
-        description: 何もしない贅沢な休日、陽だまりのような暖かさ。
       - id: autumn-evening
         label_ja: 秋の夕暮れ
         label_en: Autumn Evening
