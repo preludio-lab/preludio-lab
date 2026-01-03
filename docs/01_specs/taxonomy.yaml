@@ -1684,31 +1684,31 @@ nationalities:
 # ArticleMetadata.difficulty に対応。
 reading_levels:
   - id: 1
-    label_ja: はじめての1曲
+    label_ja: 入門
     label_en: Beginner
     description: |
       初めてクラシックを聴く人向け。感情、イメージ、有名なメロディ、映画・CM等の利用例を中心に構成。
       **AI制約:** 音楽用語（ソナタ、和声等）は原則禁止。日常の言葉で「音の体験」を語る。
   - id: 2
-    label_ja: 一歩踏み込む
+    label_ja: 初級
     label_en: Elementary
     description: |
       楽器や編成に興味が出た人向け。楽器名、楽章構成、主旋律と伴奏の役割を解説。
       **AI制約:** 基本的な楽器知識を前提とするが、形式名などの専門用語は最小限に留める。
   - id: 3
-    label_ja: 構造を知る
+    label_ja: 中級
     label_en: Intermediate
     description: |
       時代背景や作曲家の意図に関心がある人向け。作品の「型（ソナタ形式、対位法等）」の解説。
       **AI制約:** 主要な音楽用語、調性、基本的な楽式を用いた構造的・歴史的な分析を含む。
   - id: 4
-    label_ja: 深く探求する
+    label_ja: 上級
     label_en: Advanced
     description: |
       愛好家・学習者向け。演奏解釈の変遷、詳細な和声分析、主題の変容プロセスを紹介。
       **AI制約:** スコアを読める読者を想定。複雑な動機分析や、特定の演奏版の比較議論を行う。
   - id: 5
-    label_ja: 叡智の極致
+    label_ja: 専門
     label_en: Virtuoso
     description: |
       研究者・専門家レベル。自筆譜の研究、最新の校訂報告、哲学的・数理的な深い洞察。
