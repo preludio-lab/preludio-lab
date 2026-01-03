@@ -1726,30 +1726,25 @@ performance_difficulty:
   - id: 1
     label_ja: 初級
     label_en: Basic / Elementary
-    description: |
-      子供や趣味の初心者が数ヶ月〜1年程度で弾けるレベル。基本的な音階と単純なリズム。
-      examples: バッハ「メヌエット」、ブルグミュラー「素直な心」
+    description: 子供や趣味の初心者が数ヶ月〜1年程度で弾けるレベル。基本的な音階と単純なリズム。
+    examples: バッハ「メヌエット」、ブルグミュラー「素直な心」
   - id: 2
     label_ja: 中級
     label_en: Intermediate
-    description: |
-      数年の学習経験があり、基本的なテクニック（指の独立、簡単な和音）を備えた人向け。
-      examples: モーツァルト「ソナタ K.545」、ショパン「雨だれの前奏曲」
+    description: 数年の学習経験があり、基本的なテクニック（指の独立、簡単な和音）を備えた人向け。
+    examples: モーツァルト「ソナタ K.545」、ショパン「雨だれの前奏曲」
   - id: 3
     label_ja: 上級
     label_en: Advanced
-    description: |
-      音楽大学入試レベル。高度なスケール、跳躍、複雑な多声構造の処理を要する。
-      examples: ベートーヴェン「熱情ソナタ」、ショパン「革命のエチュード」
+    description: 音楽大学入試レベル。高度なスケール、跳躍、複雑な多声構造の処理を要する。
+    examples: ベートーヴェン「熱情ソナタ」、ショパン「革命のエチュード」
   - id: 4
     label_ja: プロ級
     label_en: Professional / Virtuoso
-    description: |
-      コンサート・ピアニスト等のレパートリー。極めて高度な肉体的・音楽的な熟練を要する。
-      examples: リスト「ラ・カンパネラ」、ラフマニノフ「ピアノ協奏曲第3番」
+    description: コンサート・ピアニスト等のレパートリー。極めて高度な肉体的・音楽的な熟練を要する。
+    examples: リスト「ラ・カンパネラ」、ラフマニノフ「ピアノ協奏曲第3番」
   - id: 5
     label_ja: 超絶技巧
     label_en: Legendary / Extreme
-    description: |
-      音楽史上最も困難とされる領域。極限の技巧と持久力を要求する。
-      examples: リスト「超絶技巧練習曲（第4曲マゼッパ等）」、バラキレフ「イスラメイ」
+    description: 音楽史上最も困難とされる領域。極限の技巧と持久力を要求する。
+    examples: リスト「超絶技巧練習曲（第4曲マゼッパ等）」、バラキレフ「イスラメイ」
