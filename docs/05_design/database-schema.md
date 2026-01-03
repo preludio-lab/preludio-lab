@@ -115,7 +115,7 @@ erDiagram
 | **`id`**                 | `text`    | -       | YES      | -                                                        | **PK**.                                                |
 | **`article_id`**         | `text`    | -       | YES      | -                                                        | **FK to `articles.id`**                                |
 | `lang`                   | `text`    | -       | YES      | -                                                        | ISO Language Code                                      |
-| `status`                 | `text`    | -       | YES      | `IN ('draft', 'published', 'private', 'archived')`       | ステータス                                             |
+| `status`                 | `text`    | -       | YES      | `IN ('draft', 'scheduled', 'published', 'private', 'archived')` | ステータス |
 | `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル（正式名称）                               |
 | `display_title`          | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み) |
 | `catchcopy`              | `text`    | -       | NO       | -                                                        | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示) |
@@ -207,6 +207,7 @@ type SeriesAssignment = {
 | `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
 | `idx_art_trans_search_era`     | `(lang, sl_era)`                    | B-Tree | 時代区分による絞り込み検索             |
 | `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
+| `idx_art_trans_compound_filter`| `(lang, status, is_featured, published_at)` | B-Tree | 代表的な一覧・カテゴリ表示の高速化 |
 | `idx_art_trans_embedding`      | `(content_embedding)`               | HNSW   | セマンティック検索（`vector_l2_ops`）  |
 
 > [!NOTE]
@@ -225,6 +226,10 @@ PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を�
         -   **Indexing (保存時)**: テキストの文頭に `passage: ` を付与してベクトル化。
         -   **Search (検索時)**: テキストの文頭に `query: ` を付与してベクトル化。
         -   **Optimization**: Vercel Serverless Function 上では、モデルの再ロードを防ぐためインスタンスをシングルトンで保持し、ビルドプロセスにモデルファイルを含める構成を推奨。
+        
+> [!TIP]
+> **コールドスタートと将来のスケーリング**:
+> 推論モデルのロードによるレイテンシが問題となる場合、ベクトル化処理のみを **Cloudflare Workers AI** や **Pipeless** などの外部エッジ推論サービスへオフロードすることで、Vercelのメイン関数を軽量に保つ構成が可能です。
 
 ##### 3.2.3.1 記事生成・インデックス時のフロー (Indexing Flow)
 
@@ -368,6 +373,8 @@ sequenceDiagram
 | `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
 | `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
 | `playback_samples`     | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
+| `source_url`           | `text` | -       | NO       | -     | **[Asset Origin]** 同期元URL (IMSLP/PDMX等)                |
+| `is_synced`            | `integer` | `0`     | YES      | `IN (0, 1)` | 外部ソースとの同期完了フラグ                               |
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
 
@@ -673,6 +680,6 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
 非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
 
 1.  **Maintenance Agent**: GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
-2.  **Snapshot Update**: マスタデータ (`Composers`, `Works`) またはシリーズ構成 (`SeriesArticles`) に変更があった場合、関連する `article_translations` の `sl_` カラムを一括更新します。
+2.  **Snapshot Update (Incremental)**: マスタデータ (`Composers`, `Works`) またはシリーズ構成 (`SeriesArticles`) に変更があった場合、**「変更があったレコードに関係する記事のみ」を特定してパッチを当てる差分更新ロジック**を採用し、DB負荷と計算コストを最小化します。
 3.  **Consistency Guarantee**: シリーズに追加された記事は、独自の `sl_series_assignments` 列を更新することで、記事単体のフェッチのみで「シリーズ導線」を完結させます。
 4.  **Scope**: この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
