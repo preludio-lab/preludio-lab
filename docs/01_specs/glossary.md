@@ -1,55 +1,135 @@
-# Glossary (用語集)
+# PreludioLab Glossary & Domain Language
 
 PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous Language）」を定義します。
 開発者、PM、AIエージェント間で、言葉の定義を統一するために使用します。
 
 > [!NOTE]
-> AIエージェント（翻訳・執筆）用の多言語対訳データ（7ヶ国語）は [multilingual-dictionary.json](./multilingual-dictionary.json) で管理しています。
-> 本ドキュメントは、主に**ドメイン概念の定義**と**日本語/英語の対応**に焦点を当てています。
+> **To AI Agents**: This glossary is the **single source of truth** for domain terminology.
+> When generating code or documentation, strictly adhere to the **Code / ID** and **Nuance / Policy** defined below.
 
-## Domain: Content & Music (音楽・コンテンツ)
+## 1. Core Music Entities (核となる音楽概念)
 
-| Term (En)       | Term (Ja)       | Description                                                                                                                              | Context / Usage                      |
-| :-------------- | :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- |
-| **Article**     | 記事            | URLを持つWeb上の１ページ単位。コンテンツ管理の最小親エンティティ。メタデータ（作曲家、作品、おすすめフラグ等）を持つコンテナ。           | `/works/[slug]`                      |
-| **Content**     | 本文/コンテンツ | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。                                                | Storage (`.mdx`)                     |
-| **Work**        | 作品            | 楽曲そのもの（例：平均律クラヴィーア曲集 第1巻）。言語に依存しない普遍的な作品（マスタ）情報。                                           | Metadata (Title, Op)                 |
-| **Score**       | 楽譜データ      | 楽曲の音楽情報を記述したデータ（例：ABC記法）。言語に依存しない「楽譜の原版」。                                                          | Shared Asset                         |
-| **Sheet Music** | 譜例            | ユーザーに表示されるレンダリング済みの楽譜。Scoreデータと、言語ごとのキャプションを組み合わせたもの。                                    | UI Component                         |
-| **Media**       | メディア        | 記事や楽譜に関連付けられた非テキストリソースの総称（音声、動画、画像）。                                                                 | `media_resources`                    |
-| **Recording**   | 音源            | 楽曲の演奏を記録したもの。ユーザーが「聴く」対象となる実体。VideoまたはAudio形式で提供される。                                           | Domain Concept                       |
-| **Audio**       | 音声            | 映像を含まない音声のみのデータ形式（MP3, AAC等）。またはSpotify等の配信形態。                                                            | Format / Source                      |
-| **Video**       | 動画            | 映像を含むデータ形式（MP4, YouTube等）。                                                                                                 | Format / Source                      |
-| **Image**       | 画像            | 静止画データ（OGP, アートワーク, 楽譜プレビュー画像）。                                                                                  | Format                               |
-| **Player**      | プレイヤー      | 音源（Recording）を再生するコンポーネントの総称。AudioPlayer（音声）だけでなく、将来的なVideoPlayer（YouTube埋め込み等）も含む抽象概念。 | `<AudioPlayer />`, `<VideoPlayer />` |
-| **Catalogue**   | 作品番号/目録   | 楽曲を識別するための整理番号（Op., BWV, K. など）。DB上では `catalogue_prefix` と `catalogue_number` に分割管理される。                  | `Works` マスタ                       |
-| **Analysis**    | 分析            | 楽曲構造や理論的背景の解説テキスト。                                                                                                     | Agent Output                         |
-| **Opus (Op.)**  | 作品番号        | 出版順に割り振られた番号。                                                                                                               | `Op. 18`                             |
-| **BWV**         | BWV             | バッハ作品番号 (Bach-Werke-Verzeichnis)。                                                                                                | `BWV 846`                            |
-| **Motif**       | 動機            | 楽曲を構成する最小単位のメロディ断片。                                                                                                   | Analysis                             |
-| **Voice**       | 声部            | ポリフォニー音楽における独立した旋律線（ソプラノ、アルト、バス等）。                                                                     | Fugue Analysis                       |
-| **Prelude**     | 前奏曲          | 本編（フーガ等）の前に置かれる導入的な楽曲。                                                                                             | Genre                                |
-| **Fugue**       | フーガ          | 1つの主題が複数の声部で模倣・追走する対位法的な楽曲形式。                                                                                | Genre                                |
+音楽ドメインの中核をなすエンティティ群です。
 
-## Domain: System & Architecture (システム)
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Composer** | `Composer` | 作曲家。生涯・国籍・マスタデータを管理。 | 「人物」ではなく「芸術家」として敬意を払う。一意な `slug` (e.g., `bach`) で識別される。 |
+| **Performer** | `Performer` | 演奏家・団体。指揮者、奏者、オーケストラ等。 | `Recording` の主体。単なるラベルではなく、独自の `slug` を持つエンティティ。 |
+| **Work** | `Work` | 楽曲の実体（例：運命）。不変のメタデータを持つ親エンティティ。 | 「曲」ではなく「作品」と呼称する。言語普遍的なIDを持つ。 |
+| **Article** | `Article` | `Metadata` と `Content` で構成される、解説記事の最小単位。 | 単なる「ページ」ではなく、特定の楽曲（Work）に対する音楽的知見をパッケージ化したもの。 |
+| **Article Metadata** | `ArticleMetadata` | 記事に紐付く構造化データ（作曲家、ジャンル、6軸印象値、タグ、Slug等）。 | 検索エンジンやAIエージェントが「記事を理解・分類」するために使用する情報の総称。 |
+| **Series** | `Series` | 共通のテーマ（例：連載もの）で構成される記事のグループ。 | 1つの「親記事（Header）」を持ち、複数の「子記事」を順序（Sort Order）付きで管理。 |
+| **Content** | `Content` | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。 | `Article` の内部データ。見出し構造 (`ContentStructure`) を持つ。 |
+| **Musical Example** | `MusicalExample` | 解説のために引用される数小節の楽譜抜粋。 | 楽曲解説の中核となる「概念・単位」。 |
+| **Notation Data** | `NotationData` | 譜例のソースデータ（ABC記法など）。 | `MusicalExample` の実体データ。R2等に保存。 |
+| **Music Display** | `MusicDisplay` | 譜例、再生、翻訳が統合されたUI。 | ユーザーが触れるReact等のコンポーネント。 |
+| **Recording** | `Recording` | 楽曲の演奏を記録したもの。誰のいつの演奏かを管理する実体。 | ユーザーが「聴く」対象。`RecordingSource` (YouTube/Spotify) を複数持つことができる。 |
+| **Catalogue** | `CatalogueNumber` | 楽曲を識別するための作品番号（Op., BWV, K. など）。 | 原則として翻訳しない（後述の Strategic Nuances 参照）。 |
+| **Excerpt** | `Excerpt` | 記事一覧や検索結果に表示される「抜粋・概要」。 | SEO上の Description としても機能する。 |
+| **Genre** | `Genre` | 音楽的な分類（例：Prelude, Fugue, Symphony）。 | `Category='genre'` のタグとして管理される。 |
+| **Era** | `Era` | 音楽史における時代区分（例：Baroque, Romantic）。 | `Category='era'` のタグとして管理される。 |
+| **Instrumentation** | `Instrumentation` | その作品を演奏するために必要な楽器の構成（例：ピアノ独奏、弦楽四重奏）。 | 楽曲の検索・分類における最重要軸の一つ。具体的な項目は Taxonomy にて定義される。 |
 
-| Term (En)        | Term (Ja)    | Description                                                            | Context / Usage               |
-| :--------------- | :----------- | :--------------------------------------------------------------------- | :---------------------------- |
-| **Frontmatter**  | フロントマター | MDXファイルの先頭にあるYAML形式のメタデータ領域。                      | Blog Post                     |
-| **Agent**        | エージェント | 特定の役割（音楽学者、翻訳者）を持つAIプログラム。                     | `agents/`                     |
-| **Artifact**     | 成果物       | エージェントが出力する最終ファイル（記事、画像）。                     | `public/`, `content/`         |
-| **MDX**          | MDX          | Markdownファイル内でJSXコンポーネントを使用できるフォーマット。        | Content File                  |
-| **Slug**         | スラッグ     | URLの一部となる、可読性のある識別文字列。                              | `/read/[slug]`                |
-| **OGP**          | OGP画像      | Open Graph Protocol。SNSでのシェア時に表示されるサムネイル画像。       | Metadata                      |
-| **ABC Notation** | ABC記法      | テキストで楽譜情報を記述するフォーマット。                             | `<ScoreRenderer abc="..." />` |
-| **Token**        | トークン     | デザインシステムにおける最小単位の値（色、スペース、フォントサイズ）。 | Tailwind Config               |
+## 2. User & Interaction (ユーザー)
 
-## Domain: Database & Infrastructure (データベース)
+### 2.1. Interaction & User Concepts (行動・ユーザー概念)
 
-| Term (En)        | Term (Ja)    | Description                                                            | Context / Usage               |
-| :--------------- | :----------- | :--------------------------------------------------------------------- | :---------------------------- |
-| **Zero-JOIN**    | ゼロ結合     | 検索時の結合（JOIN）を排除し、パフォーマンスを最適化する設計戦略。       | `database-schema.md`          |
-| **Snapshot**     | スナップショット | 検索・表示用に非正規化して保持されるデータの断面。`sl_` プレフィックスで管理。 | `database-schema.md`          |
-| **Turso**        | Turso        | libSQLベースの分散エッジデータベース。本プロジェクトの永続化層。         | Infrastructure                |
-| **Vector Search**| ベクトル検索 | 意味の近さに基づいた高度な検索機能。                                   | `libsql-vector`               |
-| **FTS5**         | 全文検索     | SQLite標準の全文検索エンジン。                                         | `Search Requirements`         |
+ユーザーの直接的なアクションや、サイト上での状態・役割に関する定義。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Engagement** | `Engagement` | ユーザーの反応。没入やアクションの総称。 | 内部的に `passive` / `active` に分類して分析。 |
+| **Audition** | `Audition` | 譜例や音源の再生実行アクション。 | 単なる閲覧より強い関心を示す重要シグナル。 |
+| **Like** | `Like` | 記事や楽曲への明示的な「お気に入り」。 | ユーザーが能動的に保存したポジティブな反応。 |
+| **Resonance** | `Resonance` | 楽曲に対する短い感想やメモの投稿。 | 単なるコメントではなく、音楽との共鳴を記録する概念。 |
+| **Collection** | `Collection` | ユーザーが作成する独自の楽曲リスト。 | 「プレイリスト」よりも個人の「書斎（Library）」的な趣。 |
+| **Mastery** | `Mastery` | 楽曲を聴了し、理解を深めた状態。 | 10,000記事を「踏破」していくゲーミフィケーション要素。 |
+| **Impressions** | `Impressions` | 楽曲から受ける多次元評価（-10 〜 +10）。 | セマンティック・ディファレンシャル法による感性指標。 |
+| **Member** | `Member` | 認証済みユーザー。 | UI上の呼称は「Maestro」。Collection等を保持できる。 |
+| **Guest** | `Guest` | 非ログイン（ゲスト）ユーザー。 | UI上の呼称は「Listener」。セッションベースで計測。 |
+| **Persona** | `Persona` | AIが推定したユーザーの音楽的嗜好。 | 時代、楽器、気分などの傾向を多次元ベクトル化したもの。 |
+| **PersonalizedIntro** | `PersonalizedIntro` | パーソナライズされた楽曲紹介文。 | UI上の呼称は「Overture（序曲）」。 |
+
+### 2.2. Activity & Growth Metrics (分析指標・グロース)
+
+サイトの成長やユーザーの没入度を客観的に計測するための指標。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Immersion** | `Immersion` | ユーザーの没入度を示す統合指標。 | `PageView`, `TimeOnPage`, `Audition` 等から算出される体験の質。 |
+| **PageView** | `PageView` | 記事が閲覧された回数。 | 単なるカウントではなく、楽曲が「発見」された機会。 |
+| **TimeOnPage** | `TimeOnPage` | 記事の滞在（没入）時間。 | 音楽を聴き、譜面を追う「質の高い時間」を計測。 |
+| **AffiliateClick** | `AffiliateClick` | 外部販売サイト（楽譜・CD等）への遷移。 | ユーザー体験と収益性のバランスを測る重要指標。 |
+| **Exit** | `Exit` | 記事からの離脱。 | 離脱ポイントを特定し、AIによる改善（LPO）の根拠とする。 |
+| **SocialShare** | `SocialShare` | SNS等へのシェアアクション。 | 知見が外部へ波及したシグナル。 |
+| **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
+| **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係の分析や、AIによる次楽曲推薦（Next-to-Play）の学習用データとして使用。 |
+
+## 3. Editorial & Curation (編集・キュレーション)
+
+運営・編集上の意図や管理状態に関する定義。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Source Attribution** | `SourceAttribution` | 記事生成や楽曲解説に使用した参考文献や一次情報の根拠。 | 10,000記事の信頼性を担保するため、IMSLPやWikipedia等のソースを明示する。 |
+| **Featured** | `is_featured` | トップページ等で優先的に紹介される「おすすめ記事」の状態。 | 単なる新着ではなく、サイトの「顔」として編集部がキュレートした記事。 |
+| **Recommended** | `is_recommended` | 1つの作品（Work）に対し、特に鑑賞を推奨する録音（Recording）。 | 膨大な録音の中から、入門者や深掘りしたいユーザーにまず勧めるべき「名盤」。 |
+| **Status** | `ContentStatus` | 記事の公開・管理状態（Draft, Published 等）。 | ユーザーへの公開可否を制御する基本的なライフサイクル。 |
+
+## 4. System & Architecture (システム・構成要素)
+
+システムの構成要素や技術的な概念です。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Agent** | `Agent` | 特定の役割（音楽学者、翻訳者）を持つAIプログラム。 | `agents/` ディレクトリ以下に配置される。 |
+| **Artifact** | `Artifact` | エージェントが出力する最終ファイル（記事MDX、画像等）。 | ユーザーに価値を提供する成果物。 |
+| **Slug** | `Slug` | URLの一部となる、可読性のある識別文字列。 | 開発者体験 (DX) とSEOのためにIDではなくSlugを優先して使用する。 |
+| **Frontmatter** | `Frontmatter` | MDXファイルの先頭にあるYAML形式のメタデータ領域。 | 記事の静的なメタ情報を保持する。 |
+| **MDX** | `MDX` | Markdown + JSX。記事コンテンツのフォーマット。 | コンポーネント（`<ScoreRenderer />`等）を埋め込むことができる。 |
+| **Recording Source** | `RecordingSource` | YouTubeやSpotifyなど、録音の具体的な提供元とID。 | 1つの `Recording` は複数の `Source` を持つことができ、環境に応じて切り替える。 |
+| **Playback Binding** | `PlaybackBinding` | 譜例（Musical Example）と音源の特定の時間（秒数）を紐付ける定義。 | 譜例の再生ボタンが録音の「どこ」から再生されるかを司る連携ロジック。 |
+| **Player** | `Player` | 音源（Recording）を再生するUIコンポーネントの総称。 | 以下の `Compact`, `Immersive`, `Video` の各プレイヤーを包含する抽象概念。 |
+| **Compact Player** | `CompactPlayer` | 画面下部などに常駐し、再生制御を行うバー形式のプレイヤー。 | ユーザーが記事を読みながら操作するメインのコントロール。 (旧: Mini Player) |
+| **Immersive Player** | `ImmersivePlayer` | 作品の世界に没入するための、全画面表示の再生装置。 | 譜面、楽曲解説、音源が1つの画面に統合され、切り替えなしで深く鑑賞できる最高位のモード。 (旧: Focus Player) |
+| **Video Player** | `VideoPlayer` | YouTube等の動画コンテンツを埋め込み・再生する装置。 | 視覚的な演奏情報を含む Recording を表示する際に使用。 |
+| **Musical Media Pipeline** | `MusicalMediaPipeline` | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。 | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。 |
+| **Token** | `DesignToken` | デザインシステムにおける色、余白、フォントサイズ等の最小単位。 | Tailwind Config で定義される値を正とする。 |
+
+## 5. Database & Infrastructure (データベース)
+
+データ永続化とインフラストラクチャに関する用語です。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Turso** | `Turso` | libSQLベースの分散エッジデータベース。 | 本プロジェクトの永続化層（Single Source of Truth）。 |
+| **Zero-JOIN** | `ZeroJoinStrategy` | 検索時の結合（JOIN）を排除し、アクセス速度を最大化する設計戦略。 | 読み取り頻度の高いデータは非正規化して `sl_` プレフィックスのカラムに持つ。 |
+| **Snapshot** | `Snapshot` | 非正規化して保持されるデータの断面（`sl_` columns）。 | マスタデータの変更に追従して更新される必要がある。 |
+| **Vector Search** | `VectorSearch` | ベクトル埋め込みを用いた意味論的検索。 | `libsql-vector` を使用。曖昧なクエリ（例：「朝に聴きたい曲」）に強い。 |
+| **FTS5** | `FTS5` | SQLite標準の全文検索エンジン。 | キーワード一致（例：「BWV 846」）に強い。Vectorとハイブリッドで利用する。 |
+| **Passage** | `Passage` | ベクトル化の対象となるテキスト塊。 | 多言語検索のために、英語マスタデータを含めて構築する（`passage: ` prefix必須）。 |
+
+## 6. Strategic Nuances (AIエージェントへの特別指示)
+
+> **Note to AI Agent**: 以下の用語や設定は、翻訳やコンテンツ生成時に**厳格なルール**として適用してください。
+
+### [i18n] Catalogue Numbers (作品番号)
+- **Rule**: 作品番号（Op., BWV, K.）は、原則として各国語で翻訳せず、標準的な略称を維持する。
+- **Exception**: 日本語のみ文脈により「作品10」のような表記を許容する場合があるが、検索キーや見出しは常に `Op. 10` とする。
+
+### [UX] Impression Dimensions (多軸評価)
+- **Scale**: -10 から +10 の整数値（0はNeutral）。
+- **Mapping**: `sl_impression_dimensions` カラムにJSON保存。
+- **Usage**: 文章生成時はこの値を元に形容詞を選択すること。詳細は別途定義される指標（Taxonomy）を参照。
+
+### [Search] Vectorization Prefixes
+- **Rule**: E5モデルの性能を引き出すため、以下のプレフィックスを厳守する。
+    - **Indexing**: `passage: ` (コンテンツ保存時)
+    - **Query**: `query: ` (ユーザー検索時)
+- **Visual**: 
+  - `passage: [EN] Symphony No.5 ...`
+  - `query: 運命`
+
+### [Translation] Tone & Voice
+- **Japanese**: 「です・ます」調（敬体）を基本とするが、音楽的な解説では格調高さを維持する。
+- **English**: 明瞭かつ専門的（Academic yet Accessible）。
