@@ -53,10 +53,12 @@ TursoにはネイティブのRLSがないため、アプリケーション層（
 
 ```mermaid
 erDiagram
-    %% Core Tables: Articles
+    %% Core Tables: Articles & Series
     Works ||--o{ Articles : "featured in"
     Articles ||--|{ ArticleTranslations : "has localized content"
-    Tags ||..o{ ArticleTranslations : "categorizes (snapshot)"
+    Articles ||--o| Series : "is the header of"
+    Series ||--o{ SeriesArticles : "contains"
+    Articles ||--o{ SeriesArticles : "is member of"
 
     %% Asset Tables: Scores & Recordings
     Works ||--o{ Scores : "has sheet music"
@@ -75,7 +77,7 @@ erDiagram
 
 ---
 
-## 3. Core Tables: Articles (Application Data)
+## 3. Core Tables: Articles & Series
 
 記事管理の中核テーブル。検索要件に基づき、多くの属性を非正規化して持ちます。
 
@@ -86,13 +88,13 @@ erDiagram
 | Column        | Type      | Default | NOT NULL | CHECK                        | Description                                       |
 | :------------ | :-------- | :------ | :------- | :--------------------------- | :------------------------------------------------ |
 | **`id`**      | `text`    | -       | YES      | -                            | **PK**. UUID v7                                   |
-| `work_id`     | `text`    | -       | NO       | -                            | FK to `works.id`                                  |
+| **`work_id`** | `text`    | -       | NO       | -                            | **FK to `works.id`**                              |
 | `slug`        | `text`    | -       | YES      | -                            | **Universal Slug**                                |
 | `is_featured` | `integer` | `0`     | YES      | `IN (0, 1)`                  | おすすめフラグ                                     |
 | `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
-| **`reading_time_seconds`** | `integer` | -    | NO       | `reading_time_seconds > 0`   | 読了目安時間（秒）                                 |
-| **`thumbnail_path`**     | `text`    | -       | NO       | -                            | **[Universal Asset]** サムネイル画像パス (文字なし共通画像) |
+| `reading_time_seconds` | `integer` | -    | NO       | `reading_time_seconds > 0`   | 読了目安時間（秒）                                 |
+| `thumbnail_path`     | `text`    | -       | NO       | -                            | **[Universal Asset]** サムネイル画像パス (文字なし共通画像) |
 
 #### 3.1.1 Indexes (Articles)
 
@@ -104,30 +106,31 @@ erDiagram
 
 ### 3.2 `article_translations` (Localized / Read-Optimized)
 
-言語ごとの記事データ。**検索用カラム（非正規化データ）をここに集約します。**
+言語ごとの記事データ。検索用カラム（非正規化データ）をここに集約します。
 
 | Column                   | Type      | Default | NOT NULL | CHECK                                                    | Description                                            |
 | :----------------------- | :-------- | :------ | :------- | :------------------------------------------------------- | :----------------------------------------------------- |
 | **`id`**                 | `text`    | -       | YES      | -                                                        | **PK**.                                                |
-| `article_id`             | `text`    | -       | YES      | -                                                        | FK to `articles.id`                                    |
+| **`article_id`**         | `text`    | -       | YES      | -                                                        | **FK to `articles.id`**                                |
 | `lang`                   | `text`    | -       | YES      | -                                                        | ISO Language Code                                      |
-| **`status`**             | `text`    | -       | YES      | `IN ('draft', 'published', 'private', 'archived')`       | ステータス                                             |
+| `status`                 | `text`    | -       | YES      | `IN ('draft', 'scheduled', 'published', 'private', 'archived')` | ステータス |
 | `title`                  | `text`    | -       | YES      | -                                                        | 記事タイトル（正式名称）                               |
-| **`display_title`**      | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み) |
-| **`catchcopy`**          | `text`    | -       | NO       | -                                                        | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示) |
-| **`excerpt`**            | `text`    | -       | NO       | -                                                        | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)           |
-| **`sl_composer_name`**   | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
-| **`sl_work_catalogue_id`**| `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
-| **`sl_work_nicknames`**  | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
-| **`sl_genre`**           | `text`    | -       | NO       | -                                                        | ジャンル (Source: `tags.slug` where category='genre')   |
-| **`sl_instrumentations`**| `text`    | -       | NO       | -                                                        | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
-| **`sl_era`**             | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
-| **`sl_nationality`**     | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
-| **`sl_impression_dimensions`** | `text`    | -       | NO       | -                                                        | 6軸定量値 (JSON: `ImpressionDimensions`)               |
-| **`content_embedding`**  | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
+| `display_title`          | `text`    | -       | YES      | -                                                        | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み) |
+| `catchcopy`              | `text`    | -       | NO       | -                                                        | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示) |
+| `excerpt`                | `text`    | -       | NO       | -                                                        | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)           |
+| `sl_composer_name`       | `text`    | -       | NO       | -                                                        | 作曲家名 (Source: `composer_translations.name`)        |
+| `sl_work_catalogue_id`   | `text`    | -       | NO       | -                                                        | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846") |
+| `sl_work_nicknames`      | `text`    | -       | NO       | -                                                        | 通称リスト (JSON, Source: `work_translations.nicknames`) |
+| `sl_genre`               | `text`    | -       | NO       | -                                                        | ジャンル (Source: `tags.slug` where category='genre')   |
+| `sl_instrumentations`    | `text`    | -       | NO       | -                                                        | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
+| `sl_era`                 | `text`    | -       | NO       | -                                                        | 時代区分 (Source: `tags.slug` where category='era')     |
+| `sl_nationality`         | `text`    | -       | NO       | -                                                        | 地域/国籍 (Source: `composers.nationality_code`)       |
+| `sl_impression_dimensions` | `text`    | -       | NO       | -                                                        | 6軸定量値 (JSON: `ImpressionDimensions`)               |
+| `content_embedding`      | `F32BLOB` | -       | NO       | -                                                        | ベクトルデータ (384 dims, Model: `e5-small`)           |
 | `published_at`           | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                    |
-| **`is_featured`**        | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
+| `is_featured`            | `integer` | `0`     | YES      | `IN (0, 1)`                                              | **[Snapshot]** おすすめフラグ                           |
 | `mdx_path`                | `text`    | -       | NO       | -                                                        | MDX相対パス (e.g. `works/bwv846.mdx`)                  |
+| `sl_series_assignments`   | `text`    | `[]`    | YES      | -                                                        | 所属シリーズ情報 (JSON: `SeriesAssignment[]`)          |
 | `metadata`               | `text`    | `{}`    | YES      | -                                                        | メタデータ (JSON: `ArticleMetadata`)                   |
 | `content_structure`      | `text`    | `{}`    | YES      | -                                                        | 目次構成 (JSON: `ContentStructure`)                    |
 | `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時 (形式強制)                                    |
@@ -178,6 +181,20 @@ type ArticleMetadata = {
 };
 ```
 
+##### 3.2.1.4 `sl_series_assignments` (Series Membership Snapshot)
+
+この記事が所属するシリーズの情報。記事詳細ページでの「シリーズ導線（前後の記事へのリンク等）」描画に使用します。
+Read-Optimizedポリシーに基づき、URL生成に必要な **`series_slug`** を冗長に保持することで、遷移時のSlug解決クエリを排除します。
+
+```typescript
+type SeriesAssignment = {
+  series_id: string; // Series ID
+  series_slug: string; // Series (Article) Slug
+  series_title: string; // Localized Title
+  sort_order: number; // Order within this series
+};
+```
+
 #### 3.2.2 インデックス (Article Translations)
 
 | Index Name                     | Columns                             | Type   | Usage                                  |
@@ -188,6 +205,7 @@ type ArticleMetadata = {
 | `idx_art_trans_search_genre`   | `(lang, sl_genre)`                  | B-Tree | ジャンルによる絞り込み検索             |
 | `idx_art_trans_search_era`     | `(lang, sl_era)`                    | B-Tree | 時代区分による絞り込み検索             |
 | `idx_art_trans_search_comp`    | `(lang, sl_composer_name)`          | B-Tree | 作曲家による絞り込み検索               |
+| `idx_art_trans_compound_filter`| `(lang, status, is_featured, published_at)` | B-Tree | 代表的な一覧・カテゴリ表示の高速化 |
 | `idx_art_trans_embedding`      | `(content_embedding)`               | HNSW   | セマンティック検索（`vector_l2_ops`）  |
 
 > [!NOTE]
@@ -206,6 +224,10 @@ PreludioLabの「Zero-Cost Architecture」と「スケーラビリティ」を�
         -   **Indexing (保存時)**: テキストの文頭に `passage: ` を付与してベクトル化。
         -   **Search (検索時)**: テキストの文頭に `query: ` を付与してベクトル化。
         -   **Optimization**: Vercel Serverless Function 上では、モデルの再ロードを防ぐためインスタンスをシングルトンで保持し、ビルドプロセスにモデルファイルを含める構成を推奨。
+        
+> [!TIP]
+> **コールドスタートと将来のスケーリング**:
+> 推論モデルのロードによるレイテンシが問題となる場合、ベクトル化処理のみを **Cloudflare Workers AI** や **Pipeless** などの外部エッジ推論サービスへオフロードすることで、Vercelのメイン関数を軽量に保つ構成が可能です。
 
 ##### 3.2.3.1 記事生成・インデックス時のフロー (Indexing Flow)
 
@@ -276,6 +298,60 @@ sequenceDiagram
 
 ---
 
+---
+
+### 3.3 `series` (Structure Decorator)
+
+ある記事を「シリーズの親（ヘッダー）」として定義し、子記事を束ねるためのメタデータ。
+
+| Column        | Type      | Default | NOT NULL | CHECK                        | Description                                       |
+| :------------ | :-------- | :------ | :------- | :--------------------------- | :------------------------------------------------ |
+| **`id`**      | `text`    | -       | YES      | -                            | **PK**. UUID v7                                   |
+| **`article_id`** | `text` | -       | YES      | -                            | **FK to `articles.id`**. このシリーズの「顔」となる記事 |
+| `created_at`  | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                          |
+| `updated_at`  | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                          |
+
+#### 3.3.1 Indexes (Series)
+
+| Index Name              | Columns           | Type   | Usage                |
+| :---------------------- | :---------------- | :----- | :------------------- |
+| `idx_series_article_id` | `(article_id)`    | **UNIQUE** | 記事1つにつき1シリーズ |
+
+### 3.4 `series_articles` (Membership Relationship)
+
+シリーズと所属する子記事を紐付ける中間テーブル。
+
+| Column      | Type      | Default | NOT NULL | CHECK | Description |
+| :---------- | :-------- | :------ | :------- | :---- | :---------- |
+| **`series_id`** | `text` | - | YES | - | **FK to `series.id`** |
+| **`article_id`** | `text` | - | YES | - | **FK to `articles.id` (子記事)** |
+| `sort_order` | `integer` | `0` | YES | - | シリーズ内での順番。管理UI側で10刻み等で制御 |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
+
+#### 3.4.1 Indexes (Series Articles)
+
+| Index Name              | Columns                       | Type   | Usage                                  |
+| :---------------------- | :---------------------------- | :----- | :------------------------------------- |
+| `idx_ser_art_lookup`    | `(series_id, article_id)`      | **UNIQUE** | 重複登録防止                           |
+| `idx_ser_art_order`     | `(series_id, sort_order)`      | B-Tree | 基本の並び順による取得                 |
+| `idx_ser_art_article`   | `(article_id)`                 | B-Tree | 子記事側からの所属シリーズ逆引き       |
+
+> [!TIP]
+> **動的なソートの扱い**:
+> 「作曲年順」「作曲家順」などの動的なソートは、アプリケーション層で `article_translations` 等と JOIN を行うことで対応します（コレクション表示などの動的クエリは Zero-JOIN ポリシーの例外として許容します）。
+
+#### 3.4.2 i18n Robustness (多言語への対応)
+
+シリーズの子記事一覧を取得する際、特定の言語で翻訳が存在しない異常系は、アプリケーション（Repository層）の責務として **「Filter（翻訳が存在する記事のみを表示）」を原則** とします。
+
+1. **Filter (Standard)**: 翻訳が存在する記事のみを一覧に表示。
+2. **Fallback (Optional)**: デフォルト言語（Englishなど）の記事情報を表示。
+
+マスタの `article_translations` の存在有無を起点とした LEFT JOIN による制御、または `sl_series_assignments` の有効性をアプリケーション側で検証します。
+
+---
+
 ## 4. Asset Tables: Scores & Recordings
 
 楽譜ビュワーおよび再生プレイヤーで使用するデータ。
@@ -285,13 +361,24 @@ sequenceDiagram
 | Column                 | Type   | Default | NOT NULL | CHECK | Description                                                |
 | :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
 | **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
-| `work_id`              | `text` | -       | YES      | -     | FK to `works.id`                                           |
+| **`work_id`**          | `text` | -       | YES      | -     | **FK to `works.id`**                                       |
 | `slug`                 | `text` | -       | YES      | -     | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1mov-1st-theme`)      |
-| `format`               | `text` | -       | YES      | -     | 'abc', 'musicxml'                                          |
-| `data`                 | `text` | -       | YES      | -     | 楽譜データ実体                                             |
-| **`playback_samples`** | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
+| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | 'abc', 'musicxml'                                          |
+| `data_storage_path`    | `text` | -       | YES      | -     | **[R2]** ソースデータパス (e.g. `scores/uuid/source.abc`)  |
+| `svg_storage_path`     | `text` | -       | NO       | -     | **[R2]** レンダリング済みSVGパス (CDNキャッシュ用)         |
+| `layout_dimensions`    | `text` | -       | NO       | -     | **[UX]** 表示サイズ情報 (JSON: `ScoreLayout`)              |
+| `playback_samples`     | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
+| `repository_url`       | `text` | -       | NO       | -     | **[Asset Origin]** 楽譜リポジトリのソースURL (IMSLP/PDMX等) |
+| `is_repository_synced` | `integer` | `0`     | YES      | `IN (0, 1)` | 楽譜リポジトリ側との同期完了フラグ                         |
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
+
+> [!NOTE]
+> **`is_repository_synced` の同期判定基準**:
+> 以下の条件がすべて満たされた場合に `1` (True) と見なします。それ以外（更新待機中、またはエラー発生時）は `0` です。
+> 1. **Data Presence**: `repository_url` からの取得データが `data` カラム（または外部ストレージ）に正常に保存されている。
+> 2. **Integrity**: 取得した楽譜データが破損しておらず、楽曲マスタとの関連付けが完了している。
+> 3. **Version Match**: 同期元が提供するメタデータ（ハッシュ値や最終更新日時）と DB 側の記録が一致している。
 
 #### 4.1.1 Indexes (Scores)
 
@@ -324,13 +411,26 @@ type PlaybackSample = {
 type PlaybackSamples = PlaybackSample[];
 ```
 
+##### 4.1.2.2 `layout_dimensions` (Score Layout)
+
+SVG等の楽譜を非同期で読み込む際のレイアウトシフト（CLS）を防止するための寸法情報。
+
+```typescript
+type ScoreLayout = {
+  aspectRatio: number; // e.g. 2.5 (width / height)
+  viewBox: string; // e.g. "0 0 800 300"
+  originalWidth?: number; // 原寸の幅 (px)
+};
+```
+
 ### 4.2 `score_translations` (Localized Metadata)
 
 楽譜のキャプションや説明文。
+
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
-| `score_id` | `text` | - | YES | - | FK to `scores.id` |
+| **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `caption` | `text` | - | YES | - | 譜例のタイトル (e.g. "第1主題") |
 | `description` | `text` | - | NO | - | 音楽的な補足解説（詳細表示モーダル等で使用） |
@@ -350,8 +450,8 @@ type PlaybackSamples = PlaybackSample[];
 | Column               | Type      | Default | NOT NULL | CHECK       | Description                       |
 | :------------------- | :-------- | :------ | :------- | :---------- | :-------------------------------- |
 | **`id`**             | `text`    | -       | YES      | -           | **PK**.                           |
-| `work_id`            | `text`    | -       | YES      | -           | FK to `works.id`                  |
-| **`performer_name`** | `text`    | `{}`    | YES      | -           | 演奏家名 (JSON: `MultilingualString`)             |
+| **`work_id`**        | `text`    | -       | YES      | -           | **FK to `works.id`**              |
+| `performer_name`     | `text`    | `{}`    | YES      | -           | 演奏家名 (JSON: `MultilingualString`)             |
 | `recording_year`     | `integer` | -       | NO       | -           | 録音年                            |
 | `is_recommended`     | `integer` | `0`     | YES      | `IN (0, 1)` | おすすめフラグ (0/1)               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)      |
@@ -371,7 +471,7 @@ type PlaybackSamples = PlaybackSample[];
 | Column                   | Type   | Default | NOT NULL | CHECK                                  | Description                                |
 | :--------------------- | :----- | :------ | :------- | :---                                   | :----------------------------------------- |
 | **`id`**               | `text` | -       | YES      | -                                      | **PK**.                                    |
-| `recording_id`         | `text` | -       | YES      | -                                      | FK to `recordings.id`                      |
+| **`recording_id`**     | `text` | -       | YES      | -                                      | **FK to `recordings.id`**                  |
 | `provider`             | `text` | -       | YES      | -                                      | `'youtube'`, `'spotify'`                   |
 | `external_source_id`   | `text` | -       | YES      | -                                      | 外部ID/URI (e.g. YouTube動画ID: 'jNQXAC9IVRw') |
 | `quality`              | `text` | -       | NO       | -                                      | プロバイダ固有の値 (e.g. `'hd720'`, `'high'`) |
@@ -415,7 +515,7 @@ type PlaybackSamples = PlaybackSample[];
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
-| `composer_id` | `text` | - | YES | - | FK to `composers.id` |
+| **`composer_id`** | `text` | - | YES | - | **FK to `composers.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `name` | `text` | - | YES | - | Localized Name (e.g. "バッハ") |
 | `biography` | `text` | - | NO | - | 人物伝記 |
@@ -433,7 +533,7 @@ type PlaybackSamples = PlaybackSample[];
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
-| `composer_id` | `text` | - | YES | - | FK to `composers.id` |
+| **`composer_id`** | `text` | - | YES | - | **FK to `composers.id`** |
 | `slug` | `text` | - | YES | - | e.g. `symphony-no5` |
 | `catalogue_prefix` | `text` | - | NO | - | `Op.`, `BWV` 等 |
 | `catalogue_number` | `text` | - | NO | - | `67`, `1001` 等 |
@@ -455,7 +555,7 @@ type PlaybackSamples = PlaybackSample[];
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
-| `work_id` | `text` | - | YES | - | FK to `works.id` |
+| **`work_id`** | `text` | - | YES | - | **FK to `works.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `title` | `text` | - | YES | - | 正式名称 (e.g. "Symphony No. 5") |
 | `popular_title` | `text` | - | NO | - | 日本語における代表的な通称 (e.g. "運命") |
@@ -501,7 +601,7 @@ ComposerやWork、Instrumentといった**「構造化された属性」に当�
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
-| `tag_id` | `text` | - | YES | - | FK to `tags.id` |
+| **`tag_id`** | `text` | - | YES | - | **FK to `tags.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
 | `name` | `text` | - | YES | - | 表示名 (e.g. "深い集中") |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
@@ -588,7 +688,7 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
 
 1.  **Primitive Integrity (DB Layer):**
     - **NOT NULL:** 必須項目にはすべて `NOT NULL` 制約を付与します。
-    - **Domain Constraints:** Drizzle を通じて、`CHECK (is_featured IN (0, 1))` などの制約を SQL レベルで埋め込みます。
+    - **Domain Constraints:** Drizzle を通を通じて、`CHECK (is_featured IN (0, 1))` などの制約を SQL レベルで埋め込みます。
 2.  **Structural Integrity (Application Layer):**
     - **Zod Validation:** 書き込み処理（Server Actions）の入り口で厳密なスキーマ検証を行い、不正な形式のデータが DB に到達することを防ぎます。
 3.  **Type Mapping:**
@@ -598,6 +698,7 @@ SQLiteの柔軟な型システムを補完し、エンタープライズ品質�
 
 非正規化カラム (`sl_` prefix) のデータ整合性を保つため、以下の運用を行います。
 
-1.  **Maintenance Agent:** GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
-2.  **Bulk Update:** マスタデータ (`Composers`, `Works`) に変更があった場合、関連する `article_translations` の `sl_` カラムを一括更新します。
-3.  **Scope:** この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
+1.  **Maintenance Agent**: GitHub Actions 上で定期（またはマスタ更新トリガーで）実行されるエージェント。
+2.  **Snapshot Update (Incremental)**: マスタデータ (`Composers`, `Works`) またはシリーズ構成 (`SeriesArticles`) に変更があった場合、**「変更があったレコードに関係する記事のみ」を特定してパッチを当てる差分更新ロジック**を採用し、DB負荷と計算コストを最小化します。
+3.  **Consistency Guarantee**: シリーズに追加された記事は、独自の `sl_series_assignments` 列を更新することで、記事単体のフェッチのみで「シリーズ導線」を完結させます。
+4.  **Scope**: この処理はバックグラウンドで行われ、ユーザーの検索体験への影響を最小限に抑えます。
