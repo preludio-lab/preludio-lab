@@ -20,35 +20,63 @@ eras:
   - id: medieval
     label_ja: 中世
     label_en: Medieval
+    start_year: 500
+    end_year: 1400
     description: 500年頃から1400年頃まで。グレゴリオ聖歌や初期ポリフォニーなど。
   - id: renaissance
     label_ja: ルネサンス
     label_en: Renaissance
+    start_year: 1400
+    end_year: 1600
     description: 1400年頃から1600年頃まで。ジョスカン・デ・プレ、パレストリーナなど。
   - id: baroque
     label_ja: バロック
     label_en: Baroque
+    start_year: 1600
+    end_year: 1750
     description: 1600年頃から1750年頃まで。バッハ、ヘンデル、ヴィヴァルディ。通奏低音の時代。
   - id: classical
     label_ja: 古典派
     label_en: Classical
+    start_year: 1730
+    end_year: 1820
     description: 1750年頃から1820年頃まで。ハイドン、モーツァルト、ベートーヴェン。形式美の追求。
-  - id: romantic
-    label_ja: ロマン派
-    label_en: Romantic
-    description: 1820年頃から1900年頃まで。ショパン、シューベルト、ワーグナー。感情表現の拡大。
+  - id: early-romantic
+    label_ja: 前期ロマン派
+    label_en: Early Romantic
+    start_year: 1815
+    end_year: 1850
+    description: シューベルト、メンデルスゾーンなど。古典的な形式を維持しつつ、ロマン派的抒情性を導入。
+  - id: high-romantic
+    label_ja: 盛期ロマン派
+    label_en: High Romantic
+    start_year: 1850
+    end_year: 1890
+    description: ショパン、リスト、ワーグナー。感情表現の極致、和声の拡張、ピアノ技法の発展。
   - id: late-romantic
     label_ja: 後期ロマン派 / 世紀末
     label_en: Late Romantic / Fin de siècle
-    description: 19世紀末から20世紀初頭。マーラー、R.シュトラウス。機能和声の限界と大規模化。
+    start_year: 1890
+    end_year: 1914
+    description: マーラー、R.シュトラウス。機能和声の限界とオーケストラの大規模化。
   - id: impressionism
     label_ja: 印象主義
     label_en: Impressionism
-    description: ドビュッシー、ラヴェル。色彩豊かで曖昧な響き。
+    start_year: 1890
+    end_year: 1930
+    description: ドビュッシー、ラヴェル。色彩豊かで曖昧な響き、旋法や全音音階の使用。
   - id: modern
-    label_ja: 近代・現代
-    label_en: Modern / Contemporary
-    description: 20世紀以降。シェーンベルク、ストラヴィンスキー、プロコフィエフ。調性の崩壊と再構築。
+    label_ja: 近代
+    label_en: Modern
+    start_year: 1900
+    end_year: 1945
+    description: 第二次世界大戦終結まで。ストラヴィンスキー、プロコフィエフ、新ウィーン楽派。
+  - id: contemporary
+    label_ja: 現代
+    label_en: Contemporary
+    start_year: 1945
+    end_year: 2100
+    description: 1945年以降。ケージ、武満徹、スペクトル楽派、および現存する作曲家。
 
 # -----------------------------------------------------------------------------
 # 2. Genres (ジャンル)
