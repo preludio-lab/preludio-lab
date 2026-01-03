@@ -104,6 +104,10 @@ eras:
 #        3. 形式に基づく判定: 協奏的ソナタ形式（提示部の二重提示など）を持っているか？
 #    - 時代区分と編成の連動:
 #        - バロック時代の作品には、自動的に `basso-continuo`（通奏低音）のタグ付与を検討せよ。
+#    - 10,000記事を回遊させるためのタグ自動提案（AIエージェントへの指示）:
+#        - Duration (演奏時間): 楽曲の一般的な演奏時間を推定し（5分以内: short-piece, 45分以上: monumental-work等）、付与せよ。
+#        - Occasion (行事): 宗教曲なら `liturgical-calendar`、特定の季節感（クリスマス等）があれば付与せよ。
+#        - Heritage & Media: 映画、アニメ、CM等で使用された有名な文脈（のだめ、アマデウス、のだめ等）があれば積極的に付与せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -1016,6 +1020,84 @@ tags:
         label_ja: イージーリスニング・BGM
         label_en: Easy Listening
         description: クラシックの枠を超えて親しまれる、聴きやすい名曲。
+
+  # ----------------------------------------
+  # Duration: 演奏時間・規模感
+  # ----------------------------------------
+  - category: duration
+    items:
+      - id: short-piece
+        label_ja: 5分以内の小品
+        label_en: Short Piece (< 5 min)
+      - id: mid-length
+        label_ja: 15-30分の標準的な長さ
+        label_en: Mid-length Work (15-30 min)
+      - id: monumental-work
+        label_ja: 45分以上の大作
+        label_en: Monumental Work (> 45 min)
+      - id: miniature
+        label_ja: 1分前後の極小作品
+        label_en: Miniature (~ 1 min)
+
+  # ----------------------------------------
+  # Occasion: 行事・季節・ライフイベント
+  # ----------------------------------------
+  - category: occasion
+    items:
+      - id: christmas
+        label_ja: クリスマス・待降節
+        label_en: Christmas / Advent
+      - id: easter-passion
+        label_ja: 復活祭・受難
+        label_en: Easter / Passion
+      - id: memorial-solemn
+        label_ja: 追悼・厳粛な儀式
+        label_en: Memorial / Solemn Ceremonies
+      - id: new-year-celebration
+        label_ja: 新年・祝祭
+        label_en: New Year / Celebration
+      - id: seasonal-spring
+        label_ja: 春の訪れ
+        label_en: Spring / Awakening
+      - id: seasonal-summer
+        label_ja: 夏の夜・野外
+        label_en: Summer / Evening Selection
+
+  # ----------------------------------------
+  # Pedagogy: 学習・分析・教育的視点
+  # ----------------------------------------
+  - category: pedagogy
+    items:
+      - id: analysis-focus
+        label_ja: 楽曲分析（アナリーゼ）向け
+        label_en: For Analysis / Study
+        description: 形式や対位法、和声の構造が明確で、学習に適した名作。
+      - id: orchestration-gem
+        label_ja: 管弦楽法の至宝
+        label_en: Orchestration Masterpiece
+        description: オーケストレーションの模範とされる色彩豊かな楽曲。
+      - id: piano-technique-ext
+        label_ja: ピアノ奏法の発展
+        label_en: Development of Piano Technique
+        description: 特定の技法や物理的な奏法の進化を象徴する作品。
+
+  # ----------------------------------------
+  # Heritage & Media: 文化的背景・メディア露出
+  # ----------------------------------------
+  - category: heritage-media
+    items:
+      - id: featured-in-cinema
+        label_ja: 映画で使用された名曲
+        label_en: Featured in Cinema
+      - id: anime-manga-classic
+        label_ja: アニメ・漫画に登場
+        label_en: Anime / Manga Heritage
+      - id: famous-tv-commercial
+        label_ja: CMで有名
+        label_en: Famous TV Commercial
+      - id: literary-connection
+        label_ja: 文学作品との関わり
+        label_en: Literary Connection
 
 # -----------------------------------------------------------------------------
 # 5. Impression Scales (印象評価軸)
