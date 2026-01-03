@@ -108,14 +108,22 @@ eras:
 #        - Duration (演奏時間): 楽曲の一般的な演奏時間を推定し（5分以内: short-piece, 45分以上: monumental-work等）、付与せよ。
 #        - Occasion (行事): 宗教曲なら `liturgical-calendar`、特定の季節感（クリスマス等）があれば付与せよ。
 #        - Heritage & Media: 映画、アニメ、CM等で使用された有名な文脈（のだめ、アマデウス、のだめ等）があれば積極的に付与せよ。
-#    - 情緒的ラベル（Mood）の抽出戦略:
-#        - 多楽章形式の作品においては、作品全体だけでなく、「楽章ごと」に異なるMoodタグの選定を検討せよ（例：月光ソナタの第1楽章は `serene`, 第3楽章は `passionate`）。
-#    - 利用シーン（Situation）の提案戦略:
-#        - 記事生成時、AIは「その曲を聴くのに最適な具体的なシーン」を100文字程度のストーリーで描写し、タグと連動させよ。
-#    - 歴史と発見（History & Discovery）の抽出戦略:
-#        - 単にジャンルを特定するだけでなく、「誰に捧げられたか（愛の捧げもの）」「初演時のスキャンスダル」「政治的背景」「自然描写」などのエピソードを検索し、該当すれば `terminology` タグを付与せよ。
-#    - 教育・分析的視点（Pedagogy）の活用戦略:
-#        - `analysis-focus` 等のタグを付与する場合、ソナタ形式の構造的な境界線や、対位法の重要な箇所を特定し、譜例（SVG）やポイント解説の生成を優先せよ。
+#        - Heritage & Media (文化的遺産とメディア):
+#            - Cinema/Anime: 映画、アニメ、ドラマ等で使用された文脈（例：のだめカンタービレ、アマデウス）があれば積極的に付与せよ。
+#            - Games/Pop: ビデオゲームでの使用、ポップミュージックでのサンプリングなど、現代文化との接点があれば付与せよ。
+#            - Arts/Literature: 文学作品、絵画、彫刻など、他の芸術形式との関連性があれば付与せよ。
+#            - History/Geography: 特定の歴史的事件や地理的場所（都市、風景）に捧げられた、あるいは関連する作品であれば付与せよ。
+#        - 情緒的ラベル（Mood）の抽出戦略:
+#            - 多楽章形式の作品においては、作品全体だけでなく、「楽章ごと」に異なるMoodタグの選定を検討せよ（例：月光ソナタの第1楽章は `serene`, 第3楽章は `passionate`）。
+#        - 利用シーン（Situation）の提案戦略:
+#            - 記事生成時、AIは「その曲を聴くのに最適な具体的なシーン」を100文字程度のストーリーで描写し、タグと連動させよ。
+#        - 歴史と発見（History & Discovery）の抽出戦略:
+#            - 単にジャンルを特定するだけでなく、「誰に捧げられたか（愛の捧げもの）」「初演時のスキャンダル」「政治的背景」「自然描写」などのエピソードを検索し、該当すれば `terminology` タグを付与せよ。
+#        - 作品識別とカタログ（Catalogue & Identity）:
+#            - 記事生成時、AIは必ず作品番号（Opus）やカタログ番号（BWV, K., D.等）を特定し、`thematic-catalogue` を付与せよ。
+#            - 広く知られた愛称（例：『運命』『月光』）があれば、`nicknamed-work` を付与し、その由来を解説に含めよ。
+#        - 教育・分析的視点（Pedagogy）の活用戦略:
+#            - `analysis-focus` 等のタグを付与する場合、ソナタ形式の構造的な境界線や、対位法の重要な箇所を特定し、譜例（SVG）やポイント解説の生成を優先せよ。
 genres:
   - category: orchestral
     label_ja: 管弦楽曲
@@ -1100,6 +1108,10 @@ tags:
         label_ja: 献呈と愛の物語
         label_en: Dedication & Love
         description: 特定の人物への思慕や愛着、恋心から生まれた私的な背景。
+      - id: thematic-catalogue
+        label_ja: 作品番号・カタログ体系
+        label_en: Thematic Catalogue (Op./BWV/K.)
+        description: 作品番号や特定の目録番号に基づいた、学術的・体系的な識別子。
       - id: unfinished-beauty
         label_ja: 未完成の美
         label_en: Unfinished
@@ -1148,6 +1160,10 @@ tags:
         label_ja: 世界標準の名曲（王道）
         label_en: Standard Repertoire
         description: 音楽史上、最も重要かつ頻繁に演奏される「王道中の王道」。
+      - id: nicknamed-work
+        label_ja: 愛称を持つ名曲
+        label_en: Nicknamed Work
+        description: 広く親しまれている通称・愛称（例：『運命』『英雄』）を持つ作品。
       - id: hidden-gem
         label_ja: 隠れた名曲
         label_en: Hidden Gem
@@ -1280,18 +1296,49 @@ tags:
   # ----------------------------------------
   - category: heritage-media
     items:
+      # --- Cinema, Anime & Manga (映像メディア) ---
       - id: featured-in-cinema
         label_ja: 映画で使用された名曲
         label_en: Featured in Cinema
+        description: スクリーンを彩り、映画の記憶と共に刻まれた印象的なクラシック。
       - id: anime-manga-classic
         label_ja: アニメ・漫画に登場
         label_en: Anime / Manga Heritage
+        description: 「のだめ」「四月は君の嘘」など、物語の重要な鍵として登場した曲。
+
+      # --- Games & Pop Culture (現代文化) ---
+      - id: video-game-connection
+        label_ja: ゲーム音楽への影響・採用
+        label_en: Video Game Connection
+        description: ゲーム内での引用や、ドラクエ・FFなどゲーム音楽のルーツとなった作品。
+      - id: pop-music-sampling
+        label_ja: ポップス・ジャズへの引用
+        label_en: Sampled in Pop / Jazz
+        description: 現代のポピュラー音楽でサンプリング、カバー、アレンジされた原曲。
       - id: famous-tv-commercial
         label_ja: CMで有名
         label_en: Famous TV Commercial
+        description: お茶の間で聞き馴染みのある、広告メディアで愛用されるフレーズ。
+
+      # --- Arts & Literature (芸術・文学) ---
       - id: literary-connection
         label_ja: 文学作品との関わり
         label_en: Literary Connection
+        description: 詩や小説から着想を得た、あるいは物語内に象徴的に登場する曲。
+      - id: visual-arts-link
+        label_ja: 美術・絵画との連関
+        label_en: Connection to Visual Arts
+        description: 特定の絵画や、印象派・表現主義など視覚芸術の様式と密接な作品。
+
+      # --- History & Geography (歴史・土地) ---
+      - id: historical-event
+        label_ja: 歴史的行事・事件
+        label_en: Historical Events & Ceremonies
+        description: 戴冠式、万博、あるいは政治的事件の際に作曲・演奏された記念碑的作品。
+      - id: city-geographic-tribute
+        label_ja: 都市・土地へのオマージュ
+        label_en: Tribute to Cities / Places
+        description: 特定の都市、風景、祖国の土地を称えるために書かれた音楽上の肖像。
 
 # -----------------------------------------------------------------------------
 # 5. Impression Scales (印象評価軸)
