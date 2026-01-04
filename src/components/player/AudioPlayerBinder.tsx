@@ -96,9 +96,9 @@ export function AudioPlayerBinder({
       resolvedRequest.src,
       {
         title: meta.title || 'Audio Recording',
-        composer: meta.composer,
+        composerName: meta.composerName,
         performer: meta.performer,
-        artworkSrc: meta.artworkSrc,
+        thumbnail: meta.thumbnail,
         platformUrl,
         platformLabel,
         platform,

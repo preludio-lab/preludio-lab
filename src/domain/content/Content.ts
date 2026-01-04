@@ -5,7 +5,7 @@ export const MetadataSchema = z.object({
   /** 記事のタイトル (h1として表示) */
   title: z.string(),
   /** 作曲者名 (例: J.S. Bach) */
-  composer: z.string().optional(),
+  composerName: z.string().optional(),
   /** 作品名 (大分類。例: Well-Tempered Clavier Book I) */
   work: z.string().optional(),
   /** 調性 (例: C Major) */
@@ -18,8 +18,6 @@ export const MetadataSchema = z.object({
   audioSrc: z.string().optional(),
   /** 演奏者名 (例: Glenn Gould)。指定がない場合は動画タイトル等から推測されない */
   performer: z.string().optional(),
-  /** アルバムアートワークのパス */
-  artworkSrc: z.string().optional(),
   /** コンテンツのサムネイル画像URL (Hero/List表示用) */
   thumbnail: z.string().optional(),
   /** 再生開始位置 (秒) */

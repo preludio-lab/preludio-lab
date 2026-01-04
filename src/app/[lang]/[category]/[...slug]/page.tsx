@@ -38,7 +38,7 @@ function adaptToContentDetail(dto: ArticleDetailDto): ContentDetail {
     category: dto.category,
     metadata: {
       title: dto.metadata.title,
-      composer: dto.metadata.composerName,
+      composerName: dto.metadata.composerName,
       work: dto.metadata.workTitle,
       key: dto.metadata.key,
       // Mapping number 1-5 back to string labels for legacy UI if strictly needed.
@@ -50,7 +50,6 @@ function adaptToContentDetail(dto: ArticleDetailDto): ContentDetail {
       tags: dto.metadata.tags,
       audioSrc: dto.metadata.audioSrc,
       performer: dto.metadata.performer,
-      artworkSrc: dto.metadata.artworkSrc,
       thumbnail: dto.thumbnail,
       startSeconds: dto.metadata.startSeconds,
       endSeconds: dto.metadata.endSeconds,
@@ -68,7 +67,7 @@ function adaptToContentSummary(dto: ArticleSummaryDto): ContentSummary {
     category: dto.category,
     metadata: {
       title: dto.title,
-      composer: dto.composerName,
+      composerName: dto.composerName,
       // Minimal mapping for summary
       difficulty: 'Intermediate', // Dummy
       tags: [],

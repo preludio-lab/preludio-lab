@@ -30,7 +30,7 @@ export function ContentHeroCard({
           <div className="relative h-64 w-full sm:h-80 md:h-96">
             <Image
               src={content.metadata.thumbnail || '/images/placeholders/sheet-music-hero.jpg'}
-              alt={`${content.metadata.title} - ${content.metadata.composer}`}
+              alt={`${content.metadata.title} - ${content.metadata.composerName}`}
               fill
               priority
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 896px"

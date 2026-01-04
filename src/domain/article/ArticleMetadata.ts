@@ -49,7 +49,7 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Media & Playback ---
     audioSrc: z.string().optional(),
-    artworkSrc: z.string().optional(),
+    thumbnail: z.string().url().optional().or(z.literal('')),
     performer: z.string().optional(),
     startSeconds: z.number().optional(),
     endSeconds: z.number().optional(),

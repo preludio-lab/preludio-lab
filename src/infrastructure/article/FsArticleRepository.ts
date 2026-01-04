@@ -298,7 +298,9 @@ export class FsArticleRepository implements IArticleRepository {
 
             const status = (data.status as ArticleStatus) || ArticleStatus.PUBLISHED;
             const isFeatured = !!data.isFeatured;
-            const date = data.date ? new Date(data.date) : null;
+            // Support both 'publishedAt' (new) and 'date' (legacy summary)
+            const dateStr = data.publishedAt || data.date;
+            const date = dateStr ? new Date(dateStr) : null;
 
             // Calculate ContentStructure (Simple Regex based TOC)
             const contentStructure = this.extractToc(content);
@@ -315,7 +317,7 @@ export class FsArticleRepository implements IArticleRepository {
                 metadata,
                 content,
                 contentStructure,
-                thumbnail: data.thumbnail || metadata.artworkSrc || undefined, // Fallback to artworkSrc
+                thumbnail: data.thumbnail || undefined,
                 readingTimeSeconds: 0, // Should be calculated
                 isFeatured,
                 engagementMetrics: INITIAL_ENGAGEMENT_METRICS, // FS doesn't persist this
@@ -346,12 +348,12 @@ export class FsArticleRepository implements IArticleRepository {
 
         return {
             title: data.title || 'No Title',
-            displayTitle: data.title || 'No Title', // Fallback
             catchcopy: undefined,
+            displayTitle: data.displayTitle || data.title,
             excerpt: data.ogp_excerpt || undefined,
 
-            composerName: data.composer || 'Unknown',
-            workTitle: data.work || undefined,
+            composerName: data.composer || data.composerName || 'Unknown',
+            workTitle: data.workTitle || data.work || undefined,
             workCatalogueId: undefined,
             instrumentations: [],
             genre: undefined,
@@ -364,7 +366,7 @@ export class FsArticleRepository implements IArticleRepository {
 
             // Media
             audioSrc: data.audioSrc,
-            artworkSrc: data.artworkSrc || data.thumbnail,
+            thumbnail: data.thumbnail,
             performer: data.performer,
             startSeconds: data.startSeconds,
             endSeconds: data.endSeconds,

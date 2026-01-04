@@ -159,7 +159,7 @@ Status: `[/]` 進行中
   - [ ] **[環境構築]** データベース・インフラのセットアップ
     - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
     - [ ] **Turso**: 記事・ベクトルデータ用プロジェクトの作成
-      - [ ] Turso CLI のインストールと認証
+      - [ ] Turso CLI のインストールと認証 (`brew uninstall turso && brew install tursodatabase/tap/turso`)
       - [ ] Production / Staging 用のデータベース作成
       - [ ] APIキー・接続情報の管理（Vercel環境変数への連携）
     - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
@@ -291,6 +291,7 @@ Status: `[/]` 進行中
   - [ ] **[実装]** 主要ユーザーフロー（閲覧、言語切り替え、音源再生確認）のテストシナリオ実装
   - [ ] **[運用]** テスト失敗時のレポート自動生成とGitHub上での可視化
   - [ ] **[基盤]** **多言語ルーティング (i18n) の精緻化**: ブラウザ言語の検知と、特定の言語を最上位にプロモートするブラウザロケール連動ロジックの実装
+
 
 - [ ] **8.2 シリーズ機能の実装 (Content Series)**
   - [ ] **[DB設計]** `series` テーブルおよび `series_items` (多対多) のスキーマ設計

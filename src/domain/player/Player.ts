@@ -33,9 +33,9 @@ export const PlayOptionsSchema = z
 // メタデータのバリデーション
 export const PlayerMetadataSchema = z.object({
   title: z.string().optional(),
-  composer: z.string().optional(),
+  composerName: z.string().optional(),
   performer: z.string().optional(),
-  artworkSrc: z.string().url().optional().or(z.literal('')), // 空文字も許容するか、url形式を強制するか
+  thumbnail: z.string().url().optional().or(z.literal('')), // 空文字も許容するか、url形式を強制するか
   platformUrl: z.string().url().optional(),
   platformLabel: z.string().optional(),
   platform: z.nativeEnum(PlayerPlatform).optional().nullable(),

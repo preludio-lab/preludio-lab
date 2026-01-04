@@ -36,15 +36,15 @@ export async function ContentDetailFeature({
   // AudioPlayerBinder用のAudioMetadataを構築
   const audioMetadata = hasAudio
     ? {
-        src: metadata.audioSrc!,
-        title: metadata.title,
-        composer: metadata.composer,
-        performer: metadata.performer,
-        artworkSrc: metadata.artworkSrc,
-        startSeconds: metadata.startSeconds,
-        endSeconds: metadata.endSeconds,
-        platform: 'youtube',
-      }
+      src: metadata.audioSrc!,
+      title: metadata.title,
+      composerName: metadata.composerName,
+      performer: metadata.performer,
+      thumbnail: metadata.thumbnail,
+      startSeconds: metadata.startSeconds,
+      endSeconds: metadata.endSeconds,
+      platform: 'youtube',
+    }
     : undefined;
 
   const mdxComponents = {
@@ -67,19 +67,19 @@ export async function ContentDetailFeature({
               playRequest={
                 audioMetadata
                   ? {
-                      src: audioMetadata.src,
-                      metadata: {
-                        title: audioMetadata.title,
-                        composer: audioMetadata.composer,
-                        performer: audioMetadata.performer,
-                        artworkSrc: audioMetadata.artworkSrc,
-                        platform: audioMetadata.platform as any,
-                      },
-                      options: {
-                        startSeconds: audioMetadata.startSeconds,
-                        endSeconds: audioMetadata.endSeconds,
-                      },
-                    }
+                    src: audioMetadata.src,
+                    metadata: {
+                      title: audioMetadata.title,
+                      composerName: audioMetadata.composerName,
+                      performer: audioMetadata.performer,
+                      thumbnail: audioMetadata.thumbnail,
+                      platform: audioMetadata.platform as any,
+                    },
+                    options: {
+                      startSeconds: audioMetadata.startSeconds,
+                      endSeconds: audioMetadata.endSeconds,
+                    },
+                  }
                   : undefined
               }
             >
@@ -130,10 +130,10 @@ export async function ContentDetailFeature({
           </FadeInHeading>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-lg text-secondary italic">
-            {metadata.composer && (
+            {metadata.composerName && (
               <div>
                 <span className="font-bold text-primary not-italic">Composer:</span>{' '}
-                <span>{metadata.composer}</span>
+                <span>{metadata.composerName}</span>
               </div>
             )}
             {metadata.date && (

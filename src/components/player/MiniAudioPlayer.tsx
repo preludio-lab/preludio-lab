@@ -11,9 +11,9 @@ export function MiniAudioPlayer() {
     mode,
     setMode,
     title,
-    composer,
+    composerName,
     performer,
-    artworkSrc,
+    thumbnail,
     isPlaying,
     togglePlay,
     currentTime,
@@ -68,9 +68,9 @@ export function MiniAudioPlayer() {
           <div
             className={`h-10 w-10 bg-gray-300 rounded-md flex-shrink-0 overflow-hidden relative ${isPlaying ? 'animate-pulse-slow' : ''}`}
           >
-            {artworkSrc ? (
+            {thumbnail ? (
               <img
-                src={artworkSrc}
+                src={thumbnail}
                 alt={title || 'Artwork'}
                 className="w-full h-full object-cover"
               />
@@ -79,14 +79,12 @@ export function MiniAudioPlayer() {
             )}
           </div>
 
-          <div className="min-w-0 pr-4">
-            <div className="text-sm font-bold text-preludio-black truncate">
-              {title || 'Loading...'}
-            </div>
-            <div className="text-xs text-gray-500 truncate">
-              {composer}
-              {performer ? ` (${performer})` : ''}
-            </div>
+          <div className="flex-1 min-w-0 pr-4">
+            <h3 className="text-sm font-bold text-neutral-800 truncate">{title}</h3>
+            <p className="text-xs text-neutral-500 truncate">
+              {composerName || 'Unknown Composer'}
+              {performer && ` • ${performer}`}
+            </p>
           </div>
         </div>
 

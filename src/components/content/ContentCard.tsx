@@ -83,7 +83,7 @@ export function ContentCard({
         <div className="relative aspect-video overflow-hidden block">
           <Image
             src={imgSrc}
-            alt={metadata.title}
+            alt={`${metadata.title} - ${metadata.composerName || ''}`}
             fill
             priority={priority}
             fetchPriority={priority ? 'high' : 'auto'}
@@ -106,13 +106,12 @@ export function ContentCard({
           {displayDifficulty && (
             <div className="absolute top-3 right-3">
               <span
-                className={`text-[10px] font-bold px-2.5 py-1 rounded-full text-white tracking-wider shadow-sm ${
-                  metadata.difficulty === 'Beginner'
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full text-white tracking-wider shadow-sm ${metadata.difficulty === 'Beginner'
                     ? 'bg-emerald-500'
                     : metadata.difficulty === 'Intermediate'
                       ? 'bg-sky-500'
                       : 'bg-rose-500'
-                }`}
+                  }`}
               >
                 {displayDifficulty}
               </span>
@@ -129,10 +128,10 @@ export function ContentCard({
             </h3>
 
             {/* Composer */}
-            {metadata.composer && (
+            {metadata.composerName && (
               <p className="text-neutral-700 font-bold text-sm flex items-center gap-2">
                 <span className="w-5 h-[2px] bg-primary/20 group-hover:bg-primary/50 transition-colors inline-block rounded-full"></span>
-                {metadata.composer}
+                {metadata.composerName}
               </p>
             )}
           </div>

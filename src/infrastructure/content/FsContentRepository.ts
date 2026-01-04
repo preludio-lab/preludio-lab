@@ -145,6 +145,7 @@ export class FsContentRepository implements IContentRepository {
 
         try {
           const metadata = MetadataSchema.parse(data);
+
           return {
             slug,
             lang,

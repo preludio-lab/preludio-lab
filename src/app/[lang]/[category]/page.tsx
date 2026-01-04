@@ -35,10 +35,10 @@ function adaptToContentSummary(dto: ArticleSummaryDto): ContentSummary {
     category: dto.category,
     metadata: {
       title: dto.title,
-      composer: dto.composerName || undefined,
+      composerName: dto.composerName,
       // Map legacy fields
       difficulty: 'Intermediate', // Dummy for summary list or map from readingLevel
-      tags: [], // dto.title might not have tags unless we add to SummaryDto
+      tags: [],
       date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
       thumbnail: dto.thumbnail
     }

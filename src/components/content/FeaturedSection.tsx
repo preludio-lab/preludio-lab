@@ -33,7 +33,7 @@ export async function FeaturedSection({ contents }: FeaturedSectionProps) {
   // メイン記事の説明文
   const mainDescription =
     mainContent.metadata.ogp_excerpt ||
-    t('featured.defaultDescription', { composer: mainContent.metadata.composer || '' });
+    t('featured.defaultDescription', { composer: mainContent.metadata.composerName || '' });
 
   return (
     <section className="w-full bg-gray-100 py-20">
