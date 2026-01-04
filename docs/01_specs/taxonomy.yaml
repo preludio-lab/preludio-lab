@@ -12,6 +12,100 @@
 # - docs/05_design/database-schema.md
 
 # -----------------------------------------------------------------------------
+# 0. Keys / Tonality (調性)
+# -----------------------------------------------------------------------------
+# 西洋音楽における24の調性。
+# 検索やメタデータ管理に使用する。
+keys:
+  - id: c-major
+    label_ja: ハ長調
+    label_en: C Major
+  - id: c-minor
+    label_ja: ハ短調
+    label_en: C Minor
+  - id: c-sharp-major
+    label_ja: 嬰ハ長調
+    label_en: C# Major
+  - id: c-sharp-minor
+    label_ja: 嬰ハ短調
+    label_en: C# Minor
+  - id: d-flat-major
+    label_ja: 変ニ長調
+    label_en: Db Major
+  - id: d-major
+    label_ja: ニ長調
+    label_en: D Major
+  - id: d-minor
+    label_ja: ニ短調
+    label_en: D Minor
+  - id: d-sharp-minor
+    label_ja: 嬰ニ短調
+    label_en: D# Minor
+  - id: e-flat-major
+    label_ja: 変ホ長調
+    label_en: Eb Major
+  - id: e-flat-minor
+    label_ja: 変ホ短調
+    label_en: Eb Minor
+  - id: e-major
+    label_ja: ホ長調
+    label_en: E Major
+  - id: e-minor
+    label_ja: ホ短調
+    label_en: E Minor
+  - id: f-major
+    label_ja: ヘ長調
+    label_en: F Major
+  - id: f-minor
+    label_ja: ヘ短調
+    label_en: F Minor
+  - id: f-sharp-major
+    label_ja: 嬰ヘ長調
+    label_en: F# Major
+  - id: f-sharp-minor
+    label_ja: 嬰ヘ短調
+    label_en: F# Minor
+  - id: g-flat-major
+    label_ja: 変ト長調
+    label_en: Gb Major
+  - id: g-major
+    label_ja: ト長調
+    label_en: G Major
+  - id: g-minor
+    label_ja: ト短調
+    label_en: G Minor
+  - id: g-sharp-minor
+    label_ja: 嬰ト短調
+    label_en: G# Minor
+  - id: a-flat-major
+    label_ja: 変イ長調
+    label_en: Ab Major
+  - id: a-flat-minor
+    label_ja: 変イ短調
+    label_en: Ab Minor
+  - id: a-major
+    label_ja: イ長調
+    label_en: A Major
+  - id: a-minor
+    label_ja: イ短調
+    label_en: A Minor
+  - id: a-sharp-minor
+    label_ja: 嬰イ短調
+    label_en: A# Minor
+  - id: b-flat-major
+    label_ja: 変ロ長調
+    label_en: Bb Major
+  - id: b-flat-minor
+    label_ja: 変ロ短調
+    label_en: Bb Minor
+  - id: b-major
+    label_ja: ロ長調
+    label_en: B Major
+  - id: b-minor
+    label_ja: ロ短調
+    label_en: B Minor
+
+# -----------------------------------------------------------------------------
 # 1. Eras (時代区分)
 # -----------------------------------------------------------------------------
 # 音楽史における主要な時代区分。
@@ -1548,10 +1642,10 @@ impression_scales:
         definition: 圧倒的な人間ドラマ、激情、死と再生、映画のような劇性。
         examples: Tchaikovsky 6 "Pathétique", Berlioz "Symphonie Fantastique"
 
-  - id: popularity
-    label_ja: 知名度
-    label_en: Popularity
-    description: 一般社会における認知度。
+  - id: work_popularity
+    label_ja: 楽曲知名度
+    label_en: Work Popularity
+    description: 楽曲本来の知名度・ポピュラリティ。Taxonomyに基づく客観的評価。
     min_label: Niche (通好み・隠れた名曲)
     max_label: Famous (世界的定番)
     criteria:
@@ -1580,6 +1674,25 @@ impression_scales:
         label_en: Iconic / Universal
         definition: 人類の遺産。イントロだけで誰でも分かる、説明不要の世界的大定番。
         examples: Beethoven 5 "Fate", "Ode to Joy", Pachelbel "Canon"
+
+# -----------------------------------------------------------------------------
+# 5.1. Trending / Article Engagement (トレンド・記事人気度)
+# -----------------------------------------------------------------------------
+# 楽曲本来の知名度ではなく、サイト内での現在の注目度やエンゲージメント。
+# 検索ソート「Trending」で使用する。
+trending_levels:
+  - id: hot
+    label_ja: 急上昇
+    label_en: Hot / Trending
+    description: 短期間で閲覧数やシェアが急増しているトップ記事。
+  - id: steady
+    label_ja: 定番・安定
+    label_en: Steady / Evergreen
+    description: 長期間にわたり安定して読まれている良質なコンテンツ。
+  - id: new-arrival
+    label_ja: 新着・注目
+    label_en: New Arrival
+    description: 公開されたばかりの注目記事。
 
 # -----------------------------------------------------------------------------
 # 6. Nationalities (国・地域)
