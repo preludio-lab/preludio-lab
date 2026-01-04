@@ -1,4 +1,4 @@
-import { ArticleMetadata } from './ArticleMetadata';
+import { ArticleMetadata, SourceAttribution, MonetizationElement } from './ArticleMetadata';
 import { ArticleContent } from './Article';
 import { EngagementMetrics } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
@@ -91,6 +91,11 @@ export interface ArticleDetailDto {
     metadata: ArticleMetadata;
     /** ユーザーアクション関連のメトリクス */
     engagement: EngagementMetrics;
+
+    /** 参照元リンクの配列 */
+    sources: SourceAttribution[];
+    /** 収益化要素の配列 */
+    monetizations: MonetizationElement[];
 
     /** 記事の本文 (MDX形式) */
     content: ArticleContent;

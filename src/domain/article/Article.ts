@@ -1,4 +1,4 @@
-import { ArticleMetadata } from './ArticleMetadata';
+import { ArticleMetadata, SourceAttribution, MonetizationElement } from './ArticleMetadata';
 import { EngagementMetrics, INITIAL_ENGAGEMENT_METRICS } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
 import { AppLocale } from '../i18n/Locale';
@@ -83,6 +83,11 @@ export class Article {
     /** ユーザーの反応・没入度 (PageView等) */
     readonly engagementMetrics: EngagementMetrics;
 
+    /** 記事の信頼性を担保する参照元リンク (Glossary: SourceAttribution) */
+    readonly sources: SourceAttribution[];
+    /** 収益化要素のリ表 (Glossary: MonetizationElement) */
+    readonly monetizations: MonetizationElement[];
+
     constructor(props: {
         id: string;
         slug: string;
@@ -100,6 +105,8 @@ export class Article {
         isFeatured?: boolean;
         seriesAssignments?: SeriesAssignment[];
         engagementMetrics?: EngagementMetrics;
+        sources?: SourceAttribution[];
+        monetizations?: MonetizationElement[];
     }) {
         this.id = props.id;
         this.slug = props.slug;
@@ -117,6 +124,8 @@ export class Article {
         this.isFeatured = props.isFeatured ?? false;
         this.seriesAssignments = props.seriesAssignments ?? [];
         this.engagementMetrics = props.engagementMetrics ?? INITIAL_ENGAGEMENT_METRICS;
+        this.sources = props.sources ?? [];
+        this.monetizations = props.monetizations ?? [];
     }
 
     /**
@@ -154,6 +163,8 @@ export class Article {
             isFeatured: props.isFeatured ?? this.isFeatured,
             seriesAssignments: props.seriesAssignments ?? this.seriesAssignments,
             engagementMetrics: props.engagementMetrics ?? this.engagementMetrics,
+            sources: props.sources ?? this.sources,
+            monetizations: props.monetizations ?? this.monetizations,
         });
     }
 }

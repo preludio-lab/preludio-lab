@@ -71,7 +71,8 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
-| **Source Attribution** | `SourceAttribution` | 記事生成や楽曲解説に使用した参考文献や一次情報の根拠。 | 10,000記事の信頼性を担保するため、IMSLPやWikipedia等のソースを明示する。 |
+| **Source Attribution** | `SourceAttribution` | 記事生成や楽曲解説に使用した参考文献や一次情報の根拠。 | 信頼性を担保するため、タイトルとURLを保持。IMSLPやWikipedia等のソースを明示。 |
+| **Monetization Element** | `MonetizationElement` | 記事に紐付く収益化要素。アフィリエイトリンクや販売チャネル等。 | ユーザーに不快感を与えないよう、文脈に沿った「推薦」として配置。 |
 | **Featured** | `is_featured` | トップページ等で優先的に紹介される「おすすめ記事」の状態。 | 単なる新着ではなく、サイトの「顔」として編集部がキュレートした記事。 |
 | **Recommended** | `is_recommended` | 1つの作品（Work）に対し、特に鑑賞を推奨する録音（Recording）。 | 膨大な録音の中から、入門者や深掘りしたいユーザーにまず勧めるべき「名盤」。 |
 | **Status** | `ContentStatus` | 記事の公開・管理状態（Draft, Published 等）。 | ユーザーへの公開可否を制御する基本的なライフサイクル。 |
