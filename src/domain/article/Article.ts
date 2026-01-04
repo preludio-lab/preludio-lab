@@ -84,9 +84,9 @@ export class Article {
     readonly engagementMetrics: EngagementMetrics;
 
     /** 記事の信頼性を担保する参照元リンク (Glossary: SourceAttribution) */
-    readonly sources: SourceAttribution[];
-    /** 収益化要素のリ表 (Glossary: MonetizationElement) */
-    readonly monetizations: MonetizationElement[];
+    readonly sourceAttributions: SourceAttribution[];
+    /** 収益化要素のリスト (Glossary: MonetizationElement) */
+    readonly monetizationElements: MonetizationElement[];
 
     constructor(props: {
         id: string;
@@ -105,8 +105,8 @@ export class Article {
         isFeatured?: boolean;
         seriesAssignments?: SeriesAssignment[];
         engagementMetrics?: EngagementMetrics;
-        sources?: SourceAttribution[];
-        monetizations?: MonetizationElement[];
+        sourceAttributions?: SourceAttribution[];
+        monetizationElements?: MonetizationElement[];
     }) {
         this.id = props.id;
         this.slug = props.slug;
@@ -124,8 +124,8 @@ export class Article {
         this.isFeatured = props.isFeatured ?? false;
         this.seriesAssignments = props.seriesAssignments ?? [];
         this.engagementMetrics = props.engagementMetrics ?? INITIAL_ENGAGEMENT_METRICS;
-        this.sources = props.sources ?? [];
-        this.monetizations = props.monetizations ?? [];
+        this.sourceAttributions = props.sourceAttributions ?? [];
+        this.monetizationElements = props.monetizationElements ?? [];
     }
 
     /**
@@ -163,8 +163,8 @@ export class Article {
             isFeatured: props.isFeatured ?? this.isFeatured,
             seriesAssignments: props.seriesAssignments ?? this.seriesAssignments,
             engagementMetrics: props.engagementMetrics ?? this.engagementMetrics,
-            sources: props.sources ?? this.sources,
-            monetizations: props.monetizations ?? this.monetizations,
+            sourceAttributions: props.sourceAttributions ?? this.sourceAttributions,
+            monetizationElements: props.monetizationElements ?? this.monetizationElements,
         });
     }
 }

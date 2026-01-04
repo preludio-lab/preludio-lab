@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MonetizationType } from './ArticleConstants';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
@@ -19,7 +20,7 @@ export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
  */
 export const MonetizationElementSchema = z.object({
     /** 収益化要素の種別 (affiliate, shop 等) */
-    type: z.enum(['affiliate', 'shop', 'other']),
+    type: z.nativeEnum(MonetizationType),
     /** ボタンやリンクに表示するラベル (例: "Amazonで楽譜を見る") */
     label: z.string().min(1),
     /** リンク先URL */
@@ -116,9 +117,9 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Grounding & Monetization ---
     /** 記事の信頼性を担保する参照リンクのリスト */
-    sources: z.array(SourceAttributionSchema).optional().default([]),
+    sourceAttributions: z.array(SourceAttributionSchema).optional().default([]),
     /** 収益化リンクのリスト */
-    monetizations: z.array(MonetizationElementSchema).optional().default([]),
+    monetizationElements: z.array(MonetizationElementSchema).optional().default([]),
 });
 
 export type ArticleMetadata = z.infer<typeof ArticleMetadataSchema>;

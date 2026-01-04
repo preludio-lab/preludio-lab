@@ -93,9 +93,9 @@ export interface ArticleDetailDto {
     engagement: EngagementMetrics;
 
     /** 参照元リンクの配列 */
-    sources: SourceAttribution[];
+    sourceAttributions: SourceAttribution[];
     /** 収益化要素の配列 */
-    monetizations: MonetizationElement[];
+    monetizationElements: MonetizationElement[];
 
     /** 記事の本文 (MDX形式) */
     content: ArticleContent;

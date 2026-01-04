@@ -48,6 +48,21 @@ export type ArticleCategory =
     (typeof ArticleCategory)[keyof typeof ArticleCategory];
 
 /**
+ * Monetization Type
+ * 収益化要素の種別
+ */
+export const MonetizationType = {
+    /** アフィリエイトリンク (楽譜、CD等) */
+    AFFILIATE: 'affiliate',
+    /** 自社ショップ商品 */
+    SHOP: 'shop',
+    /** その他 (ドネーション等) */
+    OTHER: 'other',
+} as const;
+
+export type MonetizationType = (typeof MonetizationType)[keyof typeof MonetizationType];
+
+/**
  * Sort Direction
  */
 export const SortDirection = {
