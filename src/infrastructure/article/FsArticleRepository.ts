@@ -308,7 +308,7 @@ export class FsArticleRepository implements IArticleRepository {
             return new Article({
                 id: slug, // Use slug as ID for FS
                 slug,
-                lang,
+                lang: lang as any, // Cast to any or AppLocale if we are sure
                 status,
                 category,
                 publishedAt: date,
@@ -317,11 +317,14 @@ export class FsArticleRepository implements IArticleRepository {
                 metadata,
                 content,
                 contentStructure,
-                thumbnail: data.thumbnail || undefined,
+                thumbnail: metadata.thumbnail || undefined,
                 readingTimeSeconds: 0, // Should be calculated
                 isFeatured,
                 engagementMetrics: INITIAL_ENGAGEMENT_METRICS, // FS doesn't persist this
                 seriesAssignments: [], // Not implemented in FS frontmatter yet
+                playback: metadata.playback,
+                sourceAttributions: metadata.sourceAttributions,
+                monetizationElements: metadata.monetizationElements,
             });
 
         } catch (e) {
@@ -364,15 +367,18 @@ export class FsArticleRepository implements IArticleRepository {
             readingLevel: level,
             performanceDifficulty: level, // Assume same for legacy
 
-            // Media
-            audioSrc: data.audioSrc,
+            // Media (Structured Playback)
+            playback: data.audioSrc ? {
+                audioSrc: data.audioSrc,
+                performer: data.performer,
+                startSeconds: data.startSeconds,
+                endSeconds: data.endSeconds,
+            } : undefined,
             thumbnail: data.thumbnail,
-            performer: data.performer,
-            startSeconds: data.startSeconds,
-            endSeconds: data.endSeconds,
 
             tags: data.tags || [],
-            // thumbnail is handled in parseArticleFile
+            sourceAttributions: data.sourceAttributions || [],
+            monetizationElements: data.monetizationElements || [],
         };
     }
 

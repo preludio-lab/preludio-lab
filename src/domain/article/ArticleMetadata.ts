@@ -9,7 +9,9 @@ export const SourceAttributionSchema = z.object({
     /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
     title: z.string().min(1),
     /** 出典へのURL */
-    url: z.string().url(),
+    url: z.string(),
+    /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
+    provider: z.string().optional(),
 });
 
 export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
@@ -28,6 +30,23 @@ export const MonetizationElementSchema = z.object({
 });
 
 export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
+
+/**
+ * Playback Information
+ * 音源再生に関する情報 (記事、譜例等で共有可能)
+ */
+export const PlaybackSchema = z.object({
+    /** 音源ソースの識別子 (YouTube ID等) */
+    audioSrc: z.string().min(1),
+    /** 演奏者・演奏団体名 */
+    performer: z.string().optional(),
+    /** 音源の再生開始位置 (秒) */
+    startSeconds: z.number().optional(),
+    /** 音源の再生終了位置 (秒) */
+    endSeconds: z.number().optional(),
+});
+
+export type Playback = z.infer<typeof PlaybackSchema>;
 
 /**
  * Impression Dimensions
@@ -100,16 +119,10 @@ export const ArticleMetadataSchema = z.object({
     composerBirthYear: z.number().int().optional(),
 
     // --- Media & Playback ---
-    /** 音源ソースの識別子 (YouTube ID等) */
-    audioSrc: z.string().optional(),
-    /** コンテンツのサムネイル画像URL */
-    thumbnail: z.string().url().optional().or(z.literal('')),
-    /** 演奏者・演奏団体名 */
-    performer: z.string().optional(),
-    /** 音源の再生開始位置 (秒) */
-    startSeconds: z.number().optional(),
-    /** 音源の再生終了位置 (秒) */
-    endSeconds: z.number().optional(),
+    /** 記事を代表する音源再生情報 */
+    playback: PlaybackSchema.optional(),
+    /** コンテンツのサムネイル画像URLまたはパス */
+    thumbnail: z.string().optional().or(z.literal('')),
 
     // --- Taxonomy & Search ---
     /** 自由タグのリスト */

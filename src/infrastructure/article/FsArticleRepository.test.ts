@@ -93,7 +93,7 @@ Content`;
             expect(result?.metadata.composerName).toBe('Mozart'); // Mapped from 'composer'
             expect(result?.metadata.readingLevel).toBe(5); // Mapped from 'Advanced'
             expect(result?.metadata.performanceDifficulty).toBe(5); // Mapped from 'Advanced'
-            expect(result?.metadata.audioSrc).toBe('/audio/legacy.mp3');
+            expect(result?.metadata.playback?.audioSrc).toBe('/audio/legacy.mp3');
         });
 
         it('should return null if file not found', async () => {

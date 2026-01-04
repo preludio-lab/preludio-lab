@@ -1,4 +1,4 @@
-import { ArticleMetadata, SourceAttribution, MonetizationElement } from './ArticleMetadata';
+import { ArticleMetadata, SourceAttribution, MonetizationElement, Playback } from './ArticleMetadata';
 import { ArticleContent } from './Article';
 import { EngagementMetrics } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
@@ -91,6 +91,8 @@ export interface ArticleDetailDto {
     metadata: ArticleMetadata;
     /** ユーザーアクション関連のメトリクス */
     engagement: EngagementMetrics;
+    /** 音源再生情報 */
+    playback?: Playback;
 
     /** 参照元リンクの配列 */
     sourceAttributions: SourceAttribution[];
