@@ -7,12 +7,17 @@ import { ArticleStatus, ArticleCategory } from './ArticleConstants';
  * 記事の目次構造
  */
 export type Section = {
-    id: string;      // Anchor ID (e.g. "introduction")
-    heading: string; // Human readable text
-    level: number;   // 2 (h2) or 3 (h3)
+    /** アンカーID (例: "introduction") */
+    id: string;
+    /** 目次の見出しテキスト */
+    heading: string;
+    /** 見出しレベル (2: h2, 3: h3) */
+    level: number;
+    /** 子セクション */
     children?: Section[];
 };
 
+/** 記事の目次構造 (Table of Contents) */
 export type ContentStructure = Section[];
 
 /**
@@ -20,9 +25,13 @@ export type ContentStructure = Section[];
  * シリーズへの所属情報
  */
 export interface SeriesAssignment {
+    /** シリーズID (UUID等) */
     seriesId: string;
+    /** シリーズのスラグ (URL用) */
     seriesSlug: string;
-    seriesTitle: string; // Snapshot
+    /** シリーズのタイトル (スナップショット) */
+    seriesTitle: string;
+    /** シリーズ内での表示順序 */
     order: number;
 }
 
@@ -31,27 +40,40 @@ export interface SeriesAssignment {
  * 記事のドメインエンティティ (Aggreate Root)
  */
 export class Article {
+    /** 記事のユニークID */
     readonly id: string;
+    /** URLスラグ (カテゴリ以下の相対パス) */
     readonly slug: string;
+    /** 言語コード (ja, en等) */
     readonly lang: string;
+    /** 公開・管理状態 (Draft, Published等) */
     readonly status: ArticleStatus;
+    /** 記事のカテゴリ (works, articles等) */
     readonly category: ArticleCategory;
+    /** 正式な公開日時 */
     readonly publishedAt: Date | null;
+    /** 作成日時 */
     readonly createdAt: Date;
+    /** 最終更新日時 */
     readonly updatedAt: Date;
 
-    // Metadata & Content
+    /** 記事のメタデータ (作曲家、ジャンル、印象値等) */
     readonly metadata: ArticleMetadata;
-    readonly content: string; // MDX Body
+    /** 記事の本文 (MDX形式) */
+    readonly content: string;
+    /** 記事の目次構造 (TOC) */
     readonly contentStructure: ContentStructure;
+    /** 記事のサムネイル画像URL */
     readonly thumbnail?: string;
+    /** 推定読了時間 (秒) */
     readonly readingTimeSeconds: number;
 
-    // Domain Logic Attributes
+    /** トップページ等で優先紹介される「おすすめ記事」フラグ */
     readonly isFeatured: boolean;
+    /** 所属するシリーズ情報のリスト */
     readonly seriesAssignments: SeriesAssignment[];
 
-    // Engagement
+    /** ユーザーの反応・没入度 (PageView等) */
     readonly engagementMetrics: EngagementMetrics;
 
     constructor(props: {

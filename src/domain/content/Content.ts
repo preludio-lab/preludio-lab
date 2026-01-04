@@ -1,32 +1,36 @@
 import { z } from 'zod';
 
 // Define the Metadata schema (Runtime Validation)
+/**
+ * コンテンツのメタデータ (Zodスキーマ)
+ * ※ArticleMetadata との重複に注意し、旧来のContent用として最小構成を維持
+ */
 export const MetadataSchema = z.object({
-  /** 記事のタイトル (h1として表示) */
+  /** UI上に表示されるタイトル */
   title: z.string(),
-  /** 作曲者名 (例: J.S. Bach) */
+  /** 作曲家名 (例: J.S. Bach) */
   composerName: z.string().optional(),
-  /** 作品名 (大分類。例: Well-Tempered Clavier Book I) */
+  /** 作品タイトル (例: Well-Tempered Clavier Book I) */
   work: z.string().optional(),
-  /** 調性 (例: C Major) */
+  /** 楽曲の調性 (例: C Major) */
   key: z.string().optional(),
-  /** 難易度 (Beginner / Intermediate / Advanced) */
+  /** 難易度ラベル (旧仕様: Beginner / Intermediate / Advanced) */
   difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).optional(),
   /** 検索用タグの配列 */
   tags: z.array(z.string()).optional(),
-  /** 音源ソース (例: YouTube ID) */
+  /** 音源ソースの識別子 (YouTube ID等) */
   audioSrc: z.string().optional(),
-  /** 演奏者名 (例: Glenn Gould)。指定がない場合は動画タイトル等から推測されない */
+  /** 演奏者・演奏団体名 */
   performer: z.string().optional(),
-  /** コンテンツのサムネイル画像URL (Hero/List表示用) */
+  /** 記事のサムネイル画像URL */
   thumbnail: z.string().optional(),
   /** 再生開始位置 (秒) */
   startSeconds: z.number().optional(),
   /** 再生終了位置 (秒) */
   endSeconds: z.number().optional(),
-  /** OGP画像生成用の抜粋テキスト (指定がない場合は本文冒頭が使われる想定) */
+  /** SEO・SNS用の抜粋テキスト */
   ogp_excerpt: z.string().optional(),
-  /** 記事の公開日または更新日 (YYYY-MM-DD) */
+  /** 公開日時または更新日 (YYYY-MM-DD) */
   date: z.string().optional(),
 });
 

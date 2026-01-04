@@ -7,23 +7,37 @@ import { ArticleStatus, ArticleCategory } from './ArticleConstants';
  * 一覧表示用など、本文（content）を含まない軽量モデル
  */
 export interface ArticleSummaryDto {
+    /** 記事のユニークID */
     id: string;
+    /** URLスラグ */
     slug: string;
+    /** 言語コード */
     lang: string;
+    /** 公開・管理状態 */
     status: ArticleStatus;
+    /** 記事カテゴリ */
     category: ArticleCategory;
+    /** 「おすすめ記事」フラグ */
     isFeatured: boolean;
+    /** 公開日時 (ISO8601等) */
     publishedAt: string | null;
+    /** サムネイルURL */
     thumbnail?: string;
 
     // Flattened Metadata for easier UI consumption
+    /** UI表示タイトル */
     title: string;
+    /** 正式な表示用タイトル */
     displayTitle: string;
+    /** 作曲家名 */
     composerName?: string;
+    /** 作品タイトル */
     workTitle?: string;
+    /** 抜粋・概要文 */
     excerpt?: string;
 
     // Metrics
+    /** 累積閲覧数 */
     viewCount: number;
 }
 
@@ -52,25 +66,36 @@ export interface PagedResponse<T> {
  * 詳細表示用（本文や全メタデータを含む）
  */
 export interface ArticleDetailDto {
+    /** 記事のユニークID */
     id: string;
+    /** URLスラグ */
     slug: string;
+    /** 言語コード */
     lang: string;
+    /** 公開・管理状態 */
     status: ArticleStatus;
+    /** 記事カテゴリ */
     category: ArticleCategory;
+    /** 「おすすめ記事」フラグ */
     isFeatured: boolean;
+    /** 公開日時 */
     publishedAt: string | null;
+    /** 最終更新日時 */
     updatedAt: string;
+    /** サムネイルURL */
     thumbnail?: string;
 
-    // Full Metadata
+    /** 構造化された全メタデータ */
     metadata: ArticleMetadata;
+    /** ユーザーアクション関連のメトリクス */
     engagement: EngagementMetrics;
 
-    // Content
-    content: string; // MDX Body
-    contentStructure?: any; // 目次構造 (ContentStructure型を後で定義予定)
+    /** 記事の本文 (MDX形式) */
+    content: string;
+    /** 目次構造 (ContentStructure) */
+    contentStructure?: any;
 
-    // Series Info
+    /** 所属するシリーズ情報のスナップショット */
     seriesAssignments?: {
         seriesId: string;
         seriesSlug: string;

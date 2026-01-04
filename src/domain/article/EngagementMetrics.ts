@@ -3,45 +3,45 @@
  * 記事の「深さ」と「広がり」を測定する指標
  */
 export interface EngagementMetrics {
-    /**
-     * viewCount (PageView)
-     * 記事が発見された回数
+    /** 
+     * 累計閲覧数 (PageView)
+     * 楽曲が発見・表示された回数
      */
     readonly viewCount: number;
 
-    /**
-     * auditionCount (Audition)
-     * 音源・譜例が再生された回数（音の体験）
+    /** 
+     * 累計再生数 (Audition)
+     * 音源や譜例が再生された回数。ユーザーの強い関心を示すシグナル。
      */
     readonly auditionCount: number;
 
-    /**
-     * likeCount (Like)
-     * ユーザー（Maestro）からの能動的な評価
+    /** 
+     * お気に入り数 (Like)
+     * Maestro（会員）による能動的な高評価。
      */
     readonly likeCount: number;
 
-    /**
-     * resonanceCount (Resonance)
-     * 感想・共有メモの投稿数（共鳴の数）
+    /** 
+     * 共鳴数 (Resonance)
+     * 楽曲に対する感想やメモの投稿数。
      */
     readonly resonanceCount: number;
 
-    /**
-     * shareCount
-     * ソーシャルシェアの総計
+    /** 
+     * シェア数 (SocialShare)
+     * SNS等への拡散アクション。
      */
     readonly shareCount: number;
 
-    /**
-     * affiliateClickCount
-     * 楽譜・CD等への送客数
+    /** 
+     * アフィリエイトクリック数 (AffiliateClick)
+     * 楽譜サイトや配信プラットフォームへの送客数。
      */
     readonly affiliateClickCount: number;
 
-    /**
-     * avgTimeOnPageSeconds
-     * 平均滞在時間（Immersionの指標）
+    /** 
+     * 平均滞在時間 (TimeOnPage)
+     * 没入度 (Immersion) を算出するための基礎データ。
      */
     readonly avgTimeOnPageSeconds: number;
 }
