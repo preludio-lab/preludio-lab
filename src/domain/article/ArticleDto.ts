@@ -2,6 +2,7 @@ import { ArticleMetadata } from './ArticleMetadata';
 import { ArticleContent } from './Article';
 import { EngagementMetrics } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
+import { AppLocale } from '../i18n/Locale';
 
 /**
  * Article DTO (Summary)
@@ -13,7 +14,7 @@ export interface ArticleSummaryDto {
     /** URLスラグ */
     slug: string;
     /** 言語コード */
-    lang: string;
+    lang: AppLocale;
     /** 公開・管理状態 */
     status: ArticleStatus;
     /** 記事カテゴリ */
@@ -72,7 +73,7 @@ export interface ArticleDetailDto {
     /** URLスラグ */
     slug: string;
     /** 言語コード */
-    lang: string;
+    lang: AppLocale;
     /** 公開・管理状態 */
     status: ArticleStatus;
     /** 記事カテゴリ */

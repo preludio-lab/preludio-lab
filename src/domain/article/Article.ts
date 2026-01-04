@@ -1,6 +1,7 @@
 import { ArticleMetadata } from './ArticleMetadata';
 import { EngagementMetrics, INITIAL_ENGAGEMENT_METRICS } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
+import { AppLocale } from '../i18n/Locale';
 
 /**
  * Content Structure (Table of Contents)
@@ -50,8 +51,8 @@ export class Article {
     readonly id: string;
     /** URLスラグ (カテゴリ以下の相対パス) */
     readonly slug: string;
-    /** 言語コード (ja, en等) */
-    readonly lang: string;
+    /** 言語コード (AppLocale準拠) */
+    readonly lang: AppLocale;
     /** 公開・管理状態 (Draft, Published等) */
     readonly status: ArticleStatus;
     /** 記事のカテゴリ (works, articles等) */
@@ -85,7 +86,7 @@ export class Article {
     constructor(props: {
         id: string;
         slug: string;
-        lang: string;
+        lang: AppLocale;
         status: ArticleStatus;
         category: ArticleCategory;
         publishedAt?: Date | null;
