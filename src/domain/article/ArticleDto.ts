@@ -1,4 +1,5 @@
 import { ArticleMetadata } from './ArticleMetadata';
+import { ArticleContent } from './Article';
 import { EngagementMetrics } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
 
@@ -91,7 +92,7 @@ export interface ArticleDetailDto {
     engagement: EngagementMetrics;
 
     /** 記事の本文 (MDX形式) */
-    content: string;
+    content: ArticleContent;
     /** 目次構造 (ContentStructure) */
     contentStructure?: any;
 

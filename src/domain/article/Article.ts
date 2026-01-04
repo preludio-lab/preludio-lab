@@ -20,6 +20,12 @@ export type Section = {
 /** 記事の目次構造 (Table of Contents) */
 export type ContentStructure = Section[];
 
+/** 
+ * 記事の本文 (MDX形式の生テキスト)
+ * ユビキタス言語: Content (実体) に対応
+ */
+export type ArticleContent = string;
+
 /**
  * Series Assignment
  * シリーズへの所属情報
@@ -60,7 +66,7 @@ export class Article {
     /** 記事のメタデータ (作曲家、ジャンル、印象値等) */
     readonly metadata: ArticleMetadata;
     /** 記事の本文 (MDX形式) */
-    readonly content: string;
+    readonly content: ArticleContent;
     /** 記事の目次構造 (TOC) */
     readonly contentStructure: ContentStructure;
     /** 記事のサムネイル画像URL */
@@ -86,7 +92,7 @@ export class Article {
         createdAt?: Date;
         updatedAt?: Date;
         metadata: ArticleMetadata;
-        content: string;
+        content: ArticleContent;
         contentStructure?: ContentStructure;
         thumbnail?: string;
         readingTimeSeconds?: number;
