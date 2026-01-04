@@ -54,7 +54,9 @@ Content`;
         vi.clearAllMocks();
         repository = new FsArticleRepository();
         // Default mock behavior
-        vi.mocked(fs.statSync).mockReturnValue({ isDirectory: () => true } as any);
+        vi.mocked(fs.statSync).mockImplementation((p: any) => ({
+            isDirectory: () => !p.toString().endsWith('.mdx')
+        }) as any);
     });
 
     describe('findBySlug', () => {

@@ -241,10 +241,16 @@ export class FsArticleRepository implements IArticleRepository {
             for (const category of categories) {
                 const dirPath = path.join(this.contentDirectory, lang, category as string);
                 if (fs.existsSync(dirPath)) {
-                    const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.mdx'));
-                    for (const file of files) {
-                        const slug = file.replace('.mdx', '');
-                        const article = await this.parseArticleFile(path.join(dirPath, file), lang, category as ArticleCategory, slug);
+                    // Recursive search for MDX files
+                    const files = this.getAllMdxFiles(dirPath);
+
+                    for (const filePath of files) {
+                        // Slug calculation: relative path from category dir, removing extension
+                        const relativePath = path.relative(dirPath, filePath);
+                        // Normalize separators and remove extension
+                        const slug = relativePath.replace(/\\/g, '/').replace(/\.mdx$/, '');
+
+                        const article = await this.parseArticleFile(filePath, lang, category as ArticleCategory, slug);
                         if (article) {
                             allArticles.push(article);
                         }
@@ -253,6 +259,24 @@ export class FsArticleRepository implements IArticleRepository {
             }
         }
         return allArticles;
+    }
+
+    private getAllMdxFiles(dir: string): string[] {
+        let results: string[] = [];
+        const list = fs.readdirSync(dir);
+
+        list.forEach(file => {
+            const filePath = path.join(dir, file);
+            const stat = fs.statSync(filePath);
+            if (stat && stat.isDirectory()) {
+                results = results.concat(this.getAllMdxFiles(filePath));
+            } else {
+                if (file.endsWith('.mdx')) {
+                    results.push(filePath);
+                }
+            }
+        });
+        return results;
     }
 
     private async parseArticleFile(filePath: string, lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
@@ -291,7 +315,7 @@ export class FsArticleRepository implements IArticleRepository {
                 metadata,
                 content,
                 contentStructure,
-                thumbnail: data.thumbnail,
+                thumbnail: data.thumbnail || metadata.artworkSrc || undefined, // Fallback to artworkSrc
                 readingTimeSeconds: 0, // Should be calculated
                 isFeatured,
                 engagementMetrics: INITIAL_ENGAGEMENT_METRICS, // FS doesn't persist this
@@ -340,12 +364,13 @@ export class FsArticleRepository implements IArticleRepository {
 
             // Media
             audioSrc: data.audioSrc,
-            artworkSrc: data.artworkSrc,
+            artworkSrc: data.artworkSrc || data.thumbnail,
             performer: data.performer,
             startSeconds: data.startSeconds,
             endSeconds: data.endSeconds,
 
             tags: data.tags || [],
+            // thumbnail is handled in parseArticleFile
         };
     }
 
