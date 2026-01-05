@@ -330,8 +330,8 @@ export class FsArticleRepository implements ArticleRepository {
                 context: {
                     seriesAssignments: [],
                     relatedArticles: data.relatedArticles || [],
-                    sourceAttributions: metadata.sourceAttributions || [],
-                    monetizationElements: metadata.monetizationElements || [],
+                    sourceAttributions: data.sourceAttributions || [],
+                    monetizationElements: data.monetizationElements || [],
                 }
             });
 
@@ -390,8 +390,6 @@ export class FsArticleRepository implements ArticleRepository {
             thumbnail: data.thumbnail,
 
             tags: data.tags || [],
-            sourceAttributions: data.sourceAttributions || [],
-            monetizationElements: data.monetizationElements || [],
             publishedAt: data.date ? new Date(data.date) : null,
         };
     }

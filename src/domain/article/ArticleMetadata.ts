@@ -107,6 +107,11 @@ export const ArticleMetadataSchema = z.object({
     /** 自由タグのリスト */
     tags: z.array(z.string()).default([]),
 
+    // --- Lifecycle (Discovery Context) ---
+    /** 
+     * 正式な公開日時 (未来日時は予約公開扱い)
+     * glossary: ArticleMetadata に移動
+     */
     publishedAt: z.coerce.date().nullable().default(null),
 });
 

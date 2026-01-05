@@ -35,10 +35,23 @@ export const EngagementMetricsSchema = z.object({
      */
     affiliateClickCount: z.number().int().nonnegative().default(0),
 
-    /** 
-     * 平均滞在時間 (TimeOnPage)
+    /**
+     * コンバージョン数 (Conversion)
+     * 成果地点（購入・契約等）に到達した数。
      */
-    avgTimeOnPageSeconds: z.number().int().nonnegative().default(0),
+    conversionCount: z.number().int().nonnegative().default(0),
+
+    /**
+     * 合計収益 (TotalRevenue)
+     * 記事から発生した推定収益額（最小通貨単位、例: JPY）。
+     */
+    totalRevenue: z.number().int().nonnegative().default(0),
+
+    /** 
+     * 合計滞在時間 (TotalTimeOnPage)
+     * 精度を維持するため累積値を保持。平均は DTO 等で算出。
+     */
+    totalTimeOnPageSeconds: z.number().int().nonnegative().default(0),
 });
 
 export type EngagementMetrics = z.infer<typeof EngagementMetricsSchema>;
@@ -66,5 +79,7 @@ export const INITIAL_ENGAGEMENT_METRICS: EngagementMetrics = {
     resonanceCount: 0,
     shareCount: 0,
     affiliateClickCount: 0,
-    avgTimeOnPageSeconds: 0,
+    conversionCount: 0,
+    totalRevenue: 0,
+    totalTimeOnPageSeconds: 0,
 };
