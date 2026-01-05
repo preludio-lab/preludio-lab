@@ -96,31 +96,17 @@ export type PagedResponse<T> = {
  * Article DTO (Detailed)
  * 記事の全情報（本文および全メタデータ）。記事詳細ページ等で使用される。
  * glossary: Article (Metadata + Content) に対応。
+ * 
+ * ArticleMetadataDto をベースとし、本文や構造化された詳細データを追加したもの。
  */
-export const ArticleDtoSchema = z.object({
-    /** 記事のユニークID */
-    id: z.string(),
-    /** URLスラグ */
-    slug: z.string(),
-    /** 言語コード */
-    lang: z.string(),
-    /** 公開・管理状態 */
-    status: z.nativeEnum(ArticleStatus),
-    /** 記事カテゴリ */
-    category: z.nativeEnum(ArticleCategory),
-    /** 「おすすめ記事」フラグ */
-    isFeatured: z.boolean().optional(),
-    /** 公開日時 */
-    publishedAt: z.string().nullable(),
+export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
     /** 最終更新日時 */
     updatedAt: z.string(),
-    /** サムネイルのURLまたはパス */
-    thumbnail: z.string().optional(),
 
-    /** 構造化された全メタデータ */
+    /** 構造化された全メタデータ (ドメインエンティティの構造を維持) */
     metadata: ArticleMetadataSchema,
-    /** ユーザーアクション関連のメトリクス (閲覧数・没入度等) */
-    engagement: z.any(), // EngagementMetrics (can be refined to schema if needed)
+    /** ユーザーアクション関連の全メトリクス (ArticleMetadataDtoのengagementを全量版で上書き) */
+    engagement: z.any(), // EngagementMetrics (can be refined to schema)
     /** 音源再生情報 */
     playback: PlaybackSchema.optional(),
 
