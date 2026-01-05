@@ -61,13 +61,31 @@ export async function ContentDetailFeature({
 
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-            {/* 
-              FIXME: 記事全体の音源(audioMetadata)を個別の譜例に紐付けると、
-              全ての譜例で同じYouTube音源のプレイボタンが表示され、ユーザーにとって紛らわしい。
-              一時的に譜例へのAudioPlayerBinder適用を無効化し、単純なスコア表示のみとする。
-              将来的に、譜例ごとに `%%audio: src` 等のメタデータがある場合のみBinderを有効化すべき。
-            */}
-            <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            <AudioPlayerBinder
+              source={abcContent}
+              format="abc"
+              playRequest={
+                audioMetadata
+                  ? {
+                    src: audioMetadata.src,
+                    metadata: {
+                      title: audioMetadata.title,
+                      composerName: audioMetadata.composerName,
+                      performer: audioMetadata.performer,
+                      thumbnail: audioMetadata.thumbnail,
+                      platform: audioMetadata.platform as any,
+                    },
+                    options: {
+                      // 数値型であることを保証 (undefinedの場合はundefinedのまま)
+                      startSeconds: typeof audioMetadata.startSeconds === 'number' ? audioMetadata.startSeconds : undefined,
+                      endSeconds: typeof audioMetadata.endSeconds === 'number' ? audioMetadata.endSeconds : undefined,
+                    },
+                  }
+                  : undefined
+              }
+            >
+              <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            </AudioPlayerBinder>
           </div>
         );
       }
