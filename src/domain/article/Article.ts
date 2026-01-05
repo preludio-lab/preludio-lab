@@ -53,6 +53,7 @@ export class Article {
     get category() { return this.metadata.category; }
     get title() { return this.metadata.title; }
     get publishedAt() { return this.metadata.publishedAt; }
+    get isFeatured() { return this.metadata.isFeatured; }
 
     /**
      * 公開済みかどうかを判定

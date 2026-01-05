@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FsArticleRepository } from './FsArticleRepository';
-import { ArticleCategory } from '@/domain/article/ArticleConstants';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import fs from 'fs';
 import path from 'path';
 
