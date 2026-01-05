@@ -1,6 +1,23 @@
 import { z } from 'zod';
 import { ArticleCategory } from './ArticleMetadata';
 
+
+/**
+ * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
+ * 用語集: Source Attribution
+ */
+export const SourceAttributionSchema = z.object({
+    /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
+    title: z.string().min(1),
+    /** 出典へのURL */
+    url: z.string(),
+    /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
+    provider: z.string().optional(),
+});
+
+export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
+
+
 /**
  * Monetization Type
  * 収益化要素の種別
@@ -21,31 +38,29 @@ export const MonetizationType = {
 export type MonetizationType = (typeof MonetizationType)[keyof typeof MonetizationType];
 
 /**
- * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
- * 用語集: Source Attribution
- */
-export const SourceAttributionSchema = z.object({
-    /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
-    title: z.string().min(1),
-    /** 出典へのURL */
-    url: z.string(),
-    /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
-    provider: z.string().optional(),
-});
-
-export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
-
-/**
  * 記事に紐付く収益化リンク（アフィリエイト、自社商品等）
  * 用語集: Monetization Element
  */
 export const MonetizationElementSchema = z.object({
-    /** 収益化要素の種別 (affiliate, shop 等) */
+    /** 収益化要素の種別 (affiliate, store, support 等) */
     type: z.nativeEnum(MonetizationType),
-    /** ボタンやリンクに表示するラベル (例: "Amazonで楽譜を見る") */
+    /** 
+     * 対象となる商品・サービス名 
+     * 例: "交響曲第5番 楽譜 (ヘンレ版)", "月刊プレミアムプラン"
+     */
+    targetTitle: z.string().min(1),
+    /** 
+     * ボタン等に直接表示するメインの表示テキスト 
+     * 例: "Amazonで購入", "詳細を見る", "サポートする"
+     */
     label: z.string().min(1),
     /** リンク先URL */
     url: z.string().url(),
+    /** 
+     * 価格の目安 (UI表示用の文字列)
+     * 例: "¥3,500", "$5.00 / mo"
+     */
+    priceHint: z.string().optional(),
 });
 
 export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
