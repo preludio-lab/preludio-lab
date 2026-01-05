@@ -1,131 +1,146 @@
-import { ArticleMetadata, SourceAttribution, MonetizationElement, Playback } from './ArticleMetadata';
-import { ArticleContent, ContentStructure } from './Article';
-import { EngagementMetrics } from './EngagementMetrics';
+import { z } from 'zod';
+import { ArticleMetadata, SourceAttribution, MonetizationElement, Playback, ArticleMetadataSchema, PlaybackSchema, SourceAttributionSchema, MonetizationElementSchema } from './ArticleMetadata';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
 import { AppLocale } from '../i18n/Locale';
+
+/**
+ * Article Engagement DTO
+ * 一覧表示等でソーシャルプルーフとして表示される指標群
+ */
+export const ArticleEngagementDtoSchema = z.object({
+    /** 累計閲覧数 */
+    viewCount: z.number().int().nonnegative(),
+    /** 累計お気に入り数 */
+    likeCount: z.number().int().nonnegative(),
+});
+
+export type ArticleEngagementDto = z.infer<typeof ArticleEngagementDtoSchema>;
 
 /**
  * Article Metadata DTO
  * 記事の構造化データ（Metadata）。一覧表示や検索結果、ヒーローセクションなどで使用される軽量モデル。
  * glossary: Article Metadata に対応。
  */
-export interface ArticleMetadataDto {
+export const ArticleMetadataDtoSchema = z.object({
     /** 記事のユニークID */
-    id: string;
+    id: z.string(),
     /** URLスラグ */
-    slug: string;
+    slug: z.string(),
     /** 言語コード */
-    lang: AppLocale;
+    lang: z.string(), // AppLocale union
     /** 公開・管理状態 */
-    status: ArticleStatus;
+    status: z.nativeEnum(ArticleStatus),
     /** 記事カテゴリ */
-    category: ArticleCategory;
+    category: z.nativeEnum(ArticleCategory),
     /** 「おすすめ記事」フラグ */
-    isFeatured?: boolean;
+    isFeatured: z.boolean().optional(),
     /** 公開日時 (ISO8601等) */
-    publishedAt: string | null;
+    publishedAt: z.string().nullable(),
     /** サムネイルのURLまたはパス */
-    thumbnail?: string;
+    thumbnail: z.string().optional(),
 
     // Flattened Metadata for easier UI consumption
     /** UI表示タイトル */
-    title: string;
+    title: z.string(),
     /** 正式な表示用タイトル */
-    displayTitle: string;
+    displayTitle: z.string(),
     /** 作曲家名 */
-    composerName?: string;
+    composerName: z.string().optional(),
     /** 作品タイトル */
-    workTitle?: string;
+    workTitle: z.string().optional(),
     /** 抜粋・概要文 */
-    excerpt?: string;
+    excerpt: z.string().optional(),
 
     // UX Indicators
     /** 推定読了時間 (秒) */
-    readingTimeSeconds: number;
+    readingTimeSeconds: z.number().int().nonnegative(),
     /** ユーザー向けのソーシャルプルーフ指標 */
-    engagement: ArticleEngagementDto;
-}
+    engagement: ArticleEngagementDtoSchema,
+});
 
-/**
- * Article Engagement DTO
- * 一覧表示等でソーシャルプルーフとして表示される指標群
- */
-export interface ArticleEngagementDto {
-    /** 累計閲覧数 */
-    viewCount: number;
-    /** 累計お気に入り数 */
-    likeCount: number;
-}
+export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
 
 /**
  * Article Search Result DTO
  * 検索結果用。ArticleMetadataDtoに検索関連のスコア情報を追加。
  */
-export interface ArticleSearchResultDto extends ArticleMetadataDto {
+export const ArticleSearchResultDtoSchema = ArticleMetadataDtoSchema.extend({
     /** 検索一致度 / ベクトル類似度 (0.0 〜 1.0) 。主にベクトル検索で使用。 */
-    matchScore?: number;
+    matchScore: z.number().min(0).max(1).optional(),
     /** ヒットした箇所の抜粋。主に全文検索時のハイライト表示に使用。 */
-    highlightedText?: string;
-}
+    highlightedText: z.string().optional(),
+});
+
+export type ArticleSearchResultDto = z.infer<typeof ArticleSearchResultDtoSchema>;
 
 /**
  * Paged Response
  * ページネーション対応の共通レスポンス
  */
-export interface PagedResponse<T> {
+export const PagedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+    z.object({
+        items: z.array(itemSchema),
+        totalCount: z.number().int().nonnegative(),
+        hasNextPage: z.boolean(),
+        nextCursor: z.string().optional(),
+    });
+
+export type PagedResponse<T> = {
     items: T[];
     totalCount: number;
     hasNextPage: boolean;
-    nextCursor?: string; // カーソルベースの場合
-}
+    nextCursor?: string;
+};
 
 /**
  * Article DTO (Detailed)
  * 記事の全情報（本文および全メタデータ）。記事詳細ページ等で使用される。
  * glossary: Article (Metadata + Content) に対応。
  */
-export interface ArticleDto {
+export const ArticleDtoSchema = z.object({
     /** 記事のユニークID */
-    id: string;
+    id: z.string(),
     /** URLスラグ */
-    slug: string;
+    slug: z.string(),
     /** 言語コード */
-    lang: AppLocale;
+    lang: z.string(),
     /** 公開・管理状態 */
-    status: ArticleStatus;
+    status: z.nativeEnum(ArticleStatus),
     /** 記事カテゴリ */
-    category: ArticleCategory;
+    category: z.nativeEnum(ArticleCategory),
     /** 「おすすめ記事」フラグ */
-    isFeatured?: boolean;
+    isFeatured: z.boolean().optional(),
     /** 公開日時 */
-    publishedAt: string | null;
+    publishedAt: z.string().nullable(),
     /** 最終更新日時 */
-    updatedAt: string;
+    updatedAt: z.string(),
     /** サムネイルのURLまたはパス */
-    thumbnail?: string;
+    thumbnail: z.string().optional(),
 
     /** 構造化された全メタデータ */
-    metadata: ArticleMetadata;
+    metadata: ArticleMetadataSchema,
     /** ユーザーアクション関連のメトリクス (閲覧数・没入度等) */
-    engagement: EngagementMetrics;
+    engagement: z.any(), // EngagementMetrics (can be refined to schema if needed)
     /** 音源再生情報 */
-    playback?: Playback;
+    playback: PlaybackSchema.optional(),
 
     /** 参照元リンクの配列 */
-    sourceAttributions: SourceAttribution[];
+    sourceAttributions: z.array(SourceAttributionSchema),
     /** 収益化要素の配列 */
-    monetizationElements: MonetizationElement[];
+    monetizationElements: z.array(MonetizationElementSchema),
 
     /** 記事の本文 (MDX形式)。ページ閲覧時に取得される。 */
-    content: ArticleContent;
+    content: z.string(),
     /** 目次構造 (ContentStructure) */
-    contentStructure?: ContentStructure;
+    contentStructure: z.array(z.any()).optional(),
 
     /** 所属するシリーズ情報のスナップショット */
-    seriesAssignments?: {
-        seriesId: string;
-        seriesSlug: string;
-        seriesTitle: string;
-        order: number;
-    }[];
-}
+    seriesAssignments: z.array(z.object({
+        seriesId: z.string(),
+        seriesSlug: z.string(),
+        seriesTitle: z.string(),
+        order: z.number(),
+    })).optional(),
+});
+
+export type ArticleDto = z.infer<typeof ArticleDtoSchema>;
