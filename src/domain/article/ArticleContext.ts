@@ -38,12 +38,40 @@ export const MonetizationType = {
 export type MonetizationType = (typeof MonetizationType)[keyof typeof MonetizationType];
 
 /**
+ * Monetization Target Category
+ * 商材・対象物のカテゴリ
+ */
+export const MonetizationTargetCategory = {
+    /** 楽譜 (物理本・輸入譜等) */
+    SCORE_PHYSICAL: 'score_physical',
+    /** 楽譜 (PDF・電子楽譜等) */
+    SCORE_DIGITAL: 'score_digital',
+    /** 音源・映像 (CD・DVD・LP等) */
+    RECORDING_PHYSICAL: 'recording_physical',
+    /** 音源・映像 (配信・ダウンロード等) */
+    RECORDING_DIGITAL: 'recording_digital',
+    /** 書籍 (伝記、音楽理論書、専門書等) */
+    BOOK: 'book',
+    /** 教育・講座 (動画レッスン、ワークショップ等) */
+    COURSE: 'course',
+    /** 楽器・備品 (楽器本体、弦、リード、アクセサリー等) */
+    EQUIPMENT: 'equipment',
+    /** その他 (ドネーション、会員権等) */
+    OTHER: 'other',
+} as const;
+
+export type MonetizationTargetCategory =
+    (typeof MonetizationTargetCategory)[keyof typeof MonetizationTargetCategory];
+
+/**
  * 記事に紐付く収益化リンク（アフィリエイト、自社商品等）
  * 用語集: Monetization Element
  */
 export const MonetizationElementSchema = z.object({
     /** 収益化要素の種別 (affiliate, store, support 等) */
     type: z.nativeEnum(MonetizationType),
+    /** 商材カテゴリ (score, recording, book 等) */
+    category: z.nativeEnum(MonetizationTargetCategory),
     /** 
      * 対象となる商品・サービス名 
      * 例: "交響曲第5番 楽譜 (ヘンレ版)", "月刊プレミアムプラン"
