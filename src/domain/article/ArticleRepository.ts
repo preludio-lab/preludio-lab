@@ -1,5 +1,7 @@
 import { Article } from './Article';
-import { ArticleCategory, ArticleSortOption, SortDirection, ArticleStatus } from './ArticleConstants';
+import { ArticleStatus } from './ArticleControl';
+import { ArticleCategory } from './ArticleMetadata';
+import { ArticleSortOption, SortDirection } from './ArticleConstants';
 import { PagedResponse } from './ArticleDto';
 
 /**

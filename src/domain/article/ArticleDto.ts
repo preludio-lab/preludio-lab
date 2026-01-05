@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { ArticleMetadata, Playback, ArticleMetadataSchema, PlaybackSchema } from './ArticleMetadata';
+import { ArticleMetadata, Playback, ArticleMetadataSchema, PlaybackSchema, ArticleCategory } from './ArticleMetadata';
 import { SourceAttribution, MonetizationElement, SourceAttributionSchema, MonetizationElementSchema, SeriesAssignmentSchema, RelatedArticleSchema } from './ArticleContext';
-import { ArticleStatus, ArticleCategory } from './ArticleConstants';
+import { ArticleStatus } from './ArticleControl';
 import { AppLocale } from '../i18n/Locale';
 
 /**

@@ -1,6 +1,7 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleMetadataDto, PagedResponse } from '@/domain/article/ArticleDto';
-import { ArticleStatus, ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { ListArticlesUseCase } from './ListArticlesUseCase';
 
 /**

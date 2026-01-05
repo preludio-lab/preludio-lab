@@ -1,5 +1,35 @@
 import { z } from 'zod';
-import { MonetizationType, ArticleCategory } from './ArticleConstants';
+
+/**
+ * Article Category
+ * コンテンツの分類
+ */
+export const ArticleCategory = {
+    /** 楽曲紹介 (メイン) */
+    WORKS: 'works',
+    /** 作曲家解説 */
+    COMPOSERS: 'composers',
+    /** 時代区分 */
+    ERAS: 'eras',
+    /** ジャンル解説 */
+    GENRES: 'genres',
+    /** 音楽用語・概念 */
+    TERMINOLOGY: 'terminology',
+    /** 楽器解説 */
+    INSTRUMENTS: 'instruments',
+    /** 演奏家・団体 */
+    PERFORMERS: 'performers',
+    /** 音楽理論・分析 */
+    THEORY: 'theory',
+    /** 読み物・コラム */
+    COLUMNS: 'columns',
+    /** 特設シリーズ・特集 */
+    SERIES: 'series',
+    /** オリジナル楽曲・企画 */
+    ORIGINALS: 'originals',
+} as const;
+
+export type ArticleCategory = (typeof ArticleCategory)[keyof typeof ArticleCategory];
 
 
 /**

@@ -7,7 +7,9 @@ import { notFound } from 'next/navigation';
 import GithubSlugger from 'github-slugger';
 import { LOCALES } from '@/lib/constants';
 import { supportedLocales } from '@/domain/i18n/Locale';
-import { ArticleStatus, ArticleCategory, ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { ArticleDto, ArticleMetadataDto } from '@/domain/article/ArticleDto';
 import { ContentDetail, ContentSummary } from '@/domain/content/Content';
 

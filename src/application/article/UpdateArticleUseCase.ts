@@ -1,6 +1,7 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
-import { ArticleStatus, ArticleCategory } from '@/domain/article/ArticleConstants';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 
 export interface UpdateArticleCommand {
     id: string; // Slug or ID

@@ -1,7 +1,7 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleSearchResultDto, PagedResponse } from '@/domain/article/ArticleDto';
 import { Article } from '@/domain/article/Article';
-import { ArticleStatus } from '@/domain/article/ArticleConstants';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { SearchArticlesUseCase } from './SearchArticlesUseCase';
 
 /**

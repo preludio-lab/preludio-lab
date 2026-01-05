@@ -10,13 +10,13 @@ import { Article, ContentSection, ContentStructure } from '@/domain/article/Arti
 import {
     ArticleMetadataSchema,
     ArticleMetadata,
+    ArticleCategory,
 } from '@/domain/article/ArticleMetadata';
 import { PagedResponse } from '@/domain/article/ArticleDto';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
 import {
-    ArticleCategory,
     ArticleSortOption,
     SortDirection,
-    ArticleStatus,
 } from '@/domain/article/ArticleConstants';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
 

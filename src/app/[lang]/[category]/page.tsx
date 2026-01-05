@@ -4,7 +4,8 @@ import { CategoryIndexFeature } from '@/components/content/CategoryIndexFeature'
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { ArticleCategory, ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
 import { ArticleMetadataDto } from '@/domain/article/ArticleDto';
 import { ContentSummary } from '@/domain/content/Content';

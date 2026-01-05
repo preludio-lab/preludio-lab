@@ -1,5 +1,5 @@
 import { ArticleMetadata } from './ArticleMetadata';
-import { ArticleStatus } from './ArticleConstants';
+import { ArticleStatus } from './ArticleControl';
 import { ArticleControl } from './ArticleControl';
 import { ArticleContent, ContentSection, ContentStructure } from './ArticleContent';
 import { ArticleEngagement, INITIAL_ENGAGEMENT_METRICS } from './ArticleEngagement';

@@ -1,6 +1,22 @@
 import { z } from 'zod';
 import { AppLocale } from '../i18n/Locale';
-import { ArticleStatus } from './ArticleConstants';
+
+/**
+ * Article Status
+ * 記事の公開状態
+ */
+export const ArticleStatus = {
+    /** 公開済み */
+    PUBLISHED: 'published',
+    /** 下書き (管理画面のみ) */
+    DRAFT: 'draft',
+    /** 非公開 (URLを知っている人のみ) */
+    PRIVATE: 'private',
+    /** アーカイブ済み (一覧に非表示) */
+    ARCHIVED: 'archived',
+} as const;
+
+export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus];
 
 /**
  * Article Control

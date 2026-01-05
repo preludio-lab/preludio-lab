@@ -1,7 +1,8 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { Article } from '@/domain/article/Article';
 import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
-import { ArticleStatus, ArticleCategory } from '@/domain/article/ArticleConstants';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
 
 export interface CreateArticleCommand {

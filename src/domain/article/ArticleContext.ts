@@ -1,5 +1,20 @@
 import { z } from 'zod';
-import { MonetizationType, ArticleCategory } from './ArticleConstants';
+import { ArticleCategory } from './ArticleMetadata';
+
+/**
+ * Monetization Type
+ * 収益化要素の種別
+ */
+export const MonetizationType = {
+    /** アフィリエイトリンク (楽譜、CD等) */
+    AFFILIATE: 'affiliate',
+    /** 自社ショップ商品 */
+    SHOP: 'shop',
+    /** その他 (ドネーション等) */
+    OTHER: 'other',
+} as const;
+
+export type MonetizationType = (typeof MonetizationType)[keyof typeof MonetizationType];
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
