@@ -31,8 +31,10 @@ export class SearchArticlesUseCase {
             publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
 
             engagement: {
-                viewCount: article.engagement.metrics.viewCount,
-                likeCount: article.engagement.metrics.likeCount,
+                ...article.engagement.metrics,
+                avgTimeOnPageSeconds: article.engagement.metrics.viewCount > 0
+                    ? article.engagement.metrics.totalTimeOnPageSeconds / article.engagement.metrics.viewCount
+                    : 0,
             },
 
             matchScore: 1.0, // Mock score for FS

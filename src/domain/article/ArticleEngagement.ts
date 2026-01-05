@@ -43,7 +43,9 @@ export const EngagementMetricsSchema = z.object({
 
     /**
      * 合計収益 (TotalRevenue)
-     * 記事から発生した推定収益額（最小通貨単位、例: JPY）。
+     * 記事から発生した推定収益額。
+     * 国際展開を考慮し、基準通貨は USD (セント単位の整数) とすることを推奨。
+     * 例: $10.50 -> 1050
      */
     totalRevenue: z.number().int().nonnegative().default(0),
 

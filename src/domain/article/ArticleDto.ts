@@ -9,10 +9,24 @@ import { AppLocale } from '../i18n/Locale';
  * 一覧表示等でソーシャルプルーフとして表示される指標群
  */
 export const ArticleEngagementDtoSchema = z.object({
-    /** 累計閲覧数 */
+    /** 累計閲覧数 (PageView) */
     viewCount: z.number().int().nonnegative(),
-    /** 累計お気に入り数 */
+    /** 累計再生数 (Audition) */
+    auditionCount: z.number().int().nonnegative(),
+    /** 累計お気に入り数 (Like) */
     likeCount: z.number().int().nonnegative(),
+    /** 累計共鳴数 (Resonance) */
+    resonanceCount: z.number().int().nonnegative(),
+    /** 累計シェア数 (SocialShare) */
+    shareCount: z.number().int().nonnegative(),
+    /** アフィリエイトクリック数 */
+    affiliateClickCount: z.number().int().nonnegative(),
+    /** 成果発生数 */
+    conversionCount: z.number().int().nonnegative(),
+    /** 合計収益 (USD Cent) */
+    totalRevenue: z.number().int().nonnegative(),
+    /** 平均滞在時間 (算出値) */
+    avgTimeOnPageSeconds: z.number().nonnegative(),
 });
 
 export type ArticleEngagementDto = z.infer<typeof ArticleEngagementDtoSchema>;
@@ -107,8 +121,8 @@ export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
     metadata: ArticleMetadataSchema,
     /** 最終更新日時 */
     updatedAt: z.string(),
-    /** ユーザーアクション関連の全メトリクス (ArticleMetadataDtoのengagementを全量版で上書き) */
-    engagement: z.any(), // EngagementMetrics (can be refined to schema)
+    /** ユーザーアクション関連の全メトリクス (算出値を含む) */
+    engagement: ArticleEngagementDtoSchema,
 
     /** 参照元リンクの配列 */
     sourceAttributions: z.array(SourceAttributionSchema),

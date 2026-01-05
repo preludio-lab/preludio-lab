@@ -29,7 +29,12 @@ export class GetArticleBySlugUseCase {
             updatedAt: article.control.updatedAt.toISOString(),
 
             metadata: article.metadata,
-            engagement: article.engagement.metrics,
+            engagement: {
+                ...article.engagement.metrics,
+                avgTimeOnPageSeconds: article.engagement.metrics.viewCount > 0
+                    ? article.engagement.metrics.totalTimeOnPageSeconds / article.engagement.metrics.viewCount
+                    : 0,
+            },
             playback: article.metadata.playback,
             sourceAttributions: article.context.sourceAttributions,
             monetizationElements: article.context.monetizationElements,
