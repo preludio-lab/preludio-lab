@@ -100,11 +100,10 @@ export type PagedResponse<T> = {
  * ArticleMetadataDto をベースとし、本文や構造化された詳細データを追加したもの。
  */
 export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
-    /** 最終更新日時 */
-    updatedAt: z.string(),
-
     /** 構造化された全メタデータ (ドメインエンティティの構造を維持) */
     metadata: ArticleMetadataSchema,
+    /** 最終更新日時 */
+    updatedAt: z.string(),
     /** ユーザーアクション関連の全メトリクス (ArticleMetadataDtoのengagementを全量版で上書き) */
     engagement: z.any(), // EngagementMetrics (can be refined to schema)
     /** 音源再生情報 */
