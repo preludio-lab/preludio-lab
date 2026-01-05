@@ -6,7 +6,7 @@ import {
     ArticleRepository,
     ArticleSearchCriteria,
 } from '@/domain/article/ArticleRepository';
-import { Article, Section, ContentStructure } from '@/domain/article/Article';
+import { Article, ContentSection, ContentStructure } from '@/domain/article/Article';
 import {
     ArticleMetadataSchema,
     ArticleMetadata,
@@ -158,7 +158,7 @@ export class FsArticleRepository implements ArticleRepository {
                     valA = a.metadata.composerBirthYear || 0;
                     valB = b.metadata.composerBirthYear || 0;
                     break;
-                case ArticleSortOption.ALPHABETICAL:
+                case ArticleSortOption.TITLE:
                     valA = a.metadata.title;
                     valB = b.metadata.title;
                     break;
@@ -382,10 +382,10 @@ export class FsArticleRepository implements ArticleRepository {
         };
     }
 
-    private extractToc(content: string): Section[] {
+    private extractToc(content: string): ContentStructure {
         const lines = content.split('\n');
-        const sections: Section[] = [];
-        let currentH2: Section | null = null;
+        const sections: ContentStructure = [];
+        let currentH2: ContentSection | null = null;
 
         const h2Regex = /^##\s+(.+)$/;
         const h3Regex = /^###\s+(.+)$/;

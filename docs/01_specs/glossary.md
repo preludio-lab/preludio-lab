@@ -20,6 +20,8 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Article Metadata** | `ArticleMetadata` | 記事に紐付く構造化データ（作曲家、ジャンル、6軸印象値、タグ、Slug等）。 | 検索エンジンやAIエージェントが「記事を理解・分類」するために使用する情報の総称。 |
 | **Series** | `Series` | 共通のテーマ（例：連載もの）で構成される記事のグループ。 | 1つの「親記事（Header）」を持ち、複数の「子記事」を順序（Sort Order）付きで管理。 |
 | **Content** | `Content` | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。 | `Article` の内部データ。見出し構造 (`ContentStructure`) を持つ。 |
+| **Content Section** | `ContentSection` | 記事本文内の論理的な区切り。ID、見出し、レベル、子要素を持つ。 | `id` はアンカー用、`heading` は表示用。レベルは `h2`〜`h6` を基本とする。 |
+| **Content Structure** | `ContentStructure` | 記事全体の目次（ToC）構造。`ContentSection` のツリーとして表現される。 | 記事タイトル (`h1`) を頂点とした論理構造を記述する。 |
 | **Musical Example** | `MusicalExample` | 解説のために引用される数小節の楽譜抜粋。 | 楽曲解説の中核となる「概念・単位」。 |
 | **Notation Data** | `NotationData` | 譜例のソースデータ（ABC記法など）。 | `MusicalExample` の実体データ。R2等に保存。 |
 | **Music Display** | `MusicDisplay` | 譜例、再生、翻訳が統合されたUI。 | ユーザーが触れるReact等のコンポーネント。 |

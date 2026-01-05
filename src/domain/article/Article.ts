@@ -4,22 +4,38 @@ import { ArticleStatus, ArticleCategory } from './ArticleConstants';
 import { AppLocale } from '../i18n/Locale';
 
 /**
- * Content Structure (Table of Contents)
- * 記事の目次構造
+ * Content Section
+ * 記事本文内の論理的な見出し区切り。
+ * glossary: ContentSection に対応
  */
-export type Section = {
-    /** アンカーID (例: "introduction") */
+export type ContentSection = {
+    /** 
+     * アンカーID (例: "historical-background") 
+     * DOM IDとして使用され、ページ内リンク（アンカー）の対象となる。
+     * 原則としてURLセーフなSlug形式。
+     */
     id: string;
-    /** 目次の見出しテキスト */
+    /** 
+     * 目次に表示される見出しテキスト (例: "歴史的背景") 
+     */
     heading: string;
-    /** 見出しレベル (2: h2, 3: h3) */
+    /** 
+     * 見出しレベル (2〜6)
+     * 記事タイトルが h1 であるため、本文内のセクションは h2 (2) から開始する。
+     */
     level: number;
-    /** 子セクション */
-    children?: Section[];
+    /** 
+     * 子セクション。
+     * ネストされた見出し構造を表現する。
+     */
+    children?: ContentSection[];
 };
 
-/** 記事の目次構造 (Table of Contents) */
-export type ContentStructure = Section[];
+/** 
+ * 記事の目次構造 (Table of Contents) 
+ * glossary: ContentStructure に対応
+ */
+export type ContentStructure = ContentSection[];
 
 /** 
  * 記事の本文 (MDX形式の生テキスト)
@@ -31,7 +47,7 @@ export type ArticleContent = string;
  * Series Assignment
  * シリーズへの所属情報
  */
-export interface SeriesAssignment {
+export type SeriesAssignment = {
     /** シリーズID (UUID等) */
     seriesId: string;
     /** シリーズのスラグ (URL用) */
@@ -148,6 +164,11 @@ export class Article {
 
     /**
      * Create a new instance with updated properties (Immutability)
+     */
+    /**
+     * 記事エンティティの複製 (イミュータブルな更新)
+     * 指定されたプロパティを上書きした、新しい Article インスタンスを生成します。
+     * プロパティを変更して保存するユースケースなどで使用します。
      */
     public cloneWith(props: Partial<Omit<Article, 'cloneWith' | 'isPublished' | 'hasSeries'>>): Article {
         return new Article({

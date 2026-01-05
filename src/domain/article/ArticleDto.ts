@@ -1,14 +1,15 @@
 import { ArticleMetadata, SourceAttribution, MonetizationElement, Playback } from './ArticleMetadata';
-import { ArticleContent } from './Article';
+import { ArticleContent, ContentStructure } from './Article';
 import { EngagementMetrics } from './EngagementMetrics';
 import { ArticleStatus, ArticleCategory } from './ArticleConstants';
 import { AppLocale } from '../i18n/Locale';
 
 /**
- * Article DTO (Summary)
- * 一覧表示用など、本文（content）を含まない軽量モデル
+ * Article Metadata DTO
+ * 記事の構造化データ（Metadata）。一覧表示や検索結果、ヒーローセクションなどで使用される軽量モデル。
+ * glossary: Article Metadata に対応。
  */
-export interface ArticleSummaryDto {
+export interface ArticleMetadataDto {
     /** 記事のユニークID */
     id: string;
     /** URLスラグ */
@@ -20,10 +21,10 @@ export interface ArticleSummaryDto {
     /** 記事カテゴリ */
     category: ArticleCategory;
     /** 「おすすめ記事」フラグ */
-    isFeatured: boolean;
+    isFeatured?: boolean;
     /** 公開日時 (ISO8601等) */
     publishedAt: string | null;
-    /** サムネイルURL */
+    /** サムネイルのURLまたはパス */
     thumbnail?: string;
 
     // Flattened Metadata for easier UI consumption
@@ -38,18 +39,33 @@ export interface ArticleSummaryDto {
     /** 抜粋・概要文 */
     excerpt?: string;
 
-    // Metrics
-    /** 累積閲覧数 */
+    // UX Indicators
+    /** 推定読了時間 (秒) */
+    readingTimeSeconds: number;
+    /** ユーザー向けのソーシャルプルーフ指標 */
+    engagement: ArticleEngagementDto;
+}
+
+/**
+ * Article Engagement DTO
+ * 一覧表示等でソーシャルプルーフとして表示される指標群
+ */
+export interface ArticleEngagementDto {
+    /** 累計閲覧数 */
     viewCount: number;
+    /** 累計お気に入り数 */
+    likeCount: number;
 }
 
 /**
  * Article Search Result DTO
- * 検索結果用（スコアなどを含む）
+ * 検索結果用。ArticleMetadataDtoに検索関連のスコア情報を追加。
  */
-export interface ArticleSearchResultDto extends ArticleSummaryDto {
-    matchScore?: number; // 検索一致度 / ベクトル類似度
-    highlightedText?: string; // ヒットした箇所の抜粋
+export interface ArticleSearchResultDto extends ArticleMetadataDto {
+    /** 検索一致度 / ベクトル類似度 (0.0 〜 1.0) 。主にベクトル検索で使用。 */
+    matchScore?: number;
+    /** ヒットした箇所の抜粋。主に全文検索時のハイライト表示に使用。 */
+    highlightedText?: string;
 }
 
 /**
@@ -64,10 +80,11 @@ export interface PagedResponse<T> {
 }
 
 /**
- * Article Detail DTO
- * 詳細表示用（本文や全メタデータを含む）
+ * Article DTO (Detailed)
+ * 記事の全情報（本文および全メタデータ）。記事詳細ページ等で使用される。
+ * glossary: Article (Metadata + Content) に対応。
  */
-export interface ArticleDetailDto {
+export interface ArticleDto {
     /** 記事のユニークID */
     id: string;
     /** URLスラグ */
@@ -79,17 +96,17 @@ export interface ArticleDetailDto {
     /** 記事カテゴリ */
     category: ArticleCategory;
     /** 「おすすめ記事」フラグ */
-    isFeatured: boolean;
+    isFeatured?: boolean;
     /** 公開日時 */
     publishedAt: string | null;
     /** 最終更新日時 */
     updatedAt: string;
-    /** サムネイルURL */
+    /** サムネイルのURLまたはパス */
     thumbnail?: string;
 
     /** 構造化された全メタデータ */
     metadata: ArticleMetadata;
-    /** ユーザーアクション関連のメトリクス */
+    /** ユーザーアクション関連のメトリクス (閲覧数・没入度等) */
     engagement: EngagementMetrics;
     /** 音源再生情報 */
     playback?: Playback;
@@ -99,10 +116,10 @@ export interface ArticleDetailDto {
     /** 収益化要素の配列 */
     monetizationElements: MonetizationElement[];
 
-    /** 記事の本文 (MDX形式) */
+    /** 記事の本文 (MDX形式)。ページ閲覧時に取得される。 */
     content: ArticleContent;
     /** 目次構造 (ContentStructure) */
-    contentStructure?: any;
+    contentStructure?: ContentStructure;
 
     /** 所属するシリーズ情報のスナップショット */
     seriesAssignments?: {

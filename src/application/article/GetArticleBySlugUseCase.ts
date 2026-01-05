@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { ArticleDetailDto } from '@/domain/article/ArticleDto';
+import { ArticleDto } from '@/domain/article/ArticleDto';
 import { Article } from '@/domain/article/Article';
 
 /**
@@ -9,7 +9,7 @@ import { Article } from '@/domain/article/Article';
 export class GetArticleBySlugUseCase {
     constructor(private readonly articleRepository: ArticleRepository) { }
 
-    async execute(lang: string, slug: string): Promise<ArticleDetailDto | null> {
+    async execute(lang: string, slug: string): Promise<ArticleDto | null> {
         const article = await this.articleRepository.findBySlug(lang, slug);
 
         if (!article) {
@@ -19,7 +19,7 @@ export class GetArticleBySlugUseCase {
         return this.toDto(article);
     }
 
-    private toDto(article: Article): ArticleDetailDto {
+    private toDto(article: Article): ArticleDto {
         return {
             id: article.id,
             slug: article.slug,

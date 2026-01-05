@@ -8,7 +8,7 @@ import GithubSlugger from 'github-slugger';
 import { LOCALES } from '@/lib/constants';
 import { supportedLocales } from '@/domain/i18n/Locale';
 import { ArticleStatus, ArticleCategory, ArticleSortOption } from '@/domain/article/ArticleConstants';
-import { ArticleDetailDto, ArticleSummaryDto } from '@/domain/article/ArticleDto';
+import { ArticleDto, ArticleMetadataDto } from '@/domain/article/ArticleDto';
 import { ContentDetail, ContentSummary } from '@/domain/content/Content';
 
 type Props = {
@@ -26,7 +26,7 @@ const articleRepository = new FsArticleRepository();
  * Adapter: ArticleDetailDto -> ContentDetail
  * 旧コンポーネントとの互換性を維持するためのアダプター
  */
-function adaptToContentDetail(dto: ArticleDetailDto): ContentDetail {
+function adaptToContentDetail(dto: ArticleDto): ContentDetail {
   return {
     slug: dto.slug, // Existing slug often includes category hierarchy? Check logic.
     // In New Domain: slug is just the filename usually.
@@ -48,11 +48,11 @@ function adaptToContentDetail(dto: ArticleDetailDto): ContentDetail {
       difficulty: mapLevelToString(dto.metadata.readingLevel || 3) as any,
 
       tags: dto.metadata.tags,
-      audioSrc: dto.metadata.audioSrc,
-      performer: dto.metadata.performer,
+      audioSrc: dto.playback?.audioSrc,
+      performer: dto.playback?.performer,
       thumbnail: dto.thumbnail,
-      startSeconds: dto.metadata.startSeconds,
-      endSeconds: dto.metadata.endSeconds,
+      startSeconds: dto.playback?.startSeconds,
+      endSeconds: dto.playback?.endSeconds,
       ogp_excerpt: dto.metadata.excerpt,
       date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
     },
@@ -60,7 +60,7 @@ function adaptToContentDetail(dto: ArticleDetailDto): ContentDetail {
   };
 }
 
-function adaptToContentSummary(dto: ArticleSummaryDto): ContentSummary {
+function adaptToContentSummary(dto: ArticleMetadataDto): ContentSummary {
   return {
     slug: dto.slug,
     lang: dto.lang,
@@ -175,7 +175,7 @@ export default async function ContentDetailPage({ params }: Props) {
         category: articleDto.category,
         status: [ArticleStatus.PUBLISHED],
         limit: 1000,
-        sortBy: ArticleSortOption.ALPHABETICAL // Maintain A-Z sort for navigation
+        sortBy: ArticleSortOption.TITLE // Maintain Title sort for navigation
       });
 
       const sorted = summaryResponse.items; // Already sorted by UseCase if specified? 

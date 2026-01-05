@@ -1,28 +1,25 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
-import { ArticleSummaryDto, PagedResponse } from '@/domain/article/ArticleDto';
+import { ArticleMetadataDto, PagedResponse } from '@/domain/article/ArticleDto';
 import { Article } from '@/domain/article/Article';
 
 /**
  * ListArticlesUseCase
- * 汎用的な記事一覧取得（条件検索含む）
+ * 条件に基づいた記事一覧の取得（検索・カテゴリ表示等）
  */
 export class ListArticlesUseCase {
     constructor(private readonly articleRepository: ArticleRepository) { }
 
-    async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleSummaryDto>> {
-        const pagedArticles = await this.articleRepository.findMany(criteria);
-
-        const items = pagedArticles.items.map(this.toSummaryDto);
+    async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleMetadataDto>> {
+        const response = await this.articleRepository.findMany(criteria);
 
         return {
-            items,
-            totalCount: pagedArticles.totalCount,
-            hasNextPage: pagedArticles.hasNextPage,
-            nextCursor: pagedArticles.nextCursor,
+            items: response.items.map(article => this.toDto(article)),
+            totalCount: response.totalCount,
+            hasNextPage: response.hasNextPage
         };
     }
 
-    private toSummaryDto(article: Article): ArticleSummaryDto {
+    private toDto(article: Article): ArticleMetadataDto {
         return {
             id: article.id,
             slug: article.slug,
@@ -33,15 +30,19 @@ export class ListArticlesUseCase {
             publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
             thumbnail: article.thumbnail,
 
-            // Flattened Metadata
+            // Flattened
             title: article.metadata.title,
             displayTitle: article.metadata.displayTitle,
             composerName: article.metadata.composerName,
             workTitle: article.metadata.workTitle,
             excerpt: article.metadata.excerpt,
 
-            // Metrics
-            viewCount: article.engagementMetrics.viewCount,
+            // UX
+            readingTimeSeconds: article.readingTimeSeconds,
+            engagement: {
+                viewCount: article.engagementMetrics.viewCount,
+                likeCount: article.engagementMetrics.likeCount,
+            }
         };
     }
 }

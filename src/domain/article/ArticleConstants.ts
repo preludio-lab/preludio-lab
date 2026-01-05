@@ -64,9 +64,12 @@ export type MonetizationType = (typeof MonetizationType)[keyof typeof Monetizati
 
 /**
  * Sort Direction
+ * ソートの昇順・降順
  */
 export const SortDirection = {
+    /** 昇順 (小さい順、A-Z、古い順) */
     ASC: 'asc',
+    /** 降順 (大きい順、Z-A、新しい順) */
     DESC: 'desc',
 } as const;
 
@@ -91,8 +94,8 @@ export const ArticleSortOption = {
     COMPOSITION_YEAR: 'compositionYear',
     /** 作曲者の誕生年順 */
     COMPOSER_BIRTH_YEAR: 'composerBirthYear',
-    /** タイトル昇順 */
-    ALPHABETICAL: 'alphabetical',
+    /** タイトル順 */
+    TITLE: 'title',
 } as const;
 
 export type ArticleSortOption =

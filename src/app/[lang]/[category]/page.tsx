@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ArticleCategory, ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
-import { ArticleSummaryDto } from '@/domain/article/ArticleDto';
+import { ArticleMetadataDto } from '@/domain/article/ArticleDto';
 import { ContentSummary } from '@/domain/content/Content';
 
 type Props = {
@@ -28,7 +28,7 @@ const articleRepository = new FsArticleRepository();
 /**
  * Adapter: ArticleSummaryDto -> ContentSummary
  */
-function adaptToContentSummary(dto: ArticleSummaryDto): ContentSummary {
+function adaptToContentSummary(dto: ArticleMetadataDto): ContentSummary {
   return {
     slug: dto.slug,
     lang: dto.lang,
