@@ -56,6 +56,8 @@ export const ArticleMetadataDtoSchema = z.object({
     readingTimeSeconds: z.number().int().nonnegative(),
     /** ユーザー向けのソーシャルプルーフ指標 */
     engagement: ArticleEngagementDtoSchema,
+    /** 音源再生情報 (一覧での試聴用) */
+    playback: PlaybackSchema.optional(),
 });
 
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
@@ -106,8 +108,6 @@ export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
     updatedAt: z.string(),
     /** ユーザーアクション関連の全メトリクス (ArticleMetadataDtoのengagementを全量版で上書き) */
     engagement: z.any(), // EngagementMetrics (can be refined to schema)
-    /** 音源再生情報 */
-    playback: PlaybackSchema.optional(),
 
     /** 参照元リンクの配列 */
     sourceAttributions: z.array(SourceAttributionSchema),

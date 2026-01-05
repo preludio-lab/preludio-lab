@@ -42,7 +42,8 @@ export class ListArticlesUseCase {
             engagement: {
                 viewCount: article.engagementMetrics.viewCount,
                 likeCount: article.engagementMetrics.likeCount,
-            }
+            },
+            playback: article.playback,
         };
     }
 }
