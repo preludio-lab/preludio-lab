@@ -2,7 +2,7 @@ import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { Article } from '@/domain/article/Article';
 import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
 import { ArticleStatus, ArticleCategory } from '@/domain/article/ArticleConstants';
-import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/EngagementMetrics';
+import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
 
 export interface CreateArticleCommand {
     slug: string;
@@ -33,12 +33,11 @@ export class CreateArticleUseCase {
             displayTitle: command.title,
             composerName: command.composerName,
             tags: [],
-            sourceAttributions: [],
-            monetizationElements: [],
             slug: command.slug,
             category: command.category,
             isFeatured: false,
             readingTimeSeconds: 0,
+            publishedAt: null,
         };
 
         const article = new Article({
@@ -48,13 +47,15 @@ export class CreateArticleUseCase {
                 status: ArticleStatus.DRAFT,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                publishedAt: null,
             },
             metadata,
             content: {
                 body: command.content,
                 structure: [],
-            }
+            },
+            engagement: {
+                metrics: INITIAL_ENGAGEMENT_METRICS,
+            },
         });
 
         await this.articleRepository.save(article);

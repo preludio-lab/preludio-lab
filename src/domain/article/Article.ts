@@ -39,8 +39,8 @@ export class Article {
         this.context = props.context ?? {
             seriesAssignments: [],
             relatedArticles: [],
-            sourceAttributions: props.metadata.sourceAttributions ?? [],
-            monetizationElements: props.metadata.monetizationElements ?? [],
+            sourceAttributions: [],
+            monetizationElements: [],
         };
     }
 
@@ -52,12 +52,26 @@ export class Article {
     get slug() { return this.metadata.slug; }
     get category() { return this.metadata.category; }
     get title() { return this.metadata.title; }
+    get publishedAt() { return this.metadata.publishedAt; }
 
     /**
      * 公開済みかどうかを判定
      */
     public isPublished(): boolean {
         return this.control.status === ArticleStatus.PUBLISHED;
+    }
+
+    /**
+     * 現在時刻において、一般ユーザーに公開可能かを判定 (配信制御)
+     * ステータスが「公開」かつ、公開予定日時を過ぎている場合に true となる。
+     */
+    public isPubliclyVisible(now: Date = new Date()): boolean {
+        const isStatusPublished = this.isPublished();
+        const hasReachedDate = this.metadata.publishedAt
+            ? this.metadata.publishedAt <= now
+            : false;
+
+        return isStatusPublished && hasReachedDate;
     }
 
     /**

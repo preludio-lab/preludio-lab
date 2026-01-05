@@ -1,35 +1,6 @@
 import { z } from 'zod';
 import { MonetizationType, ArticleCategory } from './ArticleConstants';
 
-/**
- * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
- * 用語集: Source Attribution
- */
-export const SourceAttributionSchema = z.object({
-    /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
-    title: z.string().min(1),
-    /** 出典へのURL */
-    url: z.string(),
-    /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
-    provider: z.string().optional(),
-});
-
-export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
-
-/**
- * 記事に紐付く収益化リンク（アフィリエイト、自社商品等）
- * 用語集: Monetization Element
- */
-export const MonetizationElementSchema = z.object({
-    /** 収益化要素の種別 (affiliate, shop 等) */
-    type: z.nativeEnum(MonetizationType),
-    /** ボタンやリンクに表示するラベル (例: "Amazonで楽譜を見る") */
-    label: z.string().min(1),
-    /** リンク先URL */
-    url: z.string().url(),
-});
-
-export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
 
 /**
  * Playback Information
@@ -136,11 +107,7 @@ export const ArticleMetadataSchema = z.object({
     /** 自由タグのリスト */
     tags: z.array(z.string()).default([]),
 
-    // --- Grounding & Monetization ---
-    /** 記事の信頼性を担保する参照リンクのリスト */
-    sourceAttributions: z.array(SourceAttributionSchema).optional().default([]),
-    /** 収益化リンクのリスト */
-    monetizationElements: z.array(MonetizationElementSchema).optional().default([]),
+    publishedAt: z.coerce.date().nullable().default(null),
 });
 
 export type ArticleMetadata = z.infer<typeof ArticleMetadataSchema>;

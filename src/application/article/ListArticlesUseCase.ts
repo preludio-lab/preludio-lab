@@ -25,7 +25,7 @@ export class ListArticlesUseCase {
             id: article.control.id,
             lang: article.control.lang,
             status: article.control.status,
-            publishedAt: article.control.publishedAt ? article.control.publishedAt.toISOString() : null,
+            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
             engagement: {
                 viewCount: article.engagement.metrics.viewCount,
                 likeCount: article.engagement.metrics.likeCount,

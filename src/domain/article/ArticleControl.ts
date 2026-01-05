@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { AppLocale } from '../i18n/Locale';
 import { ArticleStatus } from './ArticleConstants';
 
@@ -6,17 +7,17 @@ import { ArticleStatus } from './ArticleConstants';
  * 記事の基本識別情報とライフサイクル管理。
  * glossary: ArticleControl に対応
  */
-export type ArticleControl = {
+export const ArticleControlSchema = z.object({
     /** 記事のユニークID (システム内部用) */
-    readonly id: string;
+    id: z.string().min(1),
     /** 言語コード */
-    readonly lang: AppLocale;
+    lang: z.string().min(1) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
     /** 公開・管理状態 */
-    readonly status: ArticleStatus;
+    status: z.nativeEnum(ArticleStatus),
     /** 記事の作成日時 */
-    readonly createdAt: Date;
+    createdAt: z.coerce.date(),
     /** 記事の最終更新日時 */
-    readonly updatedAt: Date;
-    /** 正式な公開日時 */
-    readonly publishedAt: Date | null;
-};
+    updatedAt: z.coerce.date(),
+});
+
+export type ArticleControl = z.infer<typeof ArticleControlSchema>;

@@ -18,7 +18,7 @@ import {
     SortDirection,
     ArticleStatus,
 } from '@/domain/article/ArticleConstants';
-import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/EngagementMetrics';
+import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
 
 /**
  * File System Implementation of Article Repository
@@ -130,8 +130,8 @@ export class FsArticleRepository implements ArticleRepository {
 
             switch (sortOption) {
                 case ArticleSortOption.PUBLISHED_AT:
-                    valA = a.control.publishedAt ? a.control.publishedAt.getTime() : 0;
-                    valB = b.control.publishedAt ? b.control.publishedAt.getTime() : 0;
+                    valA = a.publishedAt ? a.publishedAt.getTime() : 0;
+                    valB = b.publishedAt ? b.publishedAt.getTime() : 0;
                     break;
                 case ArticleSortOption.READING_LEVEL:
                     valA = a.metadata.readingLevel || 0;
@@ -309,6 +309,7 @@ export class FsArticleRepository implements ArticleRepository {
             metadata.category = category;
             metadata.isFeatured = isFeatured;
             metadata.readingTimeSeconds = data.readingTimeSeconds || 0;
+            metadata.publishedAt = date;
 
             return new Article({
                 control: {
@@ -317,7 +318,6 @@ export class FsArticleRepository implements ArticleRepository {
                     status: status as ArticleStatus,
                     createdAt: date || new Date(),
                     updatedAt: new Date(),
-                    publishedAt: date,
                 },
                 metadata,
                 content: {
@@ -392,6 +392,7 @@ export class FsArticleRepository implements ArticleRepository {
             tags: data.tags || [],
             sourceAttributions: data.sourceAttributions || [],
             monetizationElements: data.monetizationElements || [],
+            publishedAt: data.date ? new Date(data.date) : null,
         };
     }
 

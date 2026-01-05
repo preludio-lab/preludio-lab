@@ -77,7 +77,7 @@
 | :--- | :--- | :--- | :--- |
 | 1 | ページのソースを表示 (`Cmd+Option+U`) | `<title>`, `<meta name="description">` が出力されている | |
 | 2 | Canonicalタグ確認 | `<link rel="canonical" href="...">` が現在のURLと一致している | |
-| 2 | Canonicalタグ確認 | `<link rel="canonical" href="...">` が現在のURLと一致している | |
+| 1 | ページのソースを表示 (`Cmd+Option+U`) | `<title>`, `<meta name="description">`, `<link rel="canonical">` が出力されている | |
 
 ---
 
