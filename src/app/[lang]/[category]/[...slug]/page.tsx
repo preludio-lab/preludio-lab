@@ -56,7 +56,7 @@ function adaptToContentDetail(dto: ArticleDto): ContentDetail {
       ogp_excerpt: dto.metadata.excerpt,
       date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
     },
-    body: dto.content,
+    body: dto.body,
   };
 }
 

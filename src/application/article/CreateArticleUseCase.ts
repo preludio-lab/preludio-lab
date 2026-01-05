@@ -35,19 +35,26 @@ export class CreateArticleUseCase {
             tags: [],
             sourceAttributions: [],
             monetizationElements: [],
-            // other optionals undefined
+            slug: command.slug,
+            category: command.category,
+            isFeatured: false,
+            readingTimeSeconds: 0,
         };
 
         const article = new Article({
-            id: command.slug, // ID generation strategy (use slug for FS)
-            slug: command.slug,
-            lang: command.lang as any,
-            status: ArticleStatus.DRAFT,
-            category: command.category,
+            control: {
+                id: command.slug, // ID generation strategy (use slug for FS)
+                lang: command.lang as any,
+                status: ArticleStatus.DRAFT,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                publishedAt: null,
+            },
             metadata,
-            content: command.content,
-            isFeatured: false,
-            engagementMetrics: INITIAL_ENGAGEMENT_METRICS
+            content: {
+                body: command.content,
+                structure: [],
+            }
         });
 
         await this.articleRepository.save(article);

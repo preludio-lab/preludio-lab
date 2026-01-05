@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MonetizationType } from './ArticleConstants';
+import { MonetizationType, ArticleCategory } from './ArticleConstants';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
@@ -83,6 +83,10 @@ export const ArticleMetadataSchema = z.object({
     catchcopy: z.string().optional(),
     /** 記事一覧や検索結果に表示される抜粋・概要 */
     excerpt: z.string().optional(),
+    /** URLスラグ (発見・アクセス用) */
+    slug: z.string().min(1),
+    /** 記事カテゴリ (発見・分類用) */
+    category: z.nativeEnum(ArticleCategory),
 
     // --- Musical Attributes ---
     /** 作曲家名 */
@@ -107,6 +111,10 @@ export const ArticleMetadataSchema = z.object({
     readingLevel: z.number().int().min(1).max(5).optional(),
     /** 楽曲自体の演奏難易度レベル (1-5) */
     performanceDifficulty: z.number().int().min(1).max(5).optional(),
+    /** トップページ等で優先紹介される「おすすめ記事」フラグ */
+    isFeatured: z.boolean().default(false),
+    /** 推定読了時間 (秒) */
+    readingTimeSeconds: z.number().int().nonnegative().default(0),
 
     // --- Impressions ---
     /** 感性・印象評価の6軸データ */
@@ -118,10 +126,10 @@ export const ArticleMetadataSchema = z.object({
     /** 作曲者の誕生年 */
     composerBirthYear: z.number().int().optional(),
 
-    // --- Media & Playback ---
-    /** 記事を代表する音源再生情報 */
+    // --- Media & Playback (Discovery Support) ---
+    /** 記事を代表する音源再生情報 (一覧表示での試聴用) */
     playback: PlaybackSchema.optional(),
-    /** コンテンツのサムネイル画像URLまたはパス */
+    /** コンテンツのサムネイル画像URLまたはパス (一覧・検索結果用) */
     thumbnail: z.string().optional().or(z.literal('')),
 
     // --- Taxonomy & Search ---

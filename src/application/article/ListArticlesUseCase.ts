@@ -21,29 +21,15 @@ export class ListArticlesUseCase {
 
     private toDto(article: Article): ArticleMetadataDto {
         return {
-            id: article.id,
-            slug: article.slug,
-            lang: article.lang,
-            status: article.status,
-            category: article.category,
-            isFeatured: article.isFeatured,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-            thumbnail: article.thumbnail,
-
-            // Flattened
-            title: article.metadata.title,
-            displayTitle: article.metadata.displayTitle,
-            composerName: article.metadata.composerName,
-            workTitle: article.metadata.workTitle,
-            excerpt: article.metadata.excerpt,
-
-            // UX
-            readingTimeSeconds: article.readingTimeSeconds,
+            ...article.metadata,
+            id: article.control.id,
+            lang: article.control.lang,
+            status: article.control.status,
+            publishedAt: article.control.publishedAt ? article.control.publishedAt.toISOString() : null,
             engagement: {
-                viewCount: article.engagementMetrics.viewCount,
-                likeCount: article.engagementMetrics.likeCount,
+                viewCount: article.engagement.metrics.viewCount,
+                likeCount: article.engagement.metrics.likeCount,
             },
-            playback: article.playback,
         };
     }
 }

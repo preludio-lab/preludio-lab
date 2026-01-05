@@ -114,17 +114,29 @@ export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
     /** 収益化要素の配列 */
     monetizationElements: z.array(MonetizationElementSchema),
 
-    /** 記事の本文 (MDX形式)。ページ閲覧時に取得される。 */
-    content: z.string(),
-    /** 目次構造 (ContentStructure) */
-    contentStructure: z.array(z.any()).optional(),
+    /** 
+     * 記事の本文 (MDX形式)。ページ閲覧時に取得される。 
+     * glossary: ContentBody に対応
+     */
+    body: z.string(),
+    /** 
+     * 目次構造 (ContentStructure)
+     * glossary: ContentStructure に対応
+     */
+    structure: z.array(z.any()).optional(),
 
-    /** 所属するシリーズ情報のスナップショット */
     seriesAssignments: z.array(z.object({
         seriesId: z.string(),
         seriesSlug: z.string(),
         seriesTitle: z.string(),
         order: z.number(),
+    })).optional(),
+    /** 関連記事リスト */
+    relatedArticles: z.array(z.object({
+        articleId: z.string(),
+        title: z.string(),
+        category: z.nativeEnum(ArticleCategory),
+        slug: z.string(),
     })).optional(),
 });
 

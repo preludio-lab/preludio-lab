@@ -24,11 +24,19 @@ export class UpdateArticleUseCase {
         }
 
         const updatedArticle = article.cloneWith({
-            content: command.content,
-            status: command.status,
-            isFeatured: command.isFeatured,
-            metadata: command.metadata ? { ...article.metadata, ...command.metadata } : undefined,
-            updatedAt: new Date()
+            control: {
+                status: command.status ?? article.control.status,
+                updatedAt: new Date(),
+            },
+            content: command.content ? {
+                ...article.content,
+                body: command.content,
+            } : undefined,
+            metadata: {
+                ...article.metadata,
+                ...command.metadata,
+                ...(command.isFeatured !== undefined ? { isFeatured: command.isFeatured } : {}),
+            },
         });
 
         await this.articleRepository.save(updatedArticle);

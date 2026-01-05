@@ -97,13 +97,13 @@ export class FsArticleRepository implements ArticleRepository {
         // 5. Series Filter
         if (criteria.seriesId) {
             articles = articles.filter((a) =>
-                a.seriesAssignments.some(sa => sa.seriesId === criteria.seriesId)
+                a.context.seriesAssignments.some((sa: any) => sa.seriesId === criteria.seriesId)
             );
         }
 
         // 6. Featured Filter
         if (criteria.isFeatured !== undefined) {
-            articles = articles.filter((a) => a.isFeatured === criteria.isFeatured);
+            articles = articles.filter((a) => a.metadata.isFeatured === criteria.isFeatured);
         }
 
         // 7. Metadata Filters
@@ -130,8 +130,8 @@ export class FsArticleRepository implements ArticleRepository {
 
             switch (sortOption) {
                 case ArticleSortOption.PUBLISHED_AT:
-                    valA = a.publishedAt ? a.publishedAt.getTime() : 0;
-                    valB = b.publishedAt ? b.publishedAt.getTime() : 0;
+                    valA = a.control.publishedAt ? a.control.publishedAt.getTime() : 0;
+                    valB = b.control.publishedAt ? b.control.publishedAt.getTime() : 0;
                     break;
                 case ArticleSortOption.READING_LEVEL:
                     valA = a.metadata.readingLevel || 0;
@@ -147,8 +147,8 @@ export class FsArticleRepository implements ArticleRepository {
                     valA = 0; valB = 0;
                     break;
                 case ArticleSortOption.TRENDING:
-                    valA = a.engagementMetrics.viewCount;
-                    valB = b.engagementMetrics.viewCount;
+                    valA = a.engagement.metrics.viewCount;
+                    valB = b.engagement.metrics.viewCount;
                     break;
                 case ArticleSortOption.COMPOSITION_YEAR:
                     valA = a.metadata.compositionYear || 0;
@@ -201,11 +201,10 @@ export class FsArticleRepository implements ArticleRepository {
         // Construct frontmatter object
         const frontmatter = {
             ...article.metadata,
-            status: article.status, // Move entity fields to frontmatter for persistence
-            isFeatured: article.isFeatured,
+            status: article.control.status, // Move entity fields to frontmatter for persistence
         };
 
-        const fileContent = matter.stringify(article.content, frontmatter);
+        const fileContent = matter.stringify(article.content.body, frontmatter);
         fs.writeFileSync(filePath, fileContent, 'utf8');
     }
 
@@ -305,26 +304,35 @@ export class FsArticleRepository implements ArticleRepository {
             // Calculate ContentStructure (Simple Regex based TOC)
             const contentStructure = this.extractToc(content);
 
+            // Ensure discovery fields are set in metadata
+            metadata.slug = slug;
+            metadata.category = category;
+            metadata.isFeatured = isFeatured;
+            metadata.readingTimeSeconds = data.readingTimeSeconds || 0;
+
             return new Article({
-                id: slug, // Use slug as ID for FS
-                slug,
-                lang: lang as any, // Cast to any or AppLocale if we are sure
-                status,
-                category,
-                publishedAt: date,
-                createdAt: date || new Date(), // fs.stat birthtime is unreliable across git clones
-                updatedAt: new Date(),
+                control: {
+                    id: slug, // Use slug as ID for FS
+                    lang: lang as any,
+                    status: status as ArticleStatus,
+                    createdAt: date || new Date(),
+                    updatedAt: new Date(),
+                    publishedAt: date,
+                },
                 metadata,
-                content,
-                contentStructure,
-                thumbnail: metadata.thumbnail || undefined,
-                readingTimeSeconds: 0, // Should be calculated
-                isFeatured,
-                engagementMetrics: INITIAL_ENGAGEMENT_METRICS, // FS doesn't persist this
-                seriesAssignments: [], // Not implemented in FS frontmatter yet
-                playback: metadata.playback,
-                sourceAttributions: metadata.sourceAttributions,
-                monetizationElements: metadata.monetizationElements,
+                content: {
+                    body: content,
+                    structure: contentStructure,
+                },
+                engagement: {
+                    metrics: INITIAL_ENGAGEMENT_METRICS,
+                },
+                context: {
+                    seriesAssignments: [],
+                    relatedArticles: data.relatedArticles || [],
+                    sourceAttributions: metadata.sourceAttributions || [],
+                    monetizationElements: metadata.monetizationElements || [],
+                }
             });
 
         } catch (e) {
@@ -366,6 +374,11 @@ export class FsArticleRepository implements ArticleRepository {
 
             readingLevel: level,
             performanceDifficulty: level, // Assume same for legacy
+
+            slug: data.slug || 'unknown',
+            category: data.category || ArticleCategory.WORKS,
+            isFeatured: !!data.isFeatured,
+            readingTimeSeconds: data.readingTimeSeconds || 0,
 
             // Media (Structured Playback)
             playback: data.audioSrc ? {

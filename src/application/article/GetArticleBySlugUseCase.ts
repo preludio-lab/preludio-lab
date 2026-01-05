@@ -21,31 +21,24 @@ export class GetArticleBySlugUseCase {
 
     private toDto(article: Article): ArticleDto {
         return {
-            id: article.id,
-            slug: article.slug,
-            lang: article.lang,
-            status: article.status,
-            category: article.category,
-            isFeatured: article.isFeatured,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-            updatedAt: article.updatedAt.toISOString(),
-            thumbnail: article.thumbnail,
+            ...article.metadata,
+            id: article.control.id,
+            lang: article.control.lang,
+            status: article.control.status,
+            publishedAt: article.control.publishedAt ? article.control.publishedAt.toISOString() : null,
+            updatedAt: article.control.updatedAt.toISOString(),
 
             metadata: article.metadata,
-            engagement: article.engagementMetrics,
-            playback: article.playback,
-            sourceAttributions: article.sourceAttributions,
-            monetizationElements: article.monetizationElements,
+            engagement: article.engagement.metrics,
+            playback: article.metadata.playback,
+            sourceAttributions: article.context.sourceAttributions,
+            monetizationElements: article.context.monetizationElements,
 
-            content: article.content,
-            contentStructure: article.contentStructure,
+            body: article.content.body,
+            structure: article.content.structure,
 
-            seriesAssignments: article.seriesAssignments.map(sa => ({
-                seriesId: sa.seriesId,
-                seriesSlug: sa.seriesSlug,
-                seriesTitle: sa.seriesTitle,
-                order: sa.order
-            }))
+            seriesAssignments: article.context.seriesAssignments,
+            relatedArticles: article.context.relatedArticles,
         };
     }
 }

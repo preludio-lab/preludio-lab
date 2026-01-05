@@ -23,25 +23,17 @@ export class SearchArticlesUseCase {
     }
 
     private toSearchResultDto(article: Article): ArticleSearchResultDto {
-        // In FS implementation, we don't have vector search scores.
-        // Default score to 1.0 or undefined.
         return {
-            id: article.id,
-            slug: article.slug,
-            lang: article.lang,
-            status: article.status,
-            category: article.category,
-            isFeatured: article.isFeatured,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-            thumbnail: article.thumbnail,
+            ...article.metadata,
+            id: article.control.id,
+            lang: article.control.lang,
+            status: article.control.status,
+            publishedAt: article.control.publishedAt ? article.control.publishedAt.toISOString() : null,
 
-            title: article.metadata.title,
-            displayTitle: article.metadata.displayTitle,
-            composerName: article.metadata.composerName,
-            workTitle: article.metadata.workTitle,
-            excerpt: article.metadata.excerpt,
-
-            viewCount: article.engagementMetrics.viewCount,
+            engagement: {
+                viewCount: article.engagement.metrics.viewCount,
+                likeCount: article.engagement.metrics.likeCount,
+            },
 
             matchScore: 1.0, // Mock score for FS
         };

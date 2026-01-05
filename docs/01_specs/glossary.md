@@ -14,25 +14,38 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
 | **Composer** | `Composer` | 作曲家。生涯・国籍・マスタデータを管理。 | 「人物」ではなく「芸術家」として敬意を払う。一意な `slug` (e.g., `bach`) で識別される。 |
-| **Performer** | `Performer` | 演奏家・団体。指揮者、奏者、オーケストラ等。 | `Recording` の主体。単なるラベルではなく、独自の `slug` を持つエンティティ。 |
+| **Performer** | `Performer` | 演奏家・団体。指揮者、奏者、オーケストラ等。 | `Recording` の主体。単なるラベルではなく、独自の `slug`を持つエンティティ。 |
 | **Work** | `Work` | 楽曲の実体（例：運命）。不変のメタデータを持つ親エンティティ。 | 「曲」ではなく「作品」と呼称する。言語普遍的なIDを持つ。 |
-| **Article** | `Article` | `Metadata` と `Content` で構成される、解説記事の最小単位。 | 単なる「ページ」ではなく、特定の楽曲（Work）に対する音楽的知見をパッケージ化したもの。 |
-| **Article Metadata** | `ArticleMetadata` | 記事に紐付く構造化データ（作曲家、ジャンル、6軸印象値、タグ、Slug等）。 | 検索エンジンやAIエージェントが「記事を理解・分類」するために使用する情報の総称。 |
+| **Recording** | `Recording` | 楽曲の演奏を記録したもの。誰のいつの演奏かを管理する実体。 | ユーザーが「聴く」対象。`RecordingSource` (YouTube/Spotify) を複数持つことができる。 |
+| **Catalogue** | `CatalogueNumber` | 楽曲を識別するための作品番号（Op., BWV, K. など）。 | 原則として翻訳しない（後述の Strategic Nuances 参照）。 |
+| **Genre** | `Genre` | 音楽的な分類（例：Prelude, Fugue, Symphony）。 | `Category='genre'` のタグとして管理される。 |
+| **Era** | `Era` | 音楽史における時代区分（例：Baroque, Romantic）。 | `Category='era'` のタグとして管理される。 |
+| **Instrumentation** | `Instrumentation` | その作品を演奏するために必要な楽器の構成（例：ピアノ独奏、弦楽四重奏）。 | 楽曲の検索・分類における最重要軸の一つ。具体的な項目は Taxonomy にて定義される。 |
+
+## 2. Article Entities (記事ドメイン)
+
+楽曲を解説し、ユーザーへ知見を届けるためのコンテンツ構造に関する定義です。
+
+| Term | Code / ID | Definition | Nuance / Policy |
+| :--- | :--- | :--- | :--- |
+| **Article** | `Article` | `ArticleControl`, `Metadata`, `Content`, `Engagement`, `Context` で構成されるエンティティの最小単位。 | 単なる「ページ」ではなく、特定の楽曲（Work）に対する音楽的知見をパッケージ化したもの。これらパーツを束ねる「コーディネーター」として機能する。 |
+| **Article Control** | `ArticleControl` | 記事のライフサイクルやアイデンティティを管理する制御情報。 | `id`, `lang`, `status`, `publishedAt` 等を含む、記事の「外箱」としての属性。 |
+| **Article Metadata** | `ArticleMetadata` | 記事に紐付く構造化データ（作曲家、ジャンル、6軸印象値、タグ、Slug等）。 | 検索エンジンやAIエージェントが「記事を理解・分類」するために使用する情報の総称。一覧表示や発見（Discovery）に必要なすべての属性を包含する。 |
+| **Article Content** | `ArticleContent` | 記事の実体データ。本文と構造（ToC）を含むモジュール。 | ユーザーが記事を読み始めた際に必要となる情報のセット。 |
+| **Content Body** | `ContentBody` | 記事の本文。MDX形式の生テキスト。 | `ArticleContent` の主要パーツ。実装上のプロパティ名は `body` となる。 |
+| **Content Structure** | `ContentStructure` | 記事全体の目次（ToC）構造。`ContentSection` のツリーとして表現される。 | `ArticleContent` のパーツ。記事タイトル (`h1`) を頂点とした論理構造。 |
+| **Article Engagement** | `ArticleEngagement` | ユーザーの反応や没入度を示す動的なメトリクス。 | 閲覧数、いいね数、平均滞在時間等の統計データ。一覧表示でのソーシャルプルーフとしても使用される。 |
+| **Article Context** | `ArticleContext` | 記事に付随する「文脈」や「関連情報」。 | 参照元（Source Attribution）、収益化要素（Monetization Element）、所属シリーズ、関連記事等の、記事の外部世界との関係定義。 |
 | **Series** | `Series` | 共通のテーマ（例：連載もの）で構成される記事のグループ。 | 1つの「親記事（Header）」を持ち、複数の「子記事」を順序（Sort Order）付きで管理。 |
-| **Content** | `Content` | 記事の実体。MDXファイルとして保存され、テキスト、譜例、動画などのセクションで構成される。 | `Article` の内部データ。見出し構造 (`ContentStructure`) を持つ。 |
+| **Related Article** | `RelatedArticle` | 記事の内容や楽曲の文脈に基づき、静的に紐付けられた関連コンテンツ。 | 編集部による手動選定、または埋め込みベクトルを用いた静的な類似度計算によって決定される「知のネットワーク」。 |
 | **Content Section** | `ContentSection` | 記事本文内の論理的な区切り。ID、見出し、レベル、子要素を持つ。 | `id` はアンカー用、`heading` は表示用。レベルは `h2`〜`h6` を基本とする。 |
 | **Content Structure** | `ContentStructure` | 記事全体の目次（ToC）構造。`ContentSection` のツリーとして表現される。 | 記事タイトル (`h1`) を頂点とした論理構造を記述する。 |
 | **Musical Example** | `MusicalExample` | 解説のために引用される数小節の楽譜抜粋。 | 楽曲解説の中核となる「概念・単位」。 |
 | **Notation Data** | `NotationData` | 譜例のソースデータ（ABC記法など）。 | `MusicalExample` の実体データ。R2等に保存。 |
 | **Music Display** | `MusicDisplay` | 譜例、再生、翻訳が統合されたUI。 | ユーザーが触れるReact等のコンポーネント。 |
-| **Recording** | `Recording` | 楽曲の演奏を記録したもの。誰のいつの演奏かを管理する実体。 | ユーザーが「聴く」対象。`RecordingSource` (YouTube/Spotify) を複数持つことができる。 |
-| **Catalogue** | `CatalogueNumber` | 楽曲を識別するための作品番号（Op., BWV, K. など）。 | 原則として翻訳しない（後述の Strategic Nuances 参照）。 |
 | **Excerpt** | `Excerpt` | 記事一覧や検索結果に表示される「抜粋・概要」。 | SEO上の Description としても機能する。 |
-| **Genre** | `Genre` | 音楽的な分類（例：Prelude, Fugue, Symphony）。 | `Category='genre'` のタグとして管理される。 |
-| **Era** | `Era` | 音楽史における時代区分（例：Baroque, Romantic）。 | `Category='era'` のタグとして管理される。 |
-| **Instrumentation** | `Instrumentation` | その作品を演奏するために必要な楽器の構成（例：ピアノ独奏、弦楽四重奏）。 | 楽曲の検索・分類における最重要軸の一つ。具体的な項目は Taxonomy にて定義される。 |
 
-## 2. User & Interaction (ユーザー)
+## 3. User & Interaction (ユーザー)
 
 ### 2.1. Interaction & User Concepts (行動・ユーザー概念)
 
@@ -67,9 +80,9 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Referral** | `Referral` | 未知の楽曲を他者に薦める・招待するアクション。 | ユーザー間での楽曲の伝播を計測。 |
 | **NavigationFlow** | `NavigationFlow` | ユーザーが辿った遷移の軌跡。 | 記事間の相関関係の分析や、AIによる次楽曲推薦（Next-to-Play）の学習用データとして使用。 |
 
-## 3. Editorial & Curation (編集・キュレーション)
+## 4. Editorial & Curation (編集・キュレーション)
 
-運営・編集上の意図や管理状態に関する定義。
+運営・編集上の意図や管理状態に関する定義です。
 
 | Term | Code / ID | Definition | Nuance / Policy |
 | :--- | :--- | :--- | :--- |
@@ -79,7 +92,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Recommended** | `is_recommended` | 1つの作品（Work）に対し、特に鑑賞を推奨する録音（Recording）。 | 膨大な録音の中から、入門者や深掘りしたいユーザーにまず勧めるべき「名盤」。 |
 | **Status** | `ContentStatus` | 記事の公開・管理状態（Draft, Published 等）。 | ユーザーへの公開可否を制御する基本的なライフサイクル。 |
 
-## 4. System & Architecture (システム・構成要素)
+## 5. System & Architecture (システム・構成要素)
 
 システムの構成要素や技術的な概念です。
 
@@ -96,10 +109,11 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Compact Player** | `CompactPlayer` | 画面下部などに常駐し、再生制御を行うバー形式のプレイヤー。 | ユーザーが記事を読みながら操作するメインのコントロール。 (旧: Mini Player) |
 | **Immersive Player** | `ImmersivePlayer` | 作品の世界に没入するための、全画面表示の再生装置。 | 譜面、楽曲解説、音源が1つの画面に統合され、切り替えなしで深く鑑賞できる最高位のモード。 (旧: Focus Player) |
 | **Video Player** | `VideoPlayer` | YouTube等の動画コンテンツを埋め込み・再生する装置。 | 視覚的な演奏情報を含む Recording を表示する際に使用。 |
+| **Recommendation Service** | `RecommendationService` | ユーザーの行動履歴や嗜好に基づき、動的に次のコンテンツを提案する仕組み。 | 記事固有の属性ではなく、ユーザーとの対話（Session/Identity）から生まれる動的な推薦結果を扱う。 |
 | **Musical Media Pipeline** | `MusicalMediaPipeline` | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。 | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。 |
 | **Token** | `DesignToken` | デザインシステムにおける色、余白、フォントサイズ等の最小単位。 | Tailwind Config で定義される値を正とする。 |
 
-## 5. Database & Infrastructure (データベース)
+## 6. Database & Infrastructure (データベース)
 
 データ永続化とインフラストラクチャに関する用語です。
 
