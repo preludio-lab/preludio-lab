@@ -1,11 +1,11 @@
-import { IArticleRepository } from '@/domain/article/IArticleRepository';
+import { ArticleRepository } from '@/domain/article/ArticleRepository';
 
 /**
  * IncrementViewCountUseCase
  * 記事の閲覧数をインクリメントする
  */
 export class IncrementViewCountUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(id: string): Promise<void> {
         // In FS Implementation:

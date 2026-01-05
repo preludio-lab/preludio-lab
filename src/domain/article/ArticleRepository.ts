@@ -29,10 +29,10 @@ export interface ArticleSearchCriteria {
 }
 
 /**
- * IArticleRepository
+ * ArticleRepository
  * 記事リポジトリのインターフェース
  */
-export interface IArticleRepository {
+export interface ArticleRepository {
     /**
      * Find a single article by Slug
      */

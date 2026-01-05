@@ -1,4 +1,4 @@
-import { IArticleRepository } from '@/domain/article/IArticleRepository';
+import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
 import { ArticleStatus, ArticleCategory } from '@/domain/article/ArticleConstants';
 
@@ -15,7 +15,7 @@ export interface UpdateArticleCommand {
  * 既存記事更新
  */
 export class UpdateArticleUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(command: UpdateArticleCommand): Promise<void> {
         const article = await this.articleRepository.findById(command.id);

@@ -1,4 +1,4 @@
-import { IArticleRepository, ArticleSearchCriteria } from '@/domain/article/IArticleRepository';
+import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
 import { ArticleSummaryDto, PagedResponse } from '@/domain/article/ArticleDto';
 import { ArticleStatus, ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { ListArticlesUseCase } from './ListArticlesUseCase';
@@ -8,7 +8,7 @@ import { ListArticlesUseCase } from './ListArticlesUseCase';
  * おすすめ記事（キュレーション）の取得
  */
 export class GetFeaturedArticlesUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(lang: string, limit: number = 6): Promise<PagedResponse<ArticleSummaryDto>> {
         // Reuse Repository Logic
@@ -35,7 +35,7 @@ export class GetFeaturedArticlesUseCase {
 
         // Actually, I need to filter by `isFeatured` in criteria.
         // But `ArticleSearchCriteria` doesn't have `isFeatured` field explicitly in the interface I defined earlier!
-        // I missed adding `isFeatured` to `ArticleSearchCriteria` in `IArticleRepository.ts`.
-        // I should check `IArticleRepository.ts`.
+        // I missed adding `isFeatured` to `ArticleSearchCriteria` in `ArticleRepository.ts`.
+        // I should check `ArticleRepository.ts`.
     }
 }

@@ -1,4 +1,4 @@
-import { IArticleRepository, ArticleSearchCriteria } from '@/domain/article/IArticleRepository';
+import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
 import { ArticleSearchResultDto, PagedResponse } from '@/domain/article/ArticleDto';
 import { Article } from '@/domain/article/Article';
 
@@ -7,7 +7,7 @@ import { Article } from '@/domain/article/Article';
  * 複合条件による記事検索（スコア付き）
  */
 export class SearchArticlesUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleSearchResultDto>> {
         const pagedArticles = await this.articleRepository.findMany(criteria);

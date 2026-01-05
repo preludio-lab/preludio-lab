@@ -3,9 +3,9 @@ import path from 'path';
 import matter from 'gray-matter';
 import { z } from 'zod';
 import {
-    IArticleRepository,
+    ArticleRepository,
     ArticleSearchCriteria,
-} from '@/domain/article/IArticleRepository';
+} from '@/domain/article/ArticleRepository';
 import { Article, Section, ContentStructure } from '@/domain/article/Article';
 import {
     ArticleMetadataSchema,
@@ -24,7 +24,7 @@ import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/EngagementMetrics';
  * File System Implementation of Article Repository
  * MDXファイルを正として記事を管理する。
  */
-export class FsArticleRepository implements IArticleRepository {
+export class FsArticleRepository implements ArticleRepository {
     private readonly contentDirectory: string;
 
     constructor() {

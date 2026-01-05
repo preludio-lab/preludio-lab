@@ -1,4 +1,4 @@
-import { IArticleRepository } from '@/domain/article/IArticleRepository';
+import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { Article } from '@/domain/article/Article';
 import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
 import { ArticleStatus, ArticleCategory } from '@/domain/article/ArticleConstants';
@@ -18,7 +18,7 @@ export interface CreateArticleCommand {
  * 新規記事作成
  */
 export class CreateArticleUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(command: CreateArticleCommand): Promise<string> {
         // Check if exists
@@ -32,14 +32,16 @@ export class CreateArticleUseCase {
             title: command.title,
             displayTitle: command.title,
             composerName: command.composerName,
-            tags: []
+            tags: [],
+            sourceAttributions: [],
+            monetizationElements: [],
             // other optionals undefined
         };
 
         const article = new Article({
             id: command.slug, // ID generation strategy (use slug for FS)
             slug: command.slug,
-            lang: command.lang,
+            lang: command.lang as any,
             status: ArticleStatus.DRAFT,
             category: command.category,
             metadata,

@@ -1,4 +1,4 @@
-import { IArticleRepository } from '@/domain/article/IArticleRepository';
+import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleSearchResultDto, PagedResponse } from '@/domain/article/ArticleDto';
 import { Article } from '@/domain/article/Article';
 import { ArticleStatus } from '@/domain/article/ArticleConstants';
@@ -9,7 +9,7 @@ import { SearchArticlesUseCase } from './SearchArticlesUseCase';
  * 関連記事の取得（レコメンデーション）
  */
 export class GetRelatedArticlesUseCase {
-    constructor(private readonly articleRepository: IArticleRepository) { }
+    constructor(private readonly articleRepository: ArticleRepository) { }
 
     async execute(lang: string, baseSlug: string, limit: number = 3): Promise<PagedResponse<ArticleSearchResultDto>> {
         const baseArticle = await this.articleRepository.findBySlug(lang, baseSlug);
