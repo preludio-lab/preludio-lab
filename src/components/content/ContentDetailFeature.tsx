@@ -10,6 +10,7 @@ import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import ScoreRenderer from '@/components/score';
 import { MdxLink } from '@/components/mdx/MdxLink';
 import rehypeSlug from 'rehype-slug';
+import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 
 interface ContentDetailFeatureProps {
   content: ContentDetail;
@@ -59,30 +60,46 @@ export async function ContentDetailFeature({
           abcContent = Array.isArray(abcContent) ? abcContent.join('') : String(abcContent || '');
         }
 
+        const abcMetadata = new MediaMetadataService().parse(abcContent, 'abc');
+        const extracted = abcMetadata;
+
+        const mergedPlayRequest = {
+          src: extracted?.src || audioMetadata?.src,
+          metadata: {
+            title: extracted?.metadata?.title || audioMetadata?.title,
+            composerName: extracted?.metadata?.composerName || audioMetadata?.composerName,
+            performer: extracted?.metadata?.performer || audioMetadata?.performer,
+            thumbnail: extracted?.metadata?.thumbnail || audioMetadata?.thumbnail,
+            platform: (extracted?.metadata?.platform || audioMetadata?.platform) as any,
+          },
+          options: {
+            // extracted.options (譜例) があればそれを優先、なければ undefined (ベースは継承しない)
+            // ただし、audioMetadata (記事) があっても、譜例に時間指定がなければ「最初から」再生したい場合が多い。
+            // 仕様: "%%audio_startSeconds が指定されている場合は...上書き"
+            startSeconds: typeof extracted?.options?.startSeconds === 'number'
+              ? extracted.options.startSeconds
+              : undefined,
+            endSeconds: typeof extracted?.options?.endSeconds === 'number'
+              ? extracted.options.endSeconds
+              : undefined,
+          }
+        };
+
+        // playRequest自体を構成できない（srcがない）場合はBinderを使わない
+        if (!mergedPlayRequest.src) {
+          return (
+            <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
+              <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            </div>
+          );
+        }
+
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
             <AudioPlayerBinder
               source={abcContent}
               format="abc"
-              playRequest={
-                audioMetadata
-                  ? {
-                    src: audioMetadata.src,
-                    metadata: {
-                      title: audioMetadata.title,
-                      composerName: audioMetadata.composerName,
-                      performer: audioMetadata.performer,
-                      thumbnail: audioMetadata.thumbnail,
-                      platform: audioMetadata.platform as any,
-                    },
-                    options: {
-                      // 数値型であることを保証 (undefinedの場合はundefinedのまま)
-                      startSeconds: typeof audioMetadata.startSeconds === 'number' ? audioMetadata.startSeconds : undefined,
-                      endSeconds: typeof audioMetadata.endSeconds === 'number' ? audioMetadata.endSeconds : undefined,
-                    },
-                  }
-                  : undefined
-              }
+              playRequest={mergedPlayRequest}
             >
               <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
             </AudioPlayerBinder>
