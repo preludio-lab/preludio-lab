@@ -6,11 +6,15 @@ import { ArticleCategory } from './ArticleMetadata';
  * 収益化要素の種別
  */
 export const MonetizationType = {
-    /** アフィリエイトリンク (楽譜、CD等) */
+    /** 第三者提携 (Amazon, CDショップ等への紹介手数料モデル) */
     AFFILIATE: 'affiliate',
-    /** 自社ショップ商品 */
-    SHOP: 'shop',
-    /** その他 (ドネーション等) */
+    /** 自社ブランド商品 (オリジナル楽譜、分析資料、グッズ等。販売基盤は問わない) */
+    STORE: 'store',
+    /** 支援・寄付 (投げ銭、Ko-fi、Buy Me a Coffee 等) */
+    SUPPORT: 'support',
+    /** 会員購読・継続課金 (プレミアムプランへの誘導) */
+    SUBSCRIPTION: 'subscription',
+    /** その他 */
     OTHER: 'other',
 } as const;
 
