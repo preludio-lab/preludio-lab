@@ -397,3 +397,6 @@ Status: `[/]` 進行中
 - [ ] **Faceted Search Implementation (Chip Counts)**
   - 未選択のフィルタ（難易度など）に対して、現在の絞り込み条件下でのヒット件数をリアルタイムに表示する機能（例：「中級 (4)」）。
   - これを実現するために、バックエンド（Supabase）側で Faceted Search（多面検索・集計）の仕組みを実装する。
+
+- [ ] **Article Card Visualizer (List View)**
+  - 一覧画面のカードで試聴を開始した際、再生中のカードにのみ控えめな波形アニメーション（Spectrum）を表示し、視覚的なフィードバックとプレミアムな質感を向上させる。
