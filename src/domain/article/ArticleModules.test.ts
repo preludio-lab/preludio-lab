@@ -107,7 +107,7 @@ describe('Domain Module Schemas', () => {
 
         it('should fail if body is excessively long', () => {
             const result = ArticleContentSchema.safeParse({
-                body: 'a'.repeat(10000001),
+                body: 'a'.repeat(100001),
                 structure: [],
             });
             expect(result.success).toBe(false);
