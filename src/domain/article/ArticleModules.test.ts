@@ -53,7 +53,23 @@ describe('Domain Module Schemas', () => {
         it('should fail if title is too long', () => {
             const result = ArticleMetadataSchema.safeParse({
                 ...validMetadata,
-                title: 'a'.repeat(501),
+                title: 'a'.repeat(101),
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if compositionYear is out of range', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                compositionYear: 999,
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if readingTimeSeconds exceeds 1800', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                readingTimeSeconds: 1801,
             });
             expect(result.success).toBe(false);
         });

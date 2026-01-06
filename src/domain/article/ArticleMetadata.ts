@@ -77,13 +77,13 @@ export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 export const ArticleMetadataSchema = z.object({
     // --- Titles & Text ---
     /** 記事の管理用タイトル */
-    title: z.string().min(1).max(500),
+    title: z.string().min(1).max(100),
     /** UI上に表示される正式なタイトル */
-    displayTitle: z.string().min(1).max(500),
+    displayTitle: z.string().min(1).max(100),
     /** サムネイル上に表示される短いキャッチコピー */
-    catchcopy: z.string().max(100).optional(),
+    catchcopy: z.string().max(50).optional(),
     /** 記事一覧や検索結果に表示される抜粋・概要 */
-    excerpt: z.string().max(2000).optional(),
+    excerpt: z.string().max(500).optional(),
     /** URLスラグ (発見・アクセス用) */
     slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/, {
         message: "Slug must be lowercase alphanumeric and hyphens only",
@@ -93,21 +93,21 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Musical Attributes ---
     /** 作曲家名 */
-    composerName: z.string().min(1).max(255),
+    composerName: z.string().min(1).max(100),
     /** 作品名 (例: Symphony No.5) */
-    workTitle: z.string().max(255).optional(),
+    workTitle: z.string().max(100).optional(),
     /** 作品番号・カタログ番号 (例: Op.67, BWV 846, K.334) */
     workCatalogueId: z.string().max(50).optional(),
     /** 楽器編成 (Taxonomy準拠) */
-    instrumentations: z.array(z.string().max(100)).max(50).optional(),
+    instrumentations: z.array(z.string().max(20)).max(50).optional(),
     /** 音楽ジャンル (Taxonomy準拠) */
-    genre: z.string().max(100).optional(),
+    genre: z.string().max(20).optional(),
     /** 時代区分 (Taxonomy準拠) */
-    era: z.string().max(100).optional(),
+    era: z.string().max(20).optional(),
     /** 作曲者の国籍 (ISOコード等) */
     nationality: z.string().max(10).optional(),
     /** 楽曲の調性 (Taxonomy準拠) */
-    key: z.string().max(100).optional(),
+    key: z.string().max(20).optional(),
 
     // --- Levels & Difficulty ---
     /** 記事の専門性レベル (1-5) */
@@ -117,7 +117,7 @@ export const ArticleMetadataSchema = z.object({
     /** トップページ等で優先紹介される「おすすめ記事」フラグ */
     isFeatured: z.boolean().default(false),
     /** 推定読了時間 (秒) */
-    readingTimeSeconds: z.number().int().nonnegative().max(86400).default(0),
+    readingTimeSeconds: z.number().int().nonnegative().max(1800).default(0),
 
     // --- Impressions ---
     /** 感性・印象評価の6軸データ */
@@ -125,9 +125,9 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Historical Context ---
     /** 楽曲の作曲年 */
-    compositionYear: z.number().int().optional(),
+    compositionYear: z.number().int().min(1000).max(2999).optional(),
     /** 作曲者の誕生年 */
-    composerBirthYear: z.number().int().optional(),
+    composerBirthYear: z.number().int().min(1000).max(2999).optional(),
 
     // --- Media & Playback (Discovery Support) ---
     /** 記事を代表する音源再生情報 (一覧表示での試聴用) */
@@ -137,7 +137,7 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Taxonomy & Search ---
     /** 自由タグのリスト */
-    tags: z.array(z.string().max(50)).max(50).default([]),
+    tags: z.array(z.string().max(20)).max(50).default([]),
 
     // --- Lifecycle (Discovery Context) ---
     /** 
