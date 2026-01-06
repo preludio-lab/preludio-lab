@@ -2,7 +2,7 @@ import { Article } from './Article';
 import { ArticleStatus } from './ArticleControl';
 import { ArticleCategory } from './ArticleMetadata';
 import { ArticleSortOption, SortDirection } from './ArticleConstants';
-import { PagedResponse } from './ArticleDto';
+import { PagedResponse } from '../shared/Pagination';
 
 /**
  * Article Search Criteria
