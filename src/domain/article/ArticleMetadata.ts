@@ -38,13 +38,13 @@ export type ArticleCategory = (typeof ArticleCategory)[keyof typeof ArticleCateg
  */
 export const PlaybackSchema = z.object({
     /** 音源ソースの識別子 (YouTube ID等) */
-    audioSrc: z.string().min(1),
+    audioSrc: z.string().min(1).max(2048),
     /** 演奏者・演奏団体名 */
-    performer: z.string().optional(),
+    performer: z.string().max(255).optional(),
     /** 音源の再生開始位置 (秒) */
-    startSeconds: z.number().optional(),
+    startSeconds: z.number().int().nonnegative().max(86400).optional(),
     /** 音源の再生終了位置 (秒) */
-    endSeconds: z.number().optional(),
+    endSeconds: z.number().int().nonnegative().max(86400).optional(),
 });
 
 export type Playback = z.infer<typeof PlaybackSchema>;
@@ -77,35 +77,37 @@ export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 export const ArticleMetadataSchema = z.object({
     // --- Titles & Text ---
     /** 記事の管理用タイトル */
-    title: z.string().min(1),
+    title: z.string().min(1).max(500),
     /** UI上に表示される正式なタイトル */
-    displayTitle: z.string().min(1),
+    displayTitle: z.string().min(1).max(500),
     /** サムネイル上に表示される短いキャッチコピー */
-    catchcopy: z.string().optional(),
+    catchcopy: z.string().max(100).optional(),
     /** 記事一覧や検索結果に表示される抜粋・概要 */
-    excerpt: z.string().optional(),
+    excerpt: z.string().max(2000).optional(),
     /** URLスラグ (発見・アクセス用) */
-    slug: z.string().min(1),
+    slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/, {
+        message: "Slug must be lowercase alphanumeric and hyphens only",
+    }),
     /** 記事カテゴリ (発見・分類用) */
     category: z.nativeEnum(ArticleCategory),
 
     // --- Musical Attributes ---
     /** 作曲家名 */
-    composerName: z.string(),
+    composerName: z.string().min(1).max(255),
     /** 作品名 (例: Symphony No.5) */
-    workTitle: z.string().optional(),
+    workTitle: z.string().max(255).optional(),
     /** 作品番号・カタログ番号 (例: Op.67, BWV 846, K.334) */
-    workCatalogueId: z.string().optional(),
+    workCatalogueId: z.string().max(50).optional(),
     /** 楽器編成 (Taxonomy準拠) */
-    instrumentations: z.array(z.string()).optional(),
+    instrumentations: z.array(z.string().max(100)).max(50).optional(),
     /** 音楽ジャンル (Taxonomy準拠) */
-    genre: z.string().optional(),
+    genre: z.string().max(100).optional(),
     /** 時代区分 (Taxonomy準拠) */
-    era: z.string().optional(),
+    era: z.string().max(100).optional(),
     /** 作曲者の国籍 (ISOコード等) */
-    nationality: z.string().optional(),
+    nationality: z.string().max(10).optional(),
     /** 楽曲の調性 (Taxonomy準拠) */
-    key: z.string().optional(),
+    key: z.string().max(100).optional(),
 
     // --- Levels & Difficulty ---
     /** 記事の専門性レベル (1-5) */
@@ -115,7 +117,7 @@ export const ArticleMetadataSchema = z.object({
     /** トップページ等で優先紹介される「おすすめ記事」フラグ */
     isFeatured: z.boolean().default(false),
     /** 推定読了時間 (秒) */
-    readingTimeSeconds: z.number().int().nonnegative().default(0),
+    readingTimeSeconds: z.number().int().nonnegative().max(86400).default(0),
 
     // --- Impressions ---
     /** 感性・印象評価の6軸データ */
@@ -131,11 +133,11 @@ export const ArticleMetadataSchema = z.object({
     /** 記事を代表する音源再生情報 (一覧表示での試聴用) */
     playback: PlaybackSchema.optional(),
     /** コンテンツのサムネイル画像URLまたはパス (一覧・検索結果用) */
-    thumbnail: z.string().optional().or(z.literal('')),
+    thumbnail: z.string().max(2048).optional().or(z.literal('')),
 
     // --- Taxonomy & Search ---
     /** 自由タグのリスト */
-    tags: z.array(z.string()).default([]),
+    tags: z.array(z.string().max(50)).max(50).default([]),
 
     // --- Lifecycle (Discovery Context) ---
     /** 

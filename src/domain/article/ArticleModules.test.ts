@@ -41,6 +41,22 @@ describe('Domain Module Schemas', () => {
             });
             expect(result.success).toBe(false);
         });
+
+        it('should fail if slug contains invalid characters', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                slug: 'Test_Slug_123', // Upper case and underscore
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if title is too long', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                title: 'a'.repeat(501),
+            });
+            expect(result.success).toBe(false);
+        });
     });
 
     describe('ArticleControlSchema', () => {
@@ -65,6 +81,17 @@ describe('Domain Module Schemas', () => {
             });
             expect(result.success).toBe(false);
         });
+
+        it('should fail if id is too long', () => {
+            const result = ArticleControlSchema.safeParse({
+                id: 'a'.repeat(101),
+                lang: 'ja',
+                status: ArticleStatus.PUBLISHED,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+            expect(result.success).toBe(false);
+        });
     });
 
     describe('ArticleContentSchema', () => {
@@ -76,6 +103,14 @@ describe('Domain Module Schemas', () => {
                 ],
             });
             expect(result.success).toBe(true);
+        });
+
+        it('should fail if body is excessively long', () => {
+            const result = ArticleContentSchema.safeParse({
+                body: 'a'.repeat(10000001),
+                structure: [],
+            });
+            expect(result.success).toBe(false);
         });
     });
 
@@ -112,6 +147,14 @@ describe('Domain Module Schemas', () => {
             const result = EngagementMetricsSchema.safeParse({
                 ...validMetrics,
                 viewCount: -1,
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if viewCount exceeds 1 billion', () => {
+            const result = EngagementMetricsSchema.safeParse({
+                ...validMetrics,
+                viewCount: 1000000001,
             });
             expect(result.success).toBe(false);
         });

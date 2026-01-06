@@ -25,7 +25,7 @@ export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus];
  */
 export const ArticleControlSchema = z.object({
     /** 記事のユニークID (システム内部用) */
-    id: z.string().min(1),
+    id: z.string().min(1).max(100),
     /** 言語コード */
     lang: z.string().min(1) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
     /** 公開・管理状態 */
