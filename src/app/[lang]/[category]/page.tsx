@@ -1,6 +1,6 @@
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
-import { ArticleCategoryIndexFeature } from '@/components/article/ArticleCategoryIndexFeature';
+import { ArticleCategoryIndexFeature } from '@/components/article/browse/ArticleCategoryIndexFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';

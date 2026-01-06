@@ -1,7 +1,7 @@
 import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
-import { ArticleDetailFeature } from '@/components/article/ArticleDetailFeature';
+import { ArticleDetailFeature } from '@/components/article/view/ArticleDetailFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';

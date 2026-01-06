@@ -1,19 +1,19 @@
 import { getTranslations } from 'next-intl/server';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
-import { ArticleCard } from './ArticleCard';
-import { ArticleHeroCard } from './ArticleHeroCard';
+import { ArticleCard } from '../shared/ArticleCard';
+import { ArticleHeroCard } from '../shared/ArticleHeroCard';
 import { ContentGrid } from '@/components/content/ContentGrid';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 
-export interface ArticleFeaturedSectionProps {
+export interface ArticleFeaturedFeatureProps {
     contents: ArticleMetadataDto[];
 }
 
 /**
- * ArticleFeaturedSection
+ * ArticleFeaturedFeature
  * 最新のArticleMetadataDtoに対応した、ホームページの「Featured Work」セクション。
  */
-export async function ArticleFeaturedSection({ contents }: ArticleFeaturedSectionProps) {
+export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatureProps) {
     const t = await getTranslations('Home');
 
     if (!contents || contents.length === 0) {

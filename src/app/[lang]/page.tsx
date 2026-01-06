@@ -3,7 +3,7 @@ import { LOCALES } from '@/lib/constants';
 import { getTranslations } from 'next-intl/server';
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
-import { ArticleFeaturedSection } from '@/components/article/ArticleFeaturedSection';
+import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
@@ -105,7 +105,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       </section>
 
       {/* Featured Article */}
-      <ArticleFeaturedSection contents={featuredArticles} />
+      <ArticleFeaturedFeature contents={featuredArticles} />
     </div>
   );
 }
