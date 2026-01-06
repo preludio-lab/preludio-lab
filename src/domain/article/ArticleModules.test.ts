@@ -58,6 +58,28 @@ describe('Domain Module Schemas', () => {
             expect(result.success).toBe(false);
         });
 
+        it('should allow hierarchical slugs with slashes', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                slug: 'beethoven/symphony-no5',
+            });
+            expect(result.success).toBe(true);
+        });
+
+        it('should fail if slug has leading or trailing slashes', () => {
+            expect(ArticleMetadataSchema.safeParse({ ...validMetadata, slug: '/a' }).success).toBe(false);
+            expect(ArticleMetadataSchema.safeParse({ ...validMetadata, slug: 'a/' }).success).toBe(false);
+            expect(ArticleMetadataSchema.safeParse({ ...validMetadata, slug: 'a//b' }).success).toBe(false);
+        });
+
+        it('should fail if slug is longer than 64 characters', () => {
+            const result = ArticleMetadataSchema.safeParse({
+                ...validMetadata,
+                slug: 'a'.repeat(65),
+            });
+            expect(result.success).toBe(false);
+        });
+
         it('should fail if compositionYear is out of range', () => {
             const result = ArticleMetadataSchema.safeParse({
                 ...validMetadata,

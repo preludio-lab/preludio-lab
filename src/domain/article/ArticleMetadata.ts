@@ -84,9 +84,9 @@ export const ArticleMetadataSchema = z.object({
     catchcopy: z.string().max(50).optional(),
     /** 記事一覧や検索結果に表示される抜粋・概要 */
     excerpt: z.string().max(500).optional(),
-    /** URLスラグ (発見・アクセス用) */
-    slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/, {
-        message: "Slug must be lowercase alphanumeric and hyphens only",
+    /** URLスラグ (発見・アクセス用) / での階層化を許容 */
+    slug: z.string().min(1).max(64).regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/, {
+        message: "Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash",
     }),
     /** 記事カテゴリ (発見・分類用) */
     category: z.nativeEnum(ArticleCategory),
