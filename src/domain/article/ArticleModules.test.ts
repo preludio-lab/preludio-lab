@@ -253,5 +253,21 @@ describe('Domain Module Schemas', () => {
             });
             expect(result.success).toBe(false);
         });
+
+        it('should fail if resonanceCount exceeds 1000', () => {
+            const result = EngagementMetricsSchema.safeParse({
+                ...validMetrics,
+                resonanceCount: 1001,
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if totalRevenue exceeds 10 million', () => {
+            const result = EngagementMetricsSchema.safeParse({
+                ...validMetrics,
+                totalRevenue: 10000001,
+            });
+            expect(result.success).toBe(false);
+        });
     });
 });

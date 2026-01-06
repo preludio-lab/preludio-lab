@@ -18,28 +18,28 @@ export const EngagementMetricsSchema = z.object({
     /** 
      * お気に入り数 (Like)
      */
-    likeCount: z.number().int().nonnegative().max(1000000000).default(0),
+    likeCount: z.number().int().nonnegative().max(10000000).default(0),
 
     /** 
      * 共鳴数 (Resonance)
      */
-    resonanceCount: z.number().int().nonnegative().max(1000000000).default(0),
+    resonanceCount: z.number().int().nonnegative().max(1000).default(0),
 
     /** 
      * シェア数 (SocialShare)
      */
-    shareCount: z.number().int().nonnegative().max(1000000000).default(0),
+    shareCount: z.number().int().nonnegative().max(10000000).default(0),
 
     /** 
      * アフィリエイトクリック数 (AffiliateClick)
      */
-    affiliateClickCount: z.number().int().nonnegative().max(1000000000).default(0),
+    affiliateClickCount: z.number().int().nonnegative().max(100000).default(0),
 
     /** 
      * コンバージョン数 (Conversion)
      * 成果地点（購入・契約等）に到達した数。
      */
-    conversionCount: z.number().int().nonnegative().max(1000000000).default(0),
+    conversionCount: z.number().int().nonnegative().max(100000).default(0),
 
     /**
      * 合計収益 (TotalRevenue)
@@ -47,7 +47,7 @@ export const EngagementMetricsSchema = z.object({
      * 国際展開を考慮し、基準通貨は USD (セント単位の整数) とすることを推奨。
      * 例: $10.50 -> 1050
      */
-    totalRevenue: z.number().int().nonnegative().max(1000000000).default(0),
+    totalRevenue: z.number().int().nonnegative().max(10000000).default(0),
 
     /** 
      * 合計滞在時間 (TotalTimeOnPage)
