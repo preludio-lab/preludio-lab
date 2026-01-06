@@ -136,13 +136,13 @@ export type RelatedArticle = z.infer<typeof RelatedArticleSchema>;
  */
 export const ArticleContextSchema = z.object({
     /** 所属するシリーズ情報のリスト */
-    seriesAssignments: z.array(SeriesAssignmentSchema).default([]),
+    seriesAssignments: z.array(SeriesAssignmentSchema).max(100).default([]),
     /** 静的にリンクされた関連記事のリスト */
-    relatedArticles: z.array(RelatedArticleSchema).default([]),
+    relatedArticles: z.array(RelatedArticleSchema).max(20).default([]),
     /** 記事の信頼性を担保する参照元リンク */
-    sourceAttributions: z.array(SourceAttributionSchema).default([]),
+    sourceAttributions: z.array(SourceAttributionSchema).max(20).default([]),
     /** 収益化要素のリスト */
-    monetizationElements: z.array(MonetizationElementSchema).default([]),
+    monetizationElements: z.array(MonetizationElementSchema).max(30).default([]),
 });
 
 export type ArticleContext = z.infer<typeof ArticleContextSchema>;

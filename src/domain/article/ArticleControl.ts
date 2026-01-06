@@ -25,9 +25,9 @@ export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus];
  */
 export const ArticleControlSchema = z.object({
     /** 記事のユニークID (システム内部用) */
-    id: z.string().min(1).max(100),
+    id: z.string().min(1).max(50),
     /** 言語コード */
-    lang: z.string().min(1) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
+    lang: z.string().min(1).max(10) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
     /** 公開・管理状態 */
     status: z.nativeEnum(ArticleStatus),
     /** 記事の作成日時 */

@@ -122,7 +122,7 @@ describe('Domain Module Schemas', () => {
 
         it('should fail if id is too long', () => {
             const result = ArticleControlSchema.safeParse({
-                id: 'a'.repeat(101),
+                id: 'a'.repeat(51),
                 lang: 'ja',
                 status: ArticleStatus.PUBLISHED,
                 createdAt: new Date(),
@@ -130,6 +130,18 @@ describe('Domain Module Schemas', () => {
             });
             expect(result.success).toBe(false);
         });
+
+        it('should fail if lang is too long', () => {
+            const result = ArticleControlSchema.safeParse({
+                id: 'uuid-123',
+                lang: 'too-long-lang-code',
+                status: ArticleStatus.PUBLISHED,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+            expect(result.success).toBe(false);
+        });
+
     });
 
     describe('ArticleContentSchema', () => {
@@ -190,6 +202,19 @@ describe('Domain Module Schemas', () => {
                     category: ArticleCategory.WORKS,
                     slug: 'slug',
                 }]
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if there are too many related articles', () => {
+            const tooManyArticles = Array(21).fill({
+                articleId: 'id',
+                title: 'Title',
+                category: ArticleCategory.WORKS,
+                slug: 'slug',
+            });
+            const result = ArticleContextSchema.safeParse({
+                relatedArticles: tooManyArticles,
             });
             expect(result.success).toBe(false);
         });
