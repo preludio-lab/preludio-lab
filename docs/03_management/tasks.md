@@ -169,6 +169,7 @@ Status: `[/]` 進行中
     - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
   - [ ] **[実装]** ドメインの更新とそれに伴うリファクタリング
     - [ ] 今回のエンティティ定義に基づき、既存の実装をアップデート
+    - [ ] **[リファクタリング] ArticleRepositoryFactoryの導入**: インフラ実装（Fs/Turso等）を隠蔽し、Page層を純粋な抽象（インターフェース）に依存させるDI基盤の構築
   - [ ] **[実装]** Database-First Admin UI
     - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
     - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの簡易トグル管理機能の実装
