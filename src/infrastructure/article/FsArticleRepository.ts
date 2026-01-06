@@ -28,7 +28,7 @@ export class FsArticleRepository implements ArticleRepository {
     private readonly contentDirectory: string;
 
     constructor() {
-        this.contentDirectory = path.join(process.cwd(), 'content');
+        this.contentDirectory = path.join(process.cwd(), 'article');
     }
 
     /**
