@@ -150,6 +150,14 @@ describe('Domain Module Schemas', () => {
             });
             expect(result.success).toBe(false);
         });
+
+        it('should fail if heading is too long', () => {
+            const result = ArticleContentSchema.safeParse({
+                body: '# Title',
+                structure: [{ id: 'sec', heading: 'a'.repeat(51), level: 2 }],
+            });
+            expect(result.success).toBe(false);
+        });
     });
 
     describe('ArticleContextSchema', () => {

@@ -21,8 +21,8 @@ export type ContentSection = {
  * 再帰的な構造をサポートするため z.lazy を使用し、ContentSection 型と同期させる。
  */
 export const ContentSectionSchema: z.ZodType<ContentSection> = z.lazy(() => z.object({
-    id: z.string().min(1).max(100),
-    heading: z.string().min(1).max(500),
+    id: z.string().min(1).max(64),
+    heading: z.string().min(1).max(50),
     level: z.number().int().min(2).max(6),
     children: z.array(ContentSectionSchema).optional(),
 }));
@@ -41,7 +41,7 @@ export type ContentStructure = z.infer<typeof ContentStructureSchema>;
  * glossary: ArticleContent に対応
  */
 export const ArticleContentSchema = z.object({
-    /** 記事の本文 (MDX形式の生テキスト) */
+    /** 記事の本文 (MDX形式の生テキスト。上限10万文字) */
     body: z.string().max(100000),
     /** 記事の目次構造 (ToC) */
     structure: ContentStructureSchema,
