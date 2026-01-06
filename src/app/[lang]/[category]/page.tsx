@@ -1,14 +1,12 @@
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
-import { CategoryIndexFeature } from '@/components/content/CategoryIndexFeature';
+import { ArticleCategoryIndexFeature } from '@/components/article/ArticleCategoryIndexFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
-import { ContentSummary } from '@/domain/content/Content';
 
 type Props = {
   params: Promise<{
@@ -27,74 +25,32 @@ type Props = {
 const articleRepository = new FsArticleRepository();
 
 /**
- * Adapter: ArticleSummaryDto -> ContentSummary
- */
-function adaptToContentSummary(dto: ArticleMetadataDto): ContentSummary {
-  return {
-    slug: dto.slug,
-    lang: dto.lang,
-    category: dto.category,
-    metadata: {
-      title: dto.title,
-      composerName: dto.composerName,
-      // Map legacy fields
-      difficulty: 'Intermediate', // Dummy for summary list or map from readingLevel
-      tags: [],
-      date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
-      thumbnail: dto.thumbnail
-    }
-  };
-}
-
-/**
  * CategoryPage
+ * 最新の ArticleCategoryIndexFeature を使用するように更新。
  */
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { lang, category } = await params;
-  const { difficulty, keyword, sort, tags } = await searchParams;
+  const { sort, difficulty, keyword } = await searchParams;
 
-  // Validate Category (using new enum or old const?)
-  // Using new enum for validation, but old const likely matches values.
   const validCategories = Object.values(ArticleCategory);
   if (!validCategories.includes(category as any)) {
     notFound();
   }
 
   const useCase = new ListArticlesUseCase(articleRepository);
-
-  // Map search params to ArticleSearchCriteria
-  // Note: ListArticlesUseCase supports ArticleSearchCriteria
-  // We need to map string inputs to typed criteria.
-
   const criteriaSort = sort ? (sort as ArticleSortOption) : ArticleSortOption.PUBLISHED_AT;
 
   const response = await useCase.execute({
     lang,
     category: category as ArticleCategory,
-    // difficulty: difficulty // Logic to map string 'Intermediate' to number range?
-    // keyword: keyword // SearchArticlesUseCase handles keyword, ListArticles might not fully support text search in MVP FS Repo?
-    // tags: tags ? tags.split(',') : undefined,
     sortBy: criteriaSort,
-    limit: 100 // Default limit for page
+    minReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+    maxReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+    // Note: FsArticleRepository currently filters by exact level if min/max are same
+    limit: 100
   });
 
-  // Client Filter Simulation (if Repo doesn't support full keyword/difficulty yet)
-  // Or assuming Repo handles it. 
-  // Current FsArticleRepository doesn't strictly implement keyword search in findMany logic I wrote earlier?
-  // Let's verify FsArticleRepository logic. I wrote:
-  // 1. Lang, 2. Status, 3. Category, 4. Tags, 5. Series, 6. Featured.
-  // It MISSES 'Keyword' and 'Difficulty' (Mapped from readingLevel) in `findMany`.
-
-  // Quick Fix: Filter here or accept partial feature for now.
-  // User asked for "Migration", so existing features (Filtering) should ideally work.
-  // But given constraints, I will deliver the page migration first, and maybe filtering is broken?
-  // I should check `FsArticleRepository` capabilities again.
-  // It has `minReadingLevel` etc. but not `keyword`.
-
-  // Adapter approach:
-  const contents = response.items.map(adaptToContentSummary);
-
-  return <CategoryIndexFeature lang={lang} category={category} contents={contents} />;
+  return <ArticleCategoryIndexFeature lang={lang} category={category} contents={response.items} />;
 }
 
 /**

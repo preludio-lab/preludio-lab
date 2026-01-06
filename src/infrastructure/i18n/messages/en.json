@@ -108,9 +108,11 @@
       "columns": "Columns"
     },
     "difficulty": {
-      "Beginner": "Beginner",
-      "Intermediate": "Intermediate",
-      "Advanced": "Advanced"
+      "1": "Beginner",
+      "2": "Novice",
+      "3": "Intermediate",
+      "4": "Professional",
+      "5": "Virtuoso"
     },
     "readMore": "Read More"
   },

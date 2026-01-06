@@ -43,10 +43,16 @@ export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
         readingTimeSeconds: true,
         /** 「おすすめ記事」フラグ */
         isFeatured: true,
+        /** 専門性レベル (1-5) */
+        readingLevel: true,
+        /** 演奏難易度レベル (1-5) */
+        performanceDifficulty: true,
         /** 音源再生情報 (一覧での試聴用) */
         playback: true,
         /** サムネイル画像URL */
         thumbnail: true,
+        /** タグ */
+        tags: true,
     }).shape
 ).extend(
     // エンゲージメント指標から、一覧でのソーシャルプルーフ表示に必要な項目を抽出してマージ
