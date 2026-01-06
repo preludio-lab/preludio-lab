@@ -10,32 +10,41 @@ import { EngagementMetricsSchema } from './ArticleEngagement';
  * 一覧表示や検索結果、ヒーローセクションなどで使用される軽量モデル。
  * 利便性のため、基本的な識別情報と主要なメタデータをフラットに保持します。
  */
-export const ArticleMetadataDtoSchema = z.object({
-    // Control Info (flattened for convenience)
-    id: z.string(),
-    slug: z.string(),
-    lang: z.string(),
-    status: z.string(), // ArticleStatus
-
-    // Core Metadata (flattened for convenience)
-    title: z.string(),
-    displayTitle: z.string(),
-    category: z.nativeEnum(ArticleCategory),
-    isFeatured: z.boolean().optional(),
+/**
+ * ArticleMetadataDtoSchema
+ * 一覧表示・カード表示用の軽量なDTOスキーマ。
+ * UIでの利便性のため、制御情報と主要なメタデータをフラットに保持する。
+ */
+export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
+    id: true,
+    lang: true,
+    status: true,
+}).extend(
+    ArticleMetadataSchema.pick({
+        slug: true,
+        category: true,
+        title: true,
+        displayTitle: true,
+        composerName: true,
+        workTitle: true,
+        excerpt: true,
+        readingTimeSeconds: true,
+        isFeatured: true,
+        playback: true,
+        thumbnail: true,
+    }).shape
+).extend({
+    /**
+     * 公開日時 (ISO8601 string)
+     * ドメインでは Date だが、DTO（JSON）では文字列として扱う。
+     */
     publishedAt: z.string().nullable(),
-    thumbnail: z.string().optional(),
 
-    // Musical Context
-    composerName: z.string().optional(),
-    workTitle: z.string().optional(),
-
-    // Indicators
-    excerpt: z.string().optional(),
-    readingTimeSeconds: z.number().int().nonnegative(),
-    playback: PlaybackSchema.optional(),
-
-    // Engagement Summary (Optional in list view)
-    viewCount: z.number().int().nonnegative().optional(),
+    /**
+     * エンゲージメント・サマリー
+     * 一覧でのソーシャルプルーフ表示用（例: PV数のみ等に限定可能だが、一旦 viewCount を保持）
+     */
+    viewCount: EngagementMetricsSchema.shape.viewCount,
 });
 
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
