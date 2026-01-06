@@ -13,7 +13,7 @@ import { EngagementMetricsSchema } from './ArticleEngagement';
 /**
  * ArticleMetadataDtoSchema
  * 一覧表示・カード表示用の軽量なDTOスキーマ。
- * UIでの利便性のため、制御情報と主要なメタデータをフラットに保持する。
+ * UIでの利便性のため、複数のドメインモデルから必要な情報を「フラット」に集約します。
  */
 export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
     /** 記事のユニークID */
@@ -23,6 +23,7 @@ export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
     /** 公開・管理状態 */
     status: true,
 }).extend(
+    // 音楽的メタデータから、一覧表示に必要な項目を抽出してフラットに展開
     ArticleMetadataSchema.pick({
         /** URLスラグ */
         slug: true,
@@ -47,27 +48,26 @@ export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
         /** サムネイル画像URL */
         thumbnail: true,
     }).shape
+).extend(
+    // エンゲージメント指標から、一覧でのソーシャルプルーフ表示に必要な項目を抽出してマージ
+    EngagementMetricsSchema.pick({
+        /** 累計閲覧数 (PageView) */
+        viewCount: true,
+        /** 累計再生数 (Audition) */
+        auditionCount: true,
+        /** 累計お気に入り数 (Like) */
+        likeCount: true,
+        /** 累計共鳴数 (Resonance) */
+        resonanceCount: true,
+        /** 累計シェア数 (SocialShare) */
+        shareCount: true,
+    }).shape
 ).extend({
     /** 
      * 正式な公開日時 (ISO8601 string)
-     * ドメインでは Date だが、DTO（JSON）では文字列として扱う。
+     * ドメイン層では Date ですが、JSONとしてやり取りするために文字列形式にしています。
      */
     publishedAt: z.string().nullable(),
-
-    /** 
-     * エンゲージメント・サマリー (ユーザーインタラクション累積)
-     * 一覧でのソーシャルプルーフ表示用。マネタイズ関連は除外。
-     */
-    /** 累計閲覧数 (PageView) */
-    viewCount: EngagementMetricsSchema.shape.viewCount,
-    /** 累計再生数 (Audition) */
-    auditionCount: EngagementMetricsSchema.shape.auditionCount,
-    /** 累計お気に入り数 (Like) */
-    likeCount: EngagementMetricsSchema.shape.likeCount,
-    /** 累計共鳴数 (Resonance) */
-    resonanceCount: EngagementMetricsSchema.shape.resonanceCount,
-    /** 累計シェア数 (SocialShare) */
-    shareCount: EngagementMetricsSchema.shape.shareCount,
 });
 
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
