@@ -32,6 +32,10 @@ export class ListArticlesUseCase {
 
             // Engagement Summary
             viewCount: article.engagement.metrics.viewCount,
+            auditionCount: article.engagement.metrics.auditionCount,
+            likeCount: article.engagement.metrics.likeCount,
+            resonanceCount: article.engagement.metrics.resonanceCount,
+            shareCount: article.engagement.metrics.shareCount,
         };
     }
 }

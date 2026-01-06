@@ -35,6 +35,10 @@ export class SearchArticlesUseCase {
 
             // Engagement Summary
             viewCount: article.engagement.metrics.viewCount,
+            auditionCount: article.engagement.metrics.auditionCount,
+            likeCount: article.engagement.metrics.likeCount,
+            resonanceCount: article.engagement.metrics.resonanceCount,
+            shareCount: article.engagement.metrics.shareCount,
 
             // Search Specific
             matchScore: 1.0, // Mock score for FS

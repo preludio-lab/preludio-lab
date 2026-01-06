@@ -16,35 +16,58 @@ import { EngagementMetricsSchema } from './ArticleEngagement';
  * UIでの利便性のため、制御情報と主要なメタデータをフラットに保持する。
  */
 export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
+    /** 記事のユニークID */
     id: true,
+    /** 言語コード (ja, en等) */
     lang: true,
+    /** 公開・管理状態 */
     status: true,
 }).extend(
     ArticleMetadataSchema.pick({
+        /** URLスラグ */
         slug: true,
+        /** 記事カテゴリ */
         category: true,
+        /** 管理用タイトル */
         title: true,
+        /** UI表示用タイトル */
         displayTitle: true,
+        /** 作曲家名 */
         composerName: true,
+        /** 作品名 */
         workTitle: true,
+        /** 抜粋・概要文 */
         excerpt: true,
+        /** 推定読了時間 (秒) */
         readingTimeSeconds: true,
+        /** 「おすすめ記事」フラグ */
         isFeatured: true,
+        /** 音源再生情報 (一覧での試聴用) */
         playback: true,
+        /** サムネイル画像URL */
         thumbnail: true,
     }).shape
 ).extend({
-    /**
-     * 公開日時 (ISO8601 string)
+    /** 
+     * 正式な公開日時 (ISO8601 string)
      * ドメインでは Date だが、DTO（JSON）では文字列として扱う。
      */
     publishedAt: z.string().nullable(),
 
-    /**
-     * エンゲージメント・サマリー
-     * 一覧でのソーシャルプルーフ表示用（例: PV数のみ等に限定可能だが、一旦 viewCount を保持）
+    /** 
+     * エンゲージメント・サマリー (ユーザーインタラクション累積)
+     * 一覧でのソーシャルプルーフ表示用。マネタイズ関連は除外。
      */
+    /** 累計閲覧数 (PageView) */
     viewCount: EngagementMetricsSchema.shape.viewCount,
+    /** 累計再生数 (Audition) */
+    auditionCount: EngagementMetricsSchema.shape.auditionCount,
+    /** 累計お気に入り数 (Like) */
+    likeCount: EngagementMetricsSchema.shape.likeCount,
+    /** 累計共鳴数 (Resonance) */
+    resonanceCount: EngagementMetricsSchema.shape.resonanceCount,
+    /** 累計シェア数 (SocialShare) */
+    shareCount: EngagementMetricsSchema.shape.shareCount,
 });
 
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
