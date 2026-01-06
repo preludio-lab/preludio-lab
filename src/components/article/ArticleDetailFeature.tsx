@@ -24,6 +24,7 @@ export async function ArticleDetailFeature({
     nextContent,
 }: ArticleDetailFeatureProps) {
     const t = await getTranslations('CategoryIndex');
+    const tNav = await getTranslations('Navigation');
     const { metadata, control, content } = article;
     const { category } = metadata;
     const { lang } = control;
