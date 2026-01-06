@@ -1,5 +1,5 @@
-import { GetArticleBySlugUseCase } from '@/application/article/GetArticleBySlugUseCase';
-import { ListArticlesUseCase } from '@/application/article/ListArticlesUseCase';
+import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
+import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
 import { ContentDetailFeature } from '@/components/content/ContentDetailFeature';
 import { Metadata } from 'next';
@@ -10,7 +10,7 @@ import { supportedLocales } from '@/domain/i18n/Locale';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
-import { ArticleDto, ArticleMetadataDto } from '@/domain/article/ArticleDto';
+import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { ContentDetail, ContentSummary } from '@/domain/content/Content';
 
 type Props = {

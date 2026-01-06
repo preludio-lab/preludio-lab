@@ -1,5 +1,6 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { ArticleMetadataDto, PagedResponse } from '@/domain/article/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { ListArticlesUseCase } from './ListArticlesUseCase';

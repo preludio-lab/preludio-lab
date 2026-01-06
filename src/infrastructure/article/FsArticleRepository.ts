@@ -12,7 +12,7 @@ import {
     ArticleMetadata,
     ArticleCategory,
 } from '@/domain/article/ArticleMetadata';
-import { PagedResponse } from '@/domain/article/ArticleDto';
+import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import {
     ArticleSortOption,

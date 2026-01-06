@@ -1,5 +1,5 @@
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
-import { ListArticlesUseCase } from '@/application/article/ListArticlesUseCase';
+import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { CategoryIndexFeature } from '@/components/content/CategoryIndexFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
-import { ArticleMetadataDto } from '@/domain/article/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { ContentSummary } from '@/domain/content/Content';
 
 type Props = {

@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { ArticleControlSchema } from './ArticleControl';
-import { ArticleMetadataSchema, PlaybackSchema, ArticleCategory } from './ArticleMetadata';
-import { ArticleContentSchema } from './ArticleContent';
-import { ArticleContextSchema } from './ArticleContext';
-import { EngagementMetricsSchema } from './ArticleEngagement';
+import { ArticleControlSchema } from '@/domain/article/ArticleControl';
+import { ArticleMetadataSchema, PlaybackSchema, ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleContentSchema } from '@/domain/article/ArticleContent';
+import { ArticleContextSchema } from '@/domain/article/ArticleContext';
+import { EngagementMetricsSchema } from '@/domain/article/ArticleEngagement';
 
 /**
  * Article Metadata DTO (List view)

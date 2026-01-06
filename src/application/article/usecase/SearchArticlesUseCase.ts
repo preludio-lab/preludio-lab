@@ -1,32 +1,36 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
-import { ArticleMetadataDto, PagedResponse } from '@/domain/article/ArticleDto';
+import { ArticleSearchResultDto } from '@/application/article/dto/ArticleDto';
+import { PagedResponse } from '@/domain/shared/Pagination';
 import { Article } from '@/domain/article/Article';
 
 /**
- * ListArticlesUseCase
- * 条件に基づいた記事一覧の取得（検索・カテゴリ表示等）
+ * SearchArticlesUseCase
+ * 複合条件による記事検索（スコア付き）
  */
-export class ListArticlesUseCase {
+export class SearchArticlesUseCase {
     constructor(private readonly articleRepository: ArticleRepository) { }
 
-    async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleMetadataDto>> {
-        const response = await this.articleRepository.findMany(criteria);
+    async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleSearchResultDto>> {
+        const pagedArticles = await this.articleRepository.findMany(criteria);
+
+        const items = pagedArticles.items.map(this.toSearchResultDto);
 
         return {
-            items: response.items.map(article => this.toDto(article)),
-            totalCount: response.totalCount,
-            hasNextPage: response.hasNextPage
+            items,
+            totalCount: pagedArticles.totalCount,
+            hasNextPage: pagedArticles.hasNextPage,
+            nextCursor: pagedArticles.nextCursor,
         };
     }
 
-    private toDto(article: Article): ArticleMetadataDto {
+    private toSearchResultDto(article: Article): ArticleSearchResultDto {
         return {
-            // Control Info (flattened)
+            // Control Info
             id: article.control.id,
             lang: article.control.lang,
             status: article.control.status,
 
-            // Metadata Info (flattened)
+            // Metadata Info
             ...article.metadata,
             publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
 
@@ -36,6 +40,9 @@ export class ListArticlesUseCase {
             likeCount: article.engagement.metrics.likeCount,
             resonanceCount: article.engagement.metrics.resonanceCount,
             shareCount: article.engagement.metrics.shareCount,
+
+            // Search Specific
+            matchScore: 1.0, // Mock score for FS
         };
     }
 }

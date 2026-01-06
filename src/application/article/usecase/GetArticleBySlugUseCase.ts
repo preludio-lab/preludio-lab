@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { ArticleDto } from '@/domain/article/ArticleDto';
+import { ArticleDto } from '@/application/article/dto/ArticleDto';
 import { Article } from '@/domain/article/Article';
 
 /**

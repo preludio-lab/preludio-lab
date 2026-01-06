@@ -1,5 +1,6 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { ArticleSearchResultDto, PagedResponse } from '@/domain/article/ArticleDto';
+import { ArticleSearchResultDto } from '@/application/article/dto/ArticleDto';
+import { PagedResponse } from '@/domain/shared/Pagination';
 import { Article } from '@/domain/article/Article';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { SearchArticlesUseCase } from './SearchArticlesUseCase';
