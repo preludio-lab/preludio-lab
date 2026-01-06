@@ -12,7 +12,7 @@ export interface ArticleYoutubePlayerProps {
 export function ArticleYoutubePlayer({ }: ArticleYoutubePlayerProps) {
     return (
         <div className="bg-black text-white rounded-xl p-6 flex flex-col items-center justify-center text-center aspect-video shadow-lg mb-6 group overflow-hidden relative">
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col items-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
