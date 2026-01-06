@@ -1,6 +1,6 @@
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
-import { ArticleCategoryIndexFeature } from '@/components/article/browse/ArticleCategoryIndexFeature';
+import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -50,7 +50,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     limit: 100
   });
 
-  return <ArticleCategoryIndexFeature lang={lang} category={category} contents={response.items} />;
+  return <ArticleBrowseFeature lang={lang} category={category} contents={response.items} />;
 }
 
 /**

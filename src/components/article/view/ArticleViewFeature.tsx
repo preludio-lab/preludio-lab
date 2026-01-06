@@ -10,21 +10,21 @@ import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
 import { ArticleListeningGuide } from './ArticleListeningGuide';
 import { Playback } from '@/domain/article/ArticleMetadata';
 
-interface ArticleDetailFeatureProps {
+interface ArticleViewFeatureProps {
     article: ArticleDto;
     prevContent: ArticleMetadataDto | null;
     nextContent: ArticleMetadataDto | null;
 }
 
 /**
- * ArticleDetailFeature
+ * ArticleViewFeature
  * 最新のArticleDtoに対応した記事詳細ページコンポーネント。
  */
-export async function ArticleDetailFeature({
+export async function ArticleViewFeature({
     article,
     prevContent,
     nextContent,
-}: ArticleDetailFeatureProps) {
+}: ArticleViewFeatureProps) {
     const t = await getTranslations('CategoryIndex');
     const tNav = await getTranslations('Navigation');
     const { metadata, control, content } = article;

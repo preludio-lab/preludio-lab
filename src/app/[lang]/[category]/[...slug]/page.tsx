@@ -1,7 +1,7 @@
 import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
-import { ArticleDetailFeature } from '@/components/article/view/ArticleDetailFeature';
+import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
@@ -92,7 +92,7 @@ export default async function ContentDetailPage({ params }: Props) {
   }
 
   return (
-    <ArticleDetailFeature
+    <ArticleViewFeature
       article={article}
       prevContent={prevContent}
       nextContent={nextContent}

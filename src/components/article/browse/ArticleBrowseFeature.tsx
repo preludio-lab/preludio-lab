@@ -10,17 +10,17 @@ import { ArticleFilterPanel } from './ArticleFilterPanel';
 import { ArticleCard } from '../shared/ArticleCard';
 import { handleClientError } from '@/lib/client-error';
 
-interface ArticleCategoryIndexFeatureProps {
+interface ArticleBrowseFeatureProps {
     lang: string;
     category: string;
     contents: ArticleMetadataDto[];
 }
 
 /**
- * ArticleCategoryIndexFeature
+ * ArticleBrowseFeature
  * 最新のArticleMetadataDtoに対応した、カテゴリ一覧ページのメイン機能。
  */
-export function ArticleCategoryIndexFeature({ lang, category, contents }: ArticleCategoryIndexFeatureProps) {
+export function ArticleBrowseFeature({ lang, category, contents }: ArticleBrowseFeatureProps) {
     const t = useTranslations('CategoryIndex');
     const { state, setFilter: originalSetFilter } = useFilterState();
     const [isPending, startTransition] = useTransition();
@@ -80,7 +80,7 @@ export function ArticleCategoryIndexFeature({ lang, category, contents }: Articl
                                     try {
                                         router.push(window.location.pathname);
                                     } catch (e) {
-                                        handleClientError(e, undefined, 'ArticleCategoryIndexFeature:Reset');
+                                        handleClientError(e, undefined, 'ArticleBrowseFeature:Reset');
                                     }
                                 }}
                                 className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-full hover:bg-primary-dark transition-all transform hover:-translate-y-0.5 shadow-md"
