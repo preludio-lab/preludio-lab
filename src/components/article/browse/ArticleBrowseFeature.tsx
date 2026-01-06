@@ -7,7 +7,7 @@ import { useTransition } from 'react';
 import { useFilterState } from '@/hooks/useFilterState';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 import { ArticleFilterPanel } from './ArticleFilterPanel';
-import { ArticleCard } from '../shared/ArticleCard';
+import { ArticleCard } from './ArticleCard';
 import { handleClientError } from '@/lib/client-error';
 
 interface ArticleBrowseFeatureProps {

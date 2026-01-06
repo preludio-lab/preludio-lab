@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
-import { ArticleCard } from '../shared/ArticleCard';
-import { ArticleHeroCard } from '../shared/ArticleHeroCard';
+import { ArticleCard } from './ArticleCard';
+import { ArticleHeroCard } from './ArticleHeroCard';
 import { ContentGrid } from '@/components/content/ContentGrid';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 
