@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getTranslations } from 'next-intl/server';
@@ -47,7 +48,23 @@ export async function ArticleDetailFeature({
     const mdxComponents = createArticleMdxComponents(audioMetadata);
 
     return (
-        <div className="container mx-auto px-4 py-32">
+        <div className="container mx-auto px-4 py-32 max-w-7xl">
+            {/* パンくずリスト */}
+            <nav className="text-sm rounded-md mb-8 flex items-center gap-2 text-tertiary">
+                <Link href={`/${lang}`} className="hover:text-primary transition-colors">
+                    {tNav('home')}
+                </Link>
+                <span>/</span>
+                <Link
+                    href={`/${lang}/${category}`}
+                    className="hover:text-primary transition-colors capitalize"
+                >
+                    {t(`categories.${category}`)}
+                </Link>
+                <span>/</span>
+                <span className="text-primary font-medium truncate">{metadata.displayTitle}</span>
+            </nav>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 {/* メインコンテンツ */}
                 <article className="lg:col-span-8 prose prose-neutral max-w-none">
@@ -72,7 +89,10 @@ export async function ArticleDetailFeature({
                             {metadata.composerName && (
                                 <>
                                     <span className="w-1 h-1 bg-divider rounded-full" />
-                                    <span>{metadata.composerName}</span>
+                                    <span>
+                                        <span className="font-bold text-primary mr-1">{tNav('composers')}:</span>
+                                        {metadata.composerName}
+                                    </span>
                                 </>
                             )}
                         </div>
