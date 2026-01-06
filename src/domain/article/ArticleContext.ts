@@ -8,11 +8,11 @@ import { ArticleCategory } from './ArticleMetadata';
  */
 export const SourceAttributionSchema = z.object({
     /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
-    title: z.string().min(1),
+    title: z.string().min(1).max(50),
     /** 出典へのURL */
-    url: z.string(),
+    url: z.string().max(2048),
     /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
-    provider: z.string().optional(),
+    provider: z.string().max(50).optional(),
 });
 
 export type SourceAttribution = z.infer<typeof SourceAttributionSchema>;
@@ -76,19 +76,19 @@ export const MonetizationElementSchema = z.object({
      * 対象となる商品・サービス名 
      * 例: "交響曲第5番 楽譜 (ヘンレ版)", "月刊プレミアムプラン"
      */
-    targetTitle: z.string().min(1),
+    targetTitle: z.string().min(1).max(50),
     /** 
      * ボタン等に直接表示するメインの表示テキスト 
      * 例: "Amazonで購入", "詳細を見る", "サポートする"
      */
-    label: z.string().min(1),
+    label: z.string().min(1).max(20),
     /** リンク先URL */
-    url: z.string().url(),
+    url: z.string().url().max(2048),
     /** 
      * 価格の目安 (UI表示用の文字列)
      * 例: "¥3,500", "$5.00 / mo"
      */
-    priceHint: z.string().optional(),
+    priceHint: z.string().max(20).optional(),
 });
 
 export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
@@ -99,13 +99,13 @@ export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
  */
 export const SeriesAssignmentSchema = z.object({
     /** シリーズID (UUID等) */
-    seriesId: z.string().uuid().or(z.string().min(1)),
+    seriesId: z.string().uuid().or(z.string().min(1).max(50)),
     /** シリーズのスラグ (URL用) */
-    seriesSlug: z.string().min(1),
+    seriesSlug: z.string().min(1).max(64),
     /** シリーズのタイトル (スナップショット) */
-    seriesTitle: z.string().min(1),
+    seriesTitle: z.string().min(1).max(50),
     /** シリーズ内での表示順序 */
-    order: z.number().int().nonnegative(),
+    order: z.number().int().nonnegative().max(9999),
 });
 
 export type SeriesAssignment = z.infer<typeof SeriesAssignmentSchema>;
@@ -117,13 +117,13 @@ export type SeriesAssignment = z.infer<typeof SeriesAssignmentSchema>;
  */
 export const RelatedArticleSchema = z.object({
     /** ターゲット記事のID */
-    articleId: z.string().min(1),
+    articleId: z.string().min(1).max(50),
     /** 表示用のタイトル (スナップショット) */
-    title: z.string().min(1),
+    title: z.string().min(1).max(50),
     /** 記事カテゴリ */
     category: z.nativeEnum(ArticleCategory),
     /** URLスラグ */
-    slug: z.string().min(1),
+    slug: z.string().min(1).max(64),
     publishedAt: z.coerce.date().nullable().default(null),
 });
 

@@ -169,6 +169,30 @@ describe('Domain Module Schemas', () => {
                 expect(result.data.relatedArticles).toEqual([]);
             }
         });
+
+        it('should fail if series order is too high', () => {
+            const result = ArticleContextSchema.safeParse({
+                seriesAssignments: [{
+                    seriesId: 'uuid',
+                    seriesSlug: 'slug',
+                    seriesTitle: 'Title',
+                    order: 10000,
+                }]
+            });
+            expect(result.success).toBe(false);
+        });
+
+        it('should fail if related article title is too long', () => {
+            const result = ArticleContextSchema.safeParse({
+                relatedArticles: [{
+                    articleId: 'id',
+                    title: 'a'.repeat(51),
+                    category: ArticleCategory.WORKS,
+                    slug: 'slug',
+                }]
+            });
+            expect(result.success).toBe(false);
+        });
     });
 
     describe('EngagementMetricsSchema', () => {
