@@ -67,7 +67,7 @@ Content`;
             });
             vi.mocked(fs.readFileSync).mockReturnValue(validMdx);
 
-            const result = await repository.findBySlug('en', 'prelude');
+            const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'prelude');
 
             expect(result).not.toBeNull();
             // expect(result?.title).toBe('Prelude 1'); // Entity uses metadata.title
@@ -86,7 +86,7 @@ Content`;
             });
             vi.mocked(fs.readFileSync).mockReturnValue(legacyMdx);
 
-            const result = await repository.findBySlug('en', 'legacy');
+            const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'legacy');
 
             expect(result).not.toBeNull();
             expect(result?.metadata.title).toBe('Legacy Piece');
@@ -98,7 +98,7 @@ Content`;
 
         it('should return null if file not found', async () => {
             vi.mocked(fs.existsSync).mockReturnValue(false);
-            const result = await repository.findBySlug('en', 'missing');
+            const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
             expect(result).toBeNull();
         });
     });

@@ -1,14 +1,14 @@
 import React from 'react';
 
-export interface ContentGridProps {
+export interface ArticleGridProps {
   children: React.ReactNode;
   maxColumns?: number;
 }
 
 /**
- * コンテンツカードを並べるための汎用レイアウトグリッド
+ * 記事カードを並べるためのレイアウトグリッド
  */
-export function ContentGrid({ children, maxColumns = 2 }: ContentGridProps) {
+export function ArticleGrid({ children, maxColumns = 2 }: ArticleGridProps) {
   // 列数に応じたTailwindクラスの決定
   const gridColsClass = maxColumns === 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : 'sm:grid-cols-2';
 

@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { ArticleCard } from './ArticleCard';
 import { ArticleHeroCard } from './ArticleHeroCard';
-import { ContentGrid } from '@/components/content/ContentGrid';
+import { ArticleGrid } from './ArticleGrid';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 
 export interface ArticleFeaturedFeatureProps {
@@ -53,7 +53,7 @@ export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatur
 
                 {/* Sub Featured Contents */}
                 {subContents.length > 0 && (
-                    <ContentGrid>
+                    <ArticleGrid maxColumns={3}>
                         {subContents.map((content, idx) => (
                             <ArticleCard
                                 key={content.slug}
@@ -63,7 +63,7 @@ export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatur
                                 index={idx}
                             />
                         ))}
-                    </ContentGrid>
+                    </ArticleGrid>
                 )}
             </div>
         </section>
