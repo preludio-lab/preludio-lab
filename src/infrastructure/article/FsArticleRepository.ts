@@ -416,6 +416,11 @@ export class FsArticleRepository implements ArticleRepository {
     }
 
     private slugify(text: string): string {
-        return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+        // rehype-slugのデフォルト挙動に合わせる（非ASCII文字もエンコードして保持）
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]+/g, '');
     }
 }
