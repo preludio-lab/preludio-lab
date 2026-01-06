@@ -34,23 +34,10 @@ export class FsArticleRepository implements ArticleRepository {
     /**
      * Slugから記事を取得
      */
-    async findBySlug(lang: string, slug: string): Promise<Article | null> {
-        // 1. Try to find the file by searching all categories
-        // Since slug is unique within a language across categories (ideally), 
-        // or we need to know category.
-        // The interface expects (lang, slug).
-        // In the FS structure: content/{lang}/{category}/{slug}.mdx
-        // If we don't know the category, we have to search.
-
-        // Optimization: If slug contains category prefix or we scan all.
-        // For now, scan all supported categories to find the slug.
-        const categories = Object.values(ArticleCategory);
-
-        for (const category of categories) {
-            const filePath = path.join(this.contentDirectory, lang, category, `${slug}.mdx`);
-            if (fs.existsSync(filePath)) {
-                return this.parseArticleFile(filePath, lang, category, slug);
-            }
+    async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
+        const filePath = path.join(this.contentDirectory, lang, category, `${slug}.mdx`);
+        if (fs.existsSync(filePath)) {
+            return this.parseArticleFile(filePath, lang, category, slug);
         }
 
         return null;

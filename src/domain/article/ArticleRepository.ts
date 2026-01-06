@@ -38,7 +38,7 @@ export interface ArticleRepository {
     /**
      * Find a single article by Slug
      */
-    findBySlug(lang: string, slug: string): Promise<Article | null>;
+    findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null>;
 
     /**
      * Find a single article by ID

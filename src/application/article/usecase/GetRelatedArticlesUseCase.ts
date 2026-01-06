@@ -5,6 +5,8 @@ import { Article } from '@/domain/article/Article';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { SearchArticlesUseCase } from './SearchArticlesUseCase';
 
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+
 /**
  * GetRelatedArticlesUseCase
  * 関連記事の取得（レコメンデーション）
@@ -12,8 +14,8 @@ import { SearchArticlesUseCase } from './SearchArticlesUseCase';
 export class GetRelatedArticlesUseCase {
     constructor(private readonly articleRepository: ArticleRepository) { }
 
-    async execute(lang: string, baseSlug: string, limit: number = 3): Promise<PagedResponse<ArticleSearchResultDto>> {
-        const baseArticle = await this.articleRepository.findBySlug(lang, baseSlug);
+    async execute(lang: string, category: string, baseSlug: string, limit: number = 3): Promise<PagedResponse<ArticleSearchResultDto>> {
+        const baseArticle = await this.articleRepository.findBySlug(lang, category as ArticleCategory, baseSlug);
         if (!baseArticle) {
             return { items: [], totalCount: 0, hasNextPage: false };
         }

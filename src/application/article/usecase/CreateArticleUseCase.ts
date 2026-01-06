@@ -23,7 +23,7 @@ export class CreateArticleUseCase {
 
     async execute(command: CreateArticleCommand): Promise<string> {
         // Check if exists
-        const existing = await this.articleRepository.findBySlug(command.lang, command.slug);
+        const existing = await this.articleRepository.findBySlug(command.lang, command.category, command.slug);
         if (existing) {
             throw new Error(`Article with slug ${command.slug} already exists.`);
         }

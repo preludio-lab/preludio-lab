@@ -155,7 +155,7 @@ export default async function ContentDetailPage({ params }: Props) {
   let nextContent: ContentSummary | null = null;
 
   try {
-    const articleDto = await getUseCase.execute(lang, slugStr);
+    const articleDto = await getUseCase.execute(lang, category, slugStr);
 
     if (articleDto) {
       content = adaptToContentDetail(articleDto);
@@ -208,7 +208,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slugStr = Array.isArray(slug) ? slug[slug.length - 1] : slug;
 
   const useCase = new GetArticleBySlugUseCase(articleRepository);
-  const article = await useCase.execute(lang, slugStr);
+  const article = await useCase.execute(lang, category, slugStr);
 
   if (!article) return {};
 
