@@ -30,35 +30,25 @@ const articleRepository = new FsArticleRepository();
  */
 function adaptToContentDetail(dto: ArticleDto): ContentDetail {
   return {
-    slug: dto.slug, // Existing slug often includes category hierarchy? Check logic.
-    // In New Domain: slug is just the filename usually.
-    // In Old Domain: slug might be 'category/slug'.
-    // ContentDetail expects 'slug'.
-    // FsContentRepository: slug = relativePath (e.g. 'works/prelude')? No, based on usage.
-    // Let's assume slug matches for now.
-    lang: dto.lang,
-    category: dto.category,
+    slug: dto.metadata.slug,
+    lang: dto.control.lang,
+    category: dto.metadata.category,
     metadata: {
       title: dto.metadata.title,
       composerName: dto.metadata.composerName,
       work: dto.metadata.workTitle,
       key: dto.metadata.key,
-      // Mapping number 1-5 back to string labels for legacy UI if strictly needed.
-      // But let's see if UI allows loose typing or if we just pass string?
-      // ContentDetail metadata type defines difficulty as enum 'Beginner' | 'Intermediate' etc.
-      // We need to map back if we want to avoid TS errors.
       difficulty: mapLevelToString(dto.metadata.readingLevel || 3) as any,
-
       tags: dto.metadata.tags,
-      audioSrc: dto.playback?.audioSrc,
-      performer: dto.playback?.performer,
-      thumbnail: dto.thumbnail,
-      startSeconds: dto.playback?.startSeconds,
-      endSeconds: dto.playback?.endSeconds,
+      audioSrc: dto.metadata.playback?.audioSrc,
+      performer: dto.metadata.playback?.performer,
+      thumbnail: dto.metadata.thumbnail,
+      startSeconds: dto.metadata.playback?.startSeconds,
+      endSeconds: dto.metadata.playback?.endSeconds,
       ogp_excerpt: dto.metadata.excerpt,
-      date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
+      date: dto.metadata.publishedAt ? new Date(dto.metadata.publishedAt).toISOString().split('T')[0] : undefined,
     },
-    body: dto.body,
+    body: dto.content.body,
   };
 }
 
@@ -73,7 +63,7 @@ function adaptToContentSummary(dto: ArticleMetadataDto): ContentSummary {
       // Minimal mapping for summary
       difficulty: 'Intermediate', // Dummy
       tags: [],
-      date: dto.publishedAt ? new Date(dto.publishedAt).toISOString().split('T')[0] : undefined,
+      date: dto.publishedAt ? dto.publishedAt.split('T')[0] : undefined,
     }
   };
 }
@@ -174,7 +164,7 @@ export default async function ContentDetailPage({ params }: Props) {
       // Fetch all in category to find neighbors (Expensive but same as before)
       const summaryResponse = await listUseCase.execute({
         lang,
-        category: articleDto.category,
+        category: articleDto.metadata.category,
         status: [ArticleStatus.PUBLISHED],
         limit: 1000,
         sortBy: ArticleSortOption.TITLE // Maintain Title sort for navigation
@@ -184,7 +174,7 @@ export default async function ContentDetailPage({ params }: Props) {
       // Actually ListArticlesUseCase implements sort.
       // But Alphabetical might rely on 'title'.
 
-      const currentIndex = sorted.findIndex(c => c.slug === articleDto.slug);
+      const currentIndex = sorted.findIndex(c => c.slug === articleDto.metadata.slug);
       if (currentIndex >= 0) {
         if (currentIndex > 0) prevContent = adaptToContentSummary(sorted[currentIndex - 1]);
         if (currentIndex < sorted.length - 1) nextContent = adaptToContentSummary(sorted[currentIndex + 1]);

@@ -1,78 +1,41 @@
 import { z } from 'zod';
-import { ArticleMetadata, Playback, ArticleMetadataSchema, PlaybackSchema, ArticleCategory } from './ArticleMetadata';
-import { SourceAttribution, MonetizationElement, SourceAttributionSchema, MonetizationElementSchema, SeriesAssignmentSchema, RelatedArticleSchema } from './ArticleContext';
-import { ArticleStatus } from './ArticleControl';
-import { AppLocale } from '../i18n/Locale';
+import { ArticleControlSchema } from './ArticleControl';
+import { ArticleMetadataSchema, PlaybackSchema, ArticleCategory } from './ArticleMetadata';
+import { ArticleContentSchema } from './ArticleContent';
+import { ArticleContextSchema } from './ArticleContext';
+import { EngagementMetricsSchema } from './ArticleEngagement';
 
 /**
- * Article Engagement DTO
- * 一覧表示等でソーシャルプルーフとして表示される指標群
- */
-export const ArticleEngagementDtoSchema = z.object({
-    /** 累計閲覧数 (PageView) */
-    viewCount: z.number().int().nonnegative(),
-    /** 累計再生数 (Audition) */
-    auditionCount: z.number().int().nonnegative(),
-    /** 累計お気に入り数 (Like) */
-    likeCount: z.number().int().nonnegative(),
-    /** 累計共鳴数 (Resonance) */
-    resonanceCount: z.number().int().nonnegative(),
-    /** 累計シェア数 (SocialShare) */
-    shareCount: z.number().int().nonnegative(),
-    /** アフィリエイトクリック数 */
-    affiliateClickCount: z.number().int().nonnegative(),
-    /** 成果発生数 */
-    conversionCount: z.number().int().nonnegative(),
-    /** 合計収益 (USD Cent) */
-    totalRevenue: z.number().int().nonnegative(),
-    /** 平均滞在時間 (算出値) */
-    avgTimeOnPageSeconds: z.number().nonnegative(),
-});
-
-export type ArticleEngagementDto = z.infer<typeof ArticleEngagementDtoSchema>;
-
-/**
- * Article Metadata DTO
- * 記事の構造化データ（Metadata）。一覧表示や検索結果、ヒーローセクションなどで使用される軽量モデル。
- * glossary: Article Metadata に対応。
+ * Article Metadata DTO (List view)
+ * 一覧表示や検索結果、ヒーローセクションなどで使用される軽量モデル。
+ * 利便性のため、基本的な識別情報と主要なメタデータをフラットに保持します。
  */
 export const ArticleMetadataDtoSchema = z.object({
-    /** 記事のユニークID */
+    // Control Info (flattened for convenience)
     id: z.string(),
-    /** URLスラグ */
     slug: z.string(),
-    /** 言語コード */
-    lang: z.string(), // AppLocale union
-    /** 公開・管理状態 */
-    status: z.nativeEnum(ArticleStatus),
-    /** 記事カテゴリ */
+    lang: z.string(),
+    status: z.string(), // ArticleStatus
+
+    // Core Metadata (flattened for convenience)
+    title: z.string(),
+    displayTitle: z.string(),
     category: z.nativeEnum(ArticleCategory),
-    /** 「おすすめ記事」フラグ */
     isFeatured: z.boolean().optional(),
-    /** 公開日時 (ISO8601等) */
     publishedAt: z.string().nullable(),
-    /** サムネイルのURLまたはパス */
     thumbnail: z.string().optional(),
 
-    // Flattened Metadata for easier UI consumption
-    /** UI表示タイトル */
-    title: z.string(),
-    /** 正式な表示用タイトル */
-    displayTitle: z.string(),
-    /** 作曲家名 */
+    // Musical Context
     composerName: z.string().optional(),
-    /** 作品タイトル */
     workTitle: z.string().optional(),
-    /** 抜粋・概要文 */
-    excerpt: z.string().optional(),
 
-    // UX Indicators
-    /** 推定読了時間 (秒) */
+    // Indicators
+    excerpt: z.string().optional(),
     readingTimeSeconds: z.number().int().nonnegative(),
-    /** ユーザー向けのソーシャルプルーフ指標 */
-    engagement: ArticleEngagementDtoSchema,
-    /** 音源再生情報 (一覧での試聴用) */
     playback: PlaybackSchema.optional(),
+
+    // Engagement Summary (Optional in list view)
+    viewCount: z.number().int().nonnegative().optional(),
 });
 
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
@@ -112,47 +75,20 @@ export type PagedResponse<T> = {
 /**
  * Article DTO (Detailed)
  * 記事の全情報（本文および全メタデータ）。記事詳細ページ等で使用される。
- * glossary: Article (Metadata + Content) に対応。
- * 
- * ArticleMetadataDto をベースとし、本文や構造化された詳細データを追加したもの。
+ * ドメインモデルの各モジュールを包含する集約構造を持ちます。
  */
-export const ArticleDtoSchema = ArticleMetadataDtoSchema.extend({
-    /** 構造化された全メタデータ (ドメインエンティティの構造を維持) */
+export const ArticleDtoSchema = z.object({
+    /** システム管理情報 (ID, 状態, 作成・更新日) */
+    control: ArticleControlSchema,
+    /** 音楽的・静的属性 (タイトル, 作曲家, ジャンル等) */
     metadata: ArticleMetadataSchema,
-    /** 最終更新日時 */
-    updatedAt: z.string(),
-    /** ユーザーアクション関連の全メトリクス (算出値を含む) */
-    engagement: ArticleEngagementDtoSchema,
-
-    /** 参照元リンクの配列 */
-    sourceAttributions: z.array(SourceAttributionSchema),
-    /** 収益化要素の配列 */
-    monetizationElements: z.array(MonetizationElementSchema),
-
-    /** 
-     * 記事の本文 (MDX形式)。ページ閲覧時に取得される。 
-     * glossary: ContentBody に対応
-     */
-    body: z.string(),
-    /** 
-     * 目次構造 (ContentStructure)
-     * glossary: ContentStructure に対応
-     */
-    structure: z.array(z.any()).optional(),
-
-    seriesAssignments: z.array(z.object({
-        seriesId: z.string(),
-        seriesSlug: z.string(),
-        seriesTitle: z.string(),
-        order: z.number(),
-    })).optional(),
-    /** 関連記事リスト */
-    relatedArticles: z.array(z.object({
-        articleId: z.string(),
-        title: z.string(),
-        category: z.nativeEnum(ArticleCategory),
-        slug: z.string(),
-    })).optional(),
+    /** コンテンツ実体 (本文 MDX, 目次構造) */
+    content: ArticleContentSchema,
+    /** 外部・ビジネス文脈 (参考文献, 収益化要素, 関連記事) */
+    context: ArticleContextSchema,
+    /** 動的メトリクス (PV, 再生数, いいね等) */
+    engagement: EngagementMetricsSchema,
 });
 
 export type ArticleDto = z.infer<typeof ArticleDtoSchema>;
+

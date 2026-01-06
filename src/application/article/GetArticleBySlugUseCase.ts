@@ -21,29 +21,17 @@ export class GetArticleBySlugUseCase {
 
     private toDto(article: Article): ArticleDto {
         return {
-            ...article.metadata,
-            id: article.control.id,
-            lang: article.control.lang,
-            status: article.control.status,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-            updatedAt: article.control.updatedAt.toISOString(),
-
-            metadata: article.metadata,
-            engagement: {
-                ...article.engagement.metrics,
-                avgTimeOnPageSeconds: article.engagement.metrics.viewCount > 0
-                    ? article.engagement.metrics.totalTimeOnPageSeconds / article.engagement.metrics.viewCount
-                    : 0,
+            control: {
+                id: article.control.id,
+                lang: article.control.lang as any,
+                status: article.control.status,
+                createdAt: article.control.createdAt,
+                updatedAt: article.control.updatedAt,
             },
-            playback: article.metadata.playback,
-            sourceAttributions: article.context.sourceAttributions,
-            monetizationElements: article.context.monetizationElements,
-
-            body: article.content.body,
-            structure: article.content.structure,
-
-            seriesAssignments: article.context.seriesAssignments,
-            relatedArticles: article.context.relatedArticles,
+            metadata: article.metadata,
+            content: article.content,
+            context: article.context,
+            engagement: article.engagement.metrics,
         };
     }
 }

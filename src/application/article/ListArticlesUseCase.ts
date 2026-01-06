@@ -21,17 +21,17 @@ export class ListArticlesUseCase {
 
     private toDto(article: Article): ArticleMetadataDto {
         return {
-            ...article.metadata,
+            // Control Info (flattened)
             id: article.control.id,
             lang: article.control.lang,
             status: article.control.status,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
-            engagement: {
-                ...article.engagement.metrics,
-                avgTimeOnPageSeconds: article.engagement.metrics.viewCount > 0
-                    ? article.engagement.metrics.totalTimeOnPageSeconds / article.engagement.metrics.viewCount
-                    : 0,
-            },
+
+            // Metadata Info (flattened)
+            ...article.metadata,
+            publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
+
+            // Engagement Summary
+            viewCount: article.engagement.metrics.viewCount,
         };
     }
 }

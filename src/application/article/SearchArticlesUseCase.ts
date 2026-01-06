@@ -24,19 +24,19 @@ export class SearchArticlesUseCase {
 
     private toSearchResultDto(article: Article): ArticleSearchResultDto {
         return {
-            ...article.metadata,
+            // Control Info
             id: article.control.id,
             lang: article.control.lang,
             status: article.control.status,
-            publishedAt: article.publishedAt ? article.publishedAt.toISOString() : null,
 
-            engagement: {
-                ...article.engagement.metrics,
-                avgTimeOnPageSeconds: article.engagement.metrics.viewCount > 0
-                    ? article.engagement.metrics.totalTimeOnPageSeconds / article.engagement.metrics.viewCount
-                    : 0,
-            },
+            // Metadata Info
+            ...article.metadata,
+            publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
 
+            // Engagement Summary
+            viewCount: article.engagement.metrics.viewCount,
+
+            // Search Specific
             matchScore: 1.0, // Mock score for FS
         };
     }
