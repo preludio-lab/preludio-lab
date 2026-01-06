@@ -32,7 +32,9 @@ export async function ArticleFeaturedSection({ contents }: ArticleFeaturedSectio
     // メイン記事の説明文
     const mainDescription =
         mainContent.excerpt ||
-        t('featured.defaultDescription', { composer: mainContent.composerName || '' });
+        t('featured.defaultDescription', { composer: '' }).replace('{}', '').trim() ||
+        mainContent.workTitle ||
+        '';
 
     return (
         <section className="w-full bg-gray-100 py-20">

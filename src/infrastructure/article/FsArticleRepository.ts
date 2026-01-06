@@ -273,13 +273,20 @@ export class FsArticleRepository implements ArticleRepository {
             // Validate Metadata
             let metadata: ArticleMetadata;
 
-            const parseResult = ArticleMetadataSchema.safeParse(data);
+            // Inject slug and category for validation
+            const dataToValidate = {
+                ...data,
+                slug: data.slug || slug,
+                category: data.category || category,
+            };
+
+            const parseResult = ArticleMetadataSchema.safeParse(dataToValidate);
             if (parseResult.success) {
                 metadata = parseResult.data;
             } else {
                 // Fallback: Try to map legacy frontmatter to new schema
                 // console.warn(`Legacy Frontmatter detected for ${slug}, mapping...`);
-                metadata = this.mapLegacyMetadata(data);
+                metadata = this.mapLegacyMetadata(dataToValidate);
             }
 
             const status = (data.status as ArticleStatus) || ArticleStatus.PUBLISHED;
@@ -346,9 +353,9 @@ export class FsArticleRepository implements ArticleRepository {
 
         return {
             title: data.title || 'No Title',
-            catchcopy: undefined,
+            catchcopy: data.catchcopy || undefined,
             displayTitle: data.displayTitle || data.title,
-            excerpt: data.ogp_excerpt || undefined,
+            excerpt: data.excerpt || data.ogp_excerpt || undefined,
 
             composerName: data.composer || data.composerName || 'Unknown',
             workTitle: data.workTitle || data.work || undefined,

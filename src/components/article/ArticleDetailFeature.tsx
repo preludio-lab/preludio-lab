@@ -6,8 +6,9 @@ import { ArticleTableOfContents } from './ArticleTableOfContents';
 import { ArticleSeriesNavigation } from './ArticleSeriesNavigation';
 import { createArticleMdxComponents } from './ArticleMdxComponents';
 import rehypeSlug from 'rehype-slug';
-import { WorkPlayerPlaceholder } from '@/components/content/work/WorkPlayerPlaceholder';
-import { ListeningGuide } from '@/components/content/work/ListeningGuide';
+import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
+import { ArticleListeningGuide } from './ArticleListeningGuide';
+import { Playback } from '@/domain/article/ArticleMetadata';
 
 interface ArticleDetailFeatureProps {
     article: ArticleDto;
@@ -129,8 +130,8 @@ export async function ArticleDetailFeature({
                     <div className="sticky top-28 space-y-8">
                         {hasAudio && (
                             <div>
-                                <WorkPlayerPlaceholder />
-                                <ListeningGuide />
+                                <ArticleYoutubePlayer playback={metadata.playback as Playback} />
+                                <ArticleListeningGuide />
                             </div>
                         )}
                         <div>

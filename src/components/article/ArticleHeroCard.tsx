@@ -51,8 +51,10 @@ export function ArticleHeroCard({
                     </div>
                 )}
                 <h3 className="mb-4 text-3xl font-bold text-gray-900 font-serif leading-tight">{title}</h3>
-                <p className="mb-2 text-primary font-medium italic">{composerName}</p>
-                <p className="mb-6 text-gray-600 line-clamp-3">{description}</p>
+                <div className="flex flex-col mb-6">
+                    <p className="text-primary font-medium italic mb-2">{composerName}</p>
+                    <p className="text-gray-600 line-clamp-3 leading-relaxed">{description}</p>
+                </div>
                 <div className="flex flex-wrap gap-4">
                     <Link
                         href={`/${lang}/${category}/${slug}`}
