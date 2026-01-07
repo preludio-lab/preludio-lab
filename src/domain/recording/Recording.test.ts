@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Recording } from './Recording';
-import { RecordingProvider } from './RecordingMedia';
-
+import { RecordingProvider } from './RecordingSources';
 
 describe('Recording Entity', () => {
     const mockControl = {
@@ -15,12 +14,12 @@ describe('Recording Entity', () => {
         recordingYear: 1981,
         isRecommended: true,
     };
-    const mockMedia = {
-        sources: [
+    const mockSources = {
+        items: [
             {
                 id: 'src-1',
                 provider: RecordingProvider.YOUTUBE,
-                externalSourceId: 'id',
+                sourceId: 'id',
             },
         ],
     };
@@ -29,7 +28,7 @@ describe('Recording Entity', () => {
         const recording = new Recording({
             control: mockControl,
             metadata: mockMetadata,
-            media: mockMedia,
+            sources: mockSources,
         });
 
         expect(recording.id).toBe('rec-1');
@@ -37,14 +36,14 @@ describe('Recording Entity', () => {
         expect(recording.performerName.en).toBe('Glenn Gould');
         expect(recording.recordingYear).toBe(1981);
         expect(recording.isRecommended).toBe(true);
-        expect(recording.sources).toHaveLength(1);
+        expect(recording.sourceItems).toHaveLength(1);
     });
 
     it('clones with new values immutably', () => {
         const recording = new Recording({
             control: mockControl,
             metadata: mockMetadata,
-            media: mockMedia,
+            sources: mockSources,
         });
 
         const updated = recording.cloneWith({
@@ -61,3 +60,4 @@ describe('Recording Entity', () => {
         expect(updated.id).toBe('rec-1');
     });
 });
+

@@ -1,28 +1,28 @@
 import { RecordingControl } from './RecordingControl';
 import { RecordingMetadata } from './RecordingMetadata';
-import { RecordingMedia } from './RecordingMedia';
+import { RecordingSources } from './RecordingSources';
 
 /**
  * Recording Entity
  * 録音のドメインエンティティ (Aggregate Root / Coordinator)
- * 各モジュール (Control, Metadata, Media) を束ね、整合性を管理する。
+ * 各モジュール (Control, Metadata, Sources) を束ね、整合性を管理する。
  */
 export class Recording {
     /** 制御情報 (ID, Lifecycle) */
     readonly control: RecordingControl;
     /** メタデータ (Performer, Year) */
     readonly metadata: RecordingMetadata;
-    /** メディア情報 (Sources) */
-    readonly media: RecordingMedia;
+    /** 音源情報 (Items) */
+    readonly sources: RecordingSources;
 
     constructor(props: {
         control: RecordingControl;
         metadata: RecordingMetadata;
-        media: RecordingMedia;
+        sources: RecordingSources;
     }) {
         this.control = props.control;
         this.metadata = props.metadata;
-        this.media = props.media;
+        this.sources = props.sources;
     }
 
     // --- Shortcuts for Convenience (Delegation) ---
@@ -32,7 +32,7 @@ export class Recording {
     get performerName() { return this.metadata.performerName; }
     get recordingYear() { return this.metadata.recordingYear; }
     get isRecommended() { return this.metadata.isRecommended; }
-    get sources() { return this.media.sources; }
+    get sourceItems() { return this.sources.items; }
 
     /**
      * エンティティの複製 (イミュータブルな更新)
@@ -40,12 +40,13 @@ export class Recording {
     public cloneWith(props: {
         control?: Partial<RecordingControl>;
         metadata?: Partial<RecordingMetadata>;
-        media?: Partial<RecordingMedia>;
+        sources?: Partial<RecordingSources>;
     }): Recording {
         return new Recording({
             control: props.control ? { ...this.control, ...props.control } : this.control,
             metadata: props.metadata ? { ...this.metadata, ...props.metadata } : this.metadata,
-            media: props.media ? { ...this.media, ...props.media } : this.media,
+            sources: props.sources ? { ...this.sources, ...props.sources } : this.sources,
         });
     }
 }
+
