@@ -53,7 +53,7 @@ export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatur
 
                 {/* Sub Featured Contents */}
                 {subContents.length > 0 && (
-                    <ArticleGrid maxColumns={3}>
+                    <ArticleGrid maxColumns={2}>
                         {subContents.map((content, idx) => (
                             <ArticleCard
                                 key={content.slug}
