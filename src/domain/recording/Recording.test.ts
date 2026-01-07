@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Recording } from './Recording';
-import { RecordingProvider } from './RecordingConstants';
+import { RecordingProvider } from './RecordingMedia';
+
 
 describe('Recording Entity', () => {
     const mockControl = {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { RecordingMediaSchema } from './RecordingMedia';
-import { RecordingProvider } from './RecordingConstants';
+import { RecordingMediaSchema, RecordingProvider } from './RecordingMedia';
+
 
 describe('RecordingMedia', () => {
     const validSource = {
