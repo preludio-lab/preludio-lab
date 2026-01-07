@@ -46,28 +46,34 @@ export function ArticleCard({
 
     return (
         <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group bg-white/40 backdrop-blur-md rounded-3xl overflow-hidden border border-divider shadow-sm hover:shadow-xl hover:border-accent/30 transition-all duration-500 h-full flex flex-col"
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            variants={{
+                initial: { opacity: 0, y: 20 },
+                animate: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }
+                },
+                hover: {
+                    y: -6,
+                    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+                }
+            }}
+            className="group bg-white rounded-[2rem] overflow-hidden border border-neutral-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12)] hover:border-accent/20 transition-[box-shadow,border-color] duration-200 h-full flex flex-col"
         >
             {/* Thumbnail Area */}
             <Link href={`/${lang}/${category}/${slug}`} className="relative block h-56 w-full overflow-hidden">
-                {thumbnail ? (
-                    <Image
-                        src={thumbnail}
-                        alt={displayTitle}
-                        fill
-                        priority={priority}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                ) : (
-                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
-                        <span className="text-slate-300 font-serif text-4xl">P</span>
-                    </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Image
+                    src={thumbnail || '/images/placeholders/article-placeholder.webp'}
+                    alt={displayTitle}
+                    fill
+                    priority={priority}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Category Badge */}
                 <div className="absolute top-4 left-4">

@@ -26,30 +26,40 @@ export function ArticleHeroCard({
 
     return (
         <m.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-2xl bg-paper-white shadow-xl transition-shadow duration-300 hover:shadow-2xl"
+            initial="initial"
+            animate="animate"
+            whileHover="hover"
+            variants={{
+                initial: { opacity: 0, y: 30 },
+                animate: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] }
+                },
+                hover: {
+                    y: -4,
+                    transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+                }
+            }}
+            className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-[2.5rem] bg-paper-white border border-neutral-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-[box-shadow,border-color] duration-300"
         >
             <div className="p-8 sm:p-12">
-                {thumbnail && (
-                    <div className="relative h-64 w-full sm:h-80 md:h-96 mb-8 group overflow-hidden rounded-xl">
-                        <Image
-                            src={thumbnail || '/images/placeholders/sheet-music-hero.jpg'}
-                            alt={`${title} - ${composerName}`}
-                            fill
-                            priority
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 896px"
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                        <div className="absolute bottom-4 left-4">
-                            <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm">
-                                {categoryLabel || category.toUpperCase()}
-                            </span>
-                        </div>
+                <div className="relative h-64 w-full sm:h-80 md:h-96 mb-8 group overflow-hidden rounded-xl">
+                    <Image
+                        src={thumbnail || '/images/placeholders/article-placeholder.webp'}
+                        alt={`${title} - ${composerName}`}
+                        fill
+                        priority
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 896px"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute bottom-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm">
+                            {categoryLabel || category.toUpperCase()}
+                        </span>
                     </div>
-                )}
+                </div>
                 <h3 className="mb-4 text-3xl font-bold text-gray-900 font-serif leading-tight">{title}</h3>
                 <div className="flex flex-col mb-6">
                     <p className="text-primary font-medium italic mb-2">{composerName}</p>
