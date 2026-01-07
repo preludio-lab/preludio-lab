@@ -63,55 +63,55 @@ export function ArticleCard({
             }}
             className="group bg-white rounded-[2rem] overflow-hidden border border-neutral-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12)] hover:border-accent/20 transition-[box-shadow,border-color] duration-200 h-full flex flex-col"
         >
-            {/* Thumbnail Area */}
-            <Link href={`/${lang}/${category}/${slug}`} className="relative block h-56 w-full overflow-hidden">
-                <Image
-                    src={thumbnail || '/images/placeholders/article-placeholder.webp'}
-                    alt={displayTitle}
-                    fill
-                    priority={priority}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <Link href={`/${lang}/${category}/${slug}`} className="flex flex-col h-full">
+                {/* Thumbnail Area */}
+                <div className="relative h-56 w-full overflow-hidden">
+                    <Image
+                        src={thumbnail || '/images/placeholders/article-placeholder.webp'}
+                        alt={displayTitle}
+                        fill
+                        priority={priority}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* Category Badge */}
-                <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm border border-neutral-100">
-                        {categoryLabel || t(`categories.${category}`)}
-                    </span>
-                </div>
-            </Link>
-
-            {/* Content Area */}
-            <div className="p-6 flex-grow flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                    <span className="text-[10px] font-bold text-tertiary/60 tracking-widest uppercase">
-                        {formattedDate}
-                    </span>
-                    <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[9px] font-bold rounded-md uppercase tracking-tighter border border-neutral-200/50">
-                        Difficulty {level}
-                    </span>
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm border border-neutral-100">
+                            {categoryLabel || t(`categories.${category}`)}
+                        </span>
+                    </div>
                 </div>
 
-                <Link href={`/${lang}/${category}/${slug}`} className="block group/title">
-                    <h3 className="text-xl font-bold text-primary mb-2 line-clamp-2 leading-snug group-hover/title:text-accent transition-colors font-serif">
+                {/* Content Area */}
+                <div className="p-6 flex-grow flex flex-col">
+                    <div className="flex items-center justify-between mb-3">
+                        <span className="text-[10px] font-bold text-tertiary/60 tracking-widest uppercase">
+                            {formattedDate}
+                        </span>
+                        <span className="px-2 py-0.5 bg-neutral-100 text-neutral-500 text-[9px] font-bold rounded-md uppercase tracking-tighter border border-neutral-200/50">
+                            Difficulty {level}
+                        </span>
+                    </div>
+
+                    <h3 className="text-xl font-bold text-primary mb-2 line-clamp-2 leading-snug group-hover:text-accent transition-colors font-serif">
                         {displayTitle}
                     </h3>
                     <p className="text-sm text-tertiary mb-4 font-medium italic">
                         {composerName}
                     </p>
-                </Link>
 
-                {/* Tags */}
-                <div className="mt-auto pt-4 flex flex-wrap gap-2">
-                    {tags?.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-[10px] text-tertiary/60 font-medium px-2 py-0.5 bg-neutral-50/50 rounded-md border border-neutral-100">
-                            #{tag}
-                        </span>
-                    ))}
+                    {/* Tags */}
+                    <div className="mt-auto pt-4 flex flex-wrap gap-2">
+                        {tags?.slice(0, 3).map((tag) => (
+                            <span key={tag} className="text-[10px] text-tertiary/60 font-medium px-2 py-0.5 bg-neutral-50/50 rounded-md border border-neutral-100">
+                                #{tag}
+                            </span>
+                        ))}
+                    </div>
                 </div>
-            </div>
+            </Link>
         </m.div>
     );
 }
