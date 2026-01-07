@@ -102,8 +102,8 @@ export function ArticleCard({
                         {composerName}
                     </p>
 
-                    {/* Read More Indicator (Case C) */}
-                    <div className="flex items-center text-[10px] font-bold text-accent tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
+                    {/* Read More Indicator (Case C - Premium Black Version) */}
+                    <div className="flex items-center text-[10px] font-bold text-primary/90 tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0">
                         {readMoreLabel} <span className="ml-1 transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
                     </div>
 
