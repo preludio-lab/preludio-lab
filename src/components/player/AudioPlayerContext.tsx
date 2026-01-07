@@ -41,11 +41,11 @@ export interface PlayerState {
   /** 楽曲タイトル */
   title: string | null;
   /** 作曲者名 (例: "J.S. Bach") */
-  composer: string | null;
+  composerName: string | null;
   /** 演奏者名 (例: "Glenn Gould") */
   performer: string | null;
   /** アートワーク画像のURL */
-  artworkSrc: string | null;
+  thumbnail: string | null;
   /** プラットフォームの元リンクURL (例: YouTubeの動画ページURL) */
   platformUrl: string | null;
   /** プラットフォームの表示ラベル (例: "Watch on YouTube") */
@@ -75,9 +75,9 @@ export interface PlayerActions {
     src?: string,
     metadata?: {
       title?: string;
-      composer?: string;
+      composerName?: string;
       performer?: string;
-      artworkSrc?: string;
+      thumbnail?: string;
       platformUrl?: string;
       platformLabel?: string;
       platform?: 'youtube' | 'default';
@@ -138,9 +138,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     src: null,
     mode: 'hidden',
     title: null,
-    composer: null,
+    composerName: null,
     performer: null,
-    artworkSrc: null,
+    thumbnail: null,
     platformUrl: null,
     platformLabel: null,
     platform: null,
@@ -190,9 +190,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       src: state.src,
       mode: state.mode,
       title: state.title,
-      composer: state.composer,
+      composerName: state.composerName,
       performer: state.performer,
-      artworkSrc: state.artworkSrc,
+      thumbnail: state.thumbnail,
       platformUrl: state.platformUrl,
       platformLabel: state.platformLabel,
       platform: state.platform,
@@ -205,9 +205,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     state.src,
     state.mode,
     state.title,
-    state.composer,
+    state.composerName,
     state.performer,
-    state.artworkSrc,
+    state.thumbnail,
     state.platformUrl,
     state.platformLabel,
     state.platform,
@@ -260,9 +260,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       src?: string,
       metadata?: {
         title?: string;
-        composer?: string;
+        composerName?: string;
         performer?: string;
-        artworkSrc?: string;
+        thumbnail?: string;
         platformUrl?: string;
         platformLabel?: string;
         platform?: 'youtube' | 'default';
@@ -292,18 +292,18 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           }
           // Reset metadata if new source
           newState.title = null;
-          newState.composer = null;
+          newState.composerName = null;
           newState.performer = null;
-          newState.artworkSrc = null;
+          newState.thumbnail = null;
           newState.platformUrl = null;
           newState.platformLabel = null;
           newState.platform = null;
         }
         if (metadata) {
           if (metadata.title) newState.title = metadata.title;
-          if (metadata.composer) newState.composer = metadata.composer;
+          if (metadata.composerName) newState.composerName = metadata.composerName;
           if (metadata.performer) newState.performer = metadata.performer;
-          if (metadata.artworkSrc) newState.artworkSrc = metadata.artworkSrc;
+          if (metadata.thumbnail) newState.thumbnail = metadata.thumbnail;
           if (metadata.platformUrl) newState.platformUrl = metadata.platformUrl;
           if (metadata.platformLabel) newState.platformLabel = metadata.platformLabel;
           if (metadata.platform) newState.platform = metadata.platform;

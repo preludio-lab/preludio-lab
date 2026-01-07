@@ -17,9 +17,9 @@ export function FocusAudioPlayer() {
     mode,
     setMode,
     title,
-    composer,
+    composerName,
     performer,
-    artworkSrc,
+    thumbnail,
     platformLabel,
     platformUrl,
     platform,
@@ -100,8 +100,8 @@ export function FocusAudioPlayer() {
                     ${isPlaying ? 'scale-100' : 'scale-95 opacity-90'}
                 `}
         >
-          {artworkSrc ? (
-            <img src={artworkSrc} alt={title || 'Artwork'} className="w-full h-full object-cover" />
+          {thumbnail ? (
+            <img src={thumbnail} alt={title || 'Artwork'} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-300">
               {/* Music Note Icon */}
@@ -122,7 +122,7 @@ export function FocusAudioPlayer() {
           <h2 className="text-2xl font-serif font-bold text-preludio-black leading-tight max-w-md mx-auto">
             {title || 'Unknown Title'}
           </h2>
-          <p className="text-lg text-classic-gold font-medium">{composer || 'Unknown Composer'}</p>
+          <p className="text-lg text-classic-gold font-medium">{composerName || 'Unknown Composer'}</p>
           {performer && <p className="text-sm text-gray-500 font-medium">{performer}</p>}
 
           {/* Attribution Link */}

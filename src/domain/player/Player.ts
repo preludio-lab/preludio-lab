@@ -8,17 +8,17 @@ import { PlayerPlatform } from './PlayerConstants';
 // 基本的な時間（秒）のバリデーション
 const SecondsSchema = z.number().min(0).finite();
 
-// 再生オプションのバリデーション
-// startSeconds は 0以上
-// endSeconds は startSeconds より大きくなければならない
+/** 再生オプション (開始・終了位置など) */
 export const PlayOptionsSchema = z
   .object({
+    /** 再生開始位置 (秒) */
     startSeconds: SecondsSchema.optional(),
+    /** 再生終了位置 (秒) */
     endSeconds: SecondsSchema.optional(),
   })
   .refine(
     (data) => {
-      // endSeconds がある場合、startSeconds より大きいこと
+      /** endSeconds がある場合、startSeconds より大きいこと */
       if (data.startSeconds !== undefined && data.endSeconds !== undefined) {
         return data.endSeconds > data.startSeconds;
       }
@@ -30,24 +30,37 @@ export const PlayOptionsSchema = z
     },
   );
 
-// メタデータのバリデーション
+/** 再生中に表示されるメタデータ */
 export const PlayerMetadataSchema = z.object({
+  /** 作品タイトル */
   title: z.string().optional(),
-  composer: z.string().optional(),
+  /** 作曲家名 */
+  composerName: z.string().optional(),
+  /** 演奏者名 */
   performer: z.string().optional(),
-  artworkSrc: z.string().url().optional().or(z.literal('')), // 空文字も許容するか、url形式を強制するか
+  /** サムネイル画像URL */
+  thumbnail: z.string().url().optional().or(z.literal('')),
+  /** プラットフォームのURL (YouTube等) */
   platformUrl: z.string().url().optional(),
+  /** プラットフォーム名 */
   platformLabel: z.string().optional(),
+  /** プラットフォームの種別 (PlayerPlatform) */
   platform: z.nativeEnum(PlayerPlatform).optional().nullable(),
 });
 
-// 再生リクエスト全体のバリデーション（srcは必須）
+/** 再生リクエスト全体の構造 */
 export const PlayRequestSchema = z.object({
+  /** 音源識別子 (YouTube ID等) */
   src: z.string().min(1, 'Source ID is required'),
+  /** 付随するメタデータ */
   metadata: PlayerMetadataSchema.optional(),
+  /** 再生オプション (区間指定等) */
   options: PlayOptionsSchema.optional(),
 });
 
+/** 再生オプションの型定義 */
 export type PlayOptions = z.infer<typeof PlayOptionsSchema>;
+/** プレイヤーメタデータの型定義 */
 export type PlayerMetadata = z.infer<typeof PlayerMetadataSchema>;
+/** 再生リクエストの型定義 */
 export type PlayRequest = z.infer<typeof PlayRequestSchema>;

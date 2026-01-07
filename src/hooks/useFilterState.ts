@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
-import { ContentSortOption } from '@/domain/content/ContentConstants';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { handleClientError } from '@/lib/client-error';
 
 export type FilterState = {
@@ -27,7 +27,7 @@ export function useFilterState() {
     return {
       difficulty: searchParams.get('difficulty') || undefined,
       keyword: searchParams.get('keyword') || undefined,
-      sort: searchParams.get('sort') || ContentSortOption.LATEST,
+      sort: searchParams.get('sort') || ArticleSortOption.PUBLISHED_AT,
       tags: searchParams.get('tags')?.split(',').filter(Boolean) || [],
     };
   }, [searchParams]);

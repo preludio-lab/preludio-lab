@@ -89,13 +89,14 @@
     },
     "sort": {
       "label": "並び替え",
-      "latest": "最新順",
-      "oldest": "古い順",
+      "publishedAt": "最新順",
+      "readingLevel": "解説難易度順",
+      "performanceDifficulty": "演奏難易度順",
       "title": "名前順",
-      "difficulty_asc": "難易度（易しい順）",
-      "difficulty_desc": "難易度（難しい順）",
-      "popular": "人気順",
-      "trending": "注目順"
+      "workPopularity": "人気順",
+      "trending": "注目順",
+      "compositionYear": "作曲年順",
+      "composerBirthYear": "作曲者生年順"
     },
     "categories": {
       "works": "楽曲紹介",
@@ -108,9 +109,11 @@
       "columns": "コラム"
     },
     "difficulty": {
-      "Beginner": "初級",
-      "Intermediate": "中級",
-      "Advanced": "上級"
+      "1": "初級",
+      "2": "初中級",
+      "3": "中級",
+      "4": "上級",
+      "5": "最上級 (Virtuoso)"
     },
     "readMore": "もっと見る"
   },

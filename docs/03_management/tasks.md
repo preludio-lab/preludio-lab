@@ -159,7 +159,7 @@ Status: `[/]` 進行中
   - [ ] **[環境構築]** データベース・インフラのセットアップ
     - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
     - [ ] **Turso**: 記事・ベクトルデータ用プロジェクトの作成
-      - [ ] Turso CLI のインストールと認証
+      - [ ] Turso CLI のインストールと認証 (`brew uninstall turso && brew install tursodatabase/tap/turso`)
       - [ ] Production / Staging 用のデータベース作成
       - [ ] APIキー・接続情報の管理（Vercel環境変数への連携）
     - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
@@ -169,6 +169,7 @@ Status: `[/]` 進行中
     - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
   - [ ] **[実装]** ドメインの更新とそれに伴うリファクタリング
     - [ ] 今回のエンティティ定義に基づき、既存の実装をアップデート
+    - [ ] **[リファクタリング] ArticleRepositoryFactoryの導入**: インフラ実装（Fs/Turso等）を隠蔽し、Page層を純粋な抽象（インターフェース）に依存させるDI基盤の構築
   - [ ] **[実装]** Database-First Admin UI
     - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
     - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの簡易トグル管理機能の実装
@@ -292,6 +293,7 @@ Status: `[/]` 進行中
   - [ ] **[運用]** テスト失敗時のレポート自動生成とGitHub上での可視化
   - [ ] **[基盤]** **多言語ルーティング (i18n) の精緻化**: ブラウザ言語の検知と、特定の言語を最上位にプロモートするブラウザロケール連動ロジックの実装
 
+
 - [ ] **8.2 シリーズ機能の実装 (Content Series)**
   - [ ] **[DB設計]** `series` テーブルおよび `series_items` (多対多) のスキーマ設計
   - [ ] **[UI実装]** シリーズインデックスページ（特集一覧）の実装
@@ -396,3 +398,6 @@ Status: `[/]` 進行中
 - [ ] **Faceted Search Implementation (Chip Counts)**
   - 未選択のフィルタ（難易度など）に対して、現在の絞り込み条件下でのヒット件数をリアルタイムに表示する機能（例：「中級 (4)」）。
   - これを実現するために、バックエンド（Supabase）側で Faceted Search（多面検索・集計）の仕組みを実装する。
+
+- [ ] **Article Card Visualizer (List View)**
+  - 一覧画面のカードで試聴を開始した際、再生中のカードにのみ控えめな波形アニメーション（Spectrum）を表示し、視覚的なフィードバックとプレミアムな質感を向上させる。

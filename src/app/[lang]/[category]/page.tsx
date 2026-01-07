@@ -1,10 +1,11 @@
-import { FsContentRepository } from '@/infrastructure/content/FsContentRepository';
-import { GetCategoryContentsUseCase } from '@/application/content/GetCategoryContentsUseCase';
-import { CategoryIndexFeature } from '@/components/content/CategoryIndexFeature';
+import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
+import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
+import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { SUPPORTED_CATEGORIES } from '@/domain/content/ContentConstants';
+import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
 
 type Props = {
@@ -20,36 +21,40 @@ type Props = {
   }>;
 };
 
+// Poor man's DI
+const articleRepository = new FsArticleRepository();
+
 /**
- * 全てのカテゴリ一覧ページのための動的ルート。
- * URLパラメータに基づいてコンテンツの概要を取得し、CategoryIndexFeature をレンダリングします。
+ * CategoryPage
+ * 最新の ArticleCategoryIndexFeature を使用するように更新。
  */
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { lang, category } = await params;
-  const { difficulty, keyword, sort, tags } = await searchParams;
+  const { sort, difficulty, keyword } = await searchParams;
 
-  // カテゴリの有効性を検証
-  if (!SUPPORTED_CATEGORIES.includes(category as any)) {
+  const validCategories = Object.values(ArticleCategory);
+  if (!validCategories.includes(category as any)) {
     notFound();
   }
 
-  const repository = new FsContentRepository();
-  const useCase = new GetCategoryContentsUseCase(repository);
+  const useCase = new ListArticlesUseCase(articleRepository);
+  const criteriaSort = sort ? (sort as ArticleSortOption) : ArticleSortOption.PUBLISHED_AT;
 
-  const contents = await useCase.execute({
+  const response = await useCase.execute({
     lang,
-    category,
-    difficulty,
-    keyword,
-    sort: sort as any,
-    tags: tags ? tags.split(',') : undefined,
+    category: category as ArticleCategory,
+    sortBy: criteriaSort,
+    minReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+    maxReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+    // Note: FsArticleRepository currently filters by exact level if min/max are same
+    limit: 100
   });
 
-  return <CategoryIndexFeature lang={lang} category={category} contents={contents} />;
+  return <ArticleBrowseFeature lang={lang} category={category} contents={response.items} />;
 }
 
 /**
- * カテゴリページのメタデータを生成。
+ * generateMetadata
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, category } = await params;
@@ -58,12 +63,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const categoryName = t(`categories.${category}`);
   const title = t('title', { category: categoryName });
 
-  // SEO: このカテゴリページ固有のalternates（canonicalとhreflang）を動的に生成
   const languages: Record<string, string> = {};
   supportedLocales.forEach((locale) => {
     languages[locale] = `/${locale}/${category}`;
   });
-  // x-defaultは英語版を指す
   languages['x-default'] = `/en/${category}`;
 
   return {

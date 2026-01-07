@@ -1,12 +1,14 @@
-import { FsContentRepository } from '@/infrastructure/content/FsContentRepository';
-import { ContentDetailFeature } from '@/components/content/ContentDetailFeature';
+import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
+import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
+import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
+import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import GithubSlugger from 'github-slugger';
 import { LOCALES } from '@/lib/constants';
 import { supportedLocales } from '@/domain/i18n/Locale';
-import { SUPPORTED_CATEGORIES } from '@/domain/content/ContentConstants';
-import { ContentDetail, ContentSummary } from '@/domain/content/Content';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 
 type Props = {
   params: Promise<{
@@ -16,92 +18,82 @@ type Props = {
   }>;
 };
 
+// --- Repository Singleton (Poor man's DI) ---
+const articleRepository = new FsArticleRepository();
+
 /**
- * サポートされている全言語およびカテゴリにわたる、全てのコンテンツページの静的生成。
+ * generateStaticParams
  */
 export async function generateStaticParams() {
-  const repository = new FsContentRepository();
+  const useCase = new ListArticlesUseCase(articleRepository);
   const params: { lang: string; category: string; slug: string[] }[] = [];
 
   for (const lang of LOCALES) {
-    // 全てのサポート対象カテゴリを反復処理してパラメータを生成
-    for (const category of SUPPORTED_CATEGORIES) {
-      try {
-        const contents = await repository.getContentSummariesByCategory(lang, category);
-        for (const content of contents) {
-          params.push({
-            lang,
-            category,
-            slug: content.slug.split('/'),
-          });
-        }
-      } catch (e) {
-        // コンテンツが存在しないカテゴリやエラーはビルド時に無視
+    try {
+      const response = await useCase.execute({
+        lang,
+        limit: 1000
+      });
+
+      for (const item of response.items) {
+        params.push({
+          lang,
+          category: item.category,
+          slug: [item.slug]
+        });
       }
+    } catch (e) {
+      console.warn(`Failed to generate static params for ${lang}`, e);
     }
   }
   return params;
 }
 
 /**
- * 目次(TOC)のためにMDXコンテンツから見出し（h2, h3）を抽出するユーティリティ。
- */
-function extractHeadings(content: string) {
-  const slugger = new GithubSlugger();
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
-  const headings: { level: number; text: string; slug: string }[] = [];
-  let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length;
-    const text = match[2];
-    const slug = slugger.slug(text);
-    headings.push({ level, text, slug });
-  }
-
-  return headings;
-}
-
-/**
- * 全てのコンテンツ詳細ページのための動的ルート。
- * レポジトリからコンテンツ詳細を取得し、ContentDetailFeature をレンダリングします。
+ * ContentDetailPage
+ * 最新の ArticleDetailFeature を使用するように更新。
  */
 export default async function ContentDetailPage({ params }: Props) {
   const { lang, category, slug } = await params;
+  const slugStr = Array.isArray(slug) ? slug.join('/') : slug;
 
-  const repository = new FsContentRepository();
+  const getUseCase = new GetArticleBySlugUseCase(articleRepository);
+  const listUseCase = new ListArticlesUseCase(articleRepository);
 
-  let content: ContentDetail | null = null;
-  let allContents: ContentSummary[] = [];
+  let article: ArticleDto | null = null;
+  let prevContent: ArticleMetadataDto | null = null;
+  let nextContent: ArticleMetadataDto | null = null;
 
   try {
-    content = await repository.getContentDetailBySlug(lang, category, slug);
-    if (content) {
-      allContents = await repository.getContentSummariesByCategory(lang, category);
+    article = await getUseCase.execute(lang, category, slugStr);
+
+    if (article) {
+      const summaryResponse = await listUseCase.execute({
+        lang,
+        category: article.metadata.category,
+        status: [ArticleStatus.PUBLISHED],
+        limit: 1000,
+        sortBy: ArticleSortOption.TITLE
+      });
+
+      const sorted = summaryResponse.items;
+      const currentIndex = sorted.findIndex(c => c.slug === article!.metadata.slug);
+      if (currentIndex >= 0) {
+        if (currentIndex > 0) prevContent = sorted[currentIndex - 1];
+        if (currentIndex < sorted.length - 1) nextContent = sorted[currentIndex + 1];
+      }
     }
   } catch (error) {
     console.error('Error fetching content detail:', error);
   }
 
-  if (!content) {
+  if (!article) {
     notFound();
   }
 
-  const toc = extractHeadings(content.body);
-
-  // シリーズナビゲーション（前/次）のためにソートして対象を特定
-  const sortedContents = allContents.sort((a, b) =>
-    a.metadata.title.localeCompare(b.metadata.title, lang),
-  );
-  const currentIndex = sortedContents.findIndex((c) => c.slug === content!.slug);
-  const prevContent = currentIndex > 0 ? sortedContents[currentIndex - 1] : null;
-  const nextContent =
-    currentIndex < sortedContents.length - 1 ? sortedContents[currentIndex + 1] : null;
-
   return (
-    <ContentDetailFeature
-      content={content}
-      toc={toc}
+    <ArticleViewFeature
+      article={article}
       prevContent={prevContent}
       nextContent={nextContent}
     />
@@ -109,32 +101,19 @@ export default async function ContentDetailPage({ params }: Props) {
 }
 
 /**
- * コンテンツ詳細ページのメタデータを生成。
+ * generateMetadata
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, category, slug } = await params;
-  const repository = new FsContentRepository();
-  const content = await repository.getContentDetailBySlug(lang, category, slug);
+  const slugStr = Array.isArray(slug) ? slug[slug.length - 1] : slug;
 
-  if (!content) return {};
+  const useCase = new GetArticleBySlugUseCase(articleRepository);
+  const article = await useCase.execute(lang, category, slugStr);
 
-  const slugStr = Array.isArray(slug) ? slug.join('/') : slug;
-
-  // SEO: このコンテンツ詳細ページ固有のalternates（canonicalとhreflang）を動的に生成
-  const languages: Record<string, string> = {};
-  supportedLocales.forEach((locale) => {
-    languages[locale] = `/${locale}/${category}/${slugStr}`;
-  });
-  languages['x-default'] = `/en/${category}/${slugStr}`;
+  if (!article) return {};
 
   return {
-    title: `${content.metadata.title} | Preludio Lab`,
-    description:
-      content.metadata.ogp_excerpt ||
-      `Discover more about ${content.metadata.title} on Preludio Lab.`,
-    alternates: {
-      canonical: `/${lang}/${category}/${slugStr}`,
-      languages,
-    },
+    title: `${article.metadata.displayTitle} | Preludio Lab`,
+    description: article.metadata.excerpt || `Discover more about ${article.metadata.displayTitle} on Preludio Lab.`,
   };
 }

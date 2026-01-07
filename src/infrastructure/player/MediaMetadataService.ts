@@ -56,13 +56,14 @@ export class MediaMetadataService {
             metadata.title = value;
             break;
           case 'audio_composer':
-            metadata.composer = value;
+            metadata.composerName = value;
             break;
           case 'audio_performer':
             metadata.performer = value;
             break;
-          case 'audio_artworkSrc':
-            metadata.artworkSrc = value;
+          case 'audio_thumbnail':
+          case 'audio_artworkSrc': // 後方互換性のため一旦残すが、将来的には削除
+            metadata.thumbnail = value;
             break;
           case 'audio_platform':
             // 簡易バリデーション: 現在は 'youtube' と 'default' のみサポート
