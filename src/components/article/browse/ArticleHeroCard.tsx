@@ -61,7 +61,7 @@ export function ArticleHeroCard({
                             </span>
                         </div>
                     </div>
-                    <h3 className="mb-4 text-3xl font-bold text-gray-900 font-serif leading-tight group-hover:text-accent transition-colors duration-300">{title}</h3>
+                    <h3 className="mb-4 text-3xl font-bold text-gray-900 font-serif leading-tight transition-colors duration-300">{title}</h3>
                     <div className="flex flex-col mb-6">
                         <p className="text-primary font-medium italic mb-2">{composerName}</p>
                         <p className="text-gray-600 line-clamp-3 leading-relaxed">{description}</p>
