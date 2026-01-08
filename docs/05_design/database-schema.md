@@ -368,7 +368,7 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. UUID v7 |
 | `isbn` | `text` | - | NO | - | ISBN |
-| `jan_code` | `text` | - | NO | - | JANコード |
+| `gtin` | `text` | - | NO | - | 国際標準商品識別コード (JAN/EAN/UPC) |
 | `affiliate_links` | `text` | `[]` | YES | - | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
 | `pdf_url` | `text` | - | NO | - | 内部閲覧用PDF URL |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |

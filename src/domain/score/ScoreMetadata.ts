@@ -34,8 +34,8 @@ export const ScoreMetadataSchema = z.object({
     editionName: MultilingualStringSchema.optional(),
     /** ISBNコード */
     isbn: z.string().max(20).optional(),
-    /** JANコード (日本国内の商品識別コード) */
-    janCode: z.string().max(20).optional(),
+    /** GTINコード (JAN/EAN/UPC等の国際標準商品識別コード) */
+    gtin: z.string().max(20).optional(),
     /** アフィリエイトリンクのリスト (最大20件) */
     affiliateLinks: z.array(AffiliateLinkSchema).max(20).default([]),
     /** プレビュー用PDF URL */

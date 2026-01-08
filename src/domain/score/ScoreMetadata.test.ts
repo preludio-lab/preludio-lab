@@ -9,7 +9,7 @@ describe('ScoreMetadata', () => {
             editorName: { en: 'Wallner' },
             editionName: { ja: '原典版' },
             isbn: '979-0-2018-0001-1',
-            janCode: '4900000000000',
+            gtin: '4900000000000',
             affiliateLinks: [{ provider: 'amazon', url: 'https://amazon.com/...', label: 'Buy' }],
             pdfUrl: 'https://imslp.org/test.pdf',
             format: ScoreFormat.ABC,
