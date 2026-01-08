@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ScoreControlSchema } from './ScoreControl';
-import { ScoreMetadataSchema } from './ScoreMetadata';
+import { ScoreMetadataSchema, ScoreFormat, ScoreFormatType } from './ScoreMetadata';
 
 /**
  * Score (Asset/Edition)
@@ -13,19 +13,8 @@ export const ScoreSchema = z.object({
 
 export type Score = z.infer<typeof ScoreSchema>;
 
-/**
- * Score の生成
- */
-export const createScore = (control: any, metadata: any): Score => {
-  return ScoreSchema.parse({
-    control,
-    metadata,
-  });
-};
-
-// IScoreRenderer はインターフェースなので Zod 対象外だが型は使用する
-import { ScoreFormatType } from './ScoreFormat';
-export { ScoreFormat, type ScoreFormatType } from './ScoreFormat';
+// 再エクスポート
+export { ScoreFormat, type ScoreFormatType };
 
 /**
  * IScoreRenderer

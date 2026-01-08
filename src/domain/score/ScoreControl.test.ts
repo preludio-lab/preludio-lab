@@ -1,26 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { createScoreControl } from './ScoreControl';
+import { ScoreControlSchema } from './ScoreControl';
 
 describe('ScoreControl', () => {
     it('指定された値で ScoreControl を作成できること', () => {
         const id = 'score-id-123';
         const now = new Date();
-        const control = createScoreControl(id, now, now);
+        const data = { id, createdAt: now, updatedAt: now };
+        const control = ScoreControlSchema.parse(data);
 
         expect(control.id).toBe(id);
-        // z.coerce.date() を通ると別インスタンスになるため toEqual を使用
         expect(control.createdAt).toEqual(now);
         expect(control.updatedAt).toEqual(now);
     });
 
-    it('workId を持たなくなったこと', () => {
-        const control = createScoreControl('id');
-        expect(control).not.toHaveProperty('workId');
-    });
-
-    it('日付が提供されない場合にデフォルト値が設定されること', () => {
-        const control = createScoreControl('id');
-        expect(control.createdAt).toBeInstanceOf(Date);
-        expect(control.updatedAt).toBeInstanceOf(Date);
+    it('不正な形式でエラーになること', () => {
+        expect(() => ScoreControlSchema.parse({ id: '' })).toThrow();
     });
 });

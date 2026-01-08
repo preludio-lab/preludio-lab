@@ -1,19 +1,24 @@
 import { z } from 'zod';
-import { ScoreFormatSchema } from './ScoreFormat';
+import { MultilingualStringSchema } from '../i18n/Locale';
+import { AffiliateLinkSchema } from '../monetization/Monetization';
 
 /**
- * アフィリエイトリンクの Zod スキーマ
+ * 楽譜フォーマットの定数定義
  */
-export const AffiliateLinkSchema = z.object({
-    /** 提供者名 (amazon, henle等) */
-    provider: z.string().min(1).max(50),
-    /** URL */
-    url: z.string().url().max(2048),
-    /** ボタン等に表示するラベル */
-    label: z.string().max(20).optional(),
-});
+export const ScoreFormat = {
+    ABC: 'abc',
+    MUSICXML: 'musicxml',
+} as const;
 
-export type AffiliateLink = z.infer<typeof AffiliateLinkSchema>;
+/**
+ * 楽譜フォーマットの Zod スキーマ
+ */
+export const ScoreFormatSchema = z.nativeEnum(ScoreFormat);
+
+/**
+ * 楽譜フォーマットの型定義
+ */
+export type ScoreFormatType = z.infer<typeof ScoreFormatSchema>;
 
 /**
  * ScoreMetadata
@@ -21,15 +26,15 @@ export type AffiliateLink = z.infer<typeof AffiliateLinkSchema>;
  * 出版社、校訂者、識別コードなどを管理。
  */
 export const ScoreMetadataSchema = z.object({
-    /** 出版社名 */
-    publisherName: z.string().max(50).optional(),
-    /** 校訂者名 */
-    editorName: z.string().max(50).optional(),
-    /** エディション名 */
-    editionName: z.string().max(50).optional(),
+    /** 出版社名 (i18n対応) */
+    publisherName: MultilingualStringSchema.optional(),
+    /** 校訂者名 (i18n対応) */
+    editorName: MultilingualStringSchema.optional(),
+    /** エディション名 (i18n対応, 例: "Urtext", "全音ピアノライブラリー") */
+    editionName: MultilingualStringSchema.optional(),
     /** ISBNコード */
     isbn: z.string().max(20).optional(),
-    /** JANコード */
+    /** JANコード (日本国内の商品識別コード) */
     janCode: z.string().max(20).optional(),
     /** アフィリエイトリンクのリスト (最大20件) */
     affiliateLinks: z.array(AffiliateLinkSchema).max(20).default([]),
@@ -40,10 +45,3 @@ export const ScoreMetadataSchema = z.object({
 });
 
 export type ScoreMetadata = z.infer<typeof ScoreMetadataSchema>;
-
-/**
- * ScoreMetadata の生成
- */
-export const createScoreMetadata = (params: Partial<ScoreMetadata>): ScoreMetadata => {
-    return ScoreMetadataSchema.parse(params);
-};

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ScoreFormatSchema } from './ScoreFormat';
+import { ScoreFormatSchema } from './ScoreMetadata';
 
 /**
  * 小節範囲の Zod スキーマ

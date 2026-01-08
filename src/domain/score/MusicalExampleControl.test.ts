@@ -1,13 +1,17 @@
 import { describe, it, expect } from 'vitest';
-import { createMusicalExampleControl } from './MusicalExampleControl';
+import { MusicalExampleControlSchema } from './MusicalExampleControl';
 
 describe('MusicalExampleControl', () => {
     it('articleId を持つ MusicalExampleControl を作成できること', () => {
-        const id = 'ex-id-1';
-        const articleId = 'art-id-1';
-        const control = createMusicalExampleControl(id, articleId);
+        const data = {
+            id: 'ex-id-1',
+            articleId: 'art-id-1',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+        const control = MusicalExampleControlSchema.parse(data);
 
-        expect(control.id).toBe(id);
-        expect(control.articleId).toBe(articleId);
+        expect(control.id).toBe(data.id);
+        expect(control.articleId).toBe(data.articleId);
     });
 });
