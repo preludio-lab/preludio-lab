@@ -5,8 +5,8 @@ import { ScoreFormat } from './ScoreMetadata';
 describe('ScoreMetadata', () => {
     it('すべてのプロパティを持つ ScoreMetadata を作成できること', () => {
         const params = {
-            publisherName: { en: 'Henle', ja: 'ヘンレ' },
-            editorName: { en: 'Wallner' },
+            publisher: { en: 'Henle', ja: 'ヘンレ' },
+            editor: { en: 'Wallner' },
             editionName: { ja: '原典版' },
             isbn: '979-0-2018-0001-1',
             gtin: '4900000000000',

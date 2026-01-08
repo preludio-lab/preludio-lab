@@ -26,10 +26,10 @@ export type ScoreFormatType = z.infer<typeof ScoreFormatSchema>;
  * 出版社、校訂者、識別コードなどを管理。
  */
 export const ScoreMetadataSchema = z.object({
-    /** 出版社名 (i18n対応) */
-    publisherName: MultilingualStringSchema.optional(),
-    /** 校訂者名 (i18n対応) */
-    editorName: MultilingualStringSchema.optional(),
+    /** 出版社 (個人名でなく団体名が主) */
+    publisher: MultilingualStringSchema.optional(),
+    /** 校訂者・監修者 (個人名、または編纂団体名) */
+    editor: MultilingualStringSchema.optional(),
     /** エディション名 (i18n対応, 例: "Urtext", "全音ピアノライブラリー") */
     editionName: MultilingualStringSchema.optional(),
     /** ISBNコード */

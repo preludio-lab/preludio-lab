@@ -387,8 +387,8 @@ sequenceDiagram
 | **`id`** | `text` | - | YES | - | **PK**. |
 | **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
-| `publisher_name` | `text` | - | NO | - | 出版社名 |
-| `editor_name` | `text` | - | NO | - | 校訂者名 |
+| `publisher` | `text` | - | NO | - | 出版社 (組織または個人) |
+| `editor` | `text` | - | NO | - | 校訂者・監修者 (個人または監修団体) |
 | `edition_name` | `text` | - | NO | - | 版の名前 (e.g. "Urtext", "全音ピアノライブラリー") |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
