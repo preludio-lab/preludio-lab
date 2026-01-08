@@ -1,38 +1,37 @@
+import { ScoreControl, ScoreId, ScoreFormatType } from './ScoreControl';
+import { ScoreMetadata } from './ScoreMetadata';
+
 /**
  * Score Format Constants
- * サポートされている記法フォーマットを定義します。
  */
 export const ScoreFormat = {
   ABC: 'abc',
-  MUSICXML: 'musicxml', // 将来的なサポート
+  MUSICXML: 'musicxml',
 } as const;
 
-export type ScoreFormatType = (typeof ScoreFormat)[keyof typeof ScoreFormat];
+export { type ScoreFormatType };
+export { type ScoreId };
 
 /**
- * Score Entity
- * 特定の記法フォーマットに依存しない、音楽スコアを表すエンティティです。
+ * Score Domain Entity (Edition Level)
  */
 export interface Score {
-  format: ScoreFormatType;
-  data: string; // 生の文字列コンテンツ (ABC文字列, XML文字列など)
-
-  // Metadata (Optional)
-  // 生データ(data)にメタデータが含まれていない場合、
-  // またはアプリケーション側でメタデータを上書き/補完する必要がある場合に使用します。
-  title?: string;
+  readonly control: ScoreControl;
+  readonly metadata: ScoreMetadata;
 }
 
+export const createScore = (
+  control: ScoreControl,
+  metadata: ScoreMetadata
+): Score => ({
+  control,
+  metadata,
+});
+
 /**
- * IScoreRenderer Interface
- * スコアレンダリングエンジンの抽象インターフェースです。
- * インフラストラクチャ層の実装が具体的なライブラリ (例: abcjs) を処理します。
+ * @deprecated IScoreRenderer will be moved to MusicalExample domain or unified later.
+ * Legacy interface for notation rendering.
  */
 export interface IScoreRenderer {
-  /**
-   * 指定されたHTML要素にスコアをレンダリングします。
-   * @param score レンダリング対象のスコアエンティティ
-   * @param element コンテナとなるHTML要素
-   */
-  render(score: Score, element: HTMLElement): Promise<void>;
+  render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void>;
 }
