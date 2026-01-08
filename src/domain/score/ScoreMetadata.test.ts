@@ -11,7 +11,7 @@ describe('ScoreMetadata', () => {
             isbn: '979-0-2018-0001-1',
             gtin: '4900000000000',
             affiliateLinks: [{ provider: 'amazon', url: 'https://amazon.com/...', label: 'Buy' }],
-            pdfUrl: 'https://imslp.org/test.pdf',
+            previewUrl: 'https://imslp.org/test.pdf',
             format: ScoreFormat.ABC,
         };
         const metadata = ScoreMetadataSchema.parse(params);
@@ -27,6 +27,6 @@ describe('ScoreMetadata', () => {
     });
 
     it('不正な形式でエラーになること', () => {
-        expect(() => ScoreMetadataSchema.parse({ pdfUrl: 'invalid' })).toThrow();
+        expect(() => ScoreMetadataSchema.parse({ previewUrl: 'invalid' })).toThrow();
     });
 });

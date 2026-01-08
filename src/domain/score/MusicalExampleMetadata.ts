@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ScoreFormatSchema } from './ScoreMetadata';
+import { ScoreFormat } from './ScoreMetadata';
 
 /**
  * 小節範囲の Zod スキーマ
@@ -26,7 +26,7 @@ export const MusicalExampleMetadataSchema = z.object({
     /** URLスラグ / での階層化を許容 */
     slug: z.string().min(1).max(50).regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/),
     /** データ形式 */
-    format: ScoreFormatSchema,
+    format: z.nativeEnum(ScoreFormat),
     /** 楽譜データ本体 (ABC/MusicXML等, 最大100KB) */
     data: z.string().min(1).max(100000),
     /** 対象とする小節範囲 */

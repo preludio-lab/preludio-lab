@@ -6,19 +6,20 @@ import { AffiliateLinkSchema } from '../monetization/Monetization';
  * 楽譜フォーマットの定数定義
  */
 export const ScoreFormat = {
+    /** ABC notation: テキストベースの楽譜表記法。軽量で動的な描画に適している */
     ABC: 'abc',
+    /** MusicXML: 楽譜情報の交換のための標準的なXMLフォーマット */
     MUSICXML: 'musicxml',
+    /** MEI (Music Encoding Initiative): 学術的な音楽資料の符号化のための高度なフォーマット */
+    MEI: 'mei',
 } as const;
 
 /**
- * 楽譜フォーマットの Zod スキーマ
- */
-export const ScoreFormatSchema = z.nativeEnum(ScoreFormat);
-
-/**
  * 楽譜フォーマットの型定義
+ * レンダラー（Infra層）やコンポーネント（UI層）において、描画ロジックの分岐や
+ * プロパティの型定義として広く利用される Public な定義です。
  */
-export type ScoreFormatType = z.infer<typeof ScoreFormatSchema>;
+export type ScoreFormatType = (typeof ScoreFormat)[keyof typeof ScoreFormat];
 
 /**
  * ScoreMetadata
@@ -38,10 +39,10 @@ export const ScoreMetadataSchema = z.object({
     gtin: z.string().max(20).optional(),
     /** アフィリエイトリンクのリスト (最大20件) */
     affiliateLinks: z.array(AffiliateLinkSchema).max(20).default([]),
-    /** プレビュー用PDF URL */
-    pdfUrl: z.string().url().max(2048).optional(),
+    /** 閲覧・プレビュー用URL (PDFや外部ビューワー等) */
+    previewUrl: z.string().url().max(2048).optional(),
     /** 楽譜全体の主要フォーマット (混合の場合は省略可) */
-    format: ScoreFormatSchema.optional(),
+    format: z.nativeEnum(ScoreFormat).optional(),
 });
 
 export type ScoreMetadata = z.infer<typeof ScoreMetadataSchema>;

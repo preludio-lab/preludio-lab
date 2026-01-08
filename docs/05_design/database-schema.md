@@ -370,7 +370,7 @@ sequenceDiagram
 | `isbn` | `text` | - | NO | - | ISBN |
 | `gtin` | `text` | - | NO | - | 国際標準商品識別コード (JAN/EAN/UPC) |
 | `affiliate_links` | `text` | `[]` | YES | - | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
-| `pdf_url` | `text` | - | NO | - | 内部閲覧用PDF URL |
+| `preview_url` | `text` | - | NO | - | 閲覧用プレビューURL (PDF等) |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
