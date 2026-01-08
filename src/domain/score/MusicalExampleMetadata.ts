@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ScoreFormat } from './ScoreMetadata';
+import { createMultilingualStringSchema } from '../i18n/Locale';
 
 /**
  * 小節範囲の Zod スキーマ
@@ -31,10 +32,10 @@ export const MusicalExampleMetadataSchema = z.object({
     data: z.string().min(1).max(100000),
     /** 対象とする小節範囲 */
     measureRange: MeasureRangeSchema.optional(),
-    /** キャプション (最大100) */
-    caption: z.string().max(100).optional(),
-    /** 詳細解説 (最大2000) */
-    description: z.string().max(2000).optional(),
+    /** キャプション (最大30, 多言語) */
+    caption: createMultilingualStringSchema({ max: 30 }).optional(),
+    /** 詳細解説 (最大2000, 多言語) */
+    description: createMultilingualStringSchema({ max: 2000 }).optional(),
 });
 
 export type MusicalExampleMetadata = z.infer<typeof MusicalExampleMetadataSchema>;

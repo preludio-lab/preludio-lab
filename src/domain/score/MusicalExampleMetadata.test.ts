@@ -24,10 +24,26 @@ describe('MusicalExampleMetadata', () => {
         expect(() => MusicalExampleMetadataSchema.parse({ ...validParams, data: '' })).toThrow();
     });
 
+    it('多言語の caption を持つ MusicalExampleMetadata を作成できること', () => {
+        const metadata = MusicalExampleMetadataSchema.parse({
+            ...validParams,
+            caption: { ja: '第1主題', en: '1st Theme' }
+        });
+        expect(metadata.caption?.ja).toBe('第1主題');
+    });
+
     it('小節範囲のラベルが長すぎる場合にエラーになること', () => {
         expect(() => MusicalExampleMetadataSchema.parse({
             ...validParams,
             measureRange: { startBar: 1, endBar: 8, label: 'a'.repeat(21) }
+        })).toThrow();
+    });
+
+    it('caption が最大文字数を超える場合にエラーになること', () => {
+        const longCaption = 'a'.repeat(31);
+        expect(() => MusicalExampleMetadataSchema.parse({
+            ...validParams,
+            caption: { ja: longCaption }
         })).toThrow();
     });
 });

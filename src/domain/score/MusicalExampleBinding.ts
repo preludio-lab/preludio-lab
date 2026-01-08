@@ -12,8 +12,6 @@ export const PlaybackBindingSchema = z.object({
     endSeconds: z.number().nonnegative().max(86400),
     /** デフォルト音源フラグ */
     isDefault: z.boolean(),
-    /** 識別用ラベル (例: "Theme A") */
-    label: z.string().max(20).optional(),
 });
 
 export type PlaybackBinding = z.infer<typeof PlaybackBindingSchema>;
@@ -32,7 +30,7 @@ export type MusicalExampleBinding = z.infer<typeof MusicalExampleBindingSchema>;
  * MusicalExampleBinding の生成
  */
 export const createMusicalExampleBinding = (
-    playbackBindings: any[] = []
+    playbackBindings: PlaybackBinding[] = []
 ): MusicalExampleBinding => {
     return MusicalExampleBindingSchema.parse({
         playbackBindings,

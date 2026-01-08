@@ -7,6 +7,14 @@ import { MusicalExampleBindingSchema } from './MusicalExampleBinding';
  * MusicalExample (Component/Excerpt)
  * 記事内に埋め込まれる譜例のルートエンティティ。
  */
+import { MusicalExampleControl } from './MusicalExampleControl';
+import { MusicalExampleMetadata } from './MusicalExampleMetadata';
+import { MusicalExampleBinding } from './MusicalExampleBinding';
+
+/**
+ * MusicalExample (Component/Excerpt)
+ * 記事内に埋め込まれる譜例のルートエンティティ。
+ */
 export const MusicalExampleSchema = z.object({
     control: MusicalExampleControlSchema,
     metadata: MusicalExampleMetadataSchema,
@@ -20,9 +28,9 @@ export { type MusicalExampleId } from './MusicalExampleControl';
  * MusicalExample の生成
  */
 export const createMusicalExample = (
-    control: any,
-    metadata: any,
-    binding: any
+    control: MusicalExampleControl,
+    metadata: MusicalExampleMetadata,
+    binding: MusicalExampleBinding
 ): MusicalExample => {
     return MusicalExampleSchema.parse({
         control,
