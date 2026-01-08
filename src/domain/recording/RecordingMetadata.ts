@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import { MultilingualStringSchema } from '../i18n/Locale';
 
-
-
 /**
  * Recording Metadata
  * 録音に関する記述的メタデータ
