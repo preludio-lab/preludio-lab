@@ -10,8 +10,6 @@ export const MeasureRangeSchema = z.object({
     startBar: z.number().int().min(1).max(9999),
     /** 終了小節 (1以上, 9999以下) */
     endBar: z.number().int().min(1).max(9999),
-    /** 表示ラベル (例: "bars 1-8") */
-    label: z.string().max(20).optional(),
 });
 
 export type MeasureRange = z.infer<typeof MeasureRangeSchema>;
