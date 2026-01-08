@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { MultilingualStringSchema } from '../shared/MultilingualString';
+import { MultilingualStringSchema } from '../i18n/MultilingualString';
+
 
 /**
  * Recording Metadata
