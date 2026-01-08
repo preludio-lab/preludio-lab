@@ -1,5 +1,5 @@
 import * as abcjs from 'abcjs';
-import { IScoreRenderer, Score, ScoreFormat, ScoreFormatType } from '@/domain/score/Score';
+import { IScoreRenderer, ScoreFormat, ScoreFormatType } from '@/domain/score/Score';
 
 /**
  * AbcjsScoreRenderer
@@ -11,12 +11,12 @@ export class AbcjsScoreRenderer implements IScoreRenderer {
    */
   async render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void> {
     if (format !== ScoreFormat.ABC) {
-      console.warn(`AbcjsScoreRenderer: Unsupported format '${format}'. Skipping render.`);
+      console.warn(`AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`);
       return;
     }
 
     if (!element) {
-      console.error('AbcjsScoreRenderer: Target element is null.');
+      console.error('AbcjsScoreRenderer: ターゲット要素が null です。');
       return;
     }
 
@@ -33,7 +33,7 @@ export class AbcjsScoreRenderer implements IScoreRenderer {
       abcjs.renderAbc(element, data, renderOptions);
     } catch (error) {
       throw new Error(
-        `Failed to render ABC score: ${error instanceof Error ? error.message : String(error)}`,
+        `ABCスコアのレンダリングに失敗しました: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

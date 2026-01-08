@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createScoreMetadata } from './ScoreMetadata';
 
 describe('ScoreMetadata', () => {
-    it('should create ScoreMetadata with all properties', () => {
+    it('すべてのプロパティを持つ ScoreMetadata を作成できること', () => {
         const params = {
             publisherName: 'Henle',
             editorName: 'Wallner',
@@ -17,7 +17,7 @@ describe('ScoreMetadata', () => {
         expect(metadata).toEqual(expect.objectContaining(params));
     });
 
-    it('should have empty affiliateLinks by default', () => {
+    it('デフォルトで affiliateLinks が空配列であること', () => {
         const metadata = createScoreMetadata({});
         expect(metadata.affiliateLinks).toEqual([]);
     });

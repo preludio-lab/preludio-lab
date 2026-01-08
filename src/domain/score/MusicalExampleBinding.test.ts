@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createMusicalExampleBinding } from './MusicalExampleBinding';
 
 describe('MusicalExampleBinding', () => {
-    it('should create MusicalExampleBinding with playback bindings', () => {
+    it('PlaybackBinding を持つ MusicalExampleBinding を作成できること', () => {
         const binding = createMusicalExampleBinding([
             {
                 recordingSourceId: 'src-1',
@@ -16,7 +16,7 @@ describe('MusicalExampleBinding', () => {
         expect(binding.playbackBindings[0].recordingSourceId).toBe('src-1');
     });
 
-    it('should have empty bindings by default', () => {
+    it('デフォルトでバインディングが空配列であること', () => {
         const binding = createMusicalExampleBinding();
         expect(binding.playbackBindings).toEqual([]);
     });

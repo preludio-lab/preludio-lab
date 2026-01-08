@@ -5,7 +5,8 @@ import { MusicalExampleBinding } from './MusicalExampleBinding';
 export { type MusicalExampleId };
 
 /**
- * MusicalExample Domain Entity
+ * 譜例ドメインエンティティ
+ * 記事内で使用される譜例の抜粋と、録音ソースとの再生バインディングを表現します。
  */
 export interface MusicalExample {
     readonly control: MusicalExampleControl;

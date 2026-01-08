@@ -1,7 +1,7 @@
 import { Score, ScoreId } from './Score';
 
 /**
- * ScoreRepository Interface
+ * 楽譜リポジトリ インターフェース
  * 楽譜エディションの永続化を担います。
  */
 export interface ScoreRepository {

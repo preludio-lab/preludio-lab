@@ -6,7 +6,7 @@ import { createMusicalExampleBinding } from './MusicalExampleBinding';
 import { ScoreFormat } from './Score';
 
 describe('MusicalExample', () => {
-    it('should compose MusicalExample correctly', () => {
+    it('MusicalExample を正しく構成できること', () => {
         const control = createMusicalExampleControl('ex-1', 'art-1');
         const metadata = createMusicalExampleMetadata({
             workId: 'work-1',

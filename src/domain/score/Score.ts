@@ -2,7 +2,8 @@ import { ScoreControl, ScoreId, ScoreFormatType } from './ScoreControl';
 import { ScoreMetadata } from './ScoreMetadata';
 
 /**
- * Score Format Constants
+ * 楽譜フォーマット定数
+ * サポートされている記法フォーマットを定義します。
  */
 export const ScoreFormat = {
   ABC: 'abc',
@@ -13,7 +14,8 @@ export { type ScoreFormatType };
 export { type ScoreId };
 
 /**
- * Score Domain Entity (Edition Level)
+ * 楽譜ドメインエンティティ (エディションレベル)
+ * 特定の楽曲の「版（エディション）」を表現します。
  */
 export interface Score {
   readonly control: ScoreControl;
@@ -29,8 +31,8 @@ export const createScore = (
 });
 
 /**
- * @deprecated IScoreRenderer will be moved to MusicalExample domain or unified later.
- * Legacy interface for notation rendering.
+ * @deprecated IScoreRenderer は将来的に MusicalExample ドメインに移動されるか、統合される予定です。
+ * 楽譜レンダリング用のレガシーインターフェース。
  */
 export interface IScoreRenderer {
   render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void>;

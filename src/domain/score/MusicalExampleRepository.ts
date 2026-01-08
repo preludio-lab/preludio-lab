@@ -1,7 +1,7 @@
 import { MusicalExample, MusicalExampleId } from './MusicalExample';
 
 /**
- * MusicalExampleRepository Interface
+ * 譜例リポジトリ インターフェース
  */
 export interface MusicalExampleRepository {
     findById(id: MusicalExampleId): Promise<MusicalExample | null>;

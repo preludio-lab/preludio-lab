@@ -4,7 +4,7 @@ import { createScoreControl } from './ScoreControl';
 import { createScoreMetadata } from './ScoreMetadata';
 
 describe('Score', () => {
-    it('should compose Score with control and metadata', () => {
+    it('control と metadata から Score を構成できること', () => {
         const control = createScoreControl('score-id', 'work-id');
         const metadata = createScoreMetadata({ publisherName: 'Henle' });
         const score = createScore(control, metadata);

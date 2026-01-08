@@ -1,18 +1,21 @@
 /**
- * MusicalExample ID
+ * 譜例ID
  * UUID v7
  */
 export type MusicalExampleId = string;
 
 /**
- * MusicalExample Control
+ * 譜例IDホルダー
  */
 export interface MusicalExampleIdHolder {
     readonly id: MusicalExampleId;
 }
 
+/**
+ * 譜例コントロール
+ */
 export interface MusicalExampleControl extends MusicalExampleIdHolder {
-    readonly articleId: string; // Used in which article
+    readonly articleId: string; // どの記事で使用されているか
     readonly createdAt: Date;
     readonly updatedAt: Date;
 }

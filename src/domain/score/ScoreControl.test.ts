@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createScoreControl } from './ScoreControl';
 
 describe('ScoreControl', () => {
-    it('should create ScoreControl with provided values', () => {
+    it('指定された値で ScoreControl を作成できること', () => {
         const id = 'score-id-123';
         const workId = 'work-id-456';
         const now = new Date();
@@ -14,7 +14,7 @@ describe('ScoreControl', () => {
         expect(control.updatedAt).toBe(now);
     });
 
-    it('should set default dates if not provided', () => {
+    it('日付が提供されない場合にデフォルト値が設定されること', () => {
         const control = createScoreControl('id', 'work-id');
         expect(control.createdAt).toBeInstanceOf(Date);
         expect(control.updatedAt).toBeInstanceOf(Date);

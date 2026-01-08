@@ -27,17 +27,17 @@ export function useScoreRenderer(score: Score | MusicalExample | { data: string;
 
       try {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: rendering started', { format });
+          console.debug('useScoreRenderer: レンダリングを開始しました', { format });
         }
 
         await renderer.render(data, elementRef.current, format);
 
         if (isMounted && process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: rendering completed');
+          console.debug('useScoreRenderer: レンダリングが完了しました');
         }
       } catch (error) {
         if (isMounted) {
-          handleClientError(error, 'Failed to render score');
+          handleClientError(error, 'スコアのレンダリングに失敗しました');
         }
       }
     };

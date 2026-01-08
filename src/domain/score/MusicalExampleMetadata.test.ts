@@ -3,7 +3,7 @@ import { createMusicalExampleMetadata } from './MusicalExampleMetadata';
 import { ScoreFormat } from './Score';
 
 describe('MusicalExampleMetadata', () => {
-    it('should create MusicalExampleMetadata with required fields', () => {
+    it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {
         const params = {
             workId: 'work-1',
             slug: '1st-theme',

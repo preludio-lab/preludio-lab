@@ -1,14 +1,14 @@
 /**
- * Affiliate Link
+ * アフィリエイトリンク
  */
 export interface AffiliateLink {
-    readonly provider: string; // e.g. "amazon", "sheetmusicplus"
+    readonly provider: string; // 例: "amazon", "sheetmusicplus"
     readonly url: string;
     readonly label?: string;
 }
 
 /**
- * Score Metadata
+ * 楽譜メタデータ
  * 楽譜エディションのメタデータ
  */
 export interface ScoreMetadata {
