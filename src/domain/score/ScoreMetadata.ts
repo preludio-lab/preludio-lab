@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
-import { AffiliateLinkSchema } from '../monetization/Monetization';
+import { MonetizationElementSchema } from '../monetization/Monetization';
 
 /**
  * 楽譜フォーマットの定数定義
@@ -37,8 +37,8 @@ export const ScoreMetadataSchema = z.object({
     isbn: z.string().max(20).optional(),
     /** GTINコード (JAN/EAN/UPC等の国際標準商品識別コード) */
     gtin: z.string().max(20).optional(),
-    /** アフィリエイトリンクのリスト (最大20件) */
-    affiliateLinks: z.array(AffiliateLinkSchema).max(20).default([]),
+    /** マネタイズ要素のリスト (アフィリエイトリンク等、最大20件) */
+    monetizationElements: z.array(MonetizationElementSchema).max(20).default([]),
     /** 閲覧・プレビュー用URL (PDFや外部ビューワー等) */
     previewUrl: z.string().url().max(2048).optional(),
     /** 楽譜全体の主要フォーマット (混合の場合は省略可) */
