@@ -66,7 +66,6 @@ erDiagram
     Scores ||--|{ ScoreTranslations : "has localized metadata"
     Works ||--o{ MusicalExamples : "has musical excerpts"
     MusicalExamples }o--|| Scores : "references edition from"
-    MusicalExamples }o--|| Works : "references work context"
     MusicalExamples }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
