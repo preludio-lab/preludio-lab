@@ -4,7 +4,7 @@ import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import fs from 'fs';
 import path from 'path';
 
-// Mock fs
+// fs のモック
 vi.mock('fs', () => ({
     default: {
         existsSync: vi.fn(),
@@ -27,7 +27,7 @@ vi.mock('fs', () => ({
 describe('FsArticleRepository', () => {
     let repository: FsArticleRepository;
 
-    // Mock valid MDX (New Schema)
+    // 有効な MDX のモック (新スキーマ)
     const validMdx = `---
 title: "Prelude 1"
 displayTitle: "Prelude 1"
@@ -40,7 +40,7 @@ tags: ["Piano", "Baroque"]
 ## Introduction
 Text body`;
 
-    // Mock legacy MDX (Old Schema)
+    // レガシーな MDX のモック (旧スキーマ)
     const legacyMdx = `---
 title: "Legacy Piece"
 composer: "Mozart"
@@ -53,15 +53,15 @@ Content`;
     beforeEach(() => {
         vi.clearAllMocks();
         repository = new FsArticleRepository();
-        // Default mock behavior
+        // デフォルトのモック挙動
         vi.mocked(fs.statSync).mockImplementation((p: any) => ({
             isDirectory: () => !p.toString().endsWith('.mdx')
         }) as any);
     });
 
     describe('findBySlug', () => {
-        it('should return Article when file exists (New Schema)', async () => {
-            // Setup mock to find file in 'works' category
+        it('ファイルが存在する場合に記事を返すこと (新スキーマ)', async () => {
+            // 'works' カテゴリにファイルが存在するようにモックを設定
             vi.mocked(fs.existsSync).mockImplementation((p) => {
                 return p.toString().includes('works/prelude.mdx');
             });
@@ -70,7 +70,7 @@ Content`;
             const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'prelude');
 
             expect(result).not.toBeNull();
-            // expect(result?.title).toBe('Prelude 1'); // Entity uses metadata.title
+            // expect(result?.title).toBe('Prelude 1'); // Entity は metadata.title を使用
 
             expect(result?.metadata.title).toBe('Prelude 1');
             expect(result?.metadata.composerName).toBe('J.S. Bach');
@@ -79,8 +79,8 @@ Content`;
             expect(result?.category).toBe(ArticleCategory.WORKS);
         });
 
-        it('should map Legacy Frontmatter correctly', async () => {
-            // Setup mock to find file in 'works' category
+        it('レガシーなフロントマターを正しくマッピングすること', async () => {
+            // 'works' カテゴリにファイルが存在するようにモックを設定
             vi.mocked(fs.existsSync).mockImplementation((p) => {
                 return p.toString().includes('works/legacy.mdx');
             });
@@ -90,13 +90,13 @@ Content`;
 
             expect(result).not.toBeNull();
             expect(result?.metadata.title).toBe('Legacy Piece');
-            expect(result?.metadata.composerName).toBe('Mozart'); // Mapped from 'composer'
+            expect(result?.metadata.composerName).toBe('Mozart'); // 'composer' からマッピング
             expect(result?.metadata.readingLevel).toBe(5); // Mapped from 'Advanced'
-            expect(result?.metadata.performanceDifficulty).toBe(5); // Mapped from 'Advanced'
+            expect(result?.metadata.performanceDifficulty).toBe(5); // 'Advanced' からマッピング
             expect(result?.metadata.playback?.audioSrc).toBe('/audio/legacy.mp3');
         });
 
-        it('should return null if file not found', async () => {
+        it('ファイルが見つからない場合に null を返すこと', async () => {
             vi.mocked(fs.existsSync).mockReturnValue(false);
             const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
             expect(result).toBeNull();
@@ -104,33 +104,28 @@ Content`;
     });
 
     describe('findMany', () => {
-        // To test findMany, we need to mock getAllArticles (private).
-        // Or mock readdirSync to simulate directory structure.
+        // findMany をテストするために getAllArticles (private) をモック。
+        // または readdirSync をモックしてディレクトリ構造をシミュレート。
 
-        it('should filter articles by criteria', async () => {
-            // Mock directory structure
-            // content/en/works/prelude.mdx
-            // content/en/composers/bach.mdx
-
+        it('条件に従って記事をフィルタリングすること', async () => {
+            // ディレクトリ構造をモック
             vi.mocked(fs.readdirSync).mockImplementation((p) => {
                 const pathStr = p.toString();
-                if (pathStr.endsWith('content')) return ['en'] as any; // langs
-                if (pathStr.endsWith('en')) return ['works', 'composers'] as any; // categories inside lang? 
-                // FsArticleRepository logic: 
-                // const dirPath = path.join(this.contentDirectory, lang, category);
-                // So we just need to return files when dirPath matches.
+                // pathStr will be relative to process.cwd() or absolute
+                if (pathStr.endsWith('article')) return ['en'] as any;
+                if (pathStr.includes('en') && !pathStr.includes('works') && !pathStr.includes('composers')) return ['works', 'composers'] as any;
                 if (pathStr.includes('works')) return ['prelude.mdx'] as any;
                 if (pathStr.includes('composers')) return ['bach.mdx'] as any;
                 return [] as any;
             });
 
-            // Mock FS exist check for directories
+            // ディレクトリの存在チェックをモック
             vi.mocked(fs.existsSync).mockReturnValue(true);
 
-            // Mock content reading
+            // コンテンツ読み込みをモック
             vi.mocked(fs.readFileSync).mockImplementation((p) => {
                 if (p.toString().includes('prelude.mdx')) return validMdx;
-                if (p.toString().includes('bach.mdx')) return legacyMdx; // Use legacy for variety
+                if (p.toString().includes('bach.mdx')) return legacyMdx;
                 return '';
             });
 

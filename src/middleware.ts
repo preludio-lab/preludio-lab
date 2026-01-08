@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
-import { routing } from './infrastructure/i18n/routing';
+import { routing } from './shared/i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -15,9 +15,9 @@ export default function middleware(req: NextRequest) {
   if (!firstSegment || routing.locales.includes(firstSegment as any)) {
     const response = intlMiddleware(req);
 
-    // UX Enhancement: Enable BFcache (Back/Forward Cache) for smoother navigation
-    // By default, Next.js sets 'no-store' for dynamic pages, which prevents BFcache.
-    // We override this to allow caching but require revalidation ('no-cache').
+    // UX 向上: スムーズな遷移のために BFcache (Back/Forward Cache) を有効化
+    // デフォルトでは Next.js は動的ページに 'no-store' を設定し BFcache を無効にする。
+    // これを上書きしてキャッシュを許可しつつ、再検証 ('no-cache') を要求する。
     if (!response.headers.has('Cache-Control')) {
       response.headers.set('Cache-Control', 'private, no-cache, no-transform, must-revalidate');
     }

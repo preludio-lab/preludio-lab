@@ -1,6 +1,7 @@
 import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
-import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
+import { articleRepository } from '@/infrastructure/article';
+import { logger } from '@/infrastructure/logging';
 import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -18,8 +19,7 @@ type Props = {
   }>;
 };
 
-// --- Repository Singleton (Poor man's DI) ---
-const articleRepository = new FsArticleRepository();
+// Repository Singleton は中央エントリポイントから提供されるインスタンスを使用します。
 
 /**
  * generateStaticParams
@@ -84,7 +84,7 @@ export default async function ContentDetailPage({ params }: Props) {
       }
     }
   } catch (error) {
-    console.error('Error fetching content detail:', error);
+    logger.error('Error fetching content detail', error as Error, { lang, category, slugStr });
   }
 
   if (!article) {

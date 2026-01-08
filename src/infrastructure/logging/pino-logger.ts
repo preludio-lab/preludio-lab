@@ -1,21 +1,21 @@
 import pino from 'pino';
-import { ILogger } from '@/domain/shared/logger';
+import { Logger } from '@/shared/logging/logger';
 
 /**
- * Infrastructure Implementation: Pino Logger
+ * インフラ層の実装: Pino Logger
  *
- * Concrete implementation of ILogger using Pino.
- * Should be used primarily in Server Components and Server Actions.
+ * ILogger の Pino による具体的な実装。
+ * 主にサーバーコンポーネントおよびサーバーアクションで使用されます。
  */
-export class PinoLogger implements ILogger {
+export class PinoLogger implements Logger {
   private logger: pino.Logger;
 
   constructor() {
-    // Configuration:
-    // - Development: Pretty print for readability
-    // - Production: JSON for observability
+    // 設定:
+    // - 開発環境: 読みやすさのために Pretty print を使用（Pinoのデフォルト設定に依存）
+    // - 本番環境: オブザーバビリティのために JSON 形式
     this.logger = pino({
-      level: process.env.LOG_LEVEL || 'info', // Default to info
+      level: process.env.LOG_LEVEL || 'info', // デフォルトは info
     });
   }
 
@@ -32,7 +32,7 @@ export class PinoLogger implements ILogger {
   }
 
   error(message: string, error?: Error, meta?: Record<string, unknown>) {
-    // Ensure error object is merged into the log object for structured parsing
+    // 構造化パースのためにエラーオブジェクトがログオブジェクトにマージされるようにする
     this.logger.error({ ...meta, err: error }, message);
   }
 }

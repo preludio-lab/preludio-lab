@@ -1,4 +1,4 @@
-import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
+import { articleRepository } from '@/infrastructure/article';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseFeature';
 import { Metadata } from 'next';
@@ -21,8 +21,7 @@ type Props = {
   }>;
 };
 
-// Poor man's DI
-const articleRepository = new FsArticleRepository();
+// Repository Singleton は中央エントリポイントから提供されるインスタンスを使用します。
 
 /**
  * CategoryPage

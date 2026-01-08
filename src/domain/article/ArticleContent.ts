@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 
 /**
  * Content Section
@@ -23,7 +24,7 @@ export type ContentSection = {
 export const ContentSectionSchema: z.ZodType<ContentSection> = z.lazy(() => z.object({
     id: z.string().min(1).max(64),
     heading: z.string().min(1).max(50),
-    level: z.number().int().min(2).max(6),
+    level: zInt().min(2).max(6),
     children: z.array(ContentSectionSchema).optional(),
 }));
 

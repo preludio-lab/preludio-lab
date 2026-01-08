@@ -1,11 +1,15 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
+import { Logger } from '@/shared/logging/logger';
 
 /**
  * IncrementViewCountUseCase
  * 記事の閲覧数をインクリメントする
  */
 export class IncrementViewCountUseCase {
-    constructor(private readonly articleRepository: ArticleRepository) { }
+    constructor(
+        private readonly articleRepository: ArticleRepository,
+        private readonly logger: Logger
+    ) { }
 
     async execute(id: string): Promise<void> {
         // In FS Implementation:
@@ -18,7 +22,7 @@ export class IncrementViewCountUseCase {
         //    // Update view count logic...
         // }
 
-        // console.log(`[IncrementViewCount] Article ID: ${id}`);
+        this.logger.info(`[IncrementViewCount] Article ID: ${id}`);
         return Promise.resolve();
     }
 }

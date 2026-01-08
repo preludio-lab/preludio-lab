@@ -1,5 +1,12 @@
-import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/Slug';
+
+// バリデーション用定数
+const MAX_URL_LENGTH = 2_048;
+const MAX_SECONDS_IN_DAY = 86_400;      // 24時間
+const MAX_READING_TIME_SECONDS = 1_800; // 30分
+const MIN_YEAR = 1_000;
+const MAX_YEAR = 2_999;
 
 /**
  * Article Category
@@ -39,13 +46,13 @@ export type ArticleCategory = (typeof ArticleCategory)[keyof typeof ArticleCateg
  */
 export const PlaybackSchema = z.object({
     /** 音源ソースの識別子 (YouTube ID等) */
-    audioSrc: z.string().min(1).max(2048),
+    audioSrc: z.string().min(1).max(MAX_URL_LENGTH),
     /** 演奏者・演奏団体名 */
     performer: z.string().max(255).optional(),
     /** 音源の再生開始位置 (秒) */
-    startSeconds: z.number().int().nonnegative().max(86400).optional(),
+    startSeconds: zInt().nonnegative().max(MAX_SECONDS_IN_DAY).optional(),
     /** 音源の再生終了位置 (秒) */
-    endSeconds: z.number().int().nonnegative().max(86400).optional(),
+    endSeconds: zInt().nonnegative().max(MAX_SECONDS_IN_DAY).optional(),
 });
 
 export type Playback = z.infer<typeof PlaybackSchema>;
@@ -56,17 +63,17 @@ export type Playback = z.infer<typeof PlaybackSchema>;
  */
 export const ImpressionDimensionsSchema = z.object({
     /** 明るさ (Brightness) */
-    brightness: z.number().int().min(-10).max(10),
+    brightness: zInt().min(-10).max(10),
     /** 躍動感 (Vibrancy) */
-    vibrancy: z.number().int().min(-10).max(10),
+    vibrancy: zInt().min(-10).max(10),
     /** 規模感 (Scale) */
-    scale: z.number().int().min(-10).max(10),
+    scale: zInt().min(-10).max(10),
     /** 深み (Depth) */
-    depth: z.number().int().min(-10).max(10),
+    depth: zInt().min(-10).max(10),
     /** ドラマ性 (Drama) */
-    drama: z.number().int().min(-10).max(10),
+    drama: zInt().min(-10).max(10),
     /** 通俗性・人気度 (Popularity) */
-    popularity: z.number().int().min(-10).max(10),
+    popularity: zInt().min(-10).max(10),
 });
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
@@ -110,13 +117,13 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Levels & Difficulty ---
     /** 記事の専門性レベル (1-5) */
-    readingLevel: z.number().int().min(1).max(5).optional(),
+    readingLevel: zInt().min(1).max(5).optional(),
     /** 楽曲自体の演奏難易度レベル (1-5) */
-    performanceDifficulty: z.number().int().min(1).max(5).optional(),
+    performanceDifficulty: zInt().min(1).max(5).optional(),
     /** トップページ等で優先紹介される「おすすめ記事」フラグ */
     isFeatured: z.boolean().default(false),
     /** 推定読了時間 (秒) */
-    readingTimeSeconds: z.number().int().nonnegative().max(1800).default(0),
+    readingTimeSeconds: zInt().nonnegative().max(MAX_READING_TIME_SECONDS).default(0),
 
     // --- Impressions ---
     /** 感性・印象評価の6軸データ */
@@ -124,15 +131,15 @@ export const ArticleMetadataSchema = z.object({
 
     // --- Historical Context ---
     /** 楽曲の作曲年 */
-    compositionYear: z.number().int().min(1000).max(2999).optional(),
+    compositionYear: zInt().min(MIN_YEAR).max(MAX_YEAR).optional(),
     /** 作曲者の誕生年 */
-    composerBirthYear: z.number().int().min(1000).max(2999).optional(),
+    composerBirthYear: zInt().min(MIN_YEAR).max(MAX_YEAR).optional(),
 
     // --- Media & Playback (Discovery Support) ---
     /** 記事を代表する音源再生情報 (一覧表示での試聴用) */
     playback: PlaybackSchema.optional(),
     /** コンテンツのサムネイル画像URLまたはパス (一覧・検索結果用) */
-    thumbnail: z.string().max(2048).optional().or(z.literal('')),
+    thumbnail: z.string().max(MAX_URL_LENGTH).optional().or(z.literal('')),
 
     // --- Taxonomy & Search ---
     /** 自由タグのリスト */

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { LOCALES } from '@/lib/constants';
 import { getTranslations } from 'next-intl/server';
-import { FsArticleRepository } from '@/infrastructure/article/FsArticleRepository';
+import { articleRepository } from '@/infrastructure/article';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
@@ -35,8 +35,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   // UseCaseの実行
   let featuredArticles: ArticleMetadataDto[] = [];
   try {
-    const repository = new FsArticleRepository();
-    const listUseCase = new ListArticlesUseCase(repository);
+    const listUseCase = new ListArticlesUseCase(articleRepository);
     const response = await listUseCase.execute({
       lang,
       isFeatured: true,

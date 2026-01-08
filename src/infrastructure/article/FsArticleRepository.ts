@@ -19,6 +19,7 @@ import {
     SortDirection,
 } from '@/domain/article/ArticleConstants';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
+import { logger } from '@/infrastructure/logging';
 
 /**
  * File System Implementation of Article Repository
@@ -221,7 +222,7 @@ export class FsArticleRepository implements ArticleRepository {
         // We can list `content` dirs to find langs.
         const langs = fs.readdirSync(this.contentDirectory).filter(f => fs.statSync(path.join(this.contentDirectory, f)).isDirectory());
 
-        let allArticles: Article[] = [];
+        const allArticles: Article[] = [];
 
         for (const lang of langs) {
             for (const category of categories) {
@@ -330,7 +331,7 @@ export class FsArticleRepository implements ArticleRepository {
             });
 
         } catch (e) {
-            console.warn(`Failed to parse article: ${filePath}`, e);
+            logger.warn(`Failed to parse article: ${filePath}`, { error: e });
             return null;
         }
     }

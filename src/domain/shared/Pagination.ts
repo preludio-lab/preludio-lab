@@ -1,13 +1,13 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 
 /**
- * Paged Response
- * ページネーション対応の共通レスポンス
+ * ページネーション対応レスポンス
  */
 export const PagedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
     z.object({
         items: z.array(itemSchema),
-        totalCount: z.number().int().nonnegative(),
+        totalCount: zInt().nonnegative(),
         hasNextPage: z.boolean(),
         nextCursor: z.string().optional(),
     });
