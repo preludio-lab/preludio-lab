@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { Score, ScoreFormatType } from '@/domain/score/Score';
+import { NotationFormat } from '@/domain/score/Score';
 import { MusicalExample } from '@/domain/score/MusicalExample';
 
 const ScoreView = dynamic(() => import('./Score').then((mod) => mod.Score), {
@@ -21,7 +21,7 @@ const ScoreView = dynamic(() => import('./Score').then((mod) => mod.Score), {
 });
 
 export interface ScoreRendererProps {
-  score: Score | MusicalExample | { data: string; format: ScoreFormatType };
+  score: MusicalExample | { data: string; format: NotationFormat };
   className?: string;
 }
 

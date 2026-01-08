@@ -6,8 +6,6 @@ import { z } from 'zod';
 export const MusicalExampleControlSchema = z.object({
     /** 譜例ID (UUID v7) */
     id: z.string().min(1).max(50),
-    /** 使用されている記事のID */
-    articleId: z.string().min(1).max(50),
     /** 作成日時 */
     createdAt: z.coerce.date(),
     /** 最終更新日時 */
@@ -26,13 +24,11 @@ export type MusicalExampleId = string;
  */
 export const createMusicalExampleControl = (
     id: string,
-    articleId: string,
     createdAt: Date = new Date(),
     updatedAt: Date = new Date()
 ): MusicalExampleControl => {
     return MusicalExampleControlSchema.parse({
         id,
-        articleId,
         createdAt,
         updatedAt,
     });

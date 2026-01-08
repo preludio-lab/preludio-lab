@@ -21,7 +21,7 @@ describe('ScoreMetadata', () => {
                 }
             ],
             previewUrl: 'https://imslp.org/test.pdf',
-            format: ScoreFormat.ABC,
+            format: ScoreFormat.PHYSICAL,
         };
         const metadata = ScoreMetadataSchema.parse(params);
 

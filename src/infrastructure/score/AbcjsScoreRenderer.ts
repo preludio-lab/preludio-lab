@@ -1,16 +1,16 @@
 import * as abcjs from 'abcjs';
-import { IScoreRenderer, ScoreFormat, ScoreFormatType } from '@/domain/score/Score';
+import { INotationRenderer, NotationFormat } from '@/domain/score/Score';
 
 /**
  * AbcjsScoreRenderer
- * IScoreRenderer の 'abcjs' ライブラリを使用したインフラストラクチャ実装です。
+ * INotationRenderer の 'abcjs' ライブラリを使用したインフラストラクチャ実装です。
  */
-export class AbcjsScoreRenderer implements IScoreRenderer {
+export class AbcjsScoreRenderer implements INotationRenderer {
   /**
    * 指定された要素にスコアをレンダリングします。
    */
-  async render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void> {
-    if (format !== ScoreFormat.ABC) {
+  async render(data: string, element: HTMLElement, format: NotationFormat): Promise<void> {
+    if (format !== NotationFormat.ABC) {
       console.warn(`AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`);
       return;
     }

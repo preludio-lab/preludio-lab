@@ -3,23 +3,19 @@ import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MonetizationElementSchema } from '../monetization/Monetization';
 
 /**
- * 楽譜フォーマットの定数定義
+ * 楽譜の出版・提供形態（媒体）の定義
  */
 export const ScoreFormat = {
-    /** ABC notation: テキストベースの楽譜表記法。軽量で動的な描画に適している */
-    ABC: 'abc',
-    /** MusicXML: 楽譜情報の交換のための標準的なXMLフォーマット */
-    MUSICXML: 'musicxml',
-    /** MEI (Music Encoding Initiative): 学術的な音楽資料の符号化のための高度なフォーマット */
-    MEI: 'mei',
+    /** 物理書籍: 紙媒体の楽譜エディション (Urtext, 実用譜等) */
+    PHYSICAL: 'physical',
+    /** 電子スコア: デジタル配信、PDF、リーダー用データ等 */
+    DIGITAL: 'digital',
 } as const;
 
 /**
  * 楽譜フォーマットの型定義
- * レンダラー（Infra層）やコンポーネント（UI層）において、描画ロジックの分岐や
- * プロパティの型定義として広く利用される Public な定義です。
  */
-export type ScoreFormatType = (typeof ScoreFormat)[keyof typeof ScoreFormat];
+export type ScoreFormat = (typeof ScoreFormat)[keyof typeof ScoreFormat];
 
 /**
  * ScoreMetadata

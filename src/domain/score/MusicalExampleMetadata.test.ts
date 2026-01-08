@@ -1,12 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { MusicalExampleMetadataSchema } from './MusicalExampleMetadata';
-import { ScoreFormat } from './ScoreMetadata';
+import { MusicalExampleMetadataSchema, NotationFormat } from './MusicalExampleMetadata';
 
 describe('MusicalExampleMetadata', () => {
     const validParams = {
         workId: 'work-1',
         slug: '1st-theme',
-        format: ScoreFormat.ABC,
+        format: NotationFormat.ABC,
         notationPath: 'scores/beethoven/sym5-theme1.abc',
         visualPath: 'scores/beethoven/sym5-theme1.svg',
     };

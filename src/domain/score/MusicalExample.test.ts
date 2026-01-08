@@ -1,22 +1,20 @@
 import { describe, it, expect } from 'vitest';
 import { MusicalExampleSchema } from './MusicalExample';
 import { MusicalExampleControlSchema } from './MusicalExampleControl';
-import { MusicalExampleMetadataSchema } from './MusicalExampleMetadata';
+import { MusicalExampleMetadataSchema, NotationFormat } from './MusicalExampleMetadata';
 import { MusicalExampleBindingSchema } from './MusicalExampleBinding';
-import { ScoreFormat } from './ScoreMetadata';
 
 describe('MusicalExample', () => {
     it('MusicalExample を正しく構成できること', () => {
         const control = MusicalExampleControlSchema.parse({
             id: 'ex-1',
-            articleId: 'art-1',
             createdAt: new Date(),
             updatedAt: new Date(),
         });
         const metadata = MusicalExampleMetadataSchema.parse({
             workId: 'work-1',
             slug: 'theme',
-            format: ScoreFormat.ABC,
+            format: NotationFormat.ABC,
             notationPath: 'test.abc',
         });
         const binding = MusicalExampleBindingSchema.parse({ playbackBindings: [] });
