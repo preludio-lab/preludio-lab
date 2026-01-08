@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Score } from '@/domain/score/Score';
+import { Score, ScoreFormatType } from '@/domain/score/Score';
+import { MusicalExample } from '@/domain/score/MusicalExample';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/AbcjsScoreRenderer';
 import { handleClientError } from '@/lib/client-error';
 
@@ -8,7 +9,7 @@ import { handleClientError } from '@/lib/client-error';
  * スコアレンダリングロジックを扱うカスタムフックです。
  * レンダラーのライフサイクルとDOM要素を管理します。
  */
-export function useScoreRenderer(score: Score) {
+export function useScoreRenderer(score: Score | MusicalExample | { data: string; format: ScoreFormatType }) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   // 依存性の注入 (簡易版)
@@ -21,12 +22,15 @@ export function useScoreRenderer(score: Score) {
     const renderScore = async () => {
       if (!elementRef.current || !score) return;
 
+      const data = 'metadata' in score && 'data' in score.metadata ? score.metadata.data : (score as any).data;
+      const format = 'metadata' in score && 'format' in score.metadata ? score.metadata.format : (score as any).format;
+
       try {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: rendering started', { format: score.format });
+          console.debug('useScoreRenderer: rendering started', { format });
         }
 
-        await renderer.render(score, elementRef.current);
+        await renderer.render(data, elementRef.current, format);
 
         if (isMounted && process.env.NODE_ENV === 'development') {
           console.debug('useScoreRenderer: rendering completed');

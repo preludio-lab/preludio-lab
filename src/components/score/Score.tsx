@@ -1,11 +1,12 @@
 'use client';
 
 import { useId } from 'react';
-import { Score } from '@/domain/score/Score';
+import { Score, ScoreFormatType } from '@/domain/score/Score';
+import { MusicalExample } from '@/domain/score/MusicalExample';
 import { useScoreRenderer } from './useScoreRenderer';
 
 interface ScoreProps {
-  score: Score;
+  score: Score | MusicalExample | { data: string; format: ScoreFormatType };
   className?: string; // 外部からのスタイリングを許可
 }
 
