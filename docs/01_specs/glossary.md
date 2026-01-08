@@ -40,7 +40,8 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Related Article** | `RelatedArticle` | 記事の内容や楽曲の文脈に基づき、静的に紐付けられた関連コンテンツ。 | 編集部による手動選定、または埋め込みベクトルを用いた静的な類似度計算によって決定される「知のネットワーク」。 |
 | **Content Section** | `ContentSection` | 記事本文内の論理的な区切り。ID、見出し、レベル、子要素を持つ。 | `id` はアンカー用、`heading` は表示用。レベルは `h2`〜`h6` を基本とする。 |
 | **Content Structure** | `ContentStructure` | 記事全体の目次（ToC）構造。`ContentSection` のツリーとして表現される。 | 記事タイトル (`h1`) を頂点とした論理構造を記述する。 |
-| **Musical Example** | `MusicalExample` | 解説のために引用される数小節の楽譜抜粋。 | 楽曲解説の中核となる「概念・単位」。 |
+| **Musical Example** | `MusicalExample` | 解説のために引用される楽譜の抜粋。特定の `Score` を参照し、`Work` の文脈（楽章等）を持つ。 | 楽曲解説の中核となる「概念・単位」。`slug` で識別され、再生同期情報を持つ。 |
+| **Score** | `Score` | 特定の楽曲の楽譜（版・エディション）全体を指す実体。 | 購入リンクやPDFを持つ「アセット（資産）」。エディションごとの差異を管理する。 |
 | **Notation Data** | `NotationData` | 譜例のソースデータ（ABC記法など）。 | `MusicalExample` の実体データ。R2等に保存。 |
 | **Music Display** | `MusicDisplay` | 譜例、再生、翻訳が統合されたUI。 | ユーザーが触れるReact等のコンポーネント。 |
 | **Excerpt** | `Excerpt` | 記事一覧や検索結果に表示される「抜粋・概要」。 | SEO上の Description としても機能する。 |
