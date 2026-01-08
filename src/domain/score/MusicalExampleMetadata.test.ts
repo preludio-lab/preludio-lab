@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createMusicalExampleMetadata } from './MusicalExampleMetadata';
-import { ScoreFormat } from './Score';
+import { ScoreFormat } from './ScoreFormat';
 
 describe('MusicalExampleMetadata', () => {
     it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {

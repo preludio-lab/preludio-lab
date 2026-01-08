@@ -61,10 +61,12 @@ erDiagram
     Articles ||--o{ SeriesArticles : "is member of"
 
     %% Asset Tables: Scores & Recordings
-    Works ||--o{ Scores : "has sheet music editions"
+    Works ||--o{ ScoreWorks : "contained in"
+    Scores ||--o{ ScoreWorks : "contains"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
     Works ||--o{ MusicalExamples : "has musical excerpts"
     MusicalExamples }o--|| Scores : "references edition from"
+    MusicalExamples }o--|| Works : "references work context"
     MusicalExamples }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
@@ -358,13 +360,63 @@ sequenceDiagram
 
 楽譜ビュワーおよび再生プレイヤーで使用するデータ。
 
+### 4.1 `scores` (Edition Asset)
+
+楽譜のエディション（出版物）そのものを管理します。特定の1曲に限定されず、複数の曲を含む「楽譜集」としても機能します。
+
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `text` | - | YES | - | **PK**. UUID v7 |
+| `isbn` | `text` | - | NO | - | ISBN |
+| `jan_code` | `text` | - | NO | - | JANコード |
+| `affiliate_links` | `text` | `[]` | YES | - | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
+| `pdf_url` | `text` | - | NO | - | 内部閲覧用PDF URL |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
+
+#### 4.1.1 Indexes (Scores)
+
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_scores_isbn` | `(isbn)` | B-Tree | ISBNによる検索 |
+
+### 4.2 `score_translations` (Localized Metadata)
+
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `text` | - | YES | - | **PK**. |
+| **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
+| `lang` | `text` | - | YES | - | ISO Language Code |
+| `publisher_name` | `text` | - | NO | - | 出版社名 |
+| `editor_name` | `text` | - | NO | - | 校訂者名 |
+| `edition_name` | `text` | - | NO | - | 版の名前 (e.g. "Urtext", "全音ピアノライブラリー") |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
+
 #### 4.2.1 Indexes (Score Translations)
 
 | Index Name               | Columns            | Type   | Usage                |
 | :----------------------- | :----------------- | :----- | :------------------- |
 | `idx_score_trans_lookup` | `(score_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
-### 4.3 `musical_examples` (Excerpt Component)
+### 4.3 `score_works` (Piece-to-Edition Mapping)
+
+楽譜エディションに含まれる楽曲を定義する多対多の中間テーブル。
+
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
+| **`work_id`** | `text` | - | YES | - | **FK to `works.id`** |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+
+#### 4.3.1 Indexes (Score Works)
+
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_score_works_lookup` | `(score_id, work_id)` | **UNIQUE** | 重複防止 |
+| `idx_score_works_work` | `(work_id)` | B-Tree | 楽曲から対応する楽譜を検索 |
+
+### 4.4 `musical_examples` (Excerpt Component)
 
 記事内で解説のために使用される「譜例」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
 
@@ -380,6 +432,7 @@ sequenceDiagram
 | `playback_bindings`    | `text` | `[]`    | YES      | -     | **[Recording Sync]** (JSON: `PlaybackBinding[]`)           |
 | `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                          |
 | `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                          |
+| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | データ形式 (Constants referencing `ScoreFormat`)    |
 
 #### 4.3.1 Indexes (Musical Examples)
 

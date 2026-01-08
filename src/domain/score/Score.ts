@@ -1,39 +1,30 @@
-import { ScoreControl, ScoreId, ScoreFormatType } from './ScoreControl';
+import { ScoreControl } from './ScoreControl';
 import { ScoreMetadata } from './ScoreMetadata';
+import { ScoreFormatType } from './ScoreFormat';
 
 /**
- * 楽譜フォーマット定数
- * サポートされている記法フォーマットを定義します。
- */
-export const ScoreFormat = {
-  ABC: 'abc',
-  MUSICXML: 'musicxml',
-} as const;
-
-export { type ScoreFormatType };
-export { type ScoreId };
-
-/**
- * 楽譜ドメインエンティティ (エディションレベル)
- * 特定の楽曲の「版（エディション）」を表現します。
+ * Score (Asset/Edition)
+ * 楽譜エディションのルートエンティティ。
+ * 複数の楽曲（Work）を含む可能性があるため、Workとの直接の強固な紐付けは持ちません。
  */
 export interface Score {
   readonly control: ScoreControl;
   readonly metadata: ScoreMetadata;
 }
 
-export const createScore = (
-  control: ScoreControl,
-  metadata: ScoreMetadata
-): Score => ({
+export const createScore = (control: ScoreControl, metadata: ScoreMetadata): Score => ({
   control,
   metadata,
 });
 
 /**
- * @deprecated IScoreRenderer は将来的に MusicalExample ドメインに移動されるか、統合される予定です。
- * 楽譜レンダリング用のレガシーインターフェース。
+ * IScoreRenderer
+ * 楽譜レンダリングのインターフェース
+ * @deprecated 譜例（MusicalExample）の導入に伴い、今後は MusicalExample を主体としたレンダリングに移行します。
  */
 export interface IScoreRenderer {
   render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void>;
 }
+
+// 既存コードとの互換性のために re-export (必要に応じて)
+export { ScoreFormat, type ScoreFormatType } from './ScoreFormat';

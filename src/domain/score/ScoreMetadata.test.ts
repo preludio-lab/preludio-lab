@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createScoreMetadata } from './ScoreMetadata';
+import { ScoreFormat } from './ScoreFormat';
 
 describe('ScoreMetadata', () => {
     it('すべてのプロパティを持つ ScoreMetadata を作成できること', () => {
@@ -11,6 +12,7 @@ describe('ScoreMetadata', () => {
             janCode: '4900000000000',
             affiliateLinks: [{ provider: 'amazon', url: 'https://amazon.com/...' }],
             pdfUrl: 'https://imslp.org/...',
+            format: ScoreFormat.ABC,
         };
         const metadata = createScoreMetadata(params);
 

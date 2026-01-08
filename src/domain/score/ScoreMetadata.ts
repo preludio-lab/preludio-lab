@@ -1,15 +1,18 @@
+import { ScoreFormatType } from './ScoreFormat';
+
 /**
- * アフィリエイトリンク
+ * アフィリエイトリンク情報
  */
 export interface AffiliateLink {
-    readonly provider: string; // 例: "amazon", "sheetmusicplus"
+    readonly provider: string; // e.g., 'amazon', 'henle'
     readonly url: string;
     readonly label?: string;
 }
 
 /**
- * 楽譜メタデータ
- * 楽譜エディションのメタデータ
+ * ScoreMetadata
+ * 楽譜エディションのメタデータ。
+ * 出版社、校訂者、識別コードなどを管理。
  */
 export interface ScoreMetadata {
     readonly publisherName?: string;
@@ -19,6 +22,7 @@ export interface ScoreMetadata {
     readonly janCode?: string;
     readonly affiliateLinks: readonly AffiliateLink[];
     readonly pdfUrl?: string;
+    readonly format?: ScoreFormatType; // 楽譜全体の形式（混合の場合は省略可）
 }
 
 export const createScoreMetadata = (params: Partial<ScoreMetadata>): ScoreMetadata => ({
@@ -27,6 +31,7 @@ export const createScoreMetadata = (params: Partial<ScoreMetadata>): ScoreMetada
     editionName: params.editionName,
     isbn: params.isbn,
     janCode: params.janCode,
-    affiliateLinks: params.affiliateLinks ?? [],
+    affiliateLinks: params.affiliateLinks ? [...params.affiliateLinks] : [],
     pdfUrl: params.pdfUrl,
+    format: params.format,
 });

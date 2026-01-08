@@ -1,12 +1,12 @@
-import { Score, ScoreId } from './Score';
+import { Score } from './Score';
+import { ScoreId } from './ScoreControl';
 
 /**
  * 楽譜リポジトリ インターフェース
- * 楽譜エディションの永続化を担います。
  */
 export interface ScoreRepository {
     findById(id: ScoreId): Promise<Score | null>;
-    findByWorkId(workId: string): Promise<Score[]>;
+    findByWorkId(workId: string): Promise<Score[]>; // 中間テーブル等を介して検索
     save(score: Score): Promise<void>;
     delete(id: ScoreId): Promise<void>;
 }
