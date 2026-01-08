@@ -6,7 +6,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 const mockRouter = { replace: vi.fn() };
 const mockPathname = '/mock-path';
 
-vi.mock('@/infrastructure/i18n/navigation', () => ({
+vi.mock('@/shared/i18n/navigation', () => ({
   useRouter: () => mockRouter,
   usePathname: () => mockPathname,
 }));

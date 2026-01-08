@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from '@/infrastructure/i18n/navigation';
+import { usePathname, useRouter } from '@/shared/i18n/navigation';
 import { AppLocale, supportedLocales, localeLabels } from '@/domain/i18n/Locale';
 import { useTransition, useState, useEffect, useRef } from 'react';
 import { handleClientError } from '@/lib/client-error';
@@ -52,11 +52,10 @@ export function LanguageSwitcher() {
         onClick={() => setIsOpen(!isOpen)}
         className={`
                     flex items-center gap-2 rounded-full border bg-paper px-4 py-2 text-sm font-medium transition-all whitespace-nowrap
-                    ${
-                      isOpen
-                        ? 'border-accent text-accent ring-1 ring-accent'
-                        : 'border-neutral-200 text-primary hover:border-neutral-300 hover:bg-neutral-50'
-                    }
+                    ${isOpen
+            ? 'border-accent text-accent ring-1 ring-accent'
+            : 'border-neutral-200 text-primary hover:border-neutral-300 hover:bg-neutral-50'
+          }
                 `}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -85,11 +84,10 @@ export function LanguageSwitcher() {
                   onClick={() => handleLanguageChange(cur)}
                   className={`
                                         flex w-full items-center justify-between rounded-lg px-4 py-2 text-left text-sm transition-colors
-                                        ${
-                                          locale === cur
-                                            ? 'bg-neutral-100 text-accent font-semibold'
-                                            : 'text-primary hover:bg-neutral-50'
-                                        }
+                                        ${locale === cur
+                      ? 'bg-neutral-100 text-accent font-semibold'
+                      : 'text-primary hover:bg-neutral-50'
+                    }
                                     `}
                   role="option"
                   aria-selected={locale === cur}

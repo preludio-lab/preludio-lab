@@ -109,16 +109,11 @@ Content`;
 
         it('should filter articles by criteria', async () => {
             // Mock directory structure
-            // content/en/works/prelude.mdx
-            // content/en/composers/bach.mdx
-
             vi.mocked(fs.readdirSync).mockImplementation((p) => {
                 const pathStr = p.toString();
-                if (pathStr.endsWith('content')) return ['en'] as any; // langs
-                if (pathStr.endsWith('en')) return ['works', 'composers'] as any; // categories inside lang? 
-                // FsArticleRepository logic: 
-                // const dirPath = path.join(this.contentDirectory, lang, category);
-                // So we just need to return files when dirPath matches.
+                // pathStr will be relative to process.cwd() or absolute
+                if (pathStr.endsWith('article')) return ['en'] as any;
+                if (pathStr.includes('en') && !pathStr.includes('works') && !pathStr.includes('composers')) return ['works', 'composers'] as any;
                 if (pathStr.includes('works')) return ['prelude.mdx'] as any;
                 if (pathStr.includes('composers')) return ['bach.mdx'] as any;
                 return [] as any;
@@ -130,7 +125,7 @@ Content`;
             // Mock content reading
             vi.mocked(fs.readFileSync).mockImplementation((p) => {
                 if (p.toString().includes('prelude.mdx')) return validMdx;
-                if (p.toString().includes('bach.mdx')) return legacyMdx; // Use legacy for variety
+                if (p.toString().includes('bach.mdx')) return legacyMdx;
                 return '';
             });
 
