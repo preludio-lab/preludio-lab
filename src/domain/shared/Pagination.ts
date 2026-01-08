@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Paged Response
+ * ページネーション対応レスポンス
  * ページネーション対応の共通レスポンス
  */
 export const PagedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>

@@ -60,8 +60,8 @@ Content`;
     });
 
     describe('findBySlug', () => {
-        it('should return Article when file exists (New Schema)', async () => {
-            // Setup mock to find file in 'works' category
+        it('ファイルが存在する場合に記事を返すこと (新スキーマ)', async () => {
+            // 'works' カテゴリにファイルが存在するようにモックを設定
             vi.mocked(fs.existsSync).mockImplementation((p) => {
                 return p.toString().includes('works/prelude.mdx');
             });
@@ -79,8 +79,8 @@ Content`;
             expect(result?.category).toBe(ArticleCategory.WORKS);
         });
 
-        it('should map Legacy Frontmatter correctly', async () => {
-            // Setup mock to find file in 'works' category
+        it('レガシーなフロントマターを正しくマッピングすること', async () => {
+            // 'works' カテゴリにファイルが存在するようにモックを設定
             vi.mocked(fs.existsSync).mockImplementation((p) => {
                 return p.toString().includes('works/legacy.mdx');
             });
@@ -96,7 +96,7 @@ Content`;
             expect(result?.metadata.playback?.audioSrc).toBe('/audio/legacy.mp3');
         });
 
-        it('should return null if file not found', async () => {
+        it('ファイルが見つからない場合に null を返すこと', async () => {
             vi.mocked(fs.existsSync).mockReturnValue(false);
             const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
             expect(result).toBeNull();
@@ -104,10 +104,10 @@ Content`;
     });
 
     describe('findMany', () => {
-        // To test findMany, we need to mock getAllArticles (private).
-        // Or mock readdirSync to simulate directory structure.
+        // findMany をテストするために getAllArticles (private) をモック。
+        // または readdirSync をモックしてディレクトリ構造をシミュレート。
 
-        it('should filter articles by criteria', async () => {
+        it('条件に従って記事をフィルタリングすること', async () => {
             // ディレクトリ構造をモック
             vi.mocked(fs.readdirSync).mockImplementation((p) => {
                 const pathStr = p.toString();
