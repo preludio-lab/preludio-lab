@@ -1,9 +1,9 @@
 /**
- * Domain Service Interface: Logger
+ * ドメインサービスインターフェース: Logger
  *
- * Defines the contract for logging within the application.
- * Corresponds to the Dependency Inversion Principle (DIP).
- * Domain layer depends only on this interface, not on Pino.
+ * アプリケーション内でのロギングのコントラクトを定義。
+ * 依存性逆転の原則 (DIP) に対応。
+ * ドメイン層はこのインターフェースにのみ依存し、Pino などの具体的な実装には依存しません。
  */
 export interface ILogger {
   debug(message: string, meta?: Record<string, unknown>): void;
