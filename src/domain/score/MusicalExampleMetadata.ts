@@ -30,6 +30,8 @@ export const MusicalExampleMetadataSchema = z.object({
     format: z.nativeEnum(ScoreFormat),
     /** 楽譜データへのパス (R2内のキーまたは相対パス) */
     notationPath: z.string().min(1).max(1024),
+    /** 描画された楽譜イメージへのパス (SVG/PNG等) */
+    visualPath: z.string().min(1).max(1024).optional(),
     /** 対象とする小節範囲 */
     measureRange: MeasureRangeSchema.optional(),
     /** キャプション (最大30, 多言語) */

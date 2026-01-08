@@ -43,6 +43,7 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 | **Musical Example** | `MusicalExample` | 解説のために引用される楽譜の抜粋。特定の `Score` を参照し、`Work` の文脈（楽章等）を持つ。 | 楽曲解説の中核となる「概念・単位」。`slug` で識別され、再生同期情報を持つ。 |
 | **Score** | `Score` | 特定の楽曲の楽譜（版・エディション）全体を指す実体。 | 購入リンクやPDFを持つ「アセット（資産）」。エディションごとの差異を管理する。 |
 | **Notation Data** | `NotationData` | 譜例のソースデータ（ABC記法など）。 | `MusicalExample` の実体データ。R2等に保存。 |
+| **Notation Visual** | `NotationVisual` | 譜例（Notation Data）を描画した視覚的な成果物（SVG、PNG等）。 | 事前レンダリングされたアセット。表示速度向上のために使用される。 |
 | **Music Display** | `MusicDisplay` | 譜例、再生、翻訳が統合されたUI。 | ユーザーが触れるReact等のコンポーネント。 |
 | **Excerpt** | `Excerpt` | 記事一覧や検索結果に表示される「抜粋・概要」。 | SEO上の Description としても機能する。 |
 

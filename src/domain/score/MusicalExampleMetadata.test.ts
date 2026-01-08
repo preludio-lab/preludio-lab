@@ -8,6 +8,7 @@ describe('MusicalExampleMetadata', () => {
         slug: '1st-theme',
         format: ScoreFormat.ABC,
         notationPath: 'scores/beethoven/sym5-theme1.abc',
+        visualPath: 'scores/beethoven/sym5-theme1.svg',
     };
 
     it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {
