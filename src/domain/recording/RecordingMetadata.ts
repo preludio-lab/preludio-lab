@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { MultilingualStringSchema } from '../i18n/MultilingualString';
+import { MultilingualStringSchema } from '../i18n/Locale';
+
 
 
 /**
