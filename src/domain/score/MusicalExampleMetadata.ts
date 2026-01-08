@@ -34,8 +34,6 @@ export const MusicalExampleMetadataSchema = z.object({
     measureRange: MeasureRangeSchema.optional(),
     /** キャプション (最大30, 多言語) */
     caption: createMultilingualStringSchema({ max: 30 }).optional(),
-    /** 詳細解説 (最大2000, 多言語) */
-    description: createMultilingualStringSchema({ max: 2000 }).optional(),
 });
 
 export type MusicalExampleMetadata = z.infer<typeof MusicalExampleMetadataSchema>;
