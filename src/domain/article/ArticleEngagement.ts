@@ -1,4 +1,4 @@
-import { zInt } from '@/shared/validation/zod';
+import { z, zInt } from '@/shared/validation/zod';
 
 // バリデーション用定数
 // 数値区切り文字 (_) を使用して桁数を分かりやすくしています。

@@ -1,4 +1,4 @@
-import { zInt } from '@/shared/validation/zod';
+import { z, zInt } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/Slug';
 
 // バリデーション用定数
