@@ -87,6 +87,11 @@
       "instrument": "Instrument",
       "all": "All"
     },
+    "error": {
+      "title": "Error loading list",
+      "description": "An unexpected error occurred while loading the content. Please try again later.",
+      "retry": "Try again"
+    },
     "sort": {
       "label": "Sort",
       "latest": "Latest",
