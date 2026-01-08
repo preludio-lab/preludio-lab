@@ -63,18 +63,59 @@ export const localeLabels: Record<AppLocale, string> = {
 };
 
 /**
- * Multilingual String
- * 多言語対応の文字列コンテナ。
- * AppLocale で定義された各言語コードをキーに持ちます。
+ * 多言語対応の文字列スキーマのオプション
  */
-export const MultilingualStringSchema = z.object({
-  [AppLocale.EN]: z.string().optional(),
-  [AppLocale.JA]: z.string().optional(),
-  [AppLocale.ES]: z.string().optional(),
-  [AppLocale.DE]: z.string().optional(),
-  [AppLocale.FR]: z.string().optional(),
-  [AppLocale.IT]: z.string().optional(),
-  [AppLocale.ZH]: z.string().optional(),
-});
+export type MultilingualStringOptions = {
+  /** 最小文字数 (空文字を許容しない場合は 1 を設定) */
+  min?: number;
+  /** 最大文字数 */
+  max?: number;
+  /** 正規表現パターン (RegExpオブジェクトまたは文字列) */
+  pattern?: string | RegExp;
+  /** 自動トリムを行うか (デフォルト: true) */
+  trim?: boolean;
+};
+
+/**
+ * 多言語対応の文字列コンテナを作成するヘルパー
+ * 各言語の文字列に対して一律で制約を適用できます。
+ */
+export const createMultilingualStringSchema = (options: MultilingualStringOptions = {}) => {
+  const { min, max, pattern, trim = true } = options;
+
+  // ベースとなる文字列スキーマ
+  let baseSchema = z.string();
+
+  // ホワイトスペースの自動除去設定
+  if (trim) {
+    baseSchema = baseSchema.trim();
+  }
+
+  // 文字数制限や正規表現などの制約を合成
+  if (min !== undefined) baseSchema = baseSchema.min(min);
+  if (max !== undefined) baseSchema = baseSchema.max(max);
+  if (pattern !== undefined) {
+    const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+    baseSchema = baseSchema.regex(regex);
+  }
+
+  // すべての項目はオプショナル（プロパティ自体が省略可能）として定義
+  const field = baseSchema.optional();
+
+  return z.object({
+    [AppLocale.EN]: field,
+    [AppLocale.JA]: field,
+    [AppLocale.ES]: field,
+    [AppLocale.DE]: field,
+    [AppLocale.FR]: field,
+    [AppLocale.IT]: field,
+    [AppLocale.ZH]: field,
+  });
+};
+
+/**
+ * 標準（制約なし）の多言語対応文字列スキーマ
+ */
+export const MultilingualStringSchema = createMultilingualStringSchema();
 
 export type MultilingualString = z.infer<typeof MultilingualStringSchema>;

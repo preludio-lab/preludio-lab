@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Score } from '@/domain/score/Score';
+import { Score, NotationFormat } from '@/domain/score/Score';
+import { MusicalExample } from '@/domain/score/MusicalExample';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/AbcjsScoreRenderer';
 import { handleClientError } from '@/lib/client-error';
 
@@ -8,7 +9,7 @@ import { handleClientError } from '@/lib/client-error';
  * スコアレンダリングロジックを扱うカスタムフックです。
  * レンダラーのライフサイクルとDOM要素を管理します。
  */
-export function useScoreRenderer(score: Score) {
+export function useScoreRenderer(score: MusicalExample | { data: string; format: NotationFormat }) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   // 依存性の注入 (簡易版)
@@ -21,19 +22,24 @@ export function useScoreRenderer(score: Score) {
     const renderScore = async () => {
       if (!elementRef.current || !score) return;
 
+      // MusicalExample の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
+      // ※ 現状は notationPath に生データが入っている前提、または別途フェッチが必要な設計への布石
+      const data = 'metadata' in score && 'notationPath' in score.metadata ? score.metadata.notationPath : (score as any).data;
+      const format = 'metadata' in score && 'format' in score.metadata ? score.metadata.format : (score as any).format;
+
       try {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: rendering started', { format: score.format });
+          console.debug('useScoreRenderer: レンダリングを開始しました', { format });
         }
 
-        await renderer.render(score, elementRef.current);
+        await renderer.render(data, elementRef.current, format);
 
         if (isMounted && process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: rendering completed');
+          console.debug('useScoreRenderer: レンダリングが完了しました');
         }
       } catch (error) {
         if (isMounted) {
-          handleClientError(error, 'Failed to render score');
+          handleClientError(error, 'スコアのレンダリングに失敗しました');
         }
       }
     };

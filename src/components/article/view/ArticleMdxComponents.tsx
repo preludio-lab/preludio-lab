@@ -33,13 +33,15 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
                     platform: (extracted?.metadata?.platform || audioMetadata?.platform) as any,
                 },
                 options: {
-                    startSeconds: typeof extracted?.options?.startSeconds === 'number'
-                        ? extracted.options.startSeconds
-                        : undefined,
-                    endSeconds: typeof extracted?.options?.endSeconds === 'number'
-                        ? extracted.options.endSeconds
-                        : undefined,
-                }
+                    startSeconds:
+                        typeof extracted?.options?.startSeconds === 'number'
+                            ? extracted.options.startSeconds
+                            : undefined,
+                    endSeconds:
+                        typeof extracted?.options?.endSeconds === 'number'
+                            ? extracted.options.endSeconds
+                            : undefined,
+                },
             };
 
             if (!mergedPlayRequest.src) {
@@ -52,11 +54,7 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
 
             return (
                 <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-                    <AudioPlayerBinder
-                        source={abcContent}
-                        format="abc"
-                        playRequest={mergedPlayRequest}
-                    >
+                    <AudioPlayerBinder source={abcContent} format="abc" playRequest={mergedPlayRequest}>
                         <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
                     </AudioPlayerBinder>
                 </div>

@@ -61,9 +61,12 @@ erDiagram
     Articles ||--o{ SeriesArticles : "is member of"
 
     %% Asset Tables: Scores & Recordings
-    Works ||--o{ Scores : "has sheet music"
+    Works ||--o{ ScoreWorks : "contained in"
+    Scores ||--o{ ScoreWorks : "contains"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Scores }o..|| RecordingSources : "has playback samples"
+    Works ||--o{ MusicalExamples : "has musical excerpts"
+    MusicalExamples }o--|| Scores : "references edition from"
+    MusicalExamples }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
 
@@ -356,84 +359,36 @@ sequenceDiagram
 
 楽譜ビュワーおよび再生プレイヤーで使用するデータ。
 
-### 4.1 `scores` (Universal Asset)
+### 4.1 `scores` (Edition Asset)
 
-| Column                 | Type   | Default | NOT NULL | CHECK | Description                                                |
-| :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
-| **`id`**               | `text` | -       | YES      | -     | **PK**.                                                    |
-| **`work_id`**          | `text` | -       | YES      | -     | **FK to `works.id`**                                       |
-| `slug`                 | `text` | -       | YES      | -     | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1mov-1st-theme`)      |
-| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | 'abc', 'musicxml'                                          |
-| `data_storage_path`    | `text` | -       | YES      | -     | **[R2]** ソースデータパス (e.g. `scores/uuid/source.abc`)  |
-| `svg_storage_path`     | `text` | -       | NO       | -     | **[R2]** レンダリング済みSVGパス (CDNキャッシュ用)         |
-| `layout_dimensions`    | `text` | -       | NO       | -     | **[UX]** 表示サイズ情報 (JSON: `ScoreLayout`)              |
-| `playback_samples`     | `text` | `[]`    | YES      | -     | **[Playback Bindings]** (JSON)                             |
-| `repository_url`       | `text` | -       | NO       | -     | **[Asset Origin]** 楽譜リポジトリのソースURL (IMSLP/PDMX等) |
-| `is_repository_synced` | `integer` | `0`     | YES      | `IN (0, 1)` | 楽譜リポジトリ側との同期完了フラグ                         |
-| `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                      |
-| `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                      |
+楽譜のエディション（出版物）そのものを管理します。特定の1曲に限定されず、複数の曲を含む「楽譜集」としても機能します。
 
-> [!NOTE]
-> **`is_repository_synced` の同期判定基準**:
-> 以下の条件がすべて満たされた場合に `1` (True) と見なします。それ以外（更新待機中、またはエラー発生時）は `0` です。
-> 1. **Data Presence**: `repository_url` からの取得データが `data` カラム（または外部ストレージ）に正常に保存されている。
-> 2. **Integrity**: 取得した楽譜データが破損しておらず、楽曲マスタとの関連付けが完了している。
-> 3. **Version Match**: 同期元が提供するメタデータ（ハッシュ値や最終更新日時）と DB 側の記録が一致している。
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`id`** | `text` | - | YES | - | **PK**. UUID v7 |
+| `isbn` | `text` | - | NO | - | ISBN |
+| `gtin` | `text` | - | NO | - | 国際標準商品識別コード (JAN/EAN/UPC) |
+| `affiliate_links` | `text` | `[]` | YES | - | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
+| `preview_url` | `text` | - | NO | - | 閲覧用プレビューURL (PDF等) |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+| `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
 #### 4.1.1 Indexes (Scores)
 
-| Index Name            | Columns              | Type   | Usage                                |
-| :-------------------- | :------------------- | :----- | :----------------------------------- |
-| `idx_scores_work_id`  | `(work_id)`          | B-Tree | 外部キーによる検索                   |
-| `idx_scores_slug`     | `(work_id, slug)`    | **UNIQUE** | 楽曲内でのスラグ一意性・基本取得     |
-| `idx_scores_playback` | `(playback_samples)` | B-Tree | 逆引き検索（ソースIDから楽譜を特定） |
-
-> [!NOTE]
-> **JSONカラム (`playback_samples`) のインデックスについて**:
-> SQLite/libSQLの標準的なB-Treeインデックスは、JSON全体の一致には機能しますが、内部の要素（`source_id`等）による部分的な検索を高速化するものではありません。
-> 録音ソースIDからの逆引きが頻繁に発生し、パフォーマンスが問題となる場合は、仮想カラム (Generated Column) を用いた機能インデックス、または正規化された交差テーブルの導入を検討してください。
-
-#### 4.1.2 JSON Type Definitions
-
-##### 4.1.2.1 `playback_samples` (Playback Binding)
-
-1つの楽譜切片に対応する1つ以上の録音ソースと再生位置の定義。
-
-```typescript
-type PlaybackSample = {
-  recording_source_id: string; // FK to recording_sources.id (Not recordings.id) - Source固有の時間軸のため
-  start_seconds: number; // 再生開始時間（秒）
-  end_seconds: number; // 再生終了時間（秒）
-  is_default: boolean; // デフォルト再生用フラグ
-  label?: string; // UI表示用 (e.g. "Gould (1981)")
-};
-
-type PlaybackSamples = PlaybackSample[];
-```
-
-##### 4.1.2.2 `layout_dimensions` (Score Layout)
-
-SVG等の楽譜を非同期で読み込む際のレイアウトシフト（CLS）を防止するための寸法情報。
-
-```typescript
-type ScoreLayout = {
-  aspectRatio: number; // e.g. 2.5 (width / height)
-  viewBox: string; // e.g. "0 0 800 300"
-  originalWidth?: number; // 原寸の幅 (px)
-};
-```
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_scores_isbn` | `(isbn)` | B-Tree | ISBNによる検索 |
 
 ### 4.2 `score_translations` (Localized Metadata)
-
-楽譜のキャプションや説明文。
 
 | Column | Type | Default | NOT NULL | CHECK | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **`id`** | `text` | - | YES | - | **PK**. |
 | **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
 | `lang` | `text` | - | YES | - | ISO Language Code |
-| `caption` | `text` | - | YES | - | 譜例のタイトル (e.g. "第1主題") |
-| `description` | `text` | - | NO | - | 音楽的な補足解説（詳細表示モーダル等で使用） |
+| `publisher` | `text` | - | NO | - | 出版社 (組織または個人) |
+| `editor` | `text` | - | NO | - | 校訂者・監修者 (個人または監修団体) |
+| `edition` | `text` | - | NO | - | 版の名前 (e.g. "Urtext", "全音ピアノライブラリー") |
 | `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
 | `updated_at` | `text` | - | YES | **`datetime(updated_at) IS NOT NULL`** | 更新日時 |
 
@@ -443,7 +398,73 @@ type ScoreLayout = {
 | :----------------------- | :----------------- | :----- | :------------------- |
 | `idx_score_trans_lookup` | `(score_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
 
-### 4.3 `recordings` (Audio/Video Entity)
+### 4.3 `score_works` (Piece-to-Edition Mapping)
+
+楽譜エディションに含まれる楽曲を定義する多対多の中間テーブル。
+
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`score_id`** | `text` | - | YES | - | **FK to `scores.id`** |
+| **`work_id`** | `text` | - | YES | - | **FK to `works.id`** |
+| `created_at` | `text` | - | YES | **`datetime(created_at) IS NOT NULL`** | 作成日時 |
+
+#### 4.3.1 Indexes (Score Works)
+
+| Index Name | Columns | Type | Usage |
+| :--- | :--- | :--- | :--- |
+| `idx_score_works_lookup` | `(score_id, work_id)` | **UNIQUE** | 重複防止 |
+| `idx_score_works_work` | `(work_id)` | B-Tree | 楽曲から対応する楽譜を検索 |
+
+### 4.4 `musical_examples` (Excerpt Component)
+
+記事内で解説のために使用される「譜例」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
+
+| Column                 | Type   | Default | NOT NULL | CHECK | Description                                                |
+| :--------------------- | :---   | :---    | :---     | :---  | :--------------------------------------------------------- |
+| **`id`**               | `text` | -       | YES      | -     | **PK**. UUID v7                                            |
+| **`work_id`**          | `text` | -       | YES      | -     | **FK to `works.id`**                                       |
+| **`score_id`**         | `text` | -       | NO       | -     | **FK to `scores.id`** (出典。指定なしは自作/不明)          |
+| `slug`                 | `text` | -       | YES      | -     | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)          |
+| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | データ形式                                                 |
+| `data_storage_path`    | `text` | -       | YES      | -     | **[R2]** 譜面データパス                                    |
+| `measure_range`        | `text` | -       | NO       | -     | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
+| `playback_bindings`    | `text` | `[]`    | YES      | -     | **[Recording Sync]** (JSON: `PlaybackBinding[]`)           |
+| `created_at`           | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                          |
+| `updated_at`           | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                          |
+| `format`               | `text` | -       | YES      | `IN ('abc', 'musicxml')` | データ形式 (Constants referencing `ScoreFormat`)    |
+
+#### 4.3.1 Indexes (Musical Examples)
+
+| Index Name                  | Columns                 | Type   | Usage                                |
+| :-------------------------- | :---------------------- | :----- | :----------------------------------- |
+| `idx_mus_ex_work_id`        | `(work_id)`             | B-Tree | 楽曲単位での譜例取得                 |
+| `idx_mus_ex_slug`           | `(work_id, slug)`       | **UNIQUE** | 楽曲内の一意スラグ取得               |
+| `idx_mus_ex_score_id`       | `(score_id)`            | B-Tree | 出典（エディション）からの逆引き     |
+
+#### 4.3.2 JSON Type Definitions
+
+##### 4.3.2.1 `measure_range`
+
+```typescript
+type MeasureRange = {
+  start: number; // 開始小節 (1-indexed)
+  end: number;   // 終了小節
+  label?: string; // e.g. "bars 1-8"
+};
+```
+
+##### 4.3.2.2 `playback_bindings`
+
+```typescript
+type PlaybackBinding = {
+  recording_source_id: string; // FK to recording_sources.id
+  start_seconds: number;
+  end_seconds: number;
+  is_default: boolean;
+};
+```
+
+### 4.4 `recordings` (Audio/Video Entity)
 
 「誰の、いつの演奏か」を管理する実体。
 

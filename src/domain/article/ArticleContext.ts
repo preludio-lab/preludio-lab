@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ArticleCategory } from './ArticleMetadata';
+import { SlugSchema } from '../shared/Slug';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
@@ -128,7 +129,7 @@ export const SeriesAssignmentSchema = z.object({
   /** シリーズID (UUID等) */
   seriesId: z.string().uuid().or(z.string().min(1).max(50)),
   /** シリーズのスラグ (URL用) */
-  seriesSlug: z.string().min(1).max(64),
+  seriesSlug: SlugSchema,
   /** シリーズのタイトル (スナップショット) */
   seriesTitle: z.string().min(1).max(50),
   /** シリーズ内での表示順序 */
@@ -150,7 +151,7 @@ export const RelatedArticleSchema = z.object({
   /** 記事カテゴリ */
   category: z.nativeEnum(ArticleCategory),
   /** URLスラグ */
-  slug: z.string().min(1).max(64),
+  slug: SlugSchema,
   publishedAt: z.coerce.date().nullable().default(null),
 });
 
