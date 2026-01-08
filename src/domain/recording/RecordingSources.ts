@@ -24,13 +24,14 @@ export type RecordingProvider = (typeof RecordingProvider)[keyof typeof Recordin
  * 音源の品質レベル
  */
 export const RecordingAudioQuality = {
-    /** 標準品質 (Standard / Compressed) - 例: YouTubeのデフォルト、Spotify Normal */
+    /** 標準品質 (Standard) - 日常的な視聴に適したレベル */
     STANDARD: 'standard',
-    /** 高音質 (High Bitrate) - 例: Spotify High/Very High, YouTube High Quality Audio */
+    /** 高音質 (High Quality) - 音楽的な細部を楽しめる優れたレベル */
     HIGH: 'high',
-    /** ロスレス / CD音質 (Lossless / CD Quality) - 例: Apple Music Lossless, R2上のWAVファイル */
-    LOSSLESS: 'lossless',
+    /** 最高品質 (Premium) - 原音に近い、極めて没入感の高い究極のレベル */
+    PREMIUM: 'premium',
 } as const;
+
 
 export type RecordingAudioQuality = (typeof RecordingAudioQuality)[keyof typeof RecordingAudioQuality];
 
@@ -48,9 +49,10 @@ export const RecordingSourceSchema = z.object({
     /** 
      * 音声の品質レベル 
      * ユースケース: 
-     * 1. 自動選択: ユーザーの通信環境や設定に応じて、最適なソースを自動的に選択する (例: Wi-Fi時はHIGH/LOSSLESS、モバイル通信時はSTANDARD)
-     * 2. UI表示: 「ロスレス対応」などのバッジを表示し、音源の価値をユーザーに伝える
+     * 1. 自動選択: ユーザーの通信環境や設定に応じて、最適なソースを自動的に選択する (例: Wi-Fi時はHIGH/PREMIUM、モバイル通信時はSTANDARD)
+     * 2. UI表示: 「PREMIUM」バッジを表示し、音源の価値をユーザーに伝える
      */
+
     quality: z.nativeEnum(RecordingAudioQuality).optional(),
 });
 

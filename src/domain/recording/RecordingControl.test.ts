@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { RecordingControlSchema } from './RecordingControl';
 
 describe('RecordingControl', () => {
-    it('validates a valid control object', () => {
+    it('有効な制御オブジェクトをバリデーションできること', () => {
         const validData = {
             id: '018b0a1a-2b3c-7d4e-5f6g-7h8i9j0k1l2m',
             workId: '018b0a1a-2b3c-7d4e-5f6g-7h8i9j0k1l2n',
@@ -13,7 +13,7 @@ describe('RecordingControl', () => {
         expect(result.success).toBe(true);
     });
 
-    it('fails when ID exceeds 50 characters', () => {
+    it('IDが50文字を超える場合にバリデーションエラーになること', () => {
         const invalidData = {
             id: 'a'.repeat(51),
             workId: 'some-work-id',
@@ -24,7 +24,7 @@ describe('RecordingControl', () => {
         expect(result.success).toBe(false);
     });
 
-    it('fails when workId exceeds 50 characters', () => {
+    it('workIdが50文字を超える場合にバリデーションエラーになること', () => {
         const invalidData = {
             id: 'some-id',
             workId: 'a'.repeat(51),

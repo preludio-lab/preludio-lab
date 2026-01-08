@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { RecordingMetadataSchema } from './RecordingMetadata';
 
 describe('RecordingMetadata', () => {
-    it('validates valid metadata', () => {
+    it('有効なメタデータをバリデーションできること', () => {
         const validData = {
-            performerName: { en: 'Glenn Gould' },
+            performerName: { en: 'Glenn Gould', ja: 'グレン・グールド' },
             recordingYear: 1981,
             isRecommended: true,
         };
@@ -12,7 +12,7 @@ describe('RecordingMetadata', () => {
         expect(result.success).toBe(true);
     });
 
-    it('fails when recordingYear is below 1800', () => {
+    it('録音年が1800年未満の場合にバリデーションエラーになること', () => {
         const invalidData = {
             performerName: { en: 'Too Early' },
             recordingYear: 1799,
@@ -22,7 +22,7 @@ describe('RecordingMetadata', () => {
         expect(result.success).toBe(false);
     });
 
-    it('fails when recordingYear is above 2999', () => {
+    it('録音年が2999年を超える場合にバリデーションエラーになること', () => {
         const invalidData = {
             performerName: { en: 'Future' },
             recordingYear: 3000,
