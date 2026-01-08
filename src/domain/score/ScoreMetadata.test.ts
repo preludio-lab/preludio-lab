@@ -7,7 +7,7 @@ describe('ScoreMetadata', () => {
         const params = {
             publisher: { en: 'Henle', ja: 'ヘンレ' },
             editor: { en: 'Wallner' },
-            editionName: { ja: '原典版' },
+            edition: { ja: '原典版' },
             isbn: '979-0-2018-0001-1',
             gtin: '4900000000000',
             affiliateLinks: [{ provider: 'amazon', url: 'https://amazon.com/...', label: 'Buy' }],
@@ -17,6 +17,13 @@ describe('ScoreMetadata', () => {
         const metadata = ScoreMetadataSchema.parse(params);
 
         expect(metadata).toEqual(expect.objectContaining(params));
+    });
+
+    it('多言語文字列が20文字を超える場合にエラーになること', () => {
+        const longName = 'a'.repeat(21);
+        expect(() => ScoreMetadataSchema.parse({
+            publisher: { en: longName }
+        })).toThrow();
     });
 
     it('不正な形式でエラーになること', () => {
