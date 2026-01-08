@@ -26,10 +26,10 @@ export const MusicalExampleMetadataSchema = z.object({
     scoreId: z.string().max(50).optional(),
     /** URLスラグ / での階層化を許容 */
     slug: z.string().min(1).max(50).regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/),
-    /** データ形式 */
+    /** データ形式 (ABC/MusicXML) */
     format: z.nativeEnum(ScoreFormat),
-    /** 楽譜データ本体 (ABC/MusicXML等, 最大100KB) */
-    data: z.string().min(1).max(100000),
+    /** 楽譜データへのパス (R2内のキーまたは相対パス) */
+    notationPath: z.string().min(1).max(1024),
     /** 対象とする小節範囲 */
     measureRange: MeasureRangeSchema.optional(),
     /** キャプション (最大30, 多言語) */

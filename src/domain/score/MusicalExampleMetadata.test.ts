@@ -7,7 +7,7 @@ describe('MusicalExampleMetadata', () => {
         workId: 'work-1',
         slug: '1st-theme',
         format: ScoreFormat.ABC,
-        data: 'X:1\nK:C\nCDEFGABc',
+        notationPath: 'scores/beethoven/sym5-theme1.abc',
     };
 
     it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {
@@ -20,8 +20,8 @@ describe('MusicalExampleMetadata', () => {
         expect(() => MusicalExampleMetadataSchema.parse({ ...validParams, slug: 'Invalid Slug' })).toThrow();
     });
 
-    it('データが空の場合にエラーになること', () => {
-        expect(() => MusicalExampleMetadataSchema.parse({ ...validParams, data: '' })).toThrow();
+    it('notationPath が空の場合にエラーになること', () => {
+        expect(() => MusicalExampleMetadataSchema.parse({ ...validParams, notationPath: '' })).toThrow();
     });
 
     it('多言語の caption を持つ MusicalExampleMetadata を作成できること', () => {

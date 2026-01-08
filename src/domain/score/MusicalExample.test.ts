@@ -17,7 +17,7 @@ describe('MusicalExample', () => {
             workId: 'work-1',
             slug: 'theme',
             format: ScoreFormat.ABC,
-            data: 'X:1\nK:C\nC',
+            notationPath: 'test.abc',
         });
         const binding = MusicalExampleBindingSchema.parse({ playbackBindings: [] });
         const example = MusicalExampleSchema.parse({ control, metadata, binding });
