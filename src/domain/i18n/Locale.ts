@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * Preludio Lab でサポートされるロケール定義。
  * このファイルはドメイン層における言語定義の「信頼できる唯一の情報源 (Source of Truth)」として機能します。
@@ -59,3 +61,20 @@ export const localeLabels: Record<AppLocale, string> = {
   [AppLocale.JA]: '日本語',
   [AppLocale.ZH]: '中文',
 };
+
+/**
+ * Multilingual String
+ * 多言語対応の文字列コンテナ。
+ * AppLocale で定義された各言語コードをキーに持ちます。
+ */
+export const MultilingualStringSchema = z.object({
+  [AppLocale.EN]: z.string().optional(),
+  [AppLocale.JA]: z.string().optional(),
+  [AppLocale.ES]: z.string().optional(),
+  [AppLocale.DE]: z.string().optional(),
+  [AppLocale.FR]: z.string().optional(),
+  [AppLocale.IT]: z.string().optional(),
+  [AppLocale.ZH]: z.string().optional(),
+});
+
+export type MultilingualString = z.infer<typeof MultilingualStringSchema>;
