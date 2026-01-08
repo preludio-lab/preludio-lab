@@ -64,6 +64,31 @@ export type MonetizationTargetCategory =
     (typeof MonetizationTargetCategory)[keyof typeof MonetizationTargetCategory];
 
 /**
+ * Monetization Provider
+ * 収益化要素の提供元プラットフォーム
+ */
+export const MonetizationProvider = {
+    /** Amazon (CD, 楽譜, 書籍等) */
+    AMAZON: 'amazon',
+    /** Apple Music / iTunes (配信, 楽曲購入) */
+    APPLE_MUSIC: 'apple_music',
+    /** Spotify (配信) */
+    SPOTIFY: 'spotify',
+    /** Presto Music (英・クラシック音楽専門ストア) */
+    PRESTO_MUSIC: 'presto_music',
+    /** Sheet Music Plus (米・世界最大級の楽譜サイト) */
+    SHEET_MUSIC_PLUS: 'sheet_music_plus',
+    /** ぷりんと楽譜 (ヤマハ・国内最大級の楽譜配信) */
+    YAMAHA_PRINTO: 'yamaha_printo',
+    /** Henle Library (独・ヘンレ社デジタル/物理楽譜) */
+    HENLE: 'henle',
+    /** Ko-fi (クリエイター支援プラットフォーム) */
+    KO_FI: 'ko_fi',
+} as const;
+
+export type MonetizationProvider = (typeof MonetizationProvider)[keyof typeof MonetizationProvider];
+
+/**
  * 記事に紐付く収益化リンク（アフィリエイト、自社商品等）
  * 用語集: Monetization Element
  */
@@ -89,7 +114,12 @@ export const MonetizationElementSchema = z.object({
      * 例: "¥3,500", "$5.00 / mo"
      */
     priceHint: z.string().max(20).optional(),
+    /** 
+     * 提供元プラットフォーム (UIでのアイコン表示や識別に利用) 
+     */
+    provider: z.nativeEnum(MonetizationProvider).optional(),
 });
+
 
 export type MonetizationElement = z.infer<typeof MonetizationElementSchema>;
 
