@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 
 /**
  * ページネーション対応レスポンス
@@ -7,7 +8,7 @@ import { z } from 'zod';
 export const PagedResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
     z.object({
         items: z.array(itemSchema),
-        totalCount: z.number().int().nonnegative(),
+        totalCount: zInt().nonnegative(),
         hasNextPage: z.boolean(),
         nextCursor: z.string().optional(),
     });

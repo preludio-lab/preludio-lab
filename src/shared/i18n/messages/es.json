@@ -124,6 +124,11 @@
       "Intermediate": "Intermedio",
       "Advanced": "Avanzado"
     },
+    "error": {
+      "title": "Error al cargar el contenido",
+      "description": "Es posible que haya ocurrido un error temporal. Por favor, inténtelo de nuevo más tarde.",
+      "retry": "Reintentar"
+    },
     "readMore": "Leer más"
   }
 }

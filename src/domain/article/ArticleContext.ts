@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 import { ArticleCategory } from './ArticleMetadata';
 import { SlugSchema } from '../shared/Slug';
 
@@ -133,7 +134,7 @@ export const SeriesAssignmentSchema = z.object({
   /** シリーズのタイトル (スナップショット) */
   seriesTitle: z.string().min(1).max(50),
   /** シリーズ内での表示順序 */
-  order: z.number().int().nonnegative().max(9999),
+  order: zInt().nonnegative().max(9999),
 });
 
 export type SeriesAssignment = z.infer<typeof SeriesAssignmentSchema>;

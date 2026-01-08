@@ -2,7 +2,7 @@ import 'server-only';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { env } from '@/lib/env';
 import { Database } from './database.types';
-import { PinoLogger } from '@/infrastructure/logging/pino-logger';
+import { logger } from '@/infrastructure/logging';
 
 /**
  * 管理者権限を持つ Supabase クライアント (Singleton)
@@ -16,7 +16,7 @@ import { PinoLogger } from '@/infrastructure/logging/pino-logger';
  * @throws {Error} サーバーサイド環境以外で呼び出された場合、または環境変数が不足している場合。
  */
 let adminClient: SupabaseClient<Database> | null = null;
-const logger = new PinoLogger();
+// logger は中央エントリポイントから提供されるインスタンスを使用します。
 
 export const getSupabaseAdmin = (): SupabaseClient<Database> => {
   // 1. ランタイムチェック: ブラウザ側での実行を即座にブロック

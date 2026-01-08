@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
 import { createSlugSchema } from '../shared/Slug';
 
@@ -22,9 +23,9 @@ export type NotationFormat = (typeof NotationFormat)[keyof typeof NotationFormat
  */
 export const MeasureRangeSchema = z.object({
     /** 開始小節 (1以上, 9999以下) */
-    startBar: z.number().int().min(1).max(9999),
+    startBar: zInt().min(1).max(9999),
     /** 終了小節 (1以上, 9999以下) */
-    endBar: z.number().int().min(1).max(9999),
+    endBar: zInt().min(1).max(9999),
 });
 
 export type MeasureRange = z.infer<typeof MeasureRangeSchema>;

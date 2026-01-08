@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zInt } from '@/shared/validation/zod';
 
 /**
  * Engagement Metrics
@@ -8,52 +9,15 @@ export const EngagementMetricsSchema = z.object({
     /** 
      * 累計閲覧数 (PageView)
      */
-    viewCount: z.number().int().nonnegative().max(1000000000).default(0),
-
-    /** 
-     * 累計再生数 (Audition)
-     */
-    auditionCount: z.number().int().nonnegative().max(1000000000).default(0),
-
-    /** 
-     * お気に入り数 (Like)
-     */
-    likeCount: z.number().int().nonnegative().max(10000000).default(0),
-
-    /** 
-     * 共鳴数 (Resonance)
-     */
-    resonanceCount: z.number().int().nonnegative().max(1000).default(0),
-
-    /** 
-     * シェア数 (SocialShare)
-     */
-    shareCount: z.number().int().nonnegative().max(10000000).default(0),
-
-    /** 
-     * アフィリエイトクリック数 (AffiliateClick)
-     */
-    affiliateClickCount: z.number().int().nonnegative().max(100000).default(0),
-
-    /** 
-     * コンバージョン数 (Conversion)
-     * 成果地点（購入・契約等）に到達した数。
-     */
-    conversionCount: z.number().int().nonnegative().max(100000).default(0),
-
-    /**
-     * 合計収益 (TotalRevenue)
-     * 記事から発生した推定収益額。
-     * 国際展開を考慮し、基準通貨は USD (セント単位の整数) とすることを推奨。
-     * 例: $10.50 -> 1050
-     */
-    totalRevenue: z.number().int().nonnegative().max(10000000).default(0),
-
-    /** 
-     * 合計滞在時間 (TotalTimeOnPage)
-     * 精度を維持するため累積値を保持。平均は DTO 等で算出。
-     */
-    totalTimeOnPageSeconds: z.number().int().nonnegative().max(1000000000).default(0),
+    viewCount: zInt().nonnegative().max(1000000000).default(0),
+    auditionCount: zInt().nonnegative().max(1000000000).default(0),
+    likeCount: zInt().nonnegative().max(10000000).default(0),
+    resonanceCount: zInt().nonnegative().max(1000).default(0),
+    shareCount: zInt().nonnegative().max(10000000).default(0),
+    affiliateClickCount: zInt().nonnegative().max(100000).default(0),
+    conversionCount: zInt().nonnegative().max(100000).default(0),
+    totalRevenue: zInt().nonnegative().max(10000000).default(0),
+    totalTimeOnPageSeconds: zInt().nonnegative().max(1000000000).default(0),
 });
 
 export type EngagementMetrics = z.infer<typeof EngagementMetricsSchema>;

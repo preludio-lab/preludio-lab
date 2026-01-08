@@ -112,6 +112,11 @@
       "Intermediate": "Fortgeschritten",
       "Advanced": "Experte"
     },
+    "error": {
+      "title": "Fehler beim Laden des Inhalts",
+      "description": "Möglicherweise ist ein temporärer Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+      "retry": "Wiederholen"
+    },
     "readMore": "Mehr lesen"
   },
   "Consent": {

@@ -124,6 +124,11 @@
       "Intermediate": "中级",
       "Advanced": "高级"
     },
+    "error": {
+      "title": "加载内容时出错",
+      "description": "可能发生了临时错误。请稍后重试。",
+      "retry": "重试"
+    },
     "readMore": "阅读更多"
   }
 }

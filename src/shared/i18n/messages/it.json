@@ -124,6 +124,11 @@
       "Intermediate": "Intermedio",
       "Advanced": "Avanzato"
     },
+    "error": {
+      "title": "Errore durante il caricamento del contenuto",
+      "description": "Potrebbe essersi verificato un errore temporaneo. Riprova più tardi.",
+      "retry": "Riprova"
+    },
     "readMore": "Leggi di più"
   }
 }

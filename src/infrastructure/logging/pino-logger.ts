@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { ILogger } from '@/shared/logging/logger';
+import { Logger } from '@/shared/logging/logger';
 
 /**
  * インフラ層の実装: Pino Logger
@@ -7,7 +7,7 @@ import { ILogger } from '@/shared/logging/logger';
  * ILogger の Pino による具体的な実装。
  * 主にサーバーコンポーネントおよびサーバーアクションで使用されます。
  */
-export class PinoLogger implements ILogger {
+export class PinoLogger implements Logger {
   private logger: pino.Logger;
 
   constructor() {
