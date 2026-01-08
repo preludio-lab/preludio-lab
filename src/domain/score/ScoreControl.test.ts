@@ -8,8 +8,9 @@ describe('ScoreControl', () => {
         const control = createScoreControl(id, now, now);
 
         expect(control.id).toBe(id);
-        expect(control.createdAt).toBe(now);
-        expect(control.updatedAt).toBe(now);
+        // z.coerce.date() を通ると別インスタンスになるため toEqual を使用
+        expect(control.createdAt).toEqual(now);
+        expect(control.updatedAt).toEqual(now);
     });
 
     it('workId を持たなくなったこと', () => {

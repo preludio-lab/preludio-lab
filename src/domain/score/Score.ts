@@ -1,30 +1,36 @@
-import { ScoreControl } from './ScoreControl';
-import { ScoreMetadata } from './ScoreMetadata';
-import { ScoreFormatType } from './ScoreFormat';
+import { z } from 'zod';
+import { ScoreControlSchema } from './ScoreControl';
+import { ScoreMetadataSchema } from './ScoreMetadata';
 
 /**
  * Score (Asset/Edition)
  * 楽譜エディションのルートエンティティ。
- * 複数の楽曲（Work）を含む可能性があるため、Workとの直接の強固な紐付けは持ちません。
  */
-export interface Score {
-  readonly control: ScoreControl;
-  readonly metadata: ScoreMetadata;
-}
-
-export const createScore = (control: ScoreControl, metadata: ScoreMetadata): Score => ({
-  control,
-  metadata,
+export const ScoreSchema = z.object({
+  control: ScoreControlSchema,
+  metadata: ScoreMetadataSchema,
 });
+
+export type Score = z.infer<typeof ScoreSchema>;
+
+/**
+ * Score の生成
+ */
+export const createScore = (control: any, metadata: any): Score => {
+  return ScoreSchema.parse({
+    control,
+    metadata,
+  });
+};
+
+// IScoreRenderer はインターフェースなので Zod 対象外だが型は使用する
+import { ScoreFormatType } from './ScoreFormat';
+export { ScoreFormat, type ScoreFormatType } from './ScoreFormat';
 
 /**
  * IScoreRenderer
- * 楽譜レンダリングのインターフェース
- * @deprecated 譜例（MusicalExample）の導入に伴い、今後は MusicalExample を主体としたレンダリングに移行します。
+ * @deprecated
  */
 export interface IScoreRenderer {
   render(data: string, element: HTMLElement, format: ScoreFormatType): Promise<void>;
 }
-
-// 既存コードとの互換性のために re-export (必要に応じて)
-export { ScoreFormat, type ScoreFormatType } from './ScoreFormat';

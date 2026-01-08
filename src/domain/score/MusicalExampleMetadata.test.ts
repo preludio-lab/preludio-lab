@@ -3,18 +3,31 @@ import { createMusicalExampleMetadata } from './MusicalExampleMetadata';
 import { ScoreFormat } from './ScoreFormat';
 
 describe('MusicalExampleMetadata', () => {
-    it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {
-        const params = {
-            workId: 'work-1',
-            slug: '1st-theme',
-            format: ScoreFormat.ABC,
-            data: 'X:1\nK:C\nCDEFGABc',
-        };
-        const metadata = createMusicalExampleMetadata(params);
+    const validParams = {
+        workId: 'work-1',
+        slug: '1st-theme',
+        format: ScoreFormat.ABC,
+        data: 'X:1\nK:C\nCDEFGABc',
+    };
 
-        expect(metadata.workId).toBe(params.workId);
-        expect(metadata.slug).toBe(params.slug);
-        expect(metadata.format).toBe(params.format);
-        expect(metadata.data).toBe(params.data);
+    it('必須フィールドを持つ MusicalExampleMetadata を作成できること', () => {
+        const metadata = createMusicalExampleMetadata(validParams);
+        expect(metadata.workId).toBe(validParams.workId);
+        expect(metadata.format).toBe(validParams.format);
+    });
+
+    it('slugの形式が不正な場合にエラーになること', () => {
+        expect(() => createMusicalExampleMetadata({ ...validParams, slug: 'Invalid Slug' })).toThrow();
+    });
+
+    it('データが空の場合にエラーになること', () => {
+        expect(() => createMusicalExampleMetadata({ ...validParams, data: '' })).toThrow();
+    });
+
+    it('小節範囲のラベルが長すぎる場合にエラーになること', () => {
+        expect(() => createMusicalExampleMetadata({
+            ...validParams,
+            measureRange: { startBar: 1, endBar: 8, label: 'a'.repeat(21) }
+        })).toThrow();
     });
 });

@@ -9,7 +9,8 @@ describe('Score', () => {
         const metadata = createScoreMetadata({ publisherName: 'Henle' });
         const score = createScore(control, metadata);
 
-        expect(score.control).toBe(control);
-        expect(score.metadata).toBe(metadata);
+        // Zod.parse() を通ると新しいオブジェクトになるため toEqual を使用
+        expect(score.control).toEqual(control);
+        expect(score.metadata).toEqual(metadata);
     });
 });

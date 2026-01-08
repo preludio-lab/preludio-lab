@@ -1,33 +1,39 @@
-/**
- * 譜例ID
- * UUID v7
- */
-export type MusicalExampleId = string;
-
-/**
- * 譜例IDホルダー
- */
-export interface MusicalExampleIdHolder {
-    readonly id: MusicalExampleId;
-}
+import { z } from 'zod';
 
 /**
  * 譜例コントロール
  */
-export interface MusicalExampleControl extends MusicalExampleIdHolder {
-    readonly articleId: string; // どの記事で使用されているか
-    readonly createdAt: Date;
-    readonly updatedAt: Date;
-}
+export const MusicalExampleControlSchema = z.object({
+    /** 譜例ID (UUID v7) */
+    id: z.string().min(1).max(50),
+    /** 使用されている記事のID */
+    articleId: z.string().min(1).max(50),
+    /** 作成日時 */
+    createdAt: z.coerce.date(),
+    /** 最終更新日時 */
+    updatedAt: z.coerce.date(),
+});
 
+export type MusicalExampleControl = z.infer<typeof MusicalExampleControlSchema>;
+
+/**
+ * 譜例ID
+ */
+export type MusicalExampleId = string;
+
+/**
+ * MusicalExampleControl の生成
+ */
 export const createMusicalExampleControl = (
-    id: MusicalExampleId,
+    id: string,
     articleId: string,
     createdAt: Date = new Date(),
     updatedAt: Date = new Date()
-): MusicalExampleControl => ({
-    id,
-    articleId,
-    createdAt,
-    updatedAt,
-});
+): MusicalExampleControl => {
+    return MusicalExampleControlSchema.parse({
+        id,
+        articleId,
+        createdAt,
+        updatedAt,
+    });
+};

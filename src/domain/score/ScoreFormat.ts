@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * 楽譜フォーマットの定数定義
  */
@@ -7,6 +9,11 @@ export const ScoreFormat = {
 } as const;
 
 /**
+ * 楽譜フォーマットの Zod スキーマ
+ */
+export const ScoreFormatSchema = z.nativeEnum(ScoreFormat);
+
+/**
  * 楽譜フォーマットの型定義
  */
-export type ScoreFormatType = (typeof ScoreFormat)[keyof typeof ScoreFormat];
+export type ScoreFormatType = z.infer<typeof ScoreFormatSchema>;

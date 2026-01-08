@@ -3,7 +3,7 @@ import { createMusicalExample } from './MusicalExample';
 import { createMusicalExampleControl } from './MusicalExampleControl';
 import { createMusicalExampleMetadata } from './MusicalExampleMetadata';
 import { createMusicalExampleBinding } from './MusicalExampleBinding';
-import { ScoreFormat } from './Score';
+import { ScoreFormat } from './ScoreFormat';
 
 describe('MusicalExample', () => {
     it('MusicalExample を正しく構成できること', () => {
@@ -12,13 +12,14 @@ describe('MusicalExample', () => {
             workId: 'work-1',
             slug: 'theme',
             format: ScoreFormat.ABC,
-            data: 'data',
+            data: 'X:1\nK:C\nC',
         });
         const binding = createMusicalExampleBinding();
         const example = createMusicalExample(control, metadata, binding);
 
-        expect(example.control).toBe(control);
-        expect(example.metadata).toBe(metadata);
-        expect(example.binding).toBe(binding);
+        // Zod.parse() を通ると新しいオブジェクトになるため toEqual を使用
+        expect(example.control).toEqual(control);
+        expect(example.metadata).toEqual(metadata);
+        expect(example.binding).toEqual(binding);
     });
 });

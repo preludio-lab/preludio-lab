@@ -1,25 +1,32 @@
-import { MusicalExampleControl, MusicalExampleId } from './MusicalExampleControl';
-import { MusicalExampleMetadata } from './MusicalExampleMetadata';
-import { MusicalExampleBinding } from './MusicalExampleBinding';
-
-export { type MusicalExampleId };
+import { z } from 'zod';
+import { MusicalExampleControlSchema } from './MusicalExampleControl';
+import { MusicalExampleMetadataSchema } from './MusicalExampleMetadata';
+import { MusicalExampleBindingSchema } from './MusicalExampleBinding';
 
 /**
- * 譜例ドメインエンティティ
- * 記事内で使用される譜例の抜粋と、録音ソースとの再生バインディングを表現します。
+ * MusicalExample (Component/Excerpt)
+ * 記事内に埋め込まれる譜例のルートエンティティ。
  */
-export interface MusicalExample {
-    readonly control: MusicalExampleControl;
-    readonly metadata: MusicalExampleMetadata;
-    readonly binding: MusicalExampleBinding;
-}
-
-export const createMusicalExample = (
-    control: MusicalExampleControl,
-    metadata: MusicalExampleMetadata,
-    binding: MusicalExampleBinding
-): MusicalExample => ({
-    control,
-    metadata,
-    binding,
+export const MusicalExampleSchema = z.object({
+    control: MusicalExampleControlSchema,
+    metadata: MusicalExampleMetadataSchema,
+    binding: MusicalExampleBindingSchema,
 });
+
+export type MusicalExample = z.infer<typeof MusicalExampleSchema>;
+export { type MusicalExampleId } from './MusicalExampleControl';
+
+/**
+ * MusicalExample の生成
+ */
+export const createMusicalExample = (
+    control: any,
+    metadata: any,
+    binding: any
+): MusicalExample => {
+    return MusicalExampleSchema.parse({
+        control,
+        metadata,
+        binding,
+    });
+};
