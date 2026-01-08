@@ -24,7 +24,7 @@ export const getSupabaseAdmin = (): SupabaseClient<Database> => {
     const error = new Error(
       'Critical Security Error: getSupabaseAdmin must only be called on the server.',
     );
-    console.error(error.message);
+    logger.error(error.message, error);
     throw error;
   }
 
