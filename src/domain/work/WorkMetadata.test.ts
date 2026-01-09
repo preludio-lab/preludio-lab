@@ -61,6 +61,15 @@ describe('WorkMetadataSchema', () => {
     }).success).toBe(false);
   });
 
+  it('should validate genres array max limit (20)', () => {
+    const manyGenres = Array.from({ length: 21 }, (_, i) => `genre-${i}`);
+    const result = WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { genres: manyGenres }
+    });
+    expect(result.success).toBe(false);
+  });
+
   it('should validate movement-specific genres in WorkPart', () => {
     const partWithForm = {
       id: '550e8400-e29b-41d4-a716-446655440001',

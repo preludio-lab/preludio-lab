@@ -111,11 +111,11 @@ export const MusicalIdentitySchema = z.object({
   /** 拍子 */
   timeSignature: TimeSignatureSchema.optional(),
   /** 
-   * ジャンル・形式リスト (TaxonomyのIDを保持) 
+   * ジャンル・形式リスト (TaxonomyのIDを保持) (最大20要素まで)
    * 作品全体を代表するジャンル（交響曲等）に加え、
    * 楽章単位での形式（ソナタ形式、変奏曲等）を表現するために使用。
    */
-  genres: z.array(z.string().max(32)).default([]),
+  genres: z.array(z.string().max(32)).max(20).default([]),
   /** メトロノーム記号 (BPM数値) */
   bpm: zInt().min(10).max(500).optional(),
   /** メトロノーム単位 (e.g. "quarter") */
