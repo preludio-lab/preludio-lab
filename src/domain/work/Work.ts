@@ -33,7 +33,7 @@ export class Work {
     return this.metadata.era;
   }
   get genres() {
-    return this.metadata.genres;
+    return this.metadata.musicalIdentity?.genres ?? [];
   }
   get title() {
     return this.metadata.title;

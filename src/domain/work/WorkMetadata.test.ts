@@ -11,7 +11,9 @@ describe('WorkMetadataSchema', () => {
       sortOrder: 67
     },
     era: MusicalEra.CLASSICAL,
-    genres: ['symphony'],
+    musicalIdentity: {
+      genres: ['symphony'],
+    },
   };
 
   it('should validate valid metadata', () => {
@@ -48,9 +50,30 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: 'invalid-era' }).success).toBe(false);
   });
 
-  it('should validate genres (array of slugs)', () => {
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, genres: ['symphony', 'sonata'] }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, genres: 'not-an-array' }).success).toBe(false);
+  it('should validate genres (array of slugs) in musicalIdentity', () => {
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { genres: ['symphony', 'sonata'] }
+    }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { genres: 'not-an-array' }
+    }).success).toBe(false);
+  });
+
+  it('should validate movement-specific genres in WorkPart', () => {
+    const partWithForm = {
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      slug: '1st',
+      order: 1,
+      title: { ja: '1st' },
+      musicalIdentity: { genres: ['sonata-form'] }
+    };
+    const result = WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partWithForm] });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parts[0].musicalIdentity?.genres).toContain('sonata-form');
+    }
   });
 
   it('should validate catalogue with complex numbers and sortOrder', () => {
@@ -93,6 +116,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate nested musical properties', () => {
     const musicalIdentity = {
       key: 'c-minor',
+      genres: ['symphony'],
       tempo: 'Allegro con brio',
       tempoTranslation: { ja: '快活に' },
       timeSignature: { numerator: 4, denominator: 4, displayString: 'C' },

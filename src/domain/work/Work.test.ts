@@ -21,7 +21,6 @@ describe('Work Entity', () => {
             sortOrder: 67
         },
         performanceDifficulty: 5,
-        genres: ['symphony'],
         era: MusicalEra.CLASSICAL,
         instrumentation: 'Symphony Orchestra',
         instrumentationFlags: {
@@ -33,6 +32,7 @@ describe('Work Entity', () => {
         },
         musicalIdentity: {
             key: 'c-minor',
+            genres: ['symphony'],
             tempo: 'Allegro con brio',
             tempoTranslation: { ja: '快活に、元気に', en: 'Lively and with spirit' },
             timeSignature: { numerator: 2, denominator: 4 },
@@ -48,6 +48,7 @@ describe('Work Entity', () => {
                 title: { ja: '第1楽章', en: '1st Movement' },
                 musicalIdentity: {
                     key: 'c-minor',
+                    genres: ['sonata-form'],
                     tempo: 'Allegro con brio',
                     timeSignature: { numerator: 2, denominator: 4 },
                 }

@@ -110,6 +110,12 @@ export const MusicalIdentitySchema = z.object({
   tempoTranslation: TempoTranslationSchema.optional(),
   /** 拍子 */
   timeSignature: TimeSignatureSchema.optional(),
+  /** 
+   * ジャンル・形式リスト (TaxonomyのIDを保持) 
+   * 作品全体を代表するジャンル（交響曲等）に加え、
+   * 楽章単位での形式（ソナタ形式、変奏曲等）を表現するために使用。
+   */
+  genres: z.array(z.string().max(32)).default([]),
   /** メトロノーム記号 (BPM数値) */
   bpm: zInt().min(10).max(500).optional(),
   /** メトロノーム単位 (e.g. "quarter") */
@@ -159,15 +165,13 @@ export const WorkMetadataSchema = z.object({
 
   /** 作曲家 ID/Slug */
   composer: z.string().max(64).optional(),
-  /** 
-   * ジャンルリスト (TaxonomyのIDを保持) 
-   * 1つの作品に対し複数カテゴリの割り当てを許容。
-   */
-  genres: z.array(z.string().max(32)).default([]),
   /** 時代区分 (Taxonomy準拠) */
   era: MusicalEraSchema.optional(),
 
-  /** 楽器編成 (テキスト記述 e.g. "Piano solo", "2.2.2.2 - 4.2.3.1 - tmp - str") */
+  /** 
+   * 楽器編成 (テキスト記述 e.g. "Piano solo", "2.2.2.2 - 4.2.3.1 - tmp - str") 
+   * 編成は原則として作品全体で固定されるため、トップレベルで管理。
+   */
   instrumentation: z.string().max(200).optional(),
   /** 楽器編成フラグ (フィルタリング用) */
   instrumentationFlags: InstrumentationFlagsSchema.default({
