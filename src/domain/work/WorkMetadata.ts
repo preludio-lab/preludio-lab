@@ -44,11 +44,10 @@ export const CatalogueSchema = z.object({
    * 
    * 【設計指針】
    * 1. 重複は許容。重複した場合は `number` (文字列) の昇順でタイブレーク。
-   *    (例: 331 と 331a がある場合、両方に 331 を設定すると 331 -> 331a の順になる)
-   * 2. ハイドン (Hob. I:1) 等のカテゴリ付きの場合は、上位桁をカテゴリ管理に使用することを推奨。
-   *    (例: Hob. I:1 -> 1001, Hob. III:1 -> 3001)
+   * 2. ハイドン (Hob. I:1) 等のカテゴリ付きの場合は、小数点で表現することを推奨。
+   *    (例: Hob. I:1 -> 1.001, Hob. III:1 -> 3.001)
    */
-  sortOrder: zInt().min(1).max(1_000_000).optional(),
+  sortOrder: z.number().min(1).max(1_000_000).optional(),
 });
 
 
@@ -139,7 +138,7 @@ export const WorkPartSchema = z.object({
   /** URLスラグ (作品内で一意) e.g. "1st-mov" */
   slug: SlugSchema,
   /** 表示順 (1st, 2nd, ...) */
-  order: zInt().min(1),
+  order: z.number().min(0.1),
   /** 楽章名・パーツタイトル */
   title: TitleSchema,
   /** 補足説明 */
