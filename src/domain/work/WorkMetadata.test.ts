@@ -80,6 +80,17 @@ describe('WorkMetadataSchema', () => {
       ...validMetadata,
       musicalIdentity: { ...musicalIdentity, tempo: 'A'.repeat(51) }
     }).success).toBe(false);
+
+    // Test metronome validation
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { ...musicalIdentity, bpm: 120, metronomeUnit: 'quarter' }
+    }).success).toBe(true);
+
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { ...musicalIdentity, bpm: 5, metronomeUnit: 'invalid' }
+    }).success).toBe(false);
   });
 
   it('should validate nicknames array constraints', () => {

@@ -51,6 +51,12 @@ export class Work {
   get timeSignature() {
     return this.musicalIdentity?.timeSignature;
   }
+  get bpm() {
+    return this.musicalIdentity?.bpm;
+  }
+  get metronomeUnit() {
+    return this.musicalIdentity?.metronomeUnit;
+  }
 
   /**
    * 多楽章作品かどうか

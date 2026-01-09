@@ -24,6 +24,23 @@ export const TimeSignatureSchema = z.object({
   denominator: zInt().min(1).max(64),
 });
 
+/**
+ * メトロノーム単位
+ * ♩=120 の「♩」を定義
+ */
+export const MetronomeUnitSchema = z.enum([
+  'whole',          // 全音符
+  'half',           // 2分音符
+  'quarter',        // 4分音符 (Standard)
+  'eighth',         // 8分音符
+  'sixteenth',      // 16分音符
+  'dotted-half',    // 付点2分音符
+  'dotted-quarter', // 付点4分音符
+  'dotted-eighth',  // 付点8分音符
+]);
+
+export type MetronomeUnit = z.infer<typeof MetronomeUnitSchema>;
+
 /** 多言語文字列の制約定義 */
 const TitleSchema = createMultilingualStringSchema({ max: 30 });
 const DescriptionSchema = createMultilingualStringSchema({ max: 200 });
@@ -43,6 +60,10 @@ export const MusicalIdentitySchema = z.object({
   tempoTranslation: TempoTranslationSchema.optional(),
   /** 拍子 */
   timeSignature: TimeSignatureSchema.optional(),
+  /** メトロノーム記号 (BPM数値) */
+  bpm: zInt().min(10).max(500).optional(),
+  /** メトロノーム単位 (e.g. "quarter") */
+  metronomeUnit: MetronomeUnitSchema.optional(),
 });
 
 export type MusicalIdentity = z.infer<typeof MusicalIdentitySchema>;
