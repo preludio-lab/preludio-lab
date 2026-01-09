@@ -198,8 +198,8 @@ export const WorkMetadataSchema = z.object({
   description: DescriptionSchema.optional(),
   /** 自由タグ */
   tags: z.array(z.string().max(50)).max(100).default([]),
-  /** 構成楽曲・楽章リスト */
-  parts: z.array(WorkPartSchema).default([]),
+  /** 構成楽曲・楽章リスト (最大100要素まで) */
+  parts: z.array(WorkPartSchema).max(100).default([]),
 });
 
 export type WorkMetadata = z.infer<typeof WorkMetadataSchema>;

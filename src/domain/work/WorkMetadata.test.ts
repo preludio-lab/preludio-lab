@@ -76,6 +76,16 @@ describe('WorkMetadataSchema', () => {
     }
   });
 
+  it('should validate parts array max limit (100)', () => {
+    const manyParts = Array.from({ length: 101 }, (_, i) => ({
+      slug: `part-${i}`,
+      order: i + 1,
+      title: { ja: `Part ${i}` }
+    }));
+    const result = WorkMetadataSchema.safeParse({ ...validMetadata, parts: manyParts });
+    expect(result.success).toBe(false);
+  });
+
   it('should validate catalogue with complex numbers and sortOrder', () => {
     const result = WorkMetadataSchema.safeParse({
       ...validMetadata,
