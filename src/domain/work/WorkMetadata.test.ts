@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { WorkMetadataSchema, MetronomeUnit } from './WorkMetadata';
+import { WorkMetadataSchema, MetronomeUnit, WorkEra } from './WorkMetadata';
 
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
@@ -9,6 +9,8 @@ describe('WorkMetadataSchema', () => {
       number: '67',
       sortOrder: 67
     },
+    era: WorkEra.CLASSICAL,
+    genres: ['symphony'],
   };
 
   it('should validate valid metadata', () => {
@@ -38,6 +40,16 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, performanceDifficulty: 5 }).success).toBe(true);
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, performanceDifficulty: 0 }).success).toBe(false);
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, performanceDifficulty: 6 }).success).toBe(false);
+  });
+
+  it('should validate era (WorkEra enum)', () => {
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: WorkEra.BAROQUE }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: 'invalid-era' }).success).toBe(false);
+  });
+
+  it('should validate genres (array of slugs)', () => {
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, genres: ['symphony', 'sonata'] }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, genres: 'not-an-array' }).success).toBe(false);
   });
 
   it('should validate catalogue with complex numbers and sortOrder', () => {

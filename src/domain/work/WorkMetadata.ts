@@ -73,6 +73,29 @@ export const MetronomeUnitSchema = z.enum(
   Object.values(MetronomeUnit) as [MetronomeUnit, ...MetronomeUnit[]]
 );
 
+/**
+ * Eras (時代区分)
+ * Taxonomy準拠の時代区分定義
+ */
+export const WorkEra = {
+  MEDIEVAL: 'medieval',
+  RENAISSANCE: 'renaissance',
+  BAROQUE: 'baroque',
+  CLASSICAL: 'classical',
+  EARLY_ROMANTIC: 'early-romantic',
+  MID_ROMANTIC: 'mid-romantic',
+  LATE_ROMANTIC: 'late-romantic',
+  IMPRESSIONISM: 'impressionism',
+  MODERN: 'modern',
+  CONTEMPORARY: 'contemporary',
+} as const;
+
+export type WorkEra = (typeof WorkEra)[keyof typeof WorkEra];
+
+export const WorkEraSchema = z.enum(
+  Object.values(WorkEra) as [WorkEra, ...WorkEra[]]
+);
+
 /** 多言語文字列の制約定義 */
 const TitleSchema = createMultilingualStringSchema({ max: 150 });
 const DescriptionSchema = createMultilingualStringSchema({ max: 2000 }); // 解説も長文化を想定
@@ -158,10 +181,13 @@ export const WorkMetadataSchema = z.object({
 
   /** 作曲家 ID/Slug */
   composer: z.string().max(64).optional(),
-  /** ジャンル (Taxonomy準拠) */
-  genre: z.string().max(20).optional(),
+  /** 
+   * ジャンルリスト (TaxonomyのIDを保持) 
+   * 1つの作品に対し複数カテゴリの割り当てを許容。
+   */
+  genres: z.array(z.string().max(32)).default([]),
   /** 時代区分 (Taxonomy準拠) */
-  era: z.string().max(20).optional(),
+  era: WorkEraSchema.optional(),
 
   /** 楽器編成 (テキスト記述 e.g. "Piano solo", "2.2.2.2 - 4.2.3.1 - tmp - str") */
   instrumentation: z.string().max(200).optional(),

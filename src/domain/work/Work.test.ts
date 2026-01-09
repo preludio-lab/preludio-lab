@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Work } from './Work';
-import { MetronomeUnit } from './WorkMetadata';
+import { MetronomeUnit, WorkEra } from './WorkMetadata';
 
 describe('Work Entity', () => {
     const validControl = {
@@ -20,6 +20,8 @@ describe('Work Entity', () => {
             sortOrder: 67
         },
         performanceDifficulty: 5,
+        genres: ['symphony'],
+        era: WorkEra.CLASSICAL,
         instrumentation: 'Symphony Orchestra',
         instrumentationFlags: {
             isSolo: false,
@@ -66,6 +68,8 @@ describe('Work Entity', () => {
         expect(work.composer).toBe(validControl.composer);
         expect(work.title.ja).toBe('交響曲第5番');
         expect(work.catalogue).toBe('Op. 67');
+        expect(work.era).toBe(WorkEra.CLASSICAL);
+        expect(work.genres).toContain('symphony');
         expect(work.performanceDifficulty).toBe(5);
         expect(work.instrumentationFlags.isOrchestral).toBe(true);
         expect(work.metadata.musicalIdentity?.key).toBe('c-minor');

@@ -29,6 +29,12 @@ export class Work {
   get composer() {
     return this.control.composer;
   }
+  get era() {
+    return this.metadata.era;
+  }
+  get genres() {
+    return this.metadata.genres;
+  }
   get title() {
     return this.metadata.title;
   }
