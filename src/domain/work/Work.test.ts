@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { Work } from './Work';
 import { MetronomeUnit } from './WorkMetadata';
 import { MusicalEra } from '../shared/MusicalEra';
+import { MusicalGenre } from './MusicalGenre';
 
 describe('Work Entity', () => {
     const validControl = {
@@ -32,7 +33,7 @@ describe('Work Entity', () => {
         },
         musicalIdentity: {
             key: 'c-minor',
-            genres: ['symphony'],
+            genres: [MusicalGenre.ORCHESTRAL.SYMPHONY],
             tempo: 'Allegro con brio',
             tempoTranslation: { ja: '快活に、元気に', en: 'Lively and with spirit' },
             timeSignature: { numerator: 2, denominator: 4 },
@@ -48,7 +49,7 @@ describe('Work Entity', () => {
                 title: { ja: '第1楽章', en: '1st Movement' },
                 musicalIdentity: {
                     key: 'c-minor',
-                    genres: ['sonata-form'],
+                    genres: [MusicalGenre.FORM.SONATA_FORM],
                     tempo: 'Allegro con brio',
                     timeSignature: { numerator: 2, denominator: 4 },
                 }

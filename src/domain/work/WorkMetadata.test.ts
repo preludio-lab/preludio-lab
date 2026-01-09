@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WorkMetadataSchema, MetronomeUnit } from './WorkMetadata';
 import { MusicalEra } from '../shared/MusicalEra';
+import { MusicalGenre } from './MusicalGenre';
 
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
@@ -12,7 +13,7 @@ describe('WorkMetadataSchema', () => {
     },
     era: MusicalEra.CLASSICAL,
     musicalIdentity: {
-      genres: ['symphony'],
+      genres: [MusicalGenre.ORCHESTRAL.SYMPHONY],
     },
   };
 
@@ -76,12 +77,12 @@ describe('WorkMetadataSchema', () => {
       slug: '1st',
       order: 1,
       title: { ja: '1st' },
-      musicalIdentity: { genres: ['sonata-form'] }
+      musicalIdentity: { genres: [MusicalGenre.FORM.SONATA_FORM] }
     };
     const result = WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partWithForm] });
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.parts[0].musicalIdentity?.genres).toContain('sonata-form');
+      expect(result.data.parts[0].musicalIdentity?.genres).toContain(MusicalGenre.FORM.SONATA_FORM);
     }
   });
 
@@ -135,7 +136,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate nested musical properties', () => {
     const musicalIdentity = {
       key: 'c-minor',
-      genres: ['symphony'],
+      genres: [MusicalGenre.ORCHESTRAL.SYMPHONY],
       tempo: 'Allegro con brio',
       tempoTranslation: { ja: '快活に' },
       timeSignature: { numerator: 4, denominator: 4, displayString: 'C' },

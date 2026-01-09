@@ -2,6 +2,7 @@ import { z, zInt } from '@/shared/validation/zod';
 import { createMultilingualStringSchema, MultilingualStringSchema } from '../i18n/Locale';
 import { SlugSchema } from '../shared/Slug';
 import { MusicalEraSchema } from '../shared/MusicalEra';
+import { MusicalGenreSchema } from './MusicalGenre';
 
 /**
  * Musical Property Schemas (Value Objects)
@@ -111,11 +112,11 @@ export const MusicalIdentitySchema = z.object({
   /** 拍子 */
   timeSignature: TimeSignatureSchema.optional(),
   /** 
-   * ジャンル・形式リスト (TaxonomyのIDを保持) (最大20要素まで)
+   * ジャンル・形式リスト (MusicalGenre 準拠) (最大20要素まで)
    * 作品全体を代表するジャンル（交響曲等）に加え、
-   * 楽章単位での形式（ソナタ形式、変奏曲等）を表現するために使用。
+   * 楽章単位での形式（ソナタ形式、変奏曲形式等）を表現するために使用。
    */
-  genres: z.array(z.string().max(32)).max(20).default([]),
+  genres: z.array(MusicalGenreSchema).max(20).default([]),
   /** メトロノーム記号 (BPM数値) */
   bpm: zInt().min(10).max(500).optional(),
   /** メトロノーム単位 (e.g. "quarter") */
