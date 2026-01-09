@@ -601,7 +601,7 @@ type PlaybackBinding = {
 | :---------------------- | :---------------------------------- | :--------- | :------------------------------------- |
 | `idx_works_composer_id` | `(composer_id)`                     | B-Tree     | 作曲家による絞り込み検索               |
 | `idx_works_slug`        | `(composer_id, slug)`               | **UNIQUE** | ルーティング用（作曲家ごとにユニーク） |
-| `idx_works_catalogue`   | `(composer_id, catalogue_sort_order)` | B-Tree     | 作品番号順のソート                     |
+| `idx_works_catalogue`   | `(composer_id, catalogue_prefix, catalogue_sort_order)` | B-Tree     | 作品番号順のソート                     |
 
 ### 5.4 `work_translations`
 
