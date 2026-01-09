@@ -31,6 +31,23 @@ const TempoTranslationSchema = createMultilingualStringSchema({ max: 50 });
 const CompositionPeriodSchema = createMultilingualStringSchema({ max: 20 });
 
 /**
+ * Musical Identity
+ * 楽曲の音楽的な特徴をまとめた値オブジェクト
+ */
+export const MusicalIdentitySchema = z.object({
+  /** 調性 (e.g. "c-major") */
+  key: KeySchema.optional(),
+  /** テンポ (原語表記 e.g. "Allegro") */
+  tempo: TempoSchema.optional(),
+  /** テンポ（多言語訳・補足） */
+  tempoTranslation: TempoTranslationSchema.optional(),
+  /** 拍子 */
+  timeSignature: TimeSignatureSchema.optional(),
+});
+
+export type MusicalIdentity = z.infer<typeof MusicalIdentitySchema>;
+
+/**
  * Work Part
  * 楽章や組曲の一部などを表す構造
  */
@@ -46,15 +63,8 @@ export const WorkPartSchema = z.object({
   /** 補足説明 */
   description: DescriptionSchema.optional(),
 
-  // --- Musical Identity ---
-  /** 調性 */
-  key: KeySchema.optional(),
-  /** テンポ (原語表記 e.g. "Allegro") */
-  tempo: TempoSchema.optional(),
-  /** テンポ（多言語訳・補足） */
-  tempoTranslation: TempoTranslationSchema.optional(),
-  /** 拍子 */
-  timeSignature: TimeSignatureSchema.optional(),
+  /** 音楽的アイデンティティ */
+  musicalIdentity: MusicalIdentitySchema.optional(),
 });
 
 export type WorkPart = z.infer<typeof WorkPartSchema>;
@@ -79,15 +89,8 @@ export const WorkMetadataSchema = z.object({
   /** 楽器編成 (Taxonomy準拠) */
   instrumentation: z.string().max(50).optional(),
 
-  // --- Musical Identity (Typical Values) ---
-  /** 調性 */
-  key: KeySchema.optional(),
-  /** テンポ (原語表記) */
-  tempo: TempoSchema.optional(),
-  /** テンポ（多言語訳・補足） */
-  tempoTranslation: TempoTranslationSchema.optional(),
-  /** 拍子 */
-  timeSignature: TimeSignatureSchema.optional(),
+  /** 音楽的アイデンティティ (代表的な値) */
+  musicalIdentity: MusicalIdentitySchema.optional(),
 
   /** 作曲年 (ソート用) */
   compositionYear: zInt().min(1000).max(2999).optional(),

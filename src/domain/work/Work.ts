@@ -38,6 +38,20 @@ export class Work {
     return `${prefix} ${number}`.trim();
   }
 
+  // --- Musical Identity Shortcuts ---
+  get musicalIdentity() {
+    return this.metadata.musicalIdentity;
+  }
+  get key() {
+    return this.musicalIdentity?.key;
+  }
+  get tempo() {
+    return this.musicalIdentity?.tempo;
+  }
+  get timeSignature() {
+    return this.musicalIdentity?.timeSignature;
+  }
+
   /**
    * 多楽章作品かどうか
    */

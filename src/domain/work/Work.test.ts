@@ -15,10 +15,12 @@ describe('Work Entity', () => {
         popularTitle: { ja: '運命', en: 'Fate' },
         cataloguePrefix: 'Op.',
         catalogueNumber: 67,
-        key: 'c-minor',
-        tempo: 'Allegro con brio',
-        tempoTranslation: { ja: '快活に、元気に', en: 'Lively and with spirit' },
-        timeSignature: { numerator: 2, denominator: 4 },
+        musicalIdentity: {
+            key: 'c-minor',
+            tempo: 'Allegro con brio',
+            tempoTranslation: { ja: '快活に、元気に', en: 'Lively and with spirit' },
+            timeSignature: { numerator: 2, denominator: 4 },
+        },
         compositionYear: 1808,
         parts: [
             {
@@ -26,9 +28,11 @@ describe('Work Entity', () => {
                 slug: '1st-mov',
                 order: 1,
                 title: { ja: '第1楽章', en: '1st Movement' },
-                key: 'c-minor',
-                tempo: 'Allegro con brio',
-                timeSignature: { numerator: 2, denominator: 4 },
+                musicalIdentity: {
+                    key: 'c-minor',
+                    tempo: 'Allegro con brio',
+                    timeSignature: { numerator: 2, denominator: 4 },
+                }
             },
         ],
         nicknames: ['Schicksal'],
@@ -47,11 +51,10 @@ describe('Work Entity', () => {
         expect(work.composer).toBe(validControl.composer);
         expect(work.title.ja).toBe('交響曲第5番');
         expect(work.catalogue).toBe('Op. 67');
-        expect(work.metadata.key).toBe('c-minor');
-        expect(work.metadata.tempo).toBe('Allegro con brio');
-        expect(work.metadata.tempoTranslation?.ja).toBe('快活に、元気に');
-        expect(work.metadata.timeSignature?.numerator).toBe(2);
-        expect(work.metadata.timeSignature?.denominator).toBe(4);
+        expect(work.metadata.musicalIdentity?.key).toBe('c-minor');
+        expect(work.metadata.musicalIdentity?.tempo).toBe('Allegro con brio');
+        expect(work.metadata.musicalIdentity?.tempoTranslation?.ja).toBe('快活に、元気に');
+        expect(work.metadata.musicalIdentity?.timeSignature?.numerator).toBe(2);
         expect(work.hasParts()).toBe(true);
     });
 

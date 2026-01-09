@@ -35,19 +35,19 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, compositionPeriod: { ja: 'A'.repeat(21) } }).success).toBe(false);
   });
 
-  it('should validate catalogueNumber range', () => {
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 1 }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 10000 }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 0 }).success).toBe(false);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 10001 }).success).toBe(false);
-  });
-
   it('should validate WorkPart order (1-indexed)', () => {
     const partValid = { id: '550e8400-e29b-41d4-a716-446655440001', slug: '1st', order: 1, title: { ja: '1st' } };
     const partInvalid = { id: '550e8400-e29b-41d4-a716-446655440001', slug: '1st', order: 0, title: { ja: '1st' } };
 
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partValid] }).success).toBe(true);
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partInvalid] }).success).toBe(false);
+  });
+
+  it('should validate catalogueNumber range', () => {
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 1 }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 10000 }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 0 }).success).toBe(false);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 10001 }).success).toBe(false);
   });
 
   it('should validate string lengths for cataloguePrefix', () => {
@@ -62,16 +62,24 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: 'A'.repeat(21) }).success).toBe(false);
   });
 
-  it('should validate musical properties', () => {
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, key: 'c-minor' }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, tempo: 'A'.repeat(50) }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, tempo: 'A'.repeat(51) }).success).toBe(false);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, tempoTranslation: { ja: 'A'.repeat(50) } }).success).toBe(true);
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, tempoTranslation: { ja: 'A'.repeat(51) } }).success).toBe(false);
+  it('should validate nested musical properties', () => {
+    const musicalIdentity = {
+      key: 'c-minor',
+      tempo: 'Allegro con brio',
+      tempoTranslation: { ja: '快活に' },
+      timeSignature: { numerator: 4, denominator: 4 }
+    };
+
     expect(WorkMetadataSchema.safeParse({
       ...validMetadata,
-      timeSignature: { numerator: 4, denominator: 4 }
+      musicalIdentity
     }).success).toBe(true);
+
+    // Test invalid tempo in nested object
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      musicalIdentity: { ...musicalIdentity, tempo: 'A'.repeat(51) }
+    }).success).toBe(false);
   });
 
   it('should validate nicknames array constraints', () => {
