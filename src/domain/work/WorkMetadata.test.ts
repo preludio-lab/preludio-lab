@@ -53,10 +53,10 @@ describe('WorkMetadataSchema', () => {
       catalogue: { ...validMetadata.catalogue, sortOrder: 0 }
     }).success).toBe(false);
 
-    // Invalid sortOrder (10001)
+    // Invalid sortOrder (1_000_001)
     expect(WorkMetadataSchema.safeParse({
       ...validMetadata,
-      catalogue: { ...validMetadata.catalogue, sortOrder: 10001 }
+      catalogue: { ...validMetadata.catalogue, sortOrder: 1_000_001 }
     }).success).toBe(false);
   });
 
