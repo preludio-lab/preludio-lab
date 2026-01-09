@@ -47,6 +47,8 @@ export const CatalogueSchema = z.object({
    *    (例: 331 -> 331.0, 331a -> 331.1, 330b -> 330.2)
    * 2. ハイドン (Hob. I:1) 等のカテゴリ付きの場合は、小数点で表現することを推奨。
    *    (例: Hob. I:1 -> 1.001, Hob. III:1 -> 3.001)
+   * 3. ベートーヴェン等の複数の Prefix (Op., WoO) が混在する場合は、整数部分にオフセットを設けて管理。
+   *    (例: Op. 1 -> 101.0, WoO 1 -> 2001.0)
    */
   sortOrder: z.number().min(1).max(1_000_000).optional(),
 });
