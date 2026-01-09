@@ -42,6 +42,7 @@ export const MetronomeUnit = {
 
 export type MetronomeUnit = (typeof MetronomeUnit)[keyof typeof MetronomeUnit];
 
+// Zodのz.enumに「空でない配列（タプル）」を渡すための型キャスト
 export const MetronomeUnitSchema = z.enum(
   Object.values(MetronomeUnit) as [MetronomeUnit, ...MetronomeUnit[]]
 );
