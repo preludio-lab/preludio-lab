@@ -28,19 +28,23 @@ export const TimeSignatureSchema = z.object({
  * メトロノーム単位
  * ♩=120 の「♩」を定義
  */
-export const MetronomeUnitSchema = z.enum([
-  'whole',          // 全音符
-  'half',           // 2分音符
-  'quarter',        // 4分音符 (Standard)
-  'eighth',         // 8分音符
-  'sixteenth',      // 16分音符
-  'dotted-half',    // 付点2分音符
-  'dotted-quarter', // 付点4分音符
-  'dotted-eighth',  // 付点8分音符
-  'dotted-sixteenth', // 付点16分音符
-]);
+export const MetronomeUnit = {
+  WHOLE: 'whole', // 全音符
+  HALF: 'half', // 2分音符
+  QUARTER: 'quarter', // 4分音符 (Standard)
+  EIGHTH: 'eighth', // 8分音符
+  SIXTEENTH: 'sixteenth', // 16分音符
+  DOTTED_HALF: 'dotted-half', // 付点2分音符
+  DOTTED_QUARTER: 'dotted-quarter', // 付点4分音符
+  DOTTED_EIGHTH: 'dotted-eighth', // 付点8分音符
+  DOTTED_SIXTEENTH: 'dotted-sixteenth', // 付点16分音符
+} as const;
 
-export type MetronomeUnit = z.infer<typeof MetronomeUnitSchema>;
+export type MetronomeUnit = (typeof MetronomeUnit)[keyof typeof MetronomeUnit];
+
+export const MetronomeUnitSchema = z.enum(
+  Object.values(MetronomeUnit) as [MetronomeUnit, ...MetronomeUnit[]]
+);
 
 /** 多言語文字列の制約定義 */
 const TitleSchema = createMultilingualStringSchema({ max: 30 });
