@@ -20,9 +20,27 @@ export const TempoSchema = z.string().max(50);
 export const TimeSignatureSchema = z.object({
   /** 分子 (Number of beats) */
   numerator: zInt().min(1).max(64),
-  /** 分母 (Beat unit) */
+  /** 分分母 (Beat unit) */
   denominator: zInt().min(1).max(64),
+  /** 特殊表記や伝統的表記 (e.g. "C", "Alla Breve") */
+  displayString: z.string().max(20).optional(),
 });
+
+/**
+ * 作品番号・カタログ情報
+ */
+export const CatalogueSchema = z.object({
+  /** 接頭辞 (e.g. "Op.", "BWV", "K.") */
+  prefix: z.string().max(10).optional(),
+  /** 
+   * 番号部分 (e.g. "67", "331a", "I:1")
+   * 数値だけでなく、枝番やローマ数字を含む複雑な表記を許容。
+   */
+  number: z.string().max(20).optional(),
+  /** ソート用の数値 (カタログ順に並べるために使用) */
+  sortOrder: z.number().optional(),
+});
+
 
 /**
  * メトロノーム単位
@@ -48,10 +66,27 @@ export const MetronomeUnitSchema = z.enum(
 );
 
 /** 多言語文字列の制約定義 */
-const TitleSchema = createMultilingualStringSchema({ max: 30 });
-const DescriptionSchema = createMultilingualStringSchema({ max: 200 });
-const TempoTranslationSchema = createMultilingualStringSchema({ max: 50 });
-const CompositionPeriodSchema = createMultilingualStringSchema({ max: 20 });
+const TitleSchema = createMultilingualStringSchema({ max: 150 });
+const DescriptionSchema = createMultilingualStringSchema({ max: 2000 }); // 解説も長文化を想定
+const TempoTranslationSchema = createMultilingualStringSchema({ max: 100 });
+const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 });
+
+/**
+ * 楽器編成フラグ (検索・フィルタリング用)
+ */
+export const InstrumentationFlagsSchema = z.object({
+  /** 独奏曲か */
+  isSolo: z.boolean().default(false),
+  /** 室内楽か */
+  isChamber: z.boolean().default(false),
+  /** 管弦楽曲か */
+  isOrchestral: z.boolean().default(false),
+  /** 合唱を伴うか */
+  hasChorus: z.boolean().default(false),
+  /** 声楽を伴うか (独唱等) */
+  hasVocal: z.boolean().default(false),
+});
+
 
 /**
  * Musical Identity
@@ -79,8 +114,12 @@ export type MusicalIdentity = z.infer<typeof MusicalIdentitySchema>;
  * 楽章や組曲の一部などを表す構造
  */
 export const WorkPartSchema = z.object({
-  /** パーツID (UUID等) */
-  id: z.string().uuid(),
+  /** 
+   * パーツID (UUID)
+   * MDX等の手動管理を容易にするため、入力時は任意。
+   * システムでの生成またはDB保存時に付加されることを想定。
+   */
+  id: z.string().uuid().optional(),
   /** URLスラグ (作品内で一意) e.g. "1st-mov" */
   slug: SlugSchema,
   /** 表示順 (1st, 2nd, ...) */
@@ -105,16 +144,30 @@ export const WorkMetadataSchema = z.object({
   title: TitleSchema,
   /** 通称 (e.g. "運命") */
   popularTitle: TitleSchema.optional(),
-  /** 作品番号接頭辞 (e.g. "Op.", "BWV") */
-  cataloguePrefix: z.string().max(10).optional(),
-  /** 作品番号 (e.g. 67, 1001) */
-  catalogueNumber: zInt().min(1).max(10000).optional(),
+
+  /** カタログ情報 (作品番号等) */
+  catalogue: CatalogueSchema.optional(),
+
+  /** 作曲家 ID/Slug */
+  composer: z.string().max(64).optional(),
   /** ジャンル (Taxonomy準拠) */
   genre: z.string().max(20).optional(),
   /** 時代区分 (Taxonomy準拠) */
   era: z.string().max(20).optional(),
-  /** 楽器編成 (Taxonomy準拠) */
-  instrumentation: z.string().max(50).optional(),
+
+  /** 楽器編成 (テキスト記述 e.g. "Piano solo", "2.2.2.2 - 4.2.3.1 - tmp - str") */
+  instrumentation: z.string().max(200).optional(),
+  /** 楽器編成フラグ (フィルタリング用) */
+  instrumentationFlags: InstrumentationFlagsSchema.default({
+    isSolo: false,
+    isChamber: false,
+    isOrchestral: false,
+    hasChorus: false,
+    hasVocal: false,
+  }),
+
+  /** 演奏難易度 (Taxonomy準拠 1-5) */
+  performanceDifficulty: zInt().min(1).max(5).optional(),
 
   /** 音楽的アイデンティティ (代表的な値) */
   musicalIdentity: MusicalIdentitySchema.optional(),
@@ -124,11 +177,11 @@ export const WorkMetadataSchema = z.object({
   /** 作曲時期 (e.g. "1805年頃") */
   compositionPeriod: CompositionPeriodSchema.optional(),
   /** 検索用別名リスト */
-  nicknames: z.array(z.string().max(30)).max(10).default([]),
+  nicknames: z.array(z.string().max(100)).max(20).default([]),
   /** 作品解説 */
   description: DescriptionSchema.optional(),
   /** 自由タグ */
-  tags: z.array(z.string().max(20)).max(50).default([]),
+  tags: z.array(z.string().max(50)).max(100).default([]),
   /** 構成楽曲・楽章リスト */
   parts: z.array(WorkPartSchema).default([]),
 });

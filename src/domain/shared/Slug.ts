@@ -18,15 +18,12 @@ export const SLUG_HIERARCHICAL_REGEX = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
  * @param allowHierarchical スラッシュによる階層構造を許可するか (デフォルト: true)
  */
 export const createSlugSchema = (maxLength: number = 64, allowHierarchical: boolean = true) => {
-    const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
-    const message = allowHierarchical
-        ? "Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash"
-        : "Slug must be lowercase alphanumeric and hyphens only";
+  const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
+  const message = allowHierarchical
+    ? 'Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash'
+    : 'Slug must be lowercase alphanumeric and hyphens only';
 
-    return z.string()
-        .min(1)
-        .max(maxLength)
-        .regex(regex, { message });
+  return z.string().min(1).max(maxLength).regex(regex, { message });
 };
 
 /**

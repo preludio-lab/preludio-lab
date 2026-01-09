@@ -438,39 +438,39 @@ genres:
         label_ja: アリア（詠唱）
         label_en: Aria / Air
         description: オペラやオラトリオの中で、独唱者が感情を吐露する旋律的な楽曲。ダ・カーポ・アリア等の形式を含む。
-        examples: ["Mozart: Queen of the Night Aria", "Handel: Ombra mai fu"]
+        examples: ['Mozart: Queen of the Night Aria', 'Handel: Ombra mai fu']
       - id: recitative
         label_ja: レチタティーヴォ（叙唱）
         label_en: Recitative
         description: 言葉のイントネーションを重視した、語るような歌唱形式。物語の進行（状況説明）を担う。
-        examples: ["Mozart: Don Giovanni - Recitatives", "Bach: St Matthew Passion - Evangelist"]
+        examples: ['Mozart: Don Giovanni - Recitatives', 'Bach: St Matthew Passion - Evangelist']
       - id: vocal-ensemble
         label_ja: 重唱（アンサンブル）
         label_en: Vocal Ensemble
         description: 二重唱、三重唱など、複数の独唱者が異なる歌詞や感情を同時に歌う形式。
-        examples: ["Mozart: Marriage of Figaro - Sull'aria", "Verdi: Rigoletto - Quartet"]
+        examples: ["Mozart: Marriage of Figaro - Sull'aria", 'Verdi: Rigoletto - Quartet']
       - id: chorus-piece
         label_ja: 合唱曲（劇中・独立）
         label_en: Chorus
         description: オペラやオラトリオにおける群衆の表現、または独立した合唱作品。
-        examples: ["Handel: Hallelujah Chorus", "Verdi: Va, pensiero"]
+        examples: ['Handel: Hallelujah Chorus', 'Verdi: Va, pensiero']
 
       # 2. 典礼・大規模宗教形式（Liturgical / Large-scale Religious）
       - id: mass-ordinary
         label_ja: ミサ通常文（キリエ等）
         label_en: Ordinary of the Mass
         description: キリエ、グロリア、クレド、サンクトゥス、アニュス・デイからなる、カトリック典礼の基本構造。
-        examples: ["Bach: Mass in B minor", "Beethoven: Missa Solemnis"]
+        examples: ['Bach: Mass in B minor', 'Beethoven: Missa Solemnis']
       - id: requiem-form
         label_ja: レクイエム（死者のためのミサ）
         label_en: Requiem
         description: 怒りの日（Dies Irae）などの固有文を含む、追悼のための多楽章形式。
-        examples: ["Mozart: Requiem", "Fauré: Requiem", "Verdi: Requiem"]
+        examples: ['Mozart: Requiem', 'Fauré: Requiem', 'Verdi: Requiem']
       - id: passion-structure
         label_ja: 受難曲構造
         label_en: Passion
         description: 福音書記者の朗読（レチタティーヴォ）、コラール、アリア等で構成される、キリストの受難を扱った形式。
-        examples: ["Bach: St Matthew Passion", "Bach: St John Passion"]
+        examples: ['Bach: St Matthew Passion', 'Bach: St John Passion']
       - id: chorale
         label_ja: コラール
         label_en: Chorale
@@ -480,39 +480,39 @@ genres:
         label_ja: モテット
         label_en: Motet
         description: ポリフォニーによる宗教声楽曲。ルネサンスからバロック期を代表する形式。
-        examples: ["Palestrina: Sicut cervus", "Bach: Jesu, meine Freude"]
+        examples: ['Palestrina: Sicut cervus', 'Bach: Jesu, meine Freude']
       - id: madrigal
         label_ja: マドリガル
         label_en: Madrigal
         description: ルネサンス期の世俗声楽曲。高度な対位法と「語画法（Word Painting）」が特徴。
-        examples: ["Monteverdi: Lamento d'Arianna", "Gesualdo: Moro, lasso"]
+        examples: ["Monteverdi: Lamento d'Arianna", 'Gesualdo: Moro, lasso']
 
       # 3. 歌曲・親密な形式（Art Song / Intimate Forms）
       - id: lied-song
         label_ja: 歌曲・リート
         label_en: Lied / Art Song
         description: 詩と音楽が密接に結びついた、主に独唱とピアノのための形式。
-        examples: ["Schubert: Erlkönig", "Schumann: Dichterliebe"]
+        examples: ['Schubert: Erlkönig', 'Schumann: Dichterliebe']
       - id: song-cycle-structure
         label_ja: 連作歌曲（歌曲集）
         label_en: Song Cycle
         description: 共通の詩人や物語的テーマによって結ばれた、一連の歌曲の集合体。
-        examples: ["Schubert: Winterreise", "Mahler: Kindertotenlieder"]
+        examples: ['Schubert: Winterreise', 'Mahler: Kindertotenlieder']
       - id: strophic
         label_ja: 有節形式
         label_en: Strophic Form
         description: 同じ旋律を歌詞の節ごとに繰り返す、歌曲における最も基本的な構造。
-        examples: ["Schubert: Heidenröslein"]
+        examples: ['Schubert: Heidenröslein']
       - id: through-composed
         label_ja: 通奏形式
         label_en: Through-composed
         description: 反復を排し、歌詞の流れに従って新しい音楽が連続する形式（Durchkomponiert）。
-        examples: ["Schubert: Erlkönig"]
+        examples: ['Schubert: Erlkönig']
       - id: vocalise
         label_ja: ヴォカリーズ
         label_en: Vocalise
         description: 歌詞を持たず、母音のみで歌われる楽曲。技巧的、あるいは叙情的な表現に用いられる。
-        examples: ["Rachmaninoff: Vocalise", "Ravel: Pièce en forme de Habañera"]
+        examples: ['Rachmaninoff: Vocalise', 'Ravel: Pièce en forme de Habañera']
 
       # --- 性格的小品（Character Pieces） ---
       - id: prelude
@@ -573,32 +573,32 @@ genres:
         label_ja: 練習曲（エチュード）
         label_en: Étude
         description: 特定の演奏技法の修練、あるいはその技法を芸術的に昇華させた楽曲。
-        examples: ["Chopin: Études", "Liszt: Transcendental Études"]
+        examples: ['Chopin: Études', 'Liszt: Transcendental Études']
       - id: toccata
         label_ja: トッカータ
         label_en: Toccata
         description: 鍵盤楽器の速いパッセージや打鍵の技巧を誇示する、即興的な形式。
-        examples: ["Bach: Toccata and Fugue in D minor", "Schumann: Toccata"]
+        examples: ['Bach: Toccata and Fugue in D minor', 'Schumann: Toccata']
       - id: caprice-capriccio
         label_ja: 奇想曲（カプリッチョ）
         label_en: Caprice / Capriccio
         description: 気まぐれで自由な形式、または技巧的な性格の強い楽曲。
-        examples: ["Paganini: 24 Caprices", "Brahms: 7 Fantasies (Capriccios)"]
+        examples: ['Paganini: 24 Caprices', 'Brahms: 7 Fantasies (Capriccios)']
       - id: rhapsody
         label_ja: 狂詩曲（ラプソディ）
         label_en: Rhapsody
         description: 民族的・叙事的な主題を自由な構成で繋ぎ合わせた、幻想的かつ技巧的な楽曲。
-        examples: ["Liszt: Hungarian Rhapsodies", "Rachmaninoff: Rhapsody on a Theme of Paganini"]
+        examples: ['Liszt: Hungarian Rhapsodies', 'Rachmaninoff: Rhapsody on a Theme of Paganini']
       - id: transcription-paraphrase
         label_ja: パラフレーズ・編曲
         label_en: Transcription / Paraphrase
         description: 他の楽曲の主題を、特定の楽器のために技巧的に再構成・装飾した作品。
-        examples: ["Liszt: Rigoletto Paraphrase", "Busoni: Chaconne (Bach)"]
+        examples: ['Liszt: Rigoletto Paraphrase', 'Busoni: Chaconne (Bach)']
       - id: concert-piece
         label_ja: 演奏会用楽曲（コンツェルトシュテュック）
         label_en: Concert Piece / Konzertstück
         description: 独奏楽器と管弦楽のための、華麗な技巧を特徴とする単一楽章の作品。
-        examples: ["Weber: Konzertstück in F minor", "Saint-Saëns: Morceau de Concert"]
+        examples: ['Weber: Konzertstück in F minor', 'Saint-Saëns: Morceau de Concert']
       - id: cadenza
         label_ja: カデンツァ
         label_en: Cadenza
@@ -608,7 +608,7 @@ genres:
         label_ja: 華麗なる様式（スタイル・ブリラン）
         label_en: Style Brillant
         description: 19世紀前半に流行した、技巧的で華やかな装飾を特徴とする様式。様々な形式と組み合わされる。
-        examples: ["Chopin: Grande valse brillante", "Weber: Rondo brillante"]
+        examples: ['Chopin: Grande valse brillante', 'Weber: Rondo brillante']
 
       # --- 舞曲（Dances） ---
       # 1. バロック組曲（The Baroque Suite）
@@ -616,49 +616,49 @@ genres:
         label_ja: アルマンド
         label_en: Allemande
         description: 4/4拍子の中庸なテンポ。流れるような16分音符が特徴のドイツ起源の舞曲。
-        examples: ["Bach: French Suite No.5 - Allemande"]
+        examples: ['Bach: French Suite No.5 - Allemande']
       - id: courante
         label_ja: クーラント
         label_en: Courante
         description: 3拍子系の速い舞曲。フランス/イタリア起源。複合リズムや快活なパッセージが特徴。
-        examples: ["Bach: English Suite No.2 - Courante"]
+        examples: ['Bach: English Suite No.2 - Courante']
       - id: sarabande
         label_ja: サラバンド
         label_en: Sarabande
         description: 遅い3拍子。第2拍にアクセントが置かれる、スペイン起源の荘重な舞曲。
-        examples: ["Handel: Sarabande from Suite in D minor", "Bach: Cello Suite No.5 - Sarabande"]
+        examples: ['Handel: Sarabande from Suite in D minor', 'Bach: Cello Suite No.5 - Sarabande']
       - id: gigue
         label_ja: ジーグ
         label_en: Gigue
         description: 6/8拍子等の複合拍子。イギリス起源の非常に速い舞曲。
-        examples: ["Bach: Goldberg Variations - Gigue"]
+        examples: ['Bach: Goldberg Variations - Gigue']
       - id: gavotte
         label_ja: ガヴォット
         label_en: Gavotte
         description: 4/4（2/2）拍子。小節の半ばから始まる（アウフタクト）軽快なフランス舞曲。
-        examples: ["Bach: Gavotte en Rondeau from Violin Partita No.3"]
+        examples: ['Bach: Gavotte en Rondeau from Violin Partita No.3']
       - id: bourree
         label_ja: ブーレ
         label_en: Bourrée
         description: 4/4拍子。非常に速いテンポと、鋭いアウフタクトが特徴のフランス舞曲。
-        examples: ["Bach: Lute Suite in E minor - Bourrée"]
+        examples: ['Bach: Lute Suite in E minor - Bourrée']
       - id: passepied
         label_ja: パスピエ
         label_en: Passepied
         description: 3/8または6/8拍子の非常に速いメヌエットのような舞曲。
-        examples: ["Debussy: Suite bergamasque - Passepied"]
+        examples: ['Debussy: Suite bergamasque - Passepied']
 
       # 2. 古典派・ロマン派の主要舞曲
       - id: minuet
         label_ja: メヌエット
         label_en: Minuet
         description: 優雅な3拍子の宮廷舞曲。交響曲や組曲の第3楽章の定番。
-        examples: ["Mozart: Minuet in D major K.334", "Boccherini: Minuet"]
+        examples: ['Mozart: Minuet in D major K.334', 'Boccherini: Minuet']
       - id: waltz
         label_ja: ワルツ（円舞曲）
         label_en: Waltz
         description: 3拍子。19世紀にウィーンを中心に大流行し、芸術曲としても洗練された。
-        examples: ["Strauss II: Blue Danube", "Chopin: Waltz in C-sharp minor"]
+        examples: ['Strauss II: Blue Danube', 'Chopin: Waltz in C-sharp minor']
       - id: polonaise
         label_ja: ポロネーズ
         label_en: Polonaise
@@ -668,97 +668,97 @@ genres:
         label_ja: マズルカ
         label_en: Mazurka
         description: ポーランド民族舞順。3拍子の第2または第3拍に強いアクセントを持つ。
-        examples: ["Chopin: Mazurkas Op.6, Op.7"]
+        examples: ['Chopin: Mazurkas Op.6, Op.7']
       - id: march
         label_ja: 行進曲
         label_en: March
         description: 四分の二拍子や四分の四拍子の、歩調を合わせるための規則的な音楽。
-        examples: ["Elgar: Pomp and Circumstance Marches", "Mendelssohn: Wedding March"]
+        examples: ['Elgar: Pomp and Circumstance Marches', 'Mendelssohn: Wedding March']
 
       # 3. 民族主義・その他の舞曲
       - id: tarantella
         label_ja: タランテラ
         label_en: Tarantella
         description: イタリア南部起源。6/8拍子の猛烈に速い、毒蜘蛛の伝説に由来する舞曲。
-        examples: ["Chopin: Tarantelle", "Sarasate: Introduction and Tarantella"]
+        examples: ['Chopin: Tarantelle', 'Sarasate: Introduction and Tarantella']
       - id: bolero-habanera
         label_ja: ボレロ・ハバネラ
         label_en: Bolero / Habanera
         description: スペインや中南米の色彩が強い舞曲。官能的な付点リズムを持つ。
-        examples: ["Ravel: Boléro", "Bizet: Carmen - Habanera"]
+        examples: ['Ravel: Boléro', 'Bizet: Carmen - Habanera']
       - id: czardas
         label_ja: チャールダーシュ
         label_en: Czardas
         description: ハンガリー舞曲。遅い「ラッス」と熱狂的な「フリッシュ」の対比が特徴。
-        examples: ["Monti: Csárdás", "Liszt: Hungarian Rhapsody No.2"]
+        examples: ['Monti: Csárdás', 'Liszt: Hungarian Rhapsody No.2']
       - id: polka
         label_ja: ポルカ
         label_en: Polka
         description: ボヘミア起源。2/4拍子の速く弾むようなリズムが特徴。
-        examples: ["Strauss II: Pizzicato Polka", "Smetana: Polkas"]
+        examples: ['Strauss II: Pizzicato Polka', 'Smetana: Polkas']
       - id: galop
         label_ja: ギャロップ
         label_en: Galop
         description: 2/4拍子の非常に速い舞曲。社交界のフィナーレや喜歌劇で多用された。
-        examples: ["Offenbach: Orpheus in the Underworld - Infernal Galop (Can-can)"]
+        examples: ['Offenbach: Orpheus in the Underworld - Infernal Galop (Can-can)']
       - id: pavane-galliard
         label_en: Pavane / Galliard
         description: 荘厳な2拍子（パヴァーヌ）と快活な3拍子（ガリアルド）のペア。
-        examples: ["Ravel: Pavane pour une infante défunte", "Dowland: Lachrimae Pavane"]
+        examples: ['Ravel: Pavane pour une infante défunte', 'Dowland: Lachrimae Pavane']
 
       # --- 固執低音・変奏（Ground Bass / Ostinato Forms） ---
       - id: passacaglia
         label_ja: パッサカリア
         label_en: Passacaglia
         description: 3拍子の重厚な低音主題（バッソ・オスティナート）に基づく変奏形式。主題が上声部に移動することもある。
-        examples: ["Bach: Passacaglia and Fugue in C minor", "Brahms: Symphony No.4 - 4th Mvt"]
+        examples: ['Bach: Passacaglia and Fugue in C minor', 'Brahms: Symphony No.4 - 4th Mvt']
       - id: chaconne
         label_ja: シャコンヌ
         label_en: Chaconne
         description: パッサカリアに近いが、特定の旋律というより「和声進行の繰り返し」に重点を置いた変奏形式。
-        examples: ["Bach: Chaconne from Violin Partita No.2", "Vitali: Chaconne"]
+        examples: ['Bach: Chaconne from Violin Partita No.2', 'Vitali: Chaconne']
       - id: basso-ostinato
         label_ja: バッソ・オスティナート（固執低音）
         label_en: Basso Ostinato / Ground
         description: 楽曲全体、あるいは一部で同じ低音音型を繰り返す技法。バロックの歌曲やアリアで多用される。
-        examples: ["Purcell: Dido's Lament", "Pachelbel: Canon in D"]
+        examples: ["Purcell: Dido's Lament", 'Pachelbel: Canon in D']
       - id: folia
         label_ja: フォリア
         label_en: Folía
         description: スペイン・ポルトガル起源の特定の和声進行を持つ舞曲。多くの作曲家が変奏の題材とした。
-        examples: ["Corelli: La Folia", "Rachmaninoff: Variations on a Theme of Corelli"]
+        examples: ['Corelli: La Folia', 'Rachmaninoff: Variations on a Theme of Corelli']
 
       # --- 標題・物語的構造（Programmatic / Narrative Structures） ---
       - id: symphonic-poem-structure
         label_ja: 交響詩的構造
         label_en: Symphonic Poem Structure
         description: 単一楽章の中で文学的な物語や風景の推移を音楽的に記述する構造。リストやR.シュトラウスが確立。
-        examples: ["Liszt: Les Préludes", "R.Strauss: Also sprach Zarathustra"]
+        examples: ['Liszt: Les Préludes', 'R.Strauss: Also sprach Zarathustra']
       - id: program-symphony-form
         label_ja: 標題交響曲形式
         label_en: Program Symphony Form
         description: 複数の楽章を持ちながら、各楽章に明確な標題と物語性が与えられた形式。
-        examples: ["Berlioz: Symphonie fantastique", "Beethoven: Symphony No.6 'Pastoral'"]
+        examples: ['Berlioz: Symphonie fantastique', "Beethoven: Symphony No.6 'Pastoral'"]
       - id: leitmotif-system
         label_ja: ライトモティーフ体系
         label_en: Leitmotif System
         description: 特定の概念を象徴する短い動機（導機）を変容・結合させ物語を進行させる構造。
-        examples: ["Wagner: Der Ring des Nibelungen", "R.Strauss: Salome"]
+        examples: ['Wagner: Der Ring des Nibelungen', 'R.Strauss: Salome']
       - id: idee-fixe
         label_ja: 固定観念（イデー・フィクス）
         label_en: Idée fixe
         description: 全曲を通じて変容しながら現れる主導的なテーマ。循環形式の先駆けとなる物語的統一技法。
-        examples: ["Berlioz: Symphonie fantastique"]
+        examples: ['Berlioz: Symphonie fantastique']
       - id: melodrame
         label_ja: メロドラマ
         label_en: Mélodrame
         description: 朗読と音楽が組み合わさった形式。物語の進行を直接的な言葉と音楽の描写で支える。
-        examples: ["Schumann: Manfred", "Strauss: Enoch Arden"]
+        examples: ['Schumann: Manfred', 'Strauss: Enoch Arden']
       - id: word-painting
         label_ja: 語画法（マドリガリズム）
         label_en: Word Painting
         description: 歌詞の具体的な意味（「高い」「低い」等）を音型で直接的に描写する伝統的技法。
-        examples: ["Bach: St Matthew Passion", "Purcell: Music for a While"]
+        examples: ['Bach: St Matthew Passion', 'Purcell: Music for a While']
 
 # -----------------------------------------------------------------------------
 # 3. Instrumentations & Ensemble (編成)
@@ -790,7 +790,7 @@ instrumentations:
     label_ja: 独奏楽器とアンサンブル（協奏的）
     label_en: Soloist(s) with Ensemble
     description: 協奏曲や、独唱＋室内楽などの編成。
-  
+
   # --- オーケストラ規模 (Orchestral Scale) ---
   - id: full-orchestra
     label_ja: フルオーケストラ
@@ -1509,7 +1509,7 @@ impression_scales:
         label_en: Triumphant / Radiant
         definition: 圧倒的な祝典感、光溢れる長調、最高音域の輝き。
         examples: Mozart 41 "Jupiter", Handel "Hallelujah", Beethoven 9
-      
+
   - id: vibrancy
     label_ja: 躍動感
     label_en: Vibrancy

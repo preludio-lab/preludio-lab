@@ -122,7 +122,9 @@ export function FocusAudioPlayer() {
           <h2 className="text-2xl font-serif font-bold text-preludio-black leading-tight max-w-md mx-auto">
             {title || 'Unknown Title'}
           </h2>
-          <p className="text-lg text-classic-gold font-medium">{composerName || 'Unknown Composer'}</p>
+          <p className="text-lg text-classic-gold font-medium">
+            {composerName || 'Unknown Composer'}
+          </p>
           {performer && <p className="text-sm text-gray-500 font-medium">{performer}</p>}
 
           {/* Attribution Link */}

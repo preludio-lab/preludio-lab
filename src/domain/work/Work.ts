@@ -33,9 +33,17 @@ export class Work {
     return this.metadata.title;
   }
   get catalogue() {
-    const prefix = this.metadata.cataloguePrefix ?? '';
-    const number = this.metadata.catalogueNumber ?? '';
+    const prefix = this.metadata.catalogue?.prefix ?? '';
+    const number = this.metadata.catalogue?.number ?? '';
     return `${prefix} ${number}`.trim();
+  }
+
+  get performanceDifficulty() {
+    return this.metadata.performanceDifficulty;
+  }
+
+  get instrumentationFlags() {
+    return this.metadata.instrumentationFlags;
   }
 
   // --- Musical Identity Shortcuts ---

@@ -1,0 +1,10 @@
+---
+trigger: model_decision
+description: ブラウザでの動作確認指示
+---
+
+ブラウザを使用して動作確認し、エラーが出ないことを確認してください。
+エラーが発生した場合は原因を確認し、エラーが出なくなるまで修正してください
+
+動作確認シナリオは以下を参照してください
+@/tests/manual/article_domain_test_cases.md

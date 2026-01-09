@@ -32,14 +32,14 @@ export async function generateStaticParams() {
     try {
       const response = await useCase.execute({
         lang,
-        limit: 1000
+        limit: 1000,
       });
 
       for (const item of response.items) {
         params.push({
           lang,
           category: item.category,
-          slug: [item.slug]
+          slug: [item.slug],
         });
       }
     } catch (e) {
@@ -73,11 +73,11 @@ export default async function ContentDetailPage({ params }: Props) {
         category: article.metadata.category,
         status: [ArticleStatus.PUBLISHED],
         limit: 1000,
-        sortBy: ArticleSortOption.TITLE
+        sortBy: ArticleSortOption.TITLE,
       });
 
       const sorted = summaryResponse.items;
-      const currentIndex = sorted.findIndex(c => c.slug === article!.metadata.slug);
+      const currentIndex = sorted.findIndex((c) => c.slug === article!.metadata.slug);
       if (currentIndex >= 0) {
         if (currentIndex > 0) prevContent = sorted[currentIndex - 1];
         if (currentIndex < sorted.length - 1) nextContent = sorted[currentIndex + 1];
@@ -92,11 +92,7 @@ export default async function ContentDetailPage({ params }: Props) {
   }
 
   return (
-    <ArticleViewFeature
-      article={article}
-      prevContent={prevContent}
-      nextContent={nextContent}
-    />
+    <ArticleViewFeature article={article} prevContent={prevContent} nextContent={nextContent} />
   );
 }
 
@@ -114,6 +110,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${article.metadata.displayTitle} | Preludio Lab`,
-    description: article.metadata.excerpt || `Discover more about ${article.metadata.displayTitle} on Preludio Lab.`,
+    description:
+      article.metadata.excerpt ||
+      `Discover more about ${article.metadata.displayTitle} on Preludio Lab.`,
   };
 }

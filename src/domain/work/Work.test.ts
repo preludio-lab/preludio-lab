@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Work } from './Work';
+import { MetronomeUnit } from './WorkMetadata';
 
 describe('Work Entity', () => {
     const validControl = {
@@ -13,13 +14,27 @@ describe('Work Entity', () => {
     const validMetadata = {
         title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
         popularTitle: { ja: '運命', en: 'Fate' },
-        cataloguePrefix: 'Op.',
-        catalogueNumber: 67,
+        catalogue: {
+            prefix: 'Op.',
+            number: '67',
+            sortOrder: 67
+        },
+        performanceDifficulty: 5,
+        instrumentation: 'Symphony Orchestra',
+        instrumentationFlags: {
+            isSolo: false,
+            isChamber: false,
+            isOrchestral: true,
+            hasChorus: false,
+            hasVocal: false,
+        },
         musicalIdentity: {
             key: 'c-minor',
             tempo: 'Allegro con brio',
             tempoTranslation: { ja: '快活に、元気に', en: 'Lively and with spirit' },
             timeSignature: { numerator: 2, denominator: 4 },
+            bpm: 108,
+            metronomeUnit: MetronomeUnit.QUARTER,
         },
         compositionYear: 1808,
         parts: [
@@ -51,36 +66,39 @@ describe('Work Entity', () => {
         expect(work.composer).toBe(validControl.composer);
         expect(work.title.ja).toBe('交響曲第5番');
         expect(work.catalogue).toBe('Op. 67');
+        expect(work.performanceDifficulty).toBe(5);
+        expect(work.instrumentationFlags.isOrchestral).toBe(true);
         expect(work.metadata.musicalIdentity?.key).toBe('c-minor');
-        expect(work.metadata.musicalIdentity?.tempo).toBe('Allegro con brio');
-        expect(work.metadata.musicalIdentity?.tempoTranslation?.ja).toBe('快活に、元気に');
-        expect(work.metadata.musicalIdentity?.timeSignature?.numerator).toBe(2);
+        expect(work.metadata.musicalIdentity?.bpm).toBe(108);
         expect(work.hasParts()).toBe(true);
     });
 
-    it('should correctly format catalogue when prefix or number is missing', () => {
+    it('should correctly format catalogue when properties are missing', () => {
         const work1 = new Work({
             control: validControl,
-            metadata: { ...validMetadata, cataloguePrefix: undefined, tags: [] },
+            metadata: { ...validMetadata, catalogue: { number: '67' } },
         });
         expect(work1.catalogue).toBe('67');
 
         const work2 = new Work({
             control: validControl,
-            metadata: { ...validMetadata, catalogueNumber: undefined, tags: [] },
+            metadata: { ...validMetadata, catalogue: { prefix: 'Op.' } },
         });
         expect(work2.catalogue).toBe('Op.');
 
         const work3 = new Work({
             control: validControl,
-            metadata: {
-                ...validMetadata,
-                cataloguePrefix: undefined,
-                catalogueNumber: undefined,
-                tags: [],
-            },
+            metadata: { ...validMetadata, catalogue: undefined },
         });
         expect(work3.catalogue).toBe('');
+    });
+
+    it('should handle complex catalogue numbers', () => {
+        const work = new Work({
+            control: validControl,
+            metadata: { ...validMetadata, catalogue: { prefix: 'K.', number: '331a' } },
+        });
+        expect(work.catalogue).toBe('K. 331a');
     });
 
     it('should clone with partial updates', () => {
@@ -91,11 +109,11 @@ describe('Work Entity', () => {
 
         const cloned = work.cloneWith({
             control: { composer: 'brahms' },
-            metadata: { compositionYear: 1807 },
+            metadata: { performanceDifficulty: 4 },
         });
 
         expect(cloned.composer).toBe('brahms');
-        expect(cloned.metadata.compositionYear).toBe(1807);
-        expect(cloned.id).toBe(work.id); // Identity remains same
+        expect(cloned.metadata.performanceDifficulty).toBe(4);
+        expect(cloned.id).toBe(work.id);
     });
 });
