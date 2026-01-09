@@ -39,8 +39,8 @@ export const WorkPartSchema = z.object({
   id: z.string().uuid(),
   /** URLスラグ (作品内で一意) e.g. "1st-mov" */
   slug: SlugSchema,
-  /** 表示順 */
-  order: zInt().nonnegative(),
+  /** 表示順 (1st, 2nd, ...) */
+  order: zInt().min(1),
   /** 楽章名・パーツタイトル */
   title: TitleSchema,
   /** 補足説明 */

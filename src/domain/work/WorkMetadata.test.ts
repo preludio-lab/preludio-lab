@@ -42,6 +42,14 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, catalogueNumber: 10001 }).success).toBe(false);
   });
 
+  it('should validate WorkPart order (1-indexed)', () => {
+    const partValid = { id: '550e8400-e29b-41d4-a716-446655440001', slug: '1st', order: 1, title: { ja: '1st' } };
+    const partInvalid = { id: '550e8400-e29b-41d4-a716-446655440001', slug: '1st', order: 0, title: { ja: '1st' } };
+
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partValid] }).success).toBe(true);
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, parts: [partInvalid] }).success).toBe(false);
+  });
+
   it('should validate string lengths for cataloguePrefix', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, cataloguePrefix: 'A'.repeat(10) }).success).toBe(true);
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, cataloguePrefix: 'A'.repeat(11) }).success).toBe(false);
