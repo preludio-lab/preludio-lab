@@ -37,6 +37,7 @@ export const MetronomeUnitSchema = z.enum([
   'dotted-half',    // 付点2分音符
   'dotted-quarter', // 付点4分音符
   'dotted-eighth',  // 付点8分音符
+  'dotted-sixteenth', // 付点16分音符
 ]);
 
 export type MetronomeUnit = z.infer<typeof MetronomeUnitSchema>;
