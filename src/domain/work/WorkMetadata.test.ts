@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { WorkMetadataSchema, MetronomeUnit, WorkEra } from './WorkMetadata';
+import { WorkMetadataSchema, MetronomeUnit } from './WorkMetadata';
+import { MusicalEra } from '../shared/MusicalEra';
 
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
@@ -9,7 +10,7 @@ describe('WorkMetadataSchema', () => {
       number: '67',
       sortOrder: 67
     },
-    era: WorkEra.CLASSICAL,
+    era: MusicalEra.CLASSICAL,
     genres: ['symphony'],
   };
 
@@ -42,8 +43,8 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, performanceDifficulty: 6 }).success).toBe(false);
   });
 
-  it('should validate era (WorkEra enum)', () => {
-    expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: WorkEra.BAROQUE }).success).toBe(true);
+  it('should validate era (MusicalEra enum)', () => {
+    expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: MusicalEra.BAROQUE }).success).toBe(true);
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, era: 'invalid-era' }).success).toBe(false);
   });
 
