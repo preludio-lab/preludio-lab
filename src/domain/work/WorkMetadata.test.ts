@@ -40,12 +40,24 @@ describe('WorkMetadataSchema', () => {
     expect(WorkMetadataSchema.safeParse({ ...validMetadata, performanceDifficulty: 6 }).success).toBe(false);
   });
 
-  it('should validate catalogue with complex numbers', () => {
+  it('should validate catalogue with complex numbers and sortOrder', () => {
     const result = WorkMetadataSchema.safeParse({
       ...validMetadata,
-      catalogue: { prefix: 'K.', number: '331a' }
+      catalogue: { prefix: 'K.', number: '331a', sortOrder: 331 }
     });
     expect(result.success).toBe(true);
+
+    // Invalid sortOrder (0)
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      catalogue: { ...validMetadata.catalogue, sortOrder: 0 }
+    }).success).toBe(false);
+
+    // Invalid sortOrder (10001)
+    expect(WorkMetadataSchema.safeParse({
+      ...validMetadata,
+      catalogue: { ...validMetadata.catalogue, sortOrder: 10001 }
+    }).success).toBe(false);
   });
 
   it('should validate instrumentation layout', () => {

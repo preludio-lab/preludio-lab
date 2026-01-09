@@ -37,8 +37,8 @@ export const CatalogueSchema = z.object({
    * 数値だけでなく、枝番やローマ数字を含む複雑な表記を許容。
    */
   number: z.string().max(20).optional(),
-  /** ソート用の数値 (カタログ順に並べるために使用) */
-  sortOrder: z.number().optional(),
+  /** ソート用の数値 (カタログ順に並べるために使用、1-10000) */
+  sortOrder: zInt().min(1).max(10000).optional(),
 });
 
 
