@@ -14,96 +14,165 @@
 # -----------------------------------------------------------------------------
 # 0. Keys / Tonality (調性)
 # -----------------------------------------------------------------------------
-# 西洋音楽における24の調性。
-# 検索やメタデータ管理に使用する。
+# 西洋音楽における調性および旋律の基礎。
+# 10,000記事のフィルタリングや、楽章ごとの分析に使用。
 keys:
+  # --- Major Keys (長調) ---
   - id: c-major
     label_ja: ハ長調
     label_en: C Major
-  - id: c-minor
-    label_ja: ハ短調
-    label_en: C Minor
   - id: c-sharp-major
     label_ja: 嬰ハ長調
     label_en: C# Major
-  - id: c-sharp-minor
-    label_ja: 嬰ハ短調
-    label_en: C# Minor
   - id: d-flat-major
     label_ja: 変ニ長調
     label_en: Db Major
   - id: d-major
     label_ja: ニ長調
     label_en: D Major
-  - id: d-minor
-    label_ja: ニ短調
-    label_en: D Minor
-  - id: d-sharp-minor
-    label_ja: 嬰ニ短調
-    label_en: D# Minor
   - id: e-flat-major
     label_ja: 変ホ長調
     label_en: Eb Major
-  - id: e-flat-minor
-    label_ja: 変ホ短調
-    label_en: Eb Minor
   - id: e-major
     label_ja: ホ長調
     label_en: E Major
-  - id: e-minor
-    label_ja: ホ短調
-    label_en: E Minor
   - id: f-major
     label_ja: ヘ長調
     label_en: F Major
-  - id: f-minor
-    label_ja: ヘ短調
-    label_en: F Minor
   - id: f-sharp-major
     label_ja: 嬰ヘ長調
     label_en: F# Major
-  - id: f-sharp-minor
-    label_ja: 嬰ヘ短調
-    label_en: F# Minor
   - id: g-flat-major
     label_ja: 変ト長調
     label_en: Gb Major
   - id: g-major
     label_ja: ト長調
     label_en: G Major
+  - id: a-flat-major
+    label_ja: 変イ長調
+    label_en: Ab Major
+  - id: a-major
+    label_ja: イ長調
+    label_en: A Major
+  - id: b-flat-major
+    label_ja: 変ロ長調
+    label_en: Bb Major
+  - id: b-major
+    label_ja: ロ長調
+    label_en: B Major
+  - id: c-flat-major
+    label_ja: 変ハ長調
+    label_en: Cb Major
+
+  # --- Minor Keys (短調) ---
+  - id: c-minor
+    label_ja: ハ短調
+    label_en: C Minor
+  - id: c-sharp-minor
+    label_ja: 嬰ハ短調
+    label_en: C# Minor
+  - id: d-minor
+    label_ja: ニ短調
+    label_en: D Minor
+  - id: d-sharp-minor
+    label_ja: 嬰ニ短調
+    label_en: D# Minor
+  - id: e-flat-minor
+    label_ja: 変ホ短調
+    label_en: Eb Minor
+  - id: e-minor
+    label_ja: ホ短調
+    label_en: E Minor
+  - id: f-minor
+    label_ja: ヘ短調
+    label_en: F Minor
+  - id: f-sharp-minor
+    label_ja: 嬰ヘ短調
+    label_en: F# Minor
   - id: g-minor
     label_ja: ト短調
     label_en: G Minor
   - id: g-sharp-minor
     label_ja: 嬰ト短調
     label_en: G# Minor
-  - id: a-flat-major
-    label_ja: 変イ長調
-    label_en: Ab Major
-  - id: a-flat-minor
-    label_ja: 変イ短調
-    label_en: Ab Minor
-  - id: a-major
-    label_ja: イ長調
-    label_en: A Major
   - id: a-minor
     label_ja: イ短調
     label_en: A Minor
   - id: a-sharp-minor
     label_ja: 嬰イ短調
     label_en: A# Minor
-  - id: b-flat-major
-    label_ja: 変ロ長調
-    label_en: Bb Major
   - id: b-flat-minor
     label_ja: 変ロ短調
     label_en: Bb Minor
-  - id: b-major
-    label_ja: ロ長調
-    label_en: B Major
   - id: b-minor
     label_ja: ロ短調
     label_en: B Minor
+  - id: a-flat-minor
+    label_ja: 変イ短調
+    label_en: Ab Minor
+
+  # --- Plain Notes / Modeless (主音のみ / 指定なし) ---
+  # 旋法音楽や、長短が確定しない場合に推奨。
+  - id: c
+    label_ja: ハ調
+    label_en: in C
+  - id: c-sharp
+    label_ja: 嬰ハ調
+    label_en: in C#
+  - id: d-flat
+    label_ja: 変ニ調
+    label_en: in Db
+  - id: d
+    label_ja: ニ調
+    label_en: in D
+  - id: d-sharp
+    label_ja: 嬰ニ調
+    label_en: in D#
+  - id: e-flat
+    label_ja: 変ホ調
+    label_en: in Eb
+  - id: e
+    label_ja: ホ調
+    label_en: in E
+  - id: f
+    label_ja: ヘ調
+    label_en: in F
+  - id: f-sharp
+    label_ja: 嬰ヘ調
+    label_en: in F#
+  - id: g-flat
+    label_ja: 変ト調
+    label_en: in Gb
+  - id: g
+    label_ja: ト調
+    label_en: in G
+  - id: g-sharp
+    label_ja: 嬰ト調
+    label_en: in G#
+  - id: a-flat
+    label_ja: 変イ調
+    label_en: in Ab
+  - id: a
+    label_ja: イ調
+    label_en: in A
+  - id: a-sharp
+    label_ja: 嬰イ調
+    label_en: in A#
+  - id: b-flat
+    label_ja: 変ロ調
+    label_en: in Bb
+  - id: b
+    label_ja: ロ調
+    label_en: in B
+  - id: c-flat
+    label_ja: 変ハ調
+    label_en: in Cb
+
+  # --- Other ---
+  - id: atonal
+    label_ja: 無調
+    label_en: Atonal
+    description: 調性中心を持たない音楽。
 
 # -----------------------------------------------------------------------------
 # 1. Eras (時代区分)
@@ -1861,3 +1930,214 @@ performance_difficulty:
     label_en: Virtuoso
     description: 音楽史上最も困難とされる領域。極限の技巧と持久力を要求する。
     examples: リスト「超絶技巧練習曲（第4曲マゼッパ等）」、バラキレフ「イスラメイ」
+
+# -----------------------------------------------------------------------------
+# 5. Catalogue Prefixes (作品番号接頭辞)
+# -----------------------------------------------------------------------------
+# 作品を識別するための目録番号（カタログ番号）の接頭辞を定義する。
+# これにより、作品番号の「表記揺れ」を防ぎ、正確な検索とソートを実現する。
+catalogue_prefixes:
+  # --- 通用的 / 標準的 (Universal / Standard) ---
+  - id: op
+    label: Op.
+    description: 作品番号 (Opus)。ラテン語で「作品」を意味し、作曲家自身または出版社が付与。
+  - id: op-posth
+    label: Op. posth.
+    description: 遺作作品番号 (Opus posthumous)。作曲家の死後に出版された作品。
+  - id: woo
+    label: WoO
+    description: 作品番号なし (Werke ohne Opuszahl)。ベートーヴェン等の目録で一般的。
+
+  # --- 作曲家固有：バロック (Baroque) ---
+  - id: bwv
+    label: BWV
+    description: バッハ作品目録 (Bach-Werke-Verzeichnis)。J.S.バッハ。
+  - id: rv
+    label: RV
+    description: リオム番号 (Ryom-Verzeichnis)。ヴィヴァルディ。
+  - id: hwv
+    label: HWV
+    description: ヘンデル作品目録 (Händel-Werke-Verzeichnis)。
+  - id: twv
+    label: TWV
+    description: テレマン作品目録 (Telemann-Werke-Verzeichnis).
+  - id: z
+    label: Z.
+    description: ジマーマン番号。パーセル。
+
+  # --- 作曲家固有：古典派 (Classical) ---
+  - id: k
+    label: K.
+    description: ケッヘル番号 (Köchel-Verzeichnis)。モーツァルト。
+  - id: kv
+    label: KV
+    description: ケッヘル番号（ドイツ語表記用）。基本は K. を推奨。
+  - id: d
+    label: D
+    description: ドイチュ番号。シューベルト。
+  # --- Joseph Haydn: Hoboken-Verzeichnis (Hob.) ---
+  # ホーボーケン番号。ジャンル別に分類されたハイドンの作品目録。
+  # 1. 交響曲・管弦楽 (Orchestral)
+  - id: hob-i
+    label: Hob. I
+    description: 交響曲 (Symphonies)
+  - id: hob-ia
+    label: Hob. Ia
+    description: 序曲 (Overtures)
+  - id: hob-ii
+    label: Hob. II
+    description: 4声以上のディヴェルティメント (Divertimenti in 4+ parts)
+
+  # 2. 室内楽 (Chamber)
+  - id: hob-iii
+    label: Hob. III
+    description: 弦楽四重奏曲 (String Quartets)
+  - id: hob-iv
+    label: Hob. IV
+    description: 3声のディヴェルティメント (Divertimenti in 3 parts)
+  - id: hob-v
+    label: Hob. V
+    description: 弦楽三重奏曲 (String Trios)
+  - id: hob-vi
+    label: Hob. VI
+    description: 各種の二重奏曲 (Various Duos)
+  - id: hob-vii
+    label: Hob. VII
+    description: 協奏曲 (Concertos)
+  - id: hob-viii
+    label: Hob. VIII
+    description: 行進曲 (Marches)
+  - id: hob-ix
+    label: Hob. IX
+    description: 舞曲 (Dances)
+
+  # 3. バリトン・アンサンブル (Baryton)
+  - id: hob-x
+    label: Hob. X
+    description: バリトンのための各種作品 (Works for Baryton)
+  - id: hob-xi
+    label: Hob. XI
+    description: バリトン三重奏曲 (Trios for Baryton, Violin/Viola, Cello)
+  - id: hob-xii
+    label: Hob. XII
+    description: バリトン二重奏曲 (Duos with Baryton)
+  - id: hob-xiii
+    label: Hob. XIII
+    description: バリトン協奏曲 (Concertos for Baryton)
+
+  # 4. 鍵盤楽器を伴う室内楽 (Keyboard Chamber)
+  - id: hob-xiv
+    label: Hob. XIV
+    description: 鍵盤楽器を伴うディヴェルティメント (Divertimenti with Keyboard)
+  - id: hob-xv
+    label: Hob. XV
+    description: ピアノ三重奏曲 (Piano Trios)
+  - id: hob-xva
+    label: Hob. XVa
+    description: 鍵盤二重奏曲 (Keyboard Duos)
+
+  # 5. 鍵盤楽器独奏・楽曲 (Keyboard Solo)
+  - id: hob-xvi
+    label: Hob. XVI
+    description: 鍵盤ソナタ (Keyboard Sonatas)
+  - id: hob-xvii
+    label: Hob. XVII
+    description: 鍵盤小品 (Keyboard Pieces)
+  - id: hob-xviii
+    label: Hob. XVIII
+    description: 鍵盤協奏曲 (Keyboard Concertos)
+  - id: hob-xix
+    label: Hob. XIX
+    description: 時計音楽 (Pieces for Mechanical Clock)
+
+  # 6. 宗教曲・声楽曲 (Sacred & Vocal)
+  - id: hob-xx
+    label: Hob. XX
+    description: 「十字架上のキリストの最後の7つの言葉」関連作品
+  - id: hob-xxi
+    label: Hob. XXI
+    description: オラトリオ (Oratorios)
+  - id: hob-xxii
+    label: Hob. XXII
+    description: ミサ曲 (Masses)
+  - id: hob-xxiii
+    label: Hob. XXIII
+    description: その他の宗教曲 (Other Sacred Works)
+  - id: hob-xxiv
+    label: Hob. XXIV
+    description: 管弦楽伴奏付カンタータとアリア (Cantatas/Arias with Orch)
+  - id: hob-xxv
+    label: Hob. XXV
+    description: ピアノ伴奏付歌曲 (Songs with Piano)
+  - id: hob-xxvi
+    label: Hob. XXVI
+    description: カノン (Canons)
+
+  # 7. 舞台作品 (Stage)
+  - id: hob-xxvii
+    label: Hob. XXVII
+    description: 合唱曲・舞台作品 (Stage Works)
+  - id: hob-xxviii
+    label: Hob. XXVIII
+    description: オペラ (Operas)
+  - id: hob-xxix
+    label: Hob. XXIX
+    description: シングシュピール (Singspiele)
+  - id: hob-xxx
+    label: Hob. XXX
+    description: 劇付随音楽 (Incidental Music)
+
+  # 8. 編曲 (Arrangements)
+  - id: hob-xxxi
+    label: Hob. XXXI
+    description: 民謡編曲 (Arrangements of Folksongs)
+
+  # --- 作曲家固有：ロマン派〜近代 (Romantic & Modern) ---
+  - id: s
+    label: S.
+    description: サール番号 (Searle)。フランツ・リスト。
+  - id: l
+    label: L.
+    description: ルシュール番号 (Lesure)。クロード・ドビュッシー。
+  - id: m
+    label: M.
+    description: マルナ番号 (Marnat)。モーリス・ラヴェル。
+  - id: sz
+    label: Sz.
+    description: セーレシュ番号 (Szőllősy)。バルトーク。
+  - id: bb
+    label: BB
+    description: バルトーク新全集番号 (Béla Bartók Catalogue)。
+  - id: b
+    label: B.
+    description: ブルクハウザー番号 (Burghauser)。ドヴォルザーク。
+
+  # --- 作曲家固有：古典派・バロック（追加分） ---
+  - id: kk
+    label: Kk.
+    description: カークパトリック番号 (Kirkpatrick)。ドメニコ・スカルラッティ。※モーツァルトの K. と区別。
+  - id: wq
+    label: Wq.
+    description: ヴォトケンヌ番号 (Wotquenne)。C.P.E.バッハ。
+  - id: h
+    label: H.
+    description: ヘルム番号 (Helm)。C.P.E.バッハ。
+  - id: g
+    label: G.
+    description: ジェラール番号 (Gérard)。ルイジ・ボッケリーニ。
+  - id: f
+    label: F.
+    description: ファンナ番号 (Fanna)。アントニオ・ヴィヴァルディ。※RV 以前の主要目録。
+
+  # --- 特殊・付録 (Special / Supplement) ---
+  - id: anh
+    label: Anh.
+    description: 付録 (Anhang / Appendix)。主要目録の補遺・追加セクション。
+  - id: hess
+    label: Hess
+    description: ヘス番号。ベートーヴェンの未出版・未完成作品目録。
+
+  # --- その他 (Manual/Other) ---
+  - id: custom
+    label: Custom
+    description: マスターにない特殊なカタログ。

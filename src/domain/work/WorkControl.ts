@@ -11,8 +11,8 @@ export const WorkControlSchema = z.object({
   id: z.string().uuid(),
   /** 作曲家 ID (Slug) - 作品の同一性を定義する一部 */
   composer: z.string().min(1).max(64),
-  /** 
-   * URLスラグ (作曲家単位で一意) 
+  /**
+   * URLスラグ (作曲家単位で一意)
    * e.g. "symphony-no5"
    */
   slug: SlugSchema,

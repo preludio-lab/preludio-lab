@@ -14,7 +14,9 @@ export interface WorkSearchCriteria {
 
 /**
  * WorkRepository
- * 作品リポジトリのインターフェース
+ * 作品 (Piece / Composition) リポジトリのインターフェース。
+ * 作品全体のマスタメタデータを管理します。
+ * 楽章単位の詳細は WorkPartRepository が担います。
  */
 export interface WorkRepository {
   /**

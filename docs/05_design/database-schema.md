@@ -114,33 +114,35 @@ erDiagram
 
 言語ごとの記事データ。検索用カラム（非正規化データ）をここに集約します。
 
-| Column                     | Type      | Default | NOT NULL | CHECK                                                            | Description                                                            |
-| :------------------------- | :-------- | :------ | :------- | :--------------------------------------------------------------- | :--------------------------------------------------------------------- |
-| **`id`**                   | `text`    | -       | YES      | -                                                                | **PK**.                                                                |
-| **`article_id`**           | `text`    | -       | YES      | -                                                                | **FK to `articles.id`**                                                |
-| `lang`                     | `text`    | -       | YES      | -                                                                | ISO Language Code                                                      |
-| `status`                   | `text`    | -       | YES      | `IN ('draft', 'scheduled', 'published', 'private', 'archived')`  | ステータス                                                             |
-| `title`                    | `text`    | -       | YES      | -                                                                | 記事タイトル（正式名称）                                               |
-| `display_title`            | `text`    | -       | YES      | -                                                                | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み)               |
-| `catchcopy`                | `text`    | -       | NO       | -                                                                | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示)             |
-| `excerpt`                  | `text`    | -       | NO       | -                                                                | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)                           |
-| `sl_composer_name`         | `text`    | -       | NO       | -                                                                | 作曲家名 (Source: `composer_translations.name`)                        |
-| `sl_work_catalogue_id`     | `text`    | -       | NO       | -                                                                | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846")     |
-| `sl_work_nicknames`        | `text`    | -       | NO       | -                                                                | 通称リスト (JSON, Source: `work_translations.nicknames`)               |
-| `sl_genre`                 | `text`    | -       | NO       | -                                                                | ジャンルリスト (JSON, Source: `works.genres`)                          |
-| `sl_instrumentations`      | `text`    | -       | NO       | -                                                                | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
-| `sl_era`                   | `text`    | -       | NO       | -                                                                | 時代区分 (Source: `works.era`)                                         |
-| `sl_nationality`           | `text`    | -       | NO       | -                                                                | 地域/国籍 (Source: `composers.nationality_code`)                       |
-| `sl_impression_dimensions` | `text`    | -       | NO       | -                                                                | 6軸定量値 (JSON: `ImpressionDimensions`)                               |
-| `content_embedding`        | `F32BLOB` | -       | NO       | -                                                                | ベクトルデータ (384 dims, Model: `e5-small`)                           |
-| `published_at`             | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                                    |
-| `is_featured`              | `integer` | `0`     | YES      | `IN (0, 1)`                                                      | **[Snapshot]** おすすめフラグ                                          |
-| `mdx_path`                 | `text`    | -       | NO       | -                                                                | MDX相対パス (e.g. `works/bwv846.mdx`)                                  |
-| `sl_series_assignments`    | `text`    | `[]`    | YES      | -                                                                | 所属シリーズ情報 (JSON: `SeriesAssignment[]`)                          |
-| `metadata`                 | `text`    | `{}`    | YES      | -                                                                | メタデータ (JSON: `ArticleMetadata`)                                   |
-| `content_structure`        | `text`    | `{}`    | YES      | -                                                                | 目次構成 (JSON: `ContentStructure`)                                    |
-| `created_at`               | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                           | 作成日時 (形式強制)                                                    |
-| `updated_at`               | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                           | 更新日時 (形式強制)                                                    |
+| Column                      | Type      | Default | NOT NULL | CHECK                                                            | Description                                                            |
+| :-------------------------- | :-------- | :------ | :------- | :--------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| **`id`**                    | `text`    | -       | YES      | -                                                                | **PK**.                                                                |
+| **`article_id`**            | `text`    | -       | YES      | -                                                                | **FK to `articles.id`**                                                |
+| `lang`                      | `text`    | -       | YES      | -                                                                | ISO Language Code                                                      |
+| `status`                    | `text`    | -       | YES      | `IN ('draft', 'scheduled', 'published', 'private', 'archived')`  | ステータス                                                             |
+| `title`                     | `text`    | -       | YES      | -                                                                | 記事タイトル（正式名称）                                               |
+| `display_title`             | `text`    | -       | YES      | -                                                                | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み)               |
+| `catchcopy`                 | `text`    | -       | NO       | -                                                                | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示)             |
+| `excerpt`                   | `text`    | -       | NO       | -                                                                | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)                           |
+| `sl_composer_name`          | `text`    | -       | NO       | -                                                                | 作曲家名 (Source: `composer_translations.name`)                        |
+| `sl_work_catalogue_id`      | `text`    | -       | NO       | -                                                                | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846")     |
+| `sl_work_nicknames`         | `text`    | -       | NO       | -                                                                | 通称リスト (JSON, Source: `work_translations.nicknames`)               |
+| `sl_genre`                  | `text`    | -       | NO       | -                                                                | ジャンルリスト (JSON, Source: `works.genres`)                          |
+| `sl_instrumentations`       | `text`    | -       | NO       | -                                                                | 楽器編成リスト (JSON, Source: `tags.slug` where category='instrument') |
+| `sl_era`                    | `text`    | -       | NO       | -                                                                | 時代区分 (Source: `works.era`)                                         |
+| `sl_nationality`            | `text`    | -       | NO       | -                                                                | 地域/国籍 (Source: `composers.nationality_code`)                       |
+| `sl_key`                    | `text`    | -       | NO       | -                                                                | **[Snapshot]** 調性 (Source: `works.key_tonality`)                     |
+| `sl_performance_difficulty` | `integer` | -       | NO       | -                                                                | **[Snapshot]** 演奏難易度 (Source: `works.performance_difficulty`)     |
+| `sl_impression_dimensions`  | `text`    | -       | NO       | -                                                                | **[Snapshot]** 6軸定量値 (JSON: `ImpressionDimensions`)                |
+| `content_embedding`         | `F32BLOB` | -       | NO       | -                                                                | ベクトルデータ (384 dims, Model: `e5-small`)                           |
+| `published_at`              | `text`    | -       | NO       | **`published_at IS NULL OR datetime(published_at) IS NOT NULL`** | 公開日時 (形式強制)                                                    |
+| `is_featured`               | `integer` | `0`     | YES      | `IN (0, 1)`                                                      | **[Snapshot]** おすすめフラグ                                          |
+| `mdx_path`                  | `text`    | -       | NO       | -                                                                | MDX相対パス (e.g. `works/bwv846.mdx`)                                  |
+| `sl_series_assignments`     | `text`    | `[]`    | YES      | -                                                                | 所属シリーズ情報 (JSON: `SeriesAssignment[]`)                          |
+| `metadata`                  | `text`    | `{}`    | YES      | -                                                                | メタデータ (JSON: `ArticleMetadata`)                                   |
+| `content_structure`         | `text`    | `{}`    | YES      | -                                                                | 目次構成 (JSON: `ContentStructure`)                                    |
+| `created_at`                | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                           | 作成日時 (形式強制)                                                    |
+| `updated_at`                | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                           | 更新日時 (形式強制)                                                    |
 
 #### 3.2.1 JSON Type Definitions
 
@@ -449,12 +451,12 @@ sequenceDiagram
 
 #### 4.3.1 Indexes (Musical Examples)
 
-| Index Name              | Columns              | Type       | Usage                            |
-| :---------------------- | :------------------- | :--------- | :------------------------------- |
-| `idx_mus_ex_work_id`    | `(work_id)`          | B-Tree     | 楽曲単位での譜例取得             |
-| `idx_mus_ex_work_part`  | `(work_part_id)`     | B-Tree     | 楽章単位での譜例取得             |
-| `idx_mus_ex_slug`       | `(work_id, slug)`    | **UNIQUE** | 楽曲内の一意スラグ取得           |
-| `idx_mus_ex_score_id`   | `(score_id)`         | B-Tree     | 出典（エディション）からの逆引き |
+| Index Name             | Columns           | Type       | Usage                            |
+| :--------------------- | :---------------- | :--------- | :------------------------------- |
+| `idx_mus_ex_work_id`   | `(work_id)`       | B-Tree     | 楽曲単位での譜例取得             |
+| `idx_mus_ex_work_part` | `(work_part_id)`  | B-Tree     | 楽章単位での譜例取得             |
+| `idx_mus_ex_slug`      | `(work_id, slug)` | **UNIQUE** | 楽曲内の一意スラグ取得           |
+| `idx_mus_ex_score_id`  | `(score_id)`      | B-Tree     | 出典（エディション）からの逆引き |
 
 #### 4.3.2 JSON Type Definitions
 
@@ -483,16 +485,16 @@ type PlaybackBinding = {
 
 「誰の、いつの演奏か」を管理する実体。
 
-| Column           | Type      | Default | NOT NULL | CHECK                                  | Description                                  |
-| :--------------- | :-------- | :------ | :------- | :------------------------------------- | :------------------------------------------- |
-| **`id`**         | `text`    | -       | YES      | -                                      | **PK**.                                      |
-| **`work_id`**    | `text`    | -       | YES      | -                                      | **FK to `works.id`**                         |
-| **`work_part_id`** | `text`    | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有の録音)   |
-| `performer_name` | `text`    | `{}`    | YES      | -                                      | 演奏家名 (JSON: `MultilingualString`)        |
-| `recording_year` | `integer` | -       | NO       | -                                      | 録音年                                       |
-| `is_recommended` | `integer` | `0`     | YES      | `IN (0, 1)`                            | おすすめフラグ (0/1)                         |
-| `created_at`     | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                 |
-| `updated_at`     | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                 |
+| Column             | Type      | Default | NOT NULL | CHECK                                  | Description                                |
+| :----------------- | :-------- | :------ | :------- | :------------------------------------- | :----------------------------------------- |
+| **`id`**           | `text`    | -       | YES      | -                                      | **PK**.                                    |
+| **`work_id`**      | `text`    | -       | YES      | -                                      | **FK to `works.id`**                       |
+| **`work_part_id`** | `text`    | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有の録音) |
+| `performer_name`   | `text`    | `{}`    | YES      | -                                      | 演奏家名 (JSON: `MultilingualString`)      |
+| `recording_year`   | `integer` | -       | NO       | -                                      | 録音年                                     |
+| `is_recommended`   | `integer` | `0`     | YES      | `IN (0, 1)`                            | おすすめフラグ (0/1)                       |
+| `created_at`       | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)               |
+| `updated_at`       | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)               |
 
 #### 4.3.1 Indexes (Recordings)
 
@@ -569,38 +571,38 @@ type PlaybackBinding = {
 
 ### 5.3 `works`
 
-| Column                    | Type      | Default | NOT NULL | CHECK                                                    | Description                                          |
-| :----------------------- | :-------- | :------ | :------- | :------------------------------------------------------- | :--------------------------------------------------- |
-| **`id`**                 | `text`    | -       | YES      | -                                                        | **PK**.                                              |
-| **`composer_id`**        | `text`    | -       | YES      | -                                                        | **FK to `composers.id`**                             |
-| `slug`                   | `text`    | -       | YES      | -                                                        | e.g. `symphony-no5`                                  |
-| `catalogue_prefix`       | `text`    | -       | NO       | -                                                        | `Op.`, `BWV` 等                                      |
-| `catalogue_number`       | `text`    | -       | NO       | -                                                        | `67`, `331a` 等                                      |
-| `catalogue_sort_order`   | `real`    | -       | NO       | -                                                        | 作品番号順のソート用数値                             |
-| `era`                    | `text`    | -       | NO       | -                                                        | 時代区分 (MusicalEra ID)                             |
-| `instrumentation`        | `text`    | -       | NO       | -                                                        | 楽器編成 (Text)                                      |
-| `instrumentation_flags`  | `text`    | `{}`    | YES      | -                                                        | 楽器編成フラグ (JSON: `InstrumentationFlags`)        |
-| `performance_difficulty` | `integer` | -       | NO       | `performance_difficulty BETWEEN 1 AND 5`                 | 演奏難易度 (1-5)                                     |
-| `key_tonality`           | `text`    | -       | NO       | -                                                        | 調性 (e.g. `c-minor`)                                |
-| `tempo_text`             | `text`    | -       | NO       | -                                                        | テンポ表記 (e.g. `Allegro`)                          |
-| `tempo_translation`      | `text`    | `{}`    | YES      | -                                                        | テンポ訳 (JSON: `MultilingualString`)                |
-| `ts_numerator`           | `integer` | -       | NO       | `ts_numerator > 0`                                       | 拍子 分子                                            |
-| `ts_denominator`         | `integer` | -       | NO       | `ts_denominator > 0`                                      | 拍子 分母                                            |
-| `ts_display_string`      | `text`    | -       | NO       | -                                                        | 拍子 特記 (e.g. `C`)                                 |
-| `bpm`                    | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                                 | メトロノーム記号                                     |
-| `metronome_unit`         | `text`    | -       | NO       | -                                                        | メトロノーム単位                                     |
-| `genres`                 | `text`    | `[]`    | YES      | -                                                        | ジャンルリスト (JSON: `MusicalGenre[]`)              |
-| `composition_year`       | `integer` | -       | NO       | -                                                        | 作曲年（代表値、ソート・検索用）                     |
-| `composition_period`     | `text`    | -       | NO       | -                                                        | 作曲時期のマスター表記 (English, e.g. "c. 1805")      |
-| `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時                                             |
-| `updated_at`             | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時                                             |
+| Column                   | Type      | Default | NOT NULL | CHECK                                    | Description                                           |
+| :----------------------- | :-------- | :------ | :------- | :--------------------------------------- | :---------------------------------------------------- |
+| **`id`**                 | `text`    | -       | YES      | -                                        | **PK**.                                               |
+| **`composer_id`**        | `text`    | -       | YES      | -                                        | **FK to `composers.id`**                              |
+| `slug`                   | `text`    | -       | YES      | -                                        | e.g. `symphony-no5`                                   |
+| `catalogue_prefix`       | `text`    | -       | NO       | -                                        | Enum IDs (e.g. `op`, `bwv`, `hob-i`)                  |
+| `catalogue_number`       | `text`    | -       | NO       | -                                        | e.g. `67`, `331a`                                     |
+| `catalogue_sort_order`   | `real`    | -       | NO       | -                                        | 作品番号順のソート用数値 (Scoped per composer/prefix) |
+| `era`                    | `text`    | -       | NO       | -                                        | 時代区分 (MusicalEra ID)                              |
+| `instrumentation`        | `text`    | -       | NO       | -                                        | 楽器編成 (Text)                                       |
+| `instrumentation_flags`  | `text`    | `{}`    | YES      | -                                        | 楽器編成フラグ (JSON: `InstrumentationFlags`)         |
+| `performance_difficulty` | `integer` | -       | NO       | `performance_difficulty BETWEEN 1 AND 5` | 演奏難易度 (1-5)                                      |
+| `key_tonality`           | `text`    | -       | NO       | -                                        | 調性 (MusicalKey ID: `c-major`, `atonal` 等)          |
+| `tempo_text`             | `text`    | -       | NO       | -                                        | テンポ表記 (e.g. `Allegro`)                           |
+| `tempo_translation`      | `text`    | `{}`    | YES      | -                                        | テンポ訳 (JSON: `MultilingualString`)                 |
+| `ts_numerator`           | `integer` | -       | NO       | `ts_numerator > 0`                       | 拍子 分子                                             |
+| `ts_denominator`         | `integer` | -       | NO       | `ts_denominator > 0`                     | 拍子 分母                                             |
+| `ts_display_string`      | `text`    | -       | NO       | -                                        | 拍子 特記 (e.g. `C`)                                  |
+| `bpm`                    | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                 | メトロノーム記号                                      |
+| `metronome_unit`         | `text`    | -       | NO       | -                                        | メトロノーム単位                                      |
+| `genres`                 | `text`    | `[]`    | YES      | -                                        | ジャンルリスト (JSON: `MusicalGenre[]`)               |
+| `composition_year`       | `integer` | -       | NO       | -                                        | 作曲年（代表値、ソート・検索用）                      |
+| `composition_period`     | `text`    | -       | NO       | -                                        | 作曲時期のマスター表記 (English, e.g. "c. 1805")      |
+| `created_at`             | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**   | 作成日時                                              |
+| `updated_at`             | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**   | 更新日時                                              |
 
 #### 5.3.1 Indexes (Works)
 
-| Index Name              | Columns                             | Type       | Usage                                  |
-| :---------------------- | :---------------------------------- | :--------- | :------------------------------------- |
-| `idx_works_composer_id` | `(composer_id)`                     | B-Tree     | 作曲家による絞り込み検索               |
-| `idx_works_slug`        | `(composer_id, slug)`               | **UNIQUE** | ルーティング用（作曲家ごとにユニーク） |
+| Index Name              | Columns                                                 | Type       | Usage                                  |
+| :---------------------- | :------------------------------------------------------ | :--------- | :------------------------------------- |
+| `idx_works_composer_id` | `(composer_id)`                                         | B-Tree     | 作曲家による絞り込み検索               |
+| `idx_works_slug`        | `(composer_id, slug)`                                   | **UNIQUE** | ルーティング用（作曲家ごとにユニーク） |
 | `idx_works_catalogue`   | `(composer_id, catalogue_prefix, catalogue_sort_order)` | B-Tree     | 作品番号順のソート                     |
 
 ### 5.4 `work_translations`
@@ -629,32 +631,32 @@ type PlaybackBinding = {
 
 作品の構成要素（楽章、セクション）を管理します。
 
-| Column               | Type      | Default | NOT NULL | CHECK                                    | Description                                |
-| :------------------- | :-------- | :------ | :------- | :--------------------------------------- | :----------------------------------------- |
-| **`id`**             | `text`    | -       | YES      | -                                        | **PK**.                                    |
-| **`work_id`**        | `text`    | -       | YES      | -                                        | **FK to `works.id`**                       |
-| `slug`               | `text`    | -       | YES      | -                                        | e.g. `1st-mov`                             |
-| `sort_order`         | `integer` | `0`     | YES      | -                                        | 楽章の並び順                               |
-| `title`              | `text`    | `{}`    | YES      | -                                        | 楽章名 (JSON: `MultilingualString`)        |
-| `key_tonality`       | `text`    | -       | NO       | -                                        | 調性 (e.g. `c-minor`)                      |
-| `tempo_text`         | `text`    | -       | NO       | -                                        | テンポ表記 (e.g. `Allegro`)                |
-| `tempo_translation`  | `text`    | `{}`    | YES      | -                                        | テンポ訳 (JSON: `MultilingualString`)      |
-| `ts_numerator`       | `integer` | -       | NO       | `ts_numerator > 0`                       | 拍子 分子                                  |
-| `ts_denominator`     | `integer` | -       | NO       | `ts_denominator > 0`                      | 拍子 分母                                  |
-| `ts_display_string`  | `text`    | -       | NO       | -                                        | 拍子 特記 (e.g. `C`)                       |
-| `bpm`                | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                 | メトロノーム記号                           |
-| `metronome_unit`     | `text`    | -       | NO       | -                                        | メトロノーム単位                           |
-| `genres`             | `text`    | `[]`    | YES      | -                                        | ジャンルリスト (JSON: `MusicalGenre[]`)    |
-| `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                   |
-| `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                   |
+| Column              | Type      | Default | NOT NULL | CHECK                                  | Description                             |
+| :------------------ | :-------- | :------ | :------- | :------------------------------------- | :-------------------------------------- |
+| **`id`**            | `text`    | -       | YES      | -                                      | **PK**.                                 |
+| **`work_id`**       | `text`    | -       | YES      | -                                      | **FK to `works.id`**                    |
+| `slug`              | `text`    | -       | YES      | -                                      | e.g. `1st-mov`                          |
+| `sort_order`        | `integer` | `0`     | YES      | -                                      | 楽章の並び順                            |
+| `title`             | `text`    | `{}`    | YES      | -                                      | 楽章名 (JSON: `MultilingualString`)     |
+| `key_tonality`      | `text`    | -       | NO       | -                                      | 調性 (e.g. `c-minor`)                   |
+| `tempo_text`        | `text`    | -       | NO       | -                                      | テンポ表記 (e.g. `Allegro`)             |
+| `tempo_translation` | `text`    | `{}`    | YES      | -                                      | テンポ訳 (JSON: `MultilingualString`)   |
+| `ts_numerator`      | `integer` | -       | NO       | `ts_numerator > 0`                     | 拍子 分子                               |
+| `ts_denominator`    | `integer` | -       | NO       | `ts_denominator > 0`                   | 拍子 分母                               |
+| `ts_display_string` | `text`    | -       | NO       | -                                      | 拍子 特記 (e.g. `C`)                    |
+| `bpm`               | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`               | メトロノーム記号                        |
+| `metronome_unit`    | `text`    | -       | NO       | -                                      | メトロノーム単位                        |
+| `genres`            | `text`    | `[]`    | YES      | -                                      | ジャンルリスト (JSON: `MusicalGenre[]`) |
+| `created_at`        | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                |
+| `updated_at`        | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                |
 
 #### 5.5.1 Indexes (Work Parts)
 
-| Index Name           | Columns                   | Type       | Usage                  |
-| :------------------- | :------------------------ | :--------- | :--------------------- |
-| `idx_work_parts_fk`  | `(work_id)`               | B-Tree     | 作品に紐づく楽順の取得 |
-| `idx_work_parts_ord` | `(work_id, sort_order)`   | B-Tree     | 楽章順での取得         |
-| `idx_work_parts_slg` | `(work_id, slug)`         | **UNIQUE** | スラグによる一意識別   |
+| Index Name           | Columns                 | Type       | Usage                  |
+| :------------------- | :---------------------- | :--------- | :--------------------- |
+| `idx_work_parts_fk`  | `(work_id)`             | B-Tree     | 作品に紐づく楽順の取得 |
+| `idx_work_parts_ord` | `(work_id, sort_order)` | B-Tree     | 楽章順での取得         |
+| `idx_work_parts_slg` | `(work_id, slug)`       | **UNIQUE** | スラグによる一意識別   |
 
 ### 5.6 `tags` (Normalized Taxonomy)
 

@@ -8,9 +8,6 @@ describe('EngagementMetricsSchema', () => {
     likeCount: 10,
     resonanceCount: 5,
     shareCount: 2,
-    affiliateClickCount: 0,
-    conversionCount: 0,
-    totalRevenue: 0,
     totalTimeOnPageSeconds: 3600,
   };
 
@@ -39,14 +36,6 @@ describe('EngagementMetricsSchema', () => {
     const result = EngagementMetricsSchema.safeParse({
       ...validMetrics,
       resonanceCount: 1001,
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail if totalRevenue exceeds 10 million', () => {
-    const result = EngagementMetricsSchema.safeParse({
-      ...validMetrics,
-      totalRevenue: 10000001,
     });
     expect(result.success).toBe(false);
   });

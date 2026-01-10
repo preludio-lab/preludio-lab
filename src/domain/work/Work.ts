@@ -1,7 +1,7 @@
 import { WorkControl } from './WorkControl';
-import { WorkMetadata, WorkPart } from './WorkMetadata';
+import { WorkMetadata } from './WorkMetadata';
 
-export type { WorkControl, WorkMetadata, WorkPart };
+export type { WorkControl, WorkMetadata };
 
 /**
  * Work Entity
@@ -73,16 +73,19 @@ export class Work {
   }
 
   /**
-   * 多楽章作品かどうか
+   * 多楽章作品かどうか (将来的にフラグまたは WorkPartRepository で判定)
    */
   public hasParts(): boolean {
-    return this.metadata.parts.length > 0;
+    return false; // TODO: Phase 7: Implement via flag or repository check
   }
 
   /**
    * エンティティの複製 (イミュータブルな更新)
    */
-  public cloneWith(props: { control?: Partial<WorkControl>; metadata?: Partial<WorkMetadata> }): Work {
+  public cloneWith(props: {
+    control?: Partial<WorkControl>;
+    metadata?: Partial<WorkMetadata>;
+  }): Work {
     return new Work({
       control: props.control ? { ...this.control, ...props.control } : this.control,
       metadata: props.metadata ? { ...this.metadata, ...props.metadata } : this.metadata,

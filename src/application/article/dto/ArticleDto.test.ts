@@ -40,9 +40,6 @@ describe('ArticleDtoSchema', () => {
         likeCount: 10,
         resonanceCount: 5,
         shareCount: 2,
-        affiliateClickCount: 0,
-        conversionCount: 0,
-        totalRevenue: 0,
         totalTimeOnPageSeconds: 3600,
       },
     },
@@ -57,7 +54,7 @@ describe('ArticleDtoSchema', () => {
   });
 
   it('should fail if a required section is missing', () => {
-    const { content: _, ...incompleteData } = validData;
+    const { content: __, ...incompleteData } = validData;
     const result = ArticleDtoSchema.safeParse(incompleteData);
     expect(result.success).toBe(false);
   });

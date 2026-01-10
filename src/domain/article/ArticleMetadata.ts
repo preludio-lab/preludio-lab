@@ -1,5 +1,8 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/Slug';
+import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/WorkMetadata';
+
+export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 
 // バリデーション用定数
 const MAX_URL_LENGTH = 2_048;
@@ -57,27 +60,6 @@ export const PlaybackSchema = z.object({
 export type Playback = z.infer<typeof PlaybackSchema>;
 
 /**
- * Impression Dimensions
- * 6軸の印象評価値 (-10 to +10 の整数)
- */
-export const ImpressionDimensionsSchema = z.object({
-  /** 明るさ (Brightness) */
-  brightness: zInt().min(-10).max(10),
-  /** 躍動感 (Vibrancy) */
-  vibrancy: zInt().min(-10).max(10),
-  /** 規模感 (Scale) */
-  scale: zInt().min(-10).max(10),
-  /** 深み (Depth) */
-  depth: zInt().min(-10).max(10),
-  /** ドラマ性 (Drama) */
-  drama: zInt().min(-10).max(10),
-  /** 通俗性・人気度 (Popularity) */
-  popularity: zInt().min(-10).max(10),
-});
-
-export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
-
-/**
  * Article Metadata
  * 記事のメタデータ (Glossary準拠・具象非依存)
  */
@@ -118,7 +100,7 @@ export const ArticleMetadataSchema = z.object({
   /** 記事の専門性レベル (1-5) */
   readingLevel: zInt().min(1).max(5).optional(),
   /** 楽曲自体の演奏難易度レベル (1-5) */
-  performanceDifficulty: zInt().min(1).max(5).optional(),
+  performanceDifficulty: PerformanceDifficultySchema.optional(),
   /** トップページ等で優先紹介される「おすすめ記事」フラグ */
   isFeatured: z.boolean().default(false),
   /** 推定読了時間 (秒) */

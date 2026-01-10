@@ -52,4 +52,53 @@ describe('ArticleContextSchema', () => {
     });
     expect(result.success).toBe(false);
   });
+
+  describe('monetizationElements', () => {
+    it('should validate correctly with valid elements', () => {
+      const result = ArticleContextSchema.safeParse({
+        monetizationElements: [
+          {
+            type: 'affiliate',
+            category: 'score_physical',
+            title: { ja: '交響曲第5番 楽譜', en: 'Symphony No.5 Score' },
+            url: 'https://amazon.co.jp/dp/example',
+            provider: 'amazon',
+            action: 'buy',
+            priceHint: '¥3,500',
+          },
+        ],
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('should fail if title is not multilingual', () => {
+      const result = ArticleContextSchema.safeParse({
+        monetizationElements: [
+          {
+            type: 'affiliate',
+            category: 'score_physical',
+            title: 'Symphony No.5 Score', // Should be an object
+            url: 'https://amazon.co.jp/dp/example',
+            action: 'buy',
+          },
+        ],
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('should fail with invalid action', () => {
+      const result = ArticleContextSchema.safeParse({
+        monetizationElements: [
+          {
+            type: 'affiliate',
+            category: 'score_physical',
+            title: { ja: 'Title' },
+            url: 'https://amazon.co.jp/dp/example',
+            action: 'invalid_action',
+          },
+        ],
+      });
+      expect(result.success).toBe(false);
+    });
+  });
 });

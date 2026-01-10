@@ -1,6 +1,5 @@
 ---
-trigger: model_decision
-description: 新しいセッションを開始するときに最初に確認します
+description: セッション開始時に新規ブランチを作成する
 ---
 
 # 言語
