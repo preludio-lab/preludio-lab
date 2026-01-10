@@ -68,8 +68,26 @@ export const Nationality = {
   VE: 'VE',
   /** エジプト (Egypt): 『アイーダ』の舞台であり、カイロ・オペラハウスを中心としたアフリカ最大の拠点。 */
   EG: 'EG',
-  /** 南アフリカ (South Africa): 現代オペラ界を支える、世界最高レベルの歌手たち（ソプラノ等）を数数多く輩出。 */
+  /** 南アフリカ (South Africa): 現代オペラ界を支える、世界最高レベルの歌手たち（ソプラノ等）を数多く輩出。 */
   ZA: 'ZA',
+  /** ポルトガル (Portugal): 独自のバロック音楽や、ピリス（Maria João Pires）などの世界的ピアニストの輩出。 */
+  PT: 'PT',
+  /** ギリシャ (Greece): カラス（Maria Callas）やミトロプーロス、現代ではクセナキスなど、強烈な個性を生んだ地。 */
+  GR: 'GR',
+  /** スロバキア (Slovakia): チェコと密接に関わりつつも、フンメル（Hummel）の生誕地であり、独自の東欧情緒を持つ。 */
+  SK: 'SK',
+  /** アイルランド (Ireland): フィールド（John Field）がノクターンを創始した地であり、英国とは異なるケルティックな音楽性。 */
+  IE: 'IE',
+  /** カナダ (Canada): グレン・グールド（Glenn Gould）の母国。ケント・ナガノや現代の有力なオーケストラ文化。 */
+  CA: 'CA',
+  /** オーストラリア (Australia): サザーランド（Joan Sutherland）などの名歌手や、シドニー・オペラハウスを中心とした南半球の拠点。 */
+  AU: 'AU',
+  /** キューバ (Cuba): ブロウエル（Brouwer）など、現代ギター音楽やラテン・クラシックの最重要拠点。 */
+  CU: 'CU',
+  /** トルコ (Turkey): 「トルコ行進曲」の着想源（メフテル）としての歴史から、現代のサイ（Fazıl Say）まで。 */
+  TR: 'TR',
+  /** ジョージア (Georgia): 旧ソ連圏の中でも特に個性的。ギヤ・カンチェリや、現代の世界的演奏家の宝庫。 */
+  GE: 'GE',
 } as const;
 
 export type Nationality = (typeof Nationality)[keyof typeof Nationality];
