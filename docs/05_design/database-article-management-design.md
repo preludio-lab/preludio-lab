@@ -12,14 +12,14 @@
 - **Turso Capacity:** Free Tier (9GB) を確保。コンテンツ、翻訳、ベクトルデータを一括管理可能。
 - **Build Time:** Vercel Build Timeoutの回避。全記事ビルドは不可。
 
-| Component       | Technology              | Role                                    | Persistence / Policy              |
-| :-------------- | :---------------------- | :-------------------------------------- | :-------------------------------- |
-| **Core & Auth** | **Supabase DB**         | ユーザー認証、基本プロファイル          | SQL / **500MB Limit**             |
-| **Metadata**    | **Turso (libSQL)**      | 記事・作品・作曲家メタデータ、検索      | SQL / **9GB Limit**               |
-| **Draft Body**  | **Supabase Storage**    | 執筆中の本文 (MDX)                      | **Private Bucket (Auth/RLS)**     |
-| **Public Body** | **Cloudflare R2**       | 公開済みの本文 (MDX)                    | **Public Bucket (CDN Cacheable)** |
-| **Delivery**    | **CDN (Edge)**          | 静的HTML配信 (SSG/ISR)                  | Cache                             |
-| **Search**      | **Pagefind / Turso**    | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index                      |
+| Component       | Technology           | Role                                    | Persistence / Policy              |
+| :-------------- | :------------------- | :-------------------------------------- | :-------------------------------- |
+| **Core & Auth** | **Supabase DB**      | ユーザー認証、基本プロファイル          | SQL / **500MB Limit**             |
+| **Metadata**    | **Turso (libSQL)**   | 記事・作品・作曲家メタデータ、検索      | SQL / **9GB Limit**               |
+| **Draft Body**  | **Supabase Storage** | 執筆中の本文 (MDX)                      | **Private Bucket (Auth/RLS)**     |
+| **Public Body** | **Cloudflare R2**    | 公開済みの本文 (MDX)                    | **Public Bucket (CDN Cacheable)** |
+| **Delivery**    | **CDN (Edge)**       | 静的HTML配信 (SSG/ISR)                  | Cache                             |
+| **Search**      | **Pagefind / Turso** | ハイブリッド検索（全文検索 + 意味検索） | Hybrid Index                      |
 
 ## 2. データ管理戦略 (Data Strategy)
 
@@ -81,9 +81,9 @@ DBとStorage間の整合性を保つため、以下のルールを徹底する�
 
 ### 4.2 Hybrid Search Strategy
 
-| Type            | Engine       | Target          | Description                                                        |
-| :-------------- | :----------- | :-------------- | :----------------------------------------------------------------- |
-| **Fast Search** | **Pagefind** | Top 1,000 (SSG) | 通信不要のクライアントサイド検索。「Find-as-you-type」体験。       |
+| Type            | Engine       | Target          | Description                                                       |
+| :-------------- | :----------- | :-------------- | :---------------------------------------------------------------- |
+| **Fast Search** | **Pagefind** | Top 1,000 (SSG) | 通信不要のクライアントサイド検索。「Find-as-you-type」体験。      |
 | **Deep Search** | **Turso**    | All Articles    | `FTS5` (キーワード) + `libsql-vector` (意味検索) による全件検索。 |
 
 ### 4.3 Asset Delivery

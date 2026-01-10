@@ -46,7 +46,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     minReadingLevel: difficulty ? parseInt(difficulty) : undefined,
     maxReadingLevel: difficulty ? parseInt(difficulty) : undefined,
     // Note: FsArticleRepository currently filters by exact level if min/max are same
-    limit: 100
+    limit: 100,
   });
 
   return <ArticleBrowseFeature lang={lang} category={category} contents={response.items} />;

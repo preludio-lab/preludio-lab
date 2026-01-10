@@ -24,8 +24,14 @@ export function useScoreRenderer(score: MusicalExample | { data: string; format:
 
       // MusicalExample の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
       // ※ 現状は notationPath に生データが入っている前提、または別途フェッチが必要な設計への布石
-      const data = 'metadata' in score && 'notationPath' in score.metadata ? score.metadata.notationPath : (score as any).data;
-      const format = 'metadata' in score && 'format' in score.metadata ? score.metadata.format : (score as any).format;
+      const data =
+        'metadata' in score && 'notationPath' in score.metadata
+          ? score.metadata.notationPath
+          : (score as any).data;
+      const format =
+        'metadata' in score && 'format' in score.metadata
+          ? score.metadata.format
+          : (score as any).format;
 
       try {
         if (process.env.NODE_ENV === 'development') {

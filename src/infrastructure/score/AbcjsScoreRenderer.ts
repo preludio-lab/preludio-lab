@@ -11,7 +11,9 @@ export class AbcjsScoreRenderer implements INotationRenderer {
    */
   async render(data: string, element: HTMLElement, format: NotationFormat): Promise<void> {
     if (format !== NotationFormat.ABC) {
-      console.warn(`AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`);
+      console.warn(
+        `AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`,
+      );
       return;
     }
 

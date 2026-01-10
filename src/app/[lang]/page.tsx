@@ -13,7 +13,7 @@ const HOME_DISPLAY_CATEGORIES: ArticleCategory[] = [
   ArticleCategory.WORKS,
   ArticleCategory.COMPOSERS,
   ArticleCategory.THEORY,
-  ArticleCategory.ERAS
+  ArticleCategory.ERAS,
 ];
 
 // 静的生成（SSG）のためのパラメータを明示的に定義
@@ -40,7 +40,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       lang,
       isFeatured: true,
       sortBy: ArticleSortOption.PUBLISHED_AT,
-      limit: 5
+      limit: 5,
     });
     featuredArticles = response.items;
   } catch (error) {
@@ -63,7 +63,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-preludio-black sm:text-6xl font-serif">
             {t('hero.title')}
           </h1>
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 leading-relaxed font-medium">{t('hero.description')}</p>
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-600 leading-relaxed font-medium">
+            {t('hero.description')}
+          </p>
           <div className="flex justify-center gap-4">
             <Link
               href={`/${lang}/works`}
@@ -94,7 +96,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               className={`group relative block overflow-hidden rounded-3xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-neutral-100 ${categoryColors[catId] ?? 'bg-gray-50 text-gray-700'}`}
             >
               <h3 className="mb-2 text-xl font-bold font-serif">{t(`categories.${catId}.name`)}</h3>
-              <p className="text-sm opacity-80 font-medium leading-relaxed">{t(`categories.${catId}.desc`)}</p>
+              <p className="text-sm opacity-80 font-medium leading-relaxed">
+                {t(`categories.${catId}.desc`)}
+              </p>
               <div className="mt-4 flex items-center text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Explore &rarr;
               </div>

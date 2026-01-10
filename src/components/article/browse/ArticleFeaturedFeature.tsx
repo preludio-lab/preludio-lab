@@ -6,7 +6,7 @@ import { ArticleGrid } from './ArticleGrid';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 
 export interface ArticleFeaturedFeatureProps {
-    contents: ArticleMetadataDto[];
+  contents: ArticleMetadataDto[];
 }
 
 /**
@@ -14,58 +14,58 @@ export interface ArticleFeaturedFeatureProps {
  * 最新のArticleMetadataDtoに対応した、ホームページの「Featured Work」セクション。
  */
 export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatureProps) {
-    const t = await getTranslations('Home');
+  const t = await getTranslations('Home');
 
-    if (!contents || contents.length === 0) {
-        return null;
-    }
+  if (!contents || contents.length === 0) {
+    return null;
+  }
 
-    const mainContent = contents[0];
-    const subContents = contents.slice(1);
+  const mainContent = contents[0];
+  const subContents = contents.slice(1);
 
-    // ヘルパー関数: カテゴリラベルの取得
-    const getCategoryLabel = (category: string) => {
-        const key = `categories.${category}.name` as const;
-        return t.has(key) ? t(key) : category.toUpperCase();
-    };
+  // ヘルパー関数: カテゴリラベルの取得
+  const getCategoryLabel = (category: string) => {
+    const key = `categories.${category}.name` as const;
+    return t.has(key) ? t(key) : category.toUpperCase();
+  };
 
-    // メイン記事の説明文
-    const mainDescription =
-        mainContent.excerpt ||
-        t('featured.defaultDescription', { composer: '' }).replace('{}', '').trim() ||
-        mainContent.workTitle ||
-        '';
+  // メイン記事の説明文
+  const mainDescription =
+    mainContent.excerpt ||
+    t('featured.defaultDescription', { composer: '' }).replace('{}', '').trim() ||
+    mainContent.workTitle ||
+    '';
 
-    return (
-        <section className="w-full bg-gray-100 py-20">
-            <div className="container mx-auto px-4">
-                <FadeInHeading className="mb-12 text-center text-3xl font-bold text-preludio-black">
-                    {t('featured.title')}
-                </FadeInHeading>
+  return (
+    <section className="w-full bg-gray-100 py-20">
+      <div className="container mx-auto px-4">
+        <FadeInHeading className="mb-12 text-center text-3xl font-bold text-preludio-black">
+          {t('featured.title')}
+        </FadeInHeading>
 
-                {/* Main Featured Content */}
-                <ArticleHeroCard
-                    content={mainContent}
-                    description={mainDescription}
-                    readMoreLabel={t('featured.readMore')}
-                    categoryLabel={getCategoryLabel(mainContent.category)}
-                />
+        {/* Main Featured Content */}
+        <ArticleHeroCard
+          content={mainContent}
+          description={mainDescription}
+          readMoreLabel={t('featured.readMore')}
+          categoryLabel={getCategoryLabel(mainContent.category)}
+        />
 
-                {/* Sub Featured Contents */}
-                {subContents.length > 0 && (
-                    <ArticleGrid maxColumns={2}>
-                        {subContents.map((content, idx) => (
-                            <ArticleCard
-                                key={content.slug}
-                                content={content}
-                                readMoreLabel={t('featured.readMore')}
-                                categoryLabel={getCategoryLabel(content.category)}
-                                index={idx}
-                            />
-                        ))}
-                    </ArticleGrid>
-                )}
-            </div>
-        </section>
-    );
+        {/* Sub Featured Contents */}
+        {subContents.length > 0 && (
+          <ArticleGrid maxColumns={2}>
+            {subContents.map((content, idx) => (
+              <ArticleCard
+                key={content.slug}
+                content={content}
+                readMoreLabel={t('featured.readMore')}
+                categoryLabel={getCategoryLabel(content.category)}
+                index={idx}
+              />
+            ))}
+          </ArticleGrid>
+        )}
+      </div>
+    </section>
+  );
 }

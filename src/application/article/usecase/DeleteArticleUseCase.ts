@@ -5,9 +5,9 @@ import { ArticleRepository } from '@/domain/article/ArticleRepository';
  * 記事削除
  */
 export class DeleteArticleUseCase {
-    constructor(private readonly articleRepository: ArticleRepository) { }
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
-    async execute(id: string): Promise<void> {
-        await this.articleRepository.delete(id);
-    }
+  async execute(id: string): Promise<void> {
+    await this.articleRepository.delete(id);
+  }
 }

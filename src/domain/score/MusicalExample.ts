@@ -16,9 +16,9 @@ import { MusicalExampleBinding } from './MusicalExampleBinding';
  * 記事内に埋め込まれる譜例のルートエンティティ。
  */
 export const MusicalExampleSchema = z.object({
-    control: MusicalExampleControlSchema,
-    metadata: MusicalExampleMetadataSchema,
-    binding: MusicalExampleBindingSchema,
+  control: MusicalExampleControlSchema,
+  metadata: MusicalExampleMetadataSchema,
+  binding: MusicalExampleBindingSchema,
 });
 
 export type MusicalExample = z.infer<typeof MusicalExampleSchema>;
@@ -28,13 +28,13 @@ export { type MusicalExampleId } from './MusicalExampleControl';
  * MusicalExample の生成
  */
 export const createMusicalExample = (
-    control: MusicalExampleControl,
-    metadata: MusicalExampleMetadata,
-    binding: MusicalExampleBinding
+  control: MusicalExampleControl,
+  metadata: MusicalExampleMetadata,
+  binding: MusicalExampleBinding,
 ): MusicalExample => {
-    return MusicalExampleSchema.parse({
-        control,
-        metadata,
-        binding,
-    });
+  return MusicalExampleSchema.parse({
+    control,
+    metadata,
+    binding,
+  });
 };

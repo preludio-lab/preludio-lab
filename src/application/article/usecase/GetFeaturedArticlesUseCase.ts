@@ -10,18 +10,18 @@ import { ListArticlesUseCase } from './ListArticlesUseCase';
  * おすすめ記事（キュレーション）の取得
  */
 export class GetFeaturedArticlesUseCase {
-    constructor(private readonly articleRepository: ArticleRepository) { }
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
-    async execute(lang: string, limit: number = 6): Promise<PagedResponse<ArticleMetadataDto>> {
-        const listUseCase = new ListArticlesUseCase(this.articleRepository);
+  async execute(lang: string, limit: number = 6): Promise<PagedResponse<ArticleMetadataDto>> {
+    const listUseCase = new ListArticlesUseCase(this.articleRepository);
 
-        return listUseCase.execute({
-            lang,
-            status: [ArticleStatus.PUBLISHED],
-            isFeatured: true,
-            limit,
-            offset: 0,
-            sortBy: ArticleSortOption.PUBLISHED_AT,
-        });
-    }
+    return listUseCase.execute({
+      lang,
+      status: [ArticleStatus.PUBLISHED],
+      isFeatured: true,
+      limit,
+      offset: 0,
+      sortBy: ArticleSortOption.PUBLISHED_AT,
+    });
+  }
 }

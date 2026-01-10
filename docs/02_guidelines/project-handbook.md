@@ -142,15 +142,15 @@ preludio-lab/
 
 本プロジェクトでは、以下の技術スタックと制約を厳守する。
 
-| Category      | Technology             | Constraint / Policy                               |
-| :------------ | :--------------------- | :------------------------------------------------ |
-| **Frontend**  | Next.js (App Router)   | TypeScript必須。Vercel Hobby Planで稼働。         |
-| **Auth**      | Supabase Auth          | **SSO Only** (Passwordless). RLSを徹底。          |
-| **Database**  | Turso / Supabase       | コンテンツ・マスタはTurso。ユーザーデータはSupabase。 |
-| **AI Model**  | Gemini 3.0 Pro         | Google AI Studio API **Free Tier** 内で利用。         |
-| **Agent Env** | GitHub Actions         | 定期実行やDispatchでエージェントを起動。              |
-| **Search**    | Turso Hybrid Search    | Full Text Search (FTS5) + Vector (libsql-vector)      |
-| **Media**     | react-abc / YouTube    | 音源・画像のホスティングは外部に委譲。            |
+| Category      | Technology           | Constraint / Policy                                   |
+| :------------ | :------------------- | :---------------------------------------------------- |
+| **Frontend**  | Next.js (App Router) | TypeScript必須。Vercel Hobby Planで稼働。             |
+| **Auth**      | Supabase Auth        | **SSO Only** (Passwordless). RLSを徹底。              |
+| **Database**  | Turso / Supabase     | コンテンツ・マスタはTurso。ユーザーデータはSupabase。 |
+| **AI Model**  | Gemini 3.0 Pro       | Google AI Studio API **Free Tier** 内で利用。         |
+| **Agent Env** | GitHub Actions       | 定期実行やDispatchでエージェントを起動。              |
+| **Search**    | Turso Hybrid Search  | Full Text Search (FTS5) + Vector (libsql-vector)      |
+| **Media**     | react-abc / YouTube  | 音源・画像のホスティングは外部に委譲。                |
 
 ---
 
