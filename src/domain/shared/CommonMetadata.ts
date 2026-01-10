@@ -34,12 +34,12 @@ export const YearSchema = zInt().min(1000).max(2999);
  * 活動拠点 (地点データ)
  */
 export const PlaceSchema = z.object({
-    /** 地点スラグ (e.g. "vienna", "paris") - 多言語表現はUI層でメッセージ定義から取得 */
-    slug: MusicalPlaceSchema,
-    /** 拠点タイプ (生誕地、没地、主な活動地) */
-    type: z.enum(['birth', 'death', 'activity', 'other']).default('activity'),
-    /** 国コード (ISO 3166-1 alpha-2) */
-    countryCode: NationalitySchema.optional(),
+  /** 地点スラグ (e.g. "vienna", "paris") - 多言語表現はUI層でメッセージ定義から取得 */
+  slug: MusicalPlaceSchema,
+  /** 拠点タイプ (生誕地、没地、主な活動地) */
+  type: z.enum(['birth', 'death', 'activity', 'other']).default('activity'),
+  /** 国コード (ISO 3166-1 alpha-2) */
+  countryCode: NationalitySchema.optional(),
 });
 
 export type Place = z.infer<typeof PlaceSchema>;
@@ -54,21 +54,19 @@ export const DimensionSchema = zInt().min(-10).max(10);
  * 作曲家の作風・特徴を表す6軸の印象評価値 (-10 to +10)
  */
 export const ComposerImpressionDimensionsSchema = z.object({
-    /** 革新性 (Innovation): 伝統的(-10) <-> 革新的(+10) */
-    innovation: DimensionSchema,
-    /** 情動性 (Emotionality): 知的(-10) <-> 感情的(+10) */
-    emotionality: DimensionSchema,
-    /** 民族性 (Nationalism): 国際的(-10) <-> 民族的(+10) */
-    nationalism: DimensionSchema,
-    /** 規模感 (Scale): 親密(-10) <-> 壮大(+10) */
-    scale: DimensionSchema,
-    /** 複雑性 (Complexity): 簡潔(-10) <-> 複雑(+10) */
-    complexity: DimensionSchema,
-    /** 演劇性 (Theatricality): 絶対音楽(-10) <-> 演劇的(+10) */
-    theatricality: DimensionSchema,
+  /** 革新性 (Innovation): 伝統的(-10) <-> 革新的(+10) */
+  innovation: DimensionSchema,
+  /** 情動性 (Emotionality): 知的(-10) <-> 感情的(+10) */
+  emotionality: DimensionSchema,
+  /** 民族性 (Nationalism): 国際的(-10) <-> 民族的(+10) */
+  nationalism: DimensionSchema,
+  /** 規模感 (Scale): 親密(-10) <-> 壮大(+10) */
+  scale: DimensionSchema,
+  /** 複雑性 (Complexity): 簡潔(-10) <-> 複雑(+10) */
+  complexity: DimensionSchema,
+  /** 演劇性 (Theatricality): 絶対音楽(-10) <-> 演劇的(+10) */
+  theatricality: DimensionSchema,
 });
-
-
 
 export type ComposerImpressionDimensions = z.infer<typeof ComposerImpressionDimensionsSchema>;
 
@@ -90,12 +88,12 @@ export const SLUG_HIERARCHICAL_REGEX = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
  * @param allowHierarchical スラッシュによる階層構造を許可するか (デフォルト: true)
  */
 export const createSlugSchema = (maxLength: number = 64, allowHierarchical: boolean = true) => {
-    const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
-    const message = allowHierarchical
-        ? 'Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash'
-        : 'Slug must be lowercase alphanumeric and hyphens only';
+  const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
+  const message = allowHierarchical
+    ? 'Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash'
+    : 'Slug must be lowercase alphanumeric and hyphens only';
 
-    return z.string().min(1).max(maxLength).regex(regex, { message });
+  return z.string().min(1).max(maxLength).regex(regex, { message });
 };
 
 /**
