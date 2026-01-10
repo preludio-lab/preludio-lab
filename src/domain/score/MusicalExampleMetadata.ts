@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { zInt } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
-import { createSlugSchema } from '../shared/Slug';
+import { createSlugSchema } from '../shared/CommonMetadata';
 
 /**
  * 楽譜データ（記法）フォーマットの定義

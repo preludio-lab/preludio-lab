@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { zInt } from '@/shared/validation/zod';
 import { ArticleCategory } from './ArticleMetadata';
-import { SlugSchema } from '../shared/Slug';
-import { UrlSchema } from '../shared/CommonMetadata';
+
+import { UrlSchema, SlugSchema } from '../shared/CommonMetadata';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠

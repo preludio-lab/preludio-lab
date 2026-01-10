@@ -45,23 +45,29 @@ export const PlaceSchema = z.object({
 export type Place = z.infer<typeof PlaceSchema>;
 
 /**
+ * 印象評価値の共通スキーマ (-10 to +10)
+ */
+export const DimensionSchema = zInt().min(-10).max(10);
+
+/**
  * Composer Impression Dimensions
  * 作曲家の作風・特徴を表す6軸の印象評価値 (-10 to +10)
  */
 export const ComposerImpressionDimensionsSchema = z.object({
     /** 革新性 (Innovation): 伝統的(-10) <-> 革新的(+10) */
-    innovation: zInt().min(-10).max(10),
+    innovation: DimensionSchema,
     /** 情動性 (Emotionality): 知的(-10) <-> 感情的(+10) */
-    emotionality: zInt().min(-10).max(10),
+    emotionality: DimensionSchema,
     /** 民族性 (Nationalism): 国際的(-10) <-> 民族的(+10) */
-    nationalism: zInt().min(-10).max(10),
+    nationalism: DimensionSchema,
     /** 規模感 (Scale): 親密(-10) <-> 壮大(+10) */
-    scale: zInt().min(-10).max(10),
+    scale: DimensionSchema,
     /** 複雑性 (Complexity): 簡潔(-10) <-> 複雑(+10) */
-    complexity: zInt().min(-10).max(10),
+    complexity: DimensionSchema,
     /** 演劇性 (Theatricality): 絶対音楽(-10) <-> 演劇的(+10) */
-    theatricality: zInt().min(-10).max(10),
+    theatricality: DimensionSchema,
 });
+
 
 
 export type ComposerImpressionDimensions = z.infer<typeof ComposerImpressionDimensionsSchema>;

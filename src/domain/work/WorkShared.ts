@@ -3,6 +3,7 @@ import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MusicalCataloguePrefixSchema } from './MusicalCataloguePrefix';
 import { MusicalGenreSchema } from './MusicalGenre';
 import { MusicalKeySchema } from './MusicalKey';
+import { DimensionSchema } from '../shared/CommonMetadata';
 
 /**
  * 共有の音楽メタデータスキーマ定義 (WorkShared)
@@ -27,17 +28,17 @@ export const NicknamesSchema = z.array(z.string().max(100)).max(20);
  */
 export const ImpressionDimensionsSchema = z.object({
   /** 明るさ (Brightness) */
-  brightness: zInt().min(-10).max(10),
+  brightness: DimensionSchema,
   /** 躍動感 (Vibrancy) */
-  vibrancy: zInt().min(-10).max(10),
+  vibrancy: DimensionSchema,
   /** 規模感 (Scale) */
-  scale: zInt().min(-10).max(10),
+  scale: DimensionSchema,
   /** 深み (Depth) */
-  depth: zInt().min(-10).max(10),
+  depth: DimensionSchema,
   /** ドラマ性 (Drama) */
-  drama: zInt().min(-10).max(10),
+  drama: DimensionSchema,
   /** 通俗性・人気度 (Popularity) */
-  popularity: zInt().min(-10).max(10),
+  popularity: DimensionSchema,
 });
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;

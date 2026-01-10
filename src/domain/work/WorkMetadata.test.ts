@@ -103,6 +103,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate movement-specific genres directly via WorkPartMetadataSchema', () => {
     const partWithForm = {
       title: { ja: '1st' },
+      type: 'movement',
       musicalIdentity: { genres: [MusicalGenre.FORM.SONATA_FORM] },
     };
     const result = WorkPartMetadataSchema.safeParse(partWithForm);
@@ -113,7 +114,7 @@ describe('WorkMetadataSchema', () => {
   });
 
   it('should validate WorkPartMetadataSchema max limits indirectly', () => {
-    const partValid = { title: { ja: '1st' } };
+    const partValid = { title: { ja: '1st' }, type: 'movement' };
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
   });
 
@@ -159,8 +160,8 @@ describe('WorkMetadataSchema', () => {
   });
 
   it('should validate WorkPartMetadata via schema directly', () => {
-    const partValid = { title: { ja: '1st' } };
-    const partInvalid = { title: { ja: 'A'.repeat(151) } };
+    const partValid = { title: { ja: '1st' }, type: 'movement' };
+    const partInvalid = { title: { ja: 'A'.repeat(151) }, type: 'movement' };
 
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
     expect(WorkPartMetadataSchema.safeParse(partInvalid).success).toBe(false);
