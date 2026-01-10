@@ -1,10 +1,31 @@
 import { z } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MusicalEraSchema } from '../shared/MusicalEra';
-import { ResourcePathSchema, TagsSchema, PlaceSchema, ComposerImpressionDimensionsSchema } from '../shared/CommonMetadata';
+import { ResourcePathSchema, TagsSchema, PlaceSchema, DimensionSchema } from '../shared/CommonMetadata';
 import { NationalitySchema } from '../shared/Nationality';
 import { MusicalInstrumentSchema } from '../shared/MusicalInstrument';
 import { MusicalGenreSchema } from '../work/MusicalGenre';
+
+/**
+ * Composer Impression Dimensions
+ * 作曲家の作風・特徴を表す6軸の印象評価値 (-10 to +10)
+ */
+export const ComposerImpressionDimensionsSchema = z.object({
+    /** 革新性 (Innovation): 伝統的(-10) <-> 革新的(+10) */
+    innovation: DimensionSchema,
+    /** 情動性 (Emotionality): 知的(-10) <-> 感情的(+10) */
+    emotionality: DimensionSchema,
+    /** 民族性 (Nationalism): 国際的(-10) <-> 民族的(+10) */
+    nationalism: DimensionSchema,
+    /** 規模感 (Scale): 親密(-10) <-> 壮大(+10) */
+    scale: DimensionSchema,
+    /** 複雑性 (Complexity): 簡潔(-10) <-> 複雑(+10) */
+    complexity: DimensionSchema,
+    /** 演劇性 (Theatricality): 絶対音楽(-10) <-> 演劇的(+10) */
+    theatricality: DimensionSchema,
+});
+
+export type ComposerImpressionDimensions = z.infer<typeof ComposerImpressionDimensionsSchema>;
 
 /**
  * Composer Metadata
