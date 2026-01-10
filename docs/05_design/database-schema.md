@@ -631,26 +631,26 @@ type PlaybackBinding = {
 
 作品の構成要素（楽章、セクション）を管理します。
 
-| Column              | Type      | Default | NOT NULL | CHECK                                  | Description                             |
-| :------------------ | :-------- | :------ | :------- | :------------------------------------- | :-------------------------------------- |
-| **`id`**            | `text`    | -       | YES      | -                                      | **PK**.                                 |
-| **`work_id`**       | `text`    | -       | YES      | -                                      | **FK to `works.id`**                    |
-| `slug`              | `text`    | -       | YES      | -                                      | e.g. `1st-mov`                          |
-| `type`              | `text`    | -       | YES      | `IN ('movement', 'number', 'act', 'scene', 'variation', 'section', 'part', 'interlude', 'supplement')` | **[New]** パーツの種類 |
-| `is_name_standard`  | `integer` | `1`     | YES      | `IN (0, 1)`                            | **[New]** 標準名称フラグ (1=標準生成) |
-| `sort_order`        | `integer` | `0`     | YES      | -                                      | 楽章の並び順                            |
-| `title`             | `text`    | `{}`    | YES      | -                                      | 楽章名 (JSON: `MultilingualString`)     |
-| `key_tonality`      | `text`    | -       | NO       | -                                      | 調性 (e.g. `c-minor`)                   |
-| `tempo_text`        | `text`    | -       | NO       | -                                      | テンポ表記 (e.g. `Allegro`)             |
-| `tempo_translation` | `text`    | `{}`    | YES      | -                                      | テンポ訳 (JSON: `MultilingualString`)   |
-| `ts_numerator`      | `integer` | -       | NO       | `ts_numerator > 0`                     | 拍子 分子                               |
-| `ts_denominator`    | `integer` | -       | NO       | `ts_denominator > 0`                   | 拍子 分母                               |
-| `ts_display_string` | `text`    | -       | NO       | -                                      | 拍子 特記 (e.g. `C`)                    |
-| `bpm`               | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`               | メトロノーム記号                        |
-| `metronome_unit`    | `text`    | -       | NO       | -                                      | メトロノーム単位                        |
-| `genres`            | `text`    | `[]`    | YES      | -                                      | ジャンルリスト (JSON: `MusicalGenre[]`) |
-| `created_at`        | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                |
-| `updated_at`        | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                |
+| Column              | Type      | Default | NOT NULL | CHECK                                                                                                  | Description                             |
+| :------------------ | :-------- | :------ | :------- | :----------------------------------------------------------------------------------------------------- | :-------------------------------------- |
+| **`id`**            | `text`    | -       | YES      | -                                                                                                      | **PK**.                                 |
+| **`work_id`**       | `text`    | -       | YES      | -                                                                                                      | **FK to `works.id`**                    |
+| `slug`              | `text`    | -       | YES      | -                                                                                                      | e.g. `1st-mov`                          |
+| `type`              | `text`    | -       | YES      | `IN ('movement', 'number', 'act', 'scene', 'variation', 'section', 'part', 'interlude', 'supplement')` | **[New]** パーツの種類                  |
+| `is_name_standard`  | `integer` | `1`     | YES      | `IN (0, 1)`                                                                                            | **[New]** 標準名称フラグ (1=標準生成)   |
+| `sort_order`        | `integer` | `0`     | YES      | -                                                                                                      | 楽章の並び順                            |
+| `title`             | `text`    | `{}`    | YES      | -                                                                                                      | 楽章名 (JSON: `MultilingualString`)     |
+| `key_tonality`      | `text`    | -       | NO       | -                                                                                                      | 調性 (e.g. `c-minor`)                   |
+| `tempo_text`        | `text`    | -       | NO       | -                                                                                                      | テンポ表記 (e.g. `Allegro`)             |
+| `tempo_translation` | `text`    | `{}`    | YES      | -                                                                                                      | テンポ訳 (JSON: `MultilingualString`)   |
+| `ts_numerator`      | `integer` | -       | NO       | `ts_numerator > 0`                                                                                     | 拍子 分子                               |
+| `ts_denominator`    | `integer` | -       | NO       | `ts_denominator > 0`                                                                                   | 拍子 分母                               |
+| `ts_display_string` | `text`    | -       | NO       | -                                                                                                      | 拍子 特記 (e.g. `C`)                    |
+| `bpm`               | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                                                                               | メトロノーム記号                        |
+| `metronome_unit`    | `text`    | -       | NO       | -                                                                                                      | メトロノーム単位                        |
+| `genres`            | `text`    | `[]`    | YES      | -                                                                                                      | ジャンルリスト (JSON: `MusicalGenre[]`) |
+| `created_at`        | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                                                                 | 作成日時                                |
+| `updated_at`        | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                                                                 | 更新日時                                |
 
 #### 5.5.1 Indexes (Work Parts)
 

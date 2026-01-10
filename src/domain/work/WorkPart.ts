@@ -39,6 +39,14 @@ export class WorkPart {
     return this.metadata.description;
   }
 
+  get type() {
+    return this.metadata.type;
+  }
+
+  get isNameStandard() {
+    return this.metadata.isNameStandard;
+  }
+
   get musicalIdentity() {
     return this.metadata.musicalIdentity;
   }

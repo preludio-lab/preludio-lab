@@ -32,6 +32,8 @@ describe('WorkPart Entity', () => {
     expect(part.slug).toBe(control.slug);
     expect(part.order).toBe(control.order);
     expect(part.title.ja).toBe(metadata.title.ja);
+    expect(part.type).toBe(metadata.type);
+    expect(part.isNameStandard).toBe(metadata.isNameStandard);
     expect(part.musicalIdentity?.tempo).toBe(metadata.musicalIdentity?.tempo);
   });
 
