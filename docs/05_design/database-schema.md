@@ -124,7 +124,7 @@ erDiagram
 | `display_title`             | `text`    | -       | YES      | -                                                                | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み)               |
 | `catchcopy`                 | `text`    | -       | NO       | -                                                                | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示)             |
 | `excerpt`                   | `text`    | -       | NO       | -                                                                | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)                           |
-| `sl_composer_name`          | `text`    | -       | NO       | -                                                                | 作曲家名 (Source: `composer_translations.name`)                        |
+| `sl_composer_name`          | `text`    | -       | NO       | -                                                                | 作曲家名 (Source: `composer_translations.display_name`)          |
 | `sl_work_catalogue_id`      | `text`    | -       | NO       | -                                                                | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846")     |
 | `sl_work_nicknames`         | `text`    | -       | NO       | -                                                                | 通称リスト (JSON, Source: `work_translations.nicknames`)               |
 | `sl_genre`                  | `text`    | -       | NO       | -                                                                | ジャンルリスト (JSON, Source: `works.genres`)                          |
@@ -534,21 +534,51 @@ type PlaybackBinding = {
 
 ### 5.1 `composers`
 
-| Column             | Type   | Default | NOT NULL | CHECK                                                    | Description                      |
-| :----------------- | :----- | :------ | :------- | :------------------------------------------------------- | :------------------------------- |
-| **`id`**           | `text` | -       | YES      | -                                                        | **PK**.                          |
-| `slug`             | `text` | -       | YES      | -                                                        | e.g. `bach`                      |
-| `birth_date`       | `text` | -       | NO       | **`birth_date IS NULL OR date(birth_date) IS NOT NULL`** | 生年月日 (NULLまたはISO8601形式) |
-| `death_date`       | `text` | -       | NO       | **`death_date IS NULL OR date(death_date) IS NOT NULL`** | 没年月日 (NULLまたはISO8601形式) |
-| `nationality_code` | `text` | -       | NO       | -                                                        | ISO Country Code                 |
-| `created_at`       | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時                         |
-| `updated_at`       | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時                         |
+| Column | Type | Default | NOT NULL | CHECK | Description |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`id`**                    | `text`    | -       | YES      | -                                                        | **PK**.                                               |
+| `slug`                      | `text`    | -       | YES      | -                                                        | e.g. `bach`                                           |
+| `birth_date`                | `text`    | -       | NO       | **`birth_date IS NULL OR date(birth_date) IS NOT NULL`** | 生年月日 (NULLまたはISO8601形式)                      |
+| `death_date`                | `text`    | -       | NO       | **`death_date IS NULL OR date(death_date) IS NOT NULL`** | 没年月日 (NULLまたはISO8601形式)                      |
+| `nationality_code`          | `text`    | -       | NO       | -                                                        | ISO Country Code (Legacy: use `places` for details)   |
+| `representative_instruments`| `text`    | `'[]'`  | YES      | -                                                        | 代表的な楽器リスト (JSON: `string[]`)                 |
+| `representative_genres`     | `text`    | `'[]'`  | YES      | -                                                        | 代表的なジャンルリスト (JSON: `string[]`)             |
+| `places`                    | `text`    | `'[]'`  | YES      | -                                                        | 活動拠点情報 (JSON: `Place[]`)                        |
+| `impression_dimensions`     | `text`    | -       | NO       | -                                                        | 印象6次元評価値 (JSON: `ComposerImpressionDimensions`)|
+| `portrait_image_path`       | `text`    | -       | NO       | -                                                        | 肖像画パス                                            |
+| `created_at`                | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**                   | 作成日時                                              |
+| `updated_at`                | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**                   | 更新日時                                              |
 
 #### 5.1.1 Indexes (Composers)
 
 | Index Name           | Columns  | Type       | Usage                      |
 | :------------------- | :------- | :--------- | :------------------------- |
 | `idx_composers_slug` | `(slug)` | **UNIQUE** | ルーティング用（ユニーク） |
+
+#### 5.1.2 JSON Type Definitions
+
+##### 5.1.2.1 `places`
+
+```typescript
+type Place = {
+  slug: string; // MusicalPlace ID (e.g. "vienna")
+  type: 'birth' | 'death' | 'activity' | 'other';
+  countryCode?: string; // ISO 3166-1 alpha-2
+};
+```
+
+##### 5.1.2.2 `impression_dimensions`
+
+```typescript
+type ComposerImpressionDimensions = {
+  innovation: number; // 革新性 (-10 to +10)
+  emotionality: number; // 情動性 (-10 to +10)
+  nationalism: number; // 民族性 (-10 to +10)
+  scale: number; // 規模感 (-10 to +10)
+  complexity: number; // 複雑性 (-10 to +10)
+  theatricality: number; // 演劇性 (-10 to +10)
+};
+```
 
 ### 5.2 `composer_translations`
 
@@ -557,8 +587,11 @@ type PlaybackBinding = {
 | **`id`**          | `text` | -       | YES      | -                                      | **PK**.                        |
 | **`composer_id`** | `text` | -       | YES      | -                                      | **FK to `composers.id`**       |
 | `lang`            | `text` | -       | YES      | -                                      | ISO Language Code              |
-| `name`            | `text` | -       | YES      | -                                      | Localized Name (e.g. "バッハ") |
-| `biography`       | `text` | -       | NO       | -                                      | 人物伝記                       |
+| `full_name` | `text` | - | YES | - | 正式名称 (e.g. "Ludwig van Beethoven") |
+| `display_name` | `text` | - | YES | - | 表示用名称 (e.g. "L. v. Beethoven") |
+| `short_name` | `text` | - | YES | - | 略称・検索用 (e.g. "Beethoven") |
+| `biography` | `text` | - | NO | - | 人物伝記 |
+| `profile_embedding` | `F32BLOB` | - | NO | - | プロフィールベクトル (384 dims, Model: `e5-small`) |
 | `created_at`      | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                       |
 | `updated_at`      | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                       |
 
@@ -567,7 +600,27 @@ type PlaybackBinding = {
 | Index Name              | Columns               | Type       | Usage                |
 | :---------------------- | :-------------------- | :--------- | :------------------- |
 | `idx_comp_trans_lookup` | `(composer_id, lang)` | **UNIQUE** | 基本取得（ユニーク） |
-| `idx_comp_trans_name`   | `(lang, name)`        | B-Tree     | 名前による検索       |
+| `idx_comp_trans_name` | `(lang, display_name)` | B-Tree | 名前（表示名）による検索 |
+| `idx_comp_trans_embedding` | `(profile_embedding)` | HNSW | セマンティック検索（`vector_l2_ops`） |
+
+#### 5.2.2 ベクトル化の対象ソース (Vectorization Sources)
+
+作曲家のプロフィール検索精度を最大化するため、以下の項目を連結してベクトル化します。
+
+| Priority | Source Column / Concept | Description |
+| :--- | :--- | :--- |
+| **High** | `full_name`, `short_name` | 作曲家の氏名・略称・呼び名 |
+| **High** | `composers.tags` | 性格、歴史上のエピソード、特徴的なキーワード |
+| **High** | **`Impression Dimensions`** | 6軸の評価値をテキスト化 (e.g. "Highly Innovative", "Grand Scale") |
+| **Mid** | `representative_genres` | 代表的なジャンル |
+| **Mid** | `representative_instruments`| 代表的な楽器 |
+| **Mid** | `composers.era` | 時代区分 (e.g. "Romantic Era") |
+| **Low** | `biography` | 人物伝記のサマリー |
+
+> [!NOTE]
+> **連結フォーマット例**:
+> `passage: [Name: Ludwig van Beethoven] [Style: Highly Innovative, Grand Scale] [Category: Symphony, Piano] [Tags: Deafness] Biography: A pivotal figure in the transition...`
+
 
 ### 5.3 `works`
 

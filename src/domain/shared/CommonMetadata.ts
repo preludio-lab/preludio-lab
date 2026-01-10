@@ -31,13 +31,29 @@ export const TagsSchema = z.array(z.string().max(50)).max(100).default([]);
 export const YearSchema = zInt().min(1000).max(2999);
 
 /**
+ * 拠点タイプ (生誕地、没地、主な活動地)
+ */
+export const PlaceType = {
+  /** 生誕地 */
+  BIRTH: 'birth',
+  /** 没地 */
+  DEATH: 'death',
+  /** 主な活動地 */
+  ACTIVITY: 'activity',
+  /** その他 */
+  OTHER: 'other',
+} as const;
+
+export type PlaceType = (typeof PlaceType)[keyof typeof PlaceType];
+
+/**
  * 活動拠点 (地点データ)
  */
 export const PlaceSchema = z.object({
   /** 地点スラグ (e.g. "vienna", "paris") - 多言語表現はUI層でメッセージ定義から取得 */
   slug: MusicalPlaceSchema,
-  /** 拠点タイプ (生誕地、没地、主な活動地) */
-  type: z.enum(['birth', 'death', 'activity', 'other']).default('activity'),
+  /** 拠点タイプ */
+  type: z.nativeEnum(PlaceType).default(PlaceType.ACTIVITY),
   /** 国コード (ISO 3166-1 alpha-2) */
   countryCode: NationalitySchema.optional(),
 });
