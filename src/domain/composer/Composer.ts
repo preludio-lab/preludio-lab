@@ -81,6 +81,43 @@ export class Composer {
     }
 
     /**
+     * 印象次元 (Impression Dimensions)
+     */
+    get impressionDimensions() {
+        return this.metadata.impressionDimensions;
+    }
+
+    /** 革新性 */
+    get innovation() {
+        return this.metadata.impressionDimensions?.innovation;
+    }
+
+    /** 情動性 */
+    get emotionality() {
+        return this.metadata.impressionDimensions?.emotionality;
+    }
+
+    /** 民族性 */
+    get nationalism() {
+        return this.metadata.impressionDimensions?.nationalism;
+    }
+
+    /** 規模感 */
+    get scale() {
+        return this.metadata.impressionDimensions?.scale;
+    }
+
+    /** 複雑性 */
+    get complexity() {
+        return this.metadata.impressionDimensions?.complexity;
+    }
+
+    /** 演劇性 */
+    get theatricality() {
+        return this.metadata.impressionDimensions?.theatricality;
+    }
+
+    /**
      * エンティティの複製 (イミュータブルな更新)
      */
     public cloneWith(props: {

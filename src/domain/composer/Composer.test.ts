@@ -2,6 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { Composer } from './Composer';
 import { ComposerMetadataSchema } from './ComposerMetadata';
 import { MusicalEra } from '../shared/MusicalEra';
+import { Nationality } from '../shared/Nationality';
+import { MusicalInstrument } from '../shared/MusicalInstrument';
+import { MusicalGenre } from '../work/MusicalGenre';
+import { MusicalPlace } from '../shared/MusicalPlace';
 
 describe('Composer Entity', () => {
     const validControl = {
@@ -19,12 +23,12 @@ describe('Composer Entity', () => {
         biography: { ja: '偉大な作曲家', en: 'Great composer' },
         birthDate: new Date('1770-12-17'),
         deathDate: new Date('1827-03-26'),
-        nationalityCode: 'DE',
-        representativeInstruments: ['Piano'],
-        representativeGenres: ['Piano Sonata', 'Symphony'],
+        nationalityCode: Nationality.DE,
+        representativeInstruments: [MusicalInstrument.PIANO],
+        representativeGenres: [MusicalGenre.FORM.SONATA, MusicalGenre.ORCHESTRAL.SYMPHONY],
         places: [
-            { slug: 'bonn', type: 'birth' as const, countryCode: 'DE' },
-            { slug: 'vienna', type: 'activity' as const, countryCode: 'AT' },
+            { slug: MusicalPlace.BONN, type: 'birth' as const, countryCode: Nationality.DE },
+            { slug: MusicalPlace.VIENNA, type: 'activity' as const, countryCode: Nationality.AT },
         ],
         portrait: '/images/composers/beethoven.webp',
         tags: ['Classical', 'Romantic'],
@@ -44,10 +48,10 @@ describe('Composer Entity', () => {
         expect(composer.era).toBe(MusicalEra.CLASSICAL);
         expect(composer.biography?.en).toBe('Great composer');
         expect(composer.birthDate).toEqual(validMetadata.birthDate);
-        expect(composer.nationalityCode).toBe('DE');
-        expect(composer.representativeInstruments).toContain('Piano');
-        expect(composer.representativeGenres).toContain('Symphony');
-        expect(composer.places[0].slug).toBe('bonn');
+        expect(composer.nationalityCode).toBe(Nationality.DE);
+        expect(composer.representativeInstruments).toContain(MusicalInstrument.PIANO);
+        expect(composer.representativeGenres).toContain(MusicalGenre.ORCHESTRAL.SYMPHONY);
+        expect(composer.places[0].slug).toBe(MusicalPlace.BONN);
         expect(composer.portrait).toBe('/images/composers/beethoven.webp');
         expect(composer.tags).toContain('Classical');
     });
@@ -59,10 +63,10 @@ describe('Composer Entity', () => {
         });
 
         const cloned = composer.cloneWith({
-            metadata: { nationalityCode: 'AT' },
+            metadata: { nationalityCode: Nationality.AT },
         });
 
-        expect(cloned.nationalityCode).toBe('AT');
+        expect(cloned.nationalityCode).toBe(Nationality.AT);
         expect(cloned.id).toBe(composer.id);
         expect(cloned.fullName).toEqual(validMetadata.fullName);
     });
@@ -70,5 +74,32 @@ describe('Composer Entity', () => {
     it('should validate metadata using schema', () => {
         const result = ComposerMetadataSchema.safeParse(validMetadata);
         expect(result.success).toBe(true);
+    });
+
+    it('should handle impression dimensions', () => {
+        const dimensions = {
+            innovation: 8,
+            emotionality: 5,
+            nationalism: -2,
+            scale: 7,
+            complexity: 6,
+            theatricality: 3,
+        };
+
+        const composer = new Composer({
+            control: validControl,
+            metadata: {
+                ...validMetadata,
+                impressionDimensions: dimensions,
+            },
+        });
+
+        expect(composer.impressionDimensions).toEqual(dimensions);
+        expect(composer.innovation).toBe(8);
+        expect(composer.emotionality).toBe(5);
+        expect(composer.nationalism).toBe(-2);
+        expect(composer.scale).toBe(7);
+        expect(composer.complexity).toBe(6);
+        expect(composer.theatricality).toBe(3);
     });
 });

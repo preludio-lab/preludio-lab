@@ -1,5 +1,6 @@
 import { z, zInt } from '@/shared/validation/zod';
-import { SlugSchema } from './Slug';
+import { MusicalPlaceSchema } from './MusicalPlace';
+import { NationalitySchema } from './Nationality';
 
 /**
  * 共有のメタデータスキーマ定義 (CommonMetadata)
@@ -34,11 +35,64 @@ export const YearSchema = zInt().min(1000).max(2999);
  */
 export const PlaceSchema = z.object({
     /** 地点スラグ (e.g. "vienna", "paris") - 多言語表現はUI層でメッセージ定義から取得 */
-    slug: SlugSchema,
+    slug: MusicalPlaceSchema,
     /** 拠点タイプ (生誕地、没地、主な活動地) */
     type: z.enum(['birth', 'death', 'activity', 'other']).default('activity'),
     /** 国コード (ISO 3166-1 alpha-2) */
-    countryCode: z.string().length(2).optional(),
+    countryCode: NationalitySchema.optional(),
 });
 
 export type Place = z.infer<typeof PlaceSchema>;
+
+/**
+ * Composer Impression Dimensions
+ * 作曲家の作風・特徴を表す6軸の印象評価値 (-10 to +10)
+ */
+export const ComposerImpressionDimensionsSchema = z.object({
+    /** 革新性 (Innovation): 伝統的(-10) <-> 革新的(+10) */
+    innovation: zInt().min(-10).max(10),
+    /** 情動性 (Emotionality): 知的(-10) <-> 感情的(+10) */
+    emotionality: zInt().min(-10).max(10),
+    /** 民族性 (Nationalism): 国際的(-10) <-> 民族的(+10) */
+    nationalism: zInt().min(-10).max(10),
+    /** 規模感 (Scale): 親密(-10) <-> 壮大(+10) */
+    scale: zInt().min(-10).max(10),
+    /** 複雑性 (Complexity): 簡潔(-10) <-> 複雑(+10) */
+    complexity: zInt().min(-10).max(10),
+    /** 演劇性 (Theatricality): 絶対音楽(-10) <-> 演劇的(+10) */
+    theatricality: zInt().min(-10).max(10),
+});
+
+
+export type ComposerImpressionDimensions = z.infer<typeof ComposerImpressionDimensionsSchema>;
+
+/**
+ * スラグのバリデーション用正規表現
+ * - 英小文字、数字、ハイフンのみを許可
+ * - 先頭と末尾にハイフンやスラッシュは禁止
+ */
+export const SLUG_FLAT_REGEX = /^[a-z0-9-]+$/;
+
+/**
+ * 階層構造（スラッシュ区切り）を許可するスラグの正規表現
+ */
+export const SLUG_HIERARCHICAL_REGEX = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
+
+/**
+ * スラグのバリデーションスキーマを作成する
+ * @param maxLength 最大文字数 (デフォルト: 64)
+ * @param allowHierarchical スラッシュによる階層構造を許可するか (デフォルト: true)
+ */
+export const createSlugSchema = (maxLength: number = 64, allowHierarchical: boolean = true) => {
+    const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
+    const message = allowHierarchical
+        ? 'Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash'
+        : 'Slug must be lowercase alphanumeric and hyphens only';
+
+    return z.string().min(1).max(maxLength).regex(regex, { message });
+};
+
+/**
+ * デフォルトのスラグスキーマ（最大64文字、階層構造許可）
+ */
+export const SlugSchema = createSlugSchema(64, true);

@@ -1,5 +1,5 @@
 import { z } from '@/shared/validation/zod';
-import { SlugSchema } from '../shared/Slug';
+import { SlugSchema } from '../shared/CommonMetadata';
 
 /**
  * Composer Control

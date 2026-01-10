@@ -1,7 +1,10 @@
 import { z } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MusicalEraSchema } from '../shared/MusicalEra';
-import { ResourcePathSchema, TagsSchema, PlaceSchema } from '../shared/CommonMetadata';
+import { ResourcePathSchema, TagsSchema, PlaceSchema, ComposerImpressionDimensionsSchema } from '../shared/CommonMetadata';
+import { NationalitySchema } from '../shared/Nationality';
+import { MusicalInstrumentSchema } from '../shared/MusicalInstrument';
+import { MusicalGenreSchema } from '../work/MusicalGenre';
 
 /**
  * Composer Metadata
@@ -35,13 +38,13 @@ export const ComposerMetadataSchema = z.object({
      * 国籍コード (ISO 3166-1 alpha-2) 
      * e.g. "DE", "IT", "FR"
      */
-    nationalityCode: z.string().length(2).optional(),
+    nationalityCode: NationalitySchema.optional(),
 
     /** 代表的な楽器 (Taxonomy準拠) [e.g. "Piano", "Violin"] */
-    representativeInstruments: z.array(z.string().max(50)).max(20).default([]),
+    representativeInstruments: z.array(MusicalInstrumentSchema).max(20).default([]),
 
     /** 代表的なジャンル (Taxonomy準拠) [e.g. "Symphony", "Opera"] */
-    representativeGenres: z.array(z.string().max(50)).max(20).default([]),
+    representativeGenres: z.array(MusicalGenreSchema).max(20).default([]),
 
     /** 活動拠点・地点情報 */
     places: z.array(PlaceSchema).max(20).default([]),
@@ -51,6 +54,9 @@ export const ComposerMetadataSchema = z.object({
 
     /** 自由タグ (e.g. "Impressionist", "Nationalist") */
     tags: TagsSchema,
+
+    /** 印象次元 (Impression Dimensions) */
+    impressionDimensions: ComposerImpressionDimensionsSchema.optional(),
 });
 
 export type ComposerMetadata = z.infer<typeof ComposerMetadataSchema>;
