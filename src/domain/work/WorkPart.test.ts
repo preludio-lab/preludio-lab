@@ -16,6 +16,8 @@ describe('WorkPart Entity', () => {
 
   const metadata: WorkPartMetadata = {
     title: { ja: '第1楽章', en: '1st Movement' },
+    type: 'movement',
+    isNameStandard: true,
     musicalIdentity: {
       genres: [MusicalGenre.FORM.SONATA_FORM],
       tempo: 'Allegro con brio',

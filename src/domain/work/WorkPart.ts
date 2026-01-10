@@ -51,6 +51,10 @@ export class WorkPart {
     return this.metadata.nicknames;
   }
 
+  get impressionDimensions() {
+    return this.metadata.impressionDimensions;
+  }
+
   /**
    * エンティティの複製 (イミュータブルな更新)
    */

@@ -1,6 +1,6 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/Slug';
-import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/WorkMetadata';
+import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/WorkShared';
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 

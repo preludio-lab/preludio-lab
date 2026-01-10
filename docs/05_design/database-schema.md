@@ -636,6 +636,8 @@ type PlaybackBinding = {
 | **`id`**            | `text`    | -       | YES      | -                                      | **PK**.                                 |
 | **`work_id`**       | `text`    | -       | YES      | -                                      | **FK to `works.id`**                    |
 | `slug`              | `text`    | -       | YES      | -                                      | e.g. `1st-mov`                          |
+| `type`              | `text`    | -       | YES      | `IN ('movement', 'number', 'act', 'scene', 'variation', 'section', 'part', 'interlude', 'supplement')` | **[New]** パーツの種類 |
+| `is_name_standard`  | `integer` | `1`     | YES      | `IN (0, 1)`                            | **[New]** 標準名称フラグ (1=標準生成) |
 | `sort_order`        | `integer` | `0`     | YES      | -                                      | 楽章の並び順                            |
 | `title`             | `text`    | `{}`    | YES      | -                                      | 楽章名 (JSON: `MultilingualString`)     |
 | `key_tonality`      | `text`    | -       | NO       | -                                      | 調性 (e.g. `c-minor`)                   |
