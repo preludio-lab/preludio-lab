@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MonetizationElementSchema } from '../monetization/Monetization';
+import { UrlSchema } from '../shared/CommonMetadata';
 
 /**
  * 楽譜の出版・提供形態（媒体）の定義
@@ -36,7 +37,7 @@ export const ScoreMetadataSchema = z.object({
   /** マネタイズ要素のリスト (アフィリエイトリンク等、最大20件) */
   monetizationElements: z.array(MonetizationElementSchema).max(20).default([]),
   /** 閲覧・プレビュー用URL (PDFや外部ビューワー等) */
-  previewUrl: z.string().url().max(2048).optional(),
+  previewUrl: UrlSchema.optional(),
   /** 楽譜全体の主要フォーマット (混合の場合は省略可) */
   format: z.nativeEnum(ScoreFormat).optional(),
 });

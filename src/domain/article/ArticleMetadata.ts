@@ -1,15 +1,13 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/Slug';
 import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/WorkShared';
+import { ResourcePathSchema, TagsSchema, UrlSchema, YearSchema } from '../shared/CommonMetadata';
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 
 // バリデーション用定数
-const MAX_URL_LENGTH = 2_048;
 const MAX_SECONDS_IN_DAY = 86_400; // 24時間
 const MAX_READING_TIME_SECONDS = 1_800; // 30分
-const MIN_YEAR = 1_000;
-const MAX_YEAR = 2_999;
 
 /**
  * Article Category
@@ -48,7 +46,7 @@ export type ArticleCategory = (typeof ArticleCategory)[keyof typeof ArticleCateg
  */
 export const PlaybackSchema = z.object({
   /** 音源ソースの識別子 (YouTube ID等) */
-  audioSrc: z.string().min(1).max(MAX_URL_LENGTH),
+  audioSrc: UrlSchema,
   /** 演奏者・演奏団体名 */
   performer: z.string().max(255).optional(),
   /** 音源の再生開始位置 (秒) */
@@ -112,19 +110,19 @@ export const ArticleMetadataSchema = z.object({
 
   // --- Historical Context ---
   /** 楽曲の作曲年 */
-  compositionYear: zInt().min(MIN_YEAR).max(MAX_YEAR).optional(),
+  compositionYear: YearSchema.optional(),
   /** 作曲者の誕生年 */
-  composerBirthYear: zInt().min(MIN_YEAR).max(MAX_YEAR).optional(),
+  composerBirthYear: YearSchema.optional(),
 
   // --- Media & Playback (Discovery Support) ---
   /** 記事を代表する音源再生情報 (一覧表示での試聴用) */
   playback: PlaybackSchema.optional(),
   /** コンテンツのサムネイル画像URLまたはパス (一覧・検索結果用) */
-  thumbnail: z.string().max(MAX_URL_LENGTH).optional().or(z.literal('')),
+  thumbnail: ResourcePathSchema,
 
   // --- Taxonomy & Search ---
   /** 自由タグのリスト */
-  tags: z.array(z.string().max(20)).max(50).default([]),
+  tags: TagsSchema,
 
   // --- Lifecycle (Discovery Context) ---
   /**

@@ -12,10 +12,10 @@ describe('RecordingMetadata', () => {
     expect(result.success).toBe(true);
   });
 
-  it('録音年が1800年未満の場合にバリデーションエラーになること', () => {
+  it('録音年が1000年未満の場合にバリデーションエラーになること', () => {
     const invalidData = {
       performerName: { en: 'Too Early' },
-      recordingYear: 1799,
+      recordingYear: 999,
       isRecommended: false,
     };
     const result = RecordingMetadataSchema.safeParse(invalidData);

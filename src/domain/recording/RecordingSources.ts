@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_URL_LENGTH } from '../shared/CommonMetadata';
 
 /**
  * Recording Provider
@@ -45,7 +46,7 @@ export const RecordingSourceSchema = z.object({
   /** プロバイダ (Enum) */
   provider: z.nativeEnum(RecordingProvider),
   /** プロバイダ内での識別子 (動画ID、URI、パスなど) */
-  sourceId: z.string().min(1).max(2048),
+  sourceId: z.string().min(1).max(MAX_URL_LENGTH),
   /**
    * 音声の品質レベル
    * ユースケース:

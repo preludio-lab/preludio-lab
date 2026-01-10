@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { zInt } from '@/shared/validation/zod';
 import { ArticleCategory } from './ArticleMetadata';
 import { SlugSchema } from '../shared/Slug';
+import { UrlSchema } from '../shared/CommonMetadata';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠
@@ -11,7 +12,7 @@ export const SourceAttributionSchema = z.object({
   /** 出典のタイトル (例: "IMSLP - Symphony No.5 (Beethoven)") */
   title: z.string().min(1).max(50),
   /** 出典へのURL */
-  url: z.string().max(2048),
+  url: UrlSchema,
   /** 提供サービス名 (IMSLP, Wikipedia, Henle 等) */
   provider: z.string().max(50).optional(),
 });

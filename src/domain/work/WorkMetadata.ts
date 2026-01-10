@@ -10,6 +10,7 @@ import {
   NicknamesSchema,
   ImpressionDimensionsSchema,
 } from './WorkShared';
+import { TagsSchema, YearSchema } from '../shared/CommonMetadata';
 
 // Re-export common types and schemas for convenience
 export * from './WorkShared';
@@ -71,7 +72,7 @@ export const WorkMetadataSchema = z.object({
   impressionDimensions: ImpressionDimensionsSchema.optional(),
 
   /** 作曲年 (ソート用) */
-  compositionYear: zInt().min(1000).max(2999).optional(),
+  compositionYear: YearSchema.optional(),
   /** 作曲時期 (e.g. "1805年頃") */
   compositionPeriod: CompositionPeriodSchema.optional(),
   /** 検索用別名リスト */
@@ -79,7 +80,7 @@ export const WorkMetadataSchema = z.object({
   /** 作品解説 */
   description: DescriptionSchema.optional(),
   /** 自由タグ */
-  tags: z.array(z.string().max(50)).max(100).default([]),
+  tags: TagsSchema,
   // parts: z.array(WorkPartSchema).max(100).default([]), // Phase 7: Promoted to standalone aggregate
 });
 

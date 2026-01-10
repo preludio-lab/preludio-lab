@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
+import { UrlSchema } from '../shared/CommonMetadata';
 
 /**
  * Monetization Type
@@ -106,7 +107,7 @@ export const MonetizationElementSchema = z.object({
    */
   title: createMultilingualStringSchema({ max: 50 }),
   /** リンク先URL */
-  url: z.string().url().max(2048),
+  url: UrlSchema,
   /**
    * 提供元プラットフォーム (UIでのアイコン表示や識別に利用)
    */
