@@ -906,6 +906,27 @@ instruments:
       - id: celesta
         label_ja: チェレスタ
         label_en: Celesta
+      - id: clavichord
+        label_ja: クラヴィコード
+        label_en: Clavichord
+      - id: virginal
+        label_ja: バージナル
+        label_en: Virginal
+      - id: spinet
+        label_ja: スピネット
+        label_en: Spinet
+      - id: harmonium
+        label_ja: ハルモニウム
+        label_en: Harmonium
+      - id: glass-harmonica
+        label_ja: グラス・ハーモニカ
+        label_en: Glass Harmonica
+      - id: portative-organ
+        label_ja: ポルタティフ・オルガン
+        label_en: Portative Organ
+      - id: electronic-keyboard
+        label_ja: 電子キーボード
+        label_en: Electronic Keyboard
   - category: strings
     label_ja: 弦楽器
     label_en: Strings
@@ -925,6 +946,27 @@ instruments:
       - id: viola-da-gamba
         label_ja: ヴィオラ・ダ・ガンバ
         label_en: Viola da Gamba
+      - id: viola-d-amore
+        label_ja: ヴィオラ・ダモーレ
+        label_en: Viola d'amore
+      - id: period-strings
+        label_ja: 古楽器（弦）
+        label_en: Period Strings
+      - id: violoncello-piccolo
+        label_ja: ヴィオロンチェロ・ピッコロ
+        label_en: Violoncello Piccolo
+      - id: violone
+        label_ja: ヴィオローネ
+        label_en: Violone
+      - id: violino-piccolo
+        label_ja: ピッコロ・ヴァイオリン
+        label_en: Violino Piccolo
+      - id: baryton
+        label_ja: バリトン（弦楽器）
+        label_en: Baryton
+      - id: arpeggione
+        label_ja: アルペジョーネ
+        label_en: Arpeggione
   - category: woodwinds
     label_ja: 木管楽器
     label_en: Woodwinds
@@ -956,6 +998,36 @@ instruments:
       - id: recorder
         label_ja: リコーダー
         label_en: Recorder
+      - id: alto-flute
+        label_ja: アルト・フルート
+        label_en: Alto Flute
+      - id: e-flat-clarinet
+        label_ja: 小クラリネット（変ホ管）
+        label_en: E-flat Clarinet
+      - id: saxophone
+        label_ja: サクソフォン
+        label_en: Saxophone
+      - id: traverso
+        label_ja: フラウト・トラヴェルソ
+        label_en: Traverso
+      - id: basset-horn
+        label_ja: バセットホルン
+        label_en: Basset Horn
+      - id: basset-clarinet
+        label_ja: バセットクラリネット
+        label_en: Basset Clarinet
+      - id: oboe-d-amore
+        label_ja: オーボエ・ダモーレ
+        label_en: Oboe d'amore
+      - id: oboe-da-caccia
+        label_ja: オーボエ・ダ・カッチャ
+        label_en: Oboe da caccia
+      - id: baroque-oboe
+        label_ja: バロック・オーボエ
+        label_en: Baroque Oboe
+      - id: heckelphone
+        label_ja: ヘッケルフォーン
+        label_en: Heckelphone
   - category: brass
     label_ja: 金管楽器
     label_en: Brass
@@ -975,6 +1047,33 @@ instruments:
       - id: tuba
         label_ja: チューバ
         label_en: Tuba
+      - id: euphonium
+        label_ja: ユーフォニアム
+        label_en: Euphonium
+      - id: wagner-tuba
+        label_ja: ワーグナー・テューバ
+        label_en: Wagner Tuba
+      - id: natural-trumpet
+        label_ja: ナチュラル・トランペット
+        label_en: Natural Trumpet
+      - id: natural-horn
+        label_ja: ナチュラル・ホルン
+        label_en: Natural Horn
+      - id: piccolo-trumpet
+        label_ja: ピッコロ・トランペット
+        label_en: Piccolo Trumpet
+      - id: flugelhorn
+        label_ja: フリューゲルホルン
+        label_en: Flugelhorn
+      - id: bass-trombone
+        label_ja: バストロンボーン
+        label_en: Bass Trombone
+      - id: zink
+        label_ja: ツィンク（コルネット）
+        label_en: Zink
+      - id: ophicleide
+        label_ja: オフィクレイド
+        label_en: Ophicleide
   - category: voice
     label_ja: 声楽
     label_en: Voice
@@ -997,6 +1096,33 @@ instruments:
       - id: bass
         label_ja: バス
         label_en: Bass
+      - id: mezzo-soprano
+        label_ja: メゾ・ソプラノ
+        label_en: Mezzo Soprano
+      - id: contralto
+        label_ja: コントラルト
+        label_en: Contralto
+      - id: boy-soprano
+        label_ja: ボーイ・ソプラノ
+        label_en: Boy Soprano
+      - id: castrato
+        label_ja: カストラート
+        label_en: Castrato
+      - id: bass-profundo
+        label_ja: バス・プロフンド
+        label_en: Bass Profundo
+      - id: choir-mixed
+        label_ja: 混声合唱
+        label_en: Mixed Choir
+      - id: choir-male
+        label_ja: 男声合唱
+        label_en: Male Choir
+      - id: choir-female
+        label_ja: 女声合唱
+        label_en: Female Choir
+      - id: choir-children
+        label_ja: 児童合唱
+        label_en: Children's Choir
   - category: percussion
     label_ja: 打楽器
     label_en: Percussion
@@ -1007,6 +1133,51 @@ instruments:
       - id: percussion-general
         label_ja: 打楽器（全般）
         label_en: Percussion (General)
+      - id: glockenspiel
+        label_ja: グロッケンシュピール
+        label_en: Glockenspiel
+      - id: xylophone
+        label_ja: シロフォン
+        label_en: Xylophone
+      - id: vibraphone
+        label_ja: ヴィブラフォン
+        label_en: Vibraphone
+      - id: marimba
+        label_ja: マリンバ
+        label_en: Marimba
+      - id: snare-drum
+        label_ja: スネアドラム（小太鼓）
+        label_en: Snare Drum
+      - id: bass-drum
+        label_ja: バスドラム（大太鼓）
+        label_en: Bass Drum
+      - id: cymbals
+        label_ja: シンバル
+        label_en: Cymbals
+      - id: triangle
+        label_ja: トライアングル
+        label_en: Triangle
+      - id: tubular-bells
+        label_ja: チューブラー・ベル
+        label_en: Tubular Bells
+      - id: tam-tam
+        label_ja: タムタム（銅鑼）
+        label_en: Tam-tam
+      - id: castanets
+        label_ja: カスタネット
+        label_en: Castanets
+      - id: tambourine
+        label_ja: タンバリン
+        label_en: Tambourine
+      - id: xylorimba
+        label_ja: シロリンバ
+        label_en: Xylorimba
+      - id: hammer
+        label_ja: ハンマー
+        label_en: Hammer
+      - id: bells
+        label_ja: ベル
+        label_en: Bells
   - category: plucked-strings
     label_ja: 撥弦楽器
     label_en: Plucked Strings
@@ -1023,6 +1194,24 @@ instruments:
       - id: harp
         label_ja: ハープ
         label_en: Harp
+      - id: theorbo
+        label_ja: テオルボ
+        label_en: Theorbo
+      - id: baroque-guitar
+        label_ja: バロック・ギター
+        label_en: Baroque Guitar
+      - id: vihuela
+        label_ja: ビウエラ
+        label_en: Vihuela
+      - id: lyre
+        label_ja: リラ
+        label_en: Lyre
+      - id: zither
+        label_ja: ツィター
+        label_en: Zither
+      - id: balalaika
+        label_ja: バラライカ
+        label_en: Balalaika
   - category: historical-roles
     label_ja: 歴史的役割・その他
     label_en: Historical Roles / Others
@@ -1030,6 +1219,9 @@ instruments:
       - id: basso-continuo
         label_ja: 通奏低音
         label_en: Basso Continuo
+      - id: electronics
+        label_ja: 電子音響
+        label_en: Electronics
 
 # -----------------------------------------------------------------------------
 # 5. Tags (タグ)
