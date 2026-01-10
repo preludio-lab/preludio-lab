@@ -9,7 +9,7 @@ import {
 } from '../shared/CommonMetadata';
 import { NationalitySchema } from '../shared/Nationality';
 import { MusicalInstrumentSchema } from '../shared/MusicalInstrument';
-import { MusicalGenreSchema } from '../work/MusicalGenre';
+import { MusicalGenreSchema } from '../shared/MusicalGenre';
 
 /**
  * Composer Impression Dimensions

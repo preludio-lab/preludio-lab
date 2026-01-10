@@ -1,7 +1,7 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
 import { MusicalCataloguePrefixSchema } from './MusicalCataloguePrefix';
-import { MusicalGenreSchema } from './MusicalGenre';
+import { MusicalGenreSchema } from '../shared/MusicalGenre';
 import { MusicalKeySchema } from './MusicalKey';
 import { DimensionSchema } from '../shared/CommonMetadata';
 

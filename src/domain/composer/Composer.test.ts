@@ -4,7 +4,7 @@ import { ComposerMetadataSchema } from './ComposerMetadata';
 import { MusicalEra } from '../shared/MusicalEra';
 import { Nationality } from '../shared/Nationality';
 import { MusicalInstrument } from '../shared/MusicalInstrument';
-import { MusicalGenre } from '../work/MusicalGenre';
+import { MusicalGenre } from '../shared/MusicalGenre';
 import { MusicalPlace } from '../shared/MusicalPlace';
 
 describe('Composer Entity', () => {

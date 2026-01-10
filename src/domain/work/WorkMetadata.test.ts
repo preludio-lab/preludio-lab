@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { WorkMetadataSchema, MetronomeUnit } from './WorkMetadata';
 import { WorkPartMetadataSchema } from './WorkPartMetadata';
 import { MusicalEra } from '../shared/MusicalEra';
-import { MusicalGenre } from './MusicalGenre';
+import { MusicalGenre } from '../shared/MusicalGenre';
 import { MusicalCataloguePrefix } from './MusicalCataloguePrefix';
 import { MusicalKey, MusicalKeySchema } from './MusicalKey';
 
