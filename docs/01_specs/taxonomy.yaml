@@ -906,6 +906,27 @@ instruments:
       - id: celesta
         label_ja: チェレスタ
         label_en: Celesta
+      - id: clavichord
+        label_ja: クラヴィコード
+        label_en: Clavichord
+      - id: virginal
+        label_ja: バージナル
+        label_en: Virginal
+      - id: spinet
+        label_ja: スピネット
+        label_en: Spinet
+      - id: harmonium
+        label_ja: ハルモニウム
+        label_en: Harmonium
+      - id: glass-harmonica
+        label_ja: グラス・ハーモニカ
+        label_en: Glass Harmonica
+      - id: portative-organ
+        label_ja: ポルタティフ・オルガン
+        label_en: Portative Organ
+      - id: electronic-keyboard
+        label_ja: 電子キーボード
+        label_en: Electronic Keyboard
   - category: strings
     label_ja: 弦楽器
     label_en: Strings
@@ -925,6 +946,27 @@ instruments:
       - id: viola-da-gamba
         label_ja: ヴィオラ・ダ・ガンバ
         label_en: Viola da Gamba
+      - id: viola-d-amore
+        label_ja: ヴィオラ・ダモーレ
+        label_en: Viola d'amore
+      - id: period-strings
+        label_ja: 古楽器（弦）
+        label_en: Period Strings
+      - id: violoncello-piccolo
+        label_ja: ヴィオロンチェロ・ピッコロ
+        label_en: Violoncello Piccolo
+      - id: violone
+        label_ja: ヴィオローネ
+        label_en: Violone
+      - id: violino-piccolo
+        label_ja: ピッコロ・ヴァイオリン
+        label_en: Violino Piccolo
+      - id: baryton
+        label_ja: バリトン（弦楽器）
+        label_en: Baryton
+      - id: arpeggione
+        label_ja: アルペジョーネ
+        label_en: Arpeggione
   - category: woodwinds
     label_ja: 木管楽器
     label_en: Woodwinds
@@ -956,6 +998,36 @@ instruments:
       - id: recorder
         label_ja: リコーダー
         label_en: Recorder
+      - id: alto-flute
+        label_ja: アルト・フルート
+        label_en: Alto Flute
+      - id: e-flat-clarinet
+        label_ja: 小クラリネット（変ホ管）
+        label_en: E-flat Clarinet
+      - id: saxophone
+        label_ja: サクソフォン
+        label_en: Saxophone
+      - id: traverso
+        label_ja: フラウト・トラヴェルソ
+        label_en: Traverso
+      - id: basset-horn
+        label_ja: バセットホルン
+        label_en: Basset Horn
+      - id: basset-clarinet
+        label_ja: バセットクラリネット
+        label_en: Basset Clarinet
+      - id: oboe-d-amore
+        label_ja: オーボエ・ダモーレ
+        label_en: Oboe d'amore
+      - id: oboe-da-caccia
+        label_ja: オーボエ・ダ・カッチャ
+        label_en: Oboe da caccia
+      - id: baroque-oboe
+        label_ja: バロック・オーボエ
+        label_en: Baroque Oboe
+      - id: heckelphone
+        label_ja: ヘッケルフォーン
+        label_en: Heckelphone
   - category: brass
     label_ja: 金管楽器
     label_en: Brass
@@ -975,6 +1047,33 @@ instruments:
       - id: tuba
         label_ja: チューバ
         label_en: Tuba
+      - id: euphonium
+        label_ja: ユーフォニアム
+        label_en: Euphonium
+      - id: wagner-tuba
+        label_ja: ワーグナー・テューバ
+        label_en: Wagner Tuba
+      - id: natural-trumpet
+        label_ja: ナチュラル・トランペット
+        label_en: Natural Trumpet
+      - id: natural-horn
+        label_ja: ナチュラル・ホルン
+        label_en: Natural Horn
+      - id: piccolo-trumpet
+        label_ja: ピッコロ・トランペット
+        label_en: Piccolo Trumpet
+      - id: flugelhorn
+        label_ja: フリューゲルホルン
+        label_en: Flugelhorn
+      - id: bass-trombone
+        label_ja: バストロンボーン
+        label_en: Bass Trombone
+      - id: zink
+        label_ja: ツィンク（コルネット）
+        label_en: Zink
+      - id: ophicleide
+        label_ja: オフィクレイド
+        label_en: Ophicleide
   - category: voice
     label_ja: 声楽
     label_en: Voice
@@ -997,6 +1096,33 @@ instruments:
       - id: bass
         label_ja: バス
         label_en: Bass
+      - id: mezzo-soprano
+        label_ja: メゾ・ソプラノ
+        label_en: Mezzo Soprano
+      - id: contralto
+        label_ja: コントラルト
+        label_en: Contralto
+      - id: boy-soprano
+        label_ja: ボーイ・ソプラノ
+        label_en: Boy Soprano
+      - id: castrato
+        label_ja: カストラート
+        label_en: Castrato
+      - id: bass-profundo
+        label_ja: バス・プロフンド
+        label_en: Bass Profundo
+      - id: choir-mixed
+        label_ja: 混声合唱
+        label_en: Mixed Choir
+      - id: choir-male
+        label_ja: 男声合唱
+        label_en: Male Choir
+      - id: choir-female
+        label_ja: 女声合唱
+        label_en: Female Choir
+      - id: choir-children
+        label_ja: 児童合唱
+        label_en: Children's Choir
   - category: percussion
     label_ja: 打楽器
     label_en: Percussion
@@ -1007,6 +1133,51 @@ instruments:
       - id: percussion-general
         label_ja: 打楽器（全般）
         label_en: Percussion (General)
+      - id: glockenspiel
+        label_ja: グロッケンシュピール
+        label_en: Glockenspiel
+      - id: xylophone
+        label_ja: シロフォン
+        label_en: Xylophone
+      - id: vibraphone
+        label_ja: ヴィブラフォン
+        label_en: Vibraphone
+      - id: marimba
+        label_ja: マリンバ
+        label_en: Marimba
+      - id: snare-drum
+        label_ja: スネアドラム（小太鼓）
+        label_en: Snare Drum
+      - id: bass-drum
+        label_ja: バスドラム（大太鼓）
+        label_en: Bass Drum
+      - id: cymbals
+        label_ja: シンバル
+        label_en: Cymbals
+      - id: triangle
+        label_ja: トライアングル
+        label_en: Triangle
+      - id: tubular-bells
+        label_ja: チューブラー・ベル
+        label_en: Tubular Bells
+      - id: tam-tam
+        label_ja: タムタム（銅鑼）
+        label_en: Tam-tam
+      - id: castanets
+        label_ja: カスタネット
+        label_en: Castanets
+      - id: tambourine
+        label_ja: タンバリン
+        label_en: Tambourine
+      - id: xylorimba
+        label_ja: シロリンバ
+        label_en: Xylorimba
+      - id: hammer
+        label_ja: ハンマー
+        label_en: Hammer
+      - id: bells
+        label_ja: ベル
+        label_en: Bells
   - category: plucked-strings
     label_ja: 撥弦楽器
     label_en: Plucked Strings
@@ -1023,6 +1194,24 @@ instruments:
       - id: harp
         label_ja: ハープ
         label_en: Harp
+      - id: theorbo
+        label_ja: テオルボ
+        label_en: Theorbo
+      - id: baroque-guitar
+        label_ja: バロック・ギター
+        label_en: Baroque Guitar
+      - id: vihuela
+        label_ja: ビウエラ
+        label_en: Vihuela
+      - id: lyre
+        label_ja: リラ
+        label_en: Lyre
+      - id: zither
+        label_ja: ツィター
+        label_en: Zither
+      - id: balalaika
+        label_ja: バラライカ
+        label_en: Balalaika
   - category: historical-roles
     label_ja: 歴史的役割・その他
     label_en: Historical Roles / Others
@@ -1030,6 +1219,9 @@ instruments:
       - id: basso-continuo
         label_ja: 通奏低音
         label_en: Basso Continuo
+      - id: electronics
+        label_ja: 電子音響
+        label_en: Electronics
 
 # -----------------------------------------------------------------------------
 # 5. Tags (タグ)
@@ -2141,3 +2333,621 @@ catalogue_prefixes:
   - id: custom
     label: Custom
     description: マスターにない特殊なカタログ。
+
+# -----------------------------------------------------------------------------
+# 8. Places (主要都市・活動拠点)
+# -----------------------------------------------------------------------------
+# 音楽史における主要な都市。MusicalPlace.ts と同期。
+places:
+  # --- Germany / Austria ---
+  - id: vienna
+    label_ja: ウィーン
+    label_en: Vienna
+    description: 音楽の都、ハイドン・モーツァルト・ベートーヴェンらが活躍。
+  - id: berlin
+    label_ja: ベルリン
+    label_en: Berlin
+    description: ベルリン・フィル、プロイセンの文化都市。
+  - id: leipzig
+    label_ja: ライプツィヒ
+    label_en: Leipzig
+    description: バッハが後半生を過ごし、メンデルスゾーンがゲヴァントハウス管を指揮した地。
+  - id: hamburg
+    label_ja: ハンブルク
+    label_en: Hamburg
+    description: ブラームスの生誕地。ドイツ北部の重要都市。
+  - id: munich
+    label_ja: ミュンヘン
+    label_en: Munich
+    description: バイエルンの州都。R.シュトラウスの生誕地。
+  - id: salzburg
+    label_ja: ザルツブルク
+    label_en: Salzburg
+    description: モーツァルトの生誕地。音楽祭で著名。
+  - id: bonn
+    label_ja: ボン
+    label_en: Bonn
+    description: ベートーヴェンの生誕地。
+  - id: eisenach
+    label_ja: アイゼナハ
+    label_en: Eisenach
+    description: バッハの生誕地。
+  - id: dresden
+    label_ja: ドレスデン
+    label_en: Dresden
+    description: ウェーバー、ワーグナーの活動拠点。ドレスデン国立歌劇場。
+  - id: mannheim
+    label_ja: マンハイム
+    label_en: Mannheim
+    description: マンハイム楽派（交響曲の発展）。モーツァルトも滞在。
+  - id: weimar
+    label_ja: ワイマール
+    label_en: Weimar
+    description: バッハ（宮廷音楽家）、リストの活動拠点。
+  - id: bayreuth
+    label_ja: バイロイト
+    label_en: Bayreuth
+    description: ワーグナー、バイロイト祝祭劇場。
+  - id: kassel
+    label_ja: カッセル
+    label_en: Kassel
+    description: シュポーアの活動拠点。
+  - id: augsburg
+    label_ja: アウクスブルク
+    label_en: Augsburg
+    description: モーツァルト家ゆかりの地（父レオポルトの出身地）。
+  - id: lubeck
+    label_ja: リューベック
+    label_en: Lubeck
+    description: ブクステフーデ。若きバッハが歩いて訪れた地。
+  - id: halle
+    label_ja: ハレ
+    label_en: Halle
+    description: ヘンデルの生誕地。
+  - id: mainz
+    label_ja: マインツ
+    label_en: Mainz
+    description: ショット社（楽譜出版）の本拠地。
+  - id: linz
+    label_ja: リンツ
+    label_en: Linz
+    description: ブルックナーの活動拠点（セント・フローリアン修道院）。
+  - id: graz
+    label_ja: グラーツ
+    label_en: Graz
+    description: オーストリア第二の都市。シューベルトゆかり。
+  - id: bad-ischl
+    label_ja: バート・イシュル
+    label_en: Bad Ischl
+    description: ブラームスやレハールが夏を過ごした保養地。
+  - id: cothen
+    label_ja: ケーテン
+    label_en: Cothen
+    description: バッハが「ブランデンブルク協奏曲」等を書いた地。
+  - id: potsdam
+    label_ja: ポツダム
+    label_en: Potsdam
+    description: フリードリヒ大王の宮廷。バッハ「音楽の捧げもの」。
+  - id: zurich
+    label_ja: チューリッヒ
+    label_en: Zurich
+    description: ※スイスですが、ドイツ語圏・ワーグナー亡命地として重要。
+
+  # --- France ---
+  - id: paris
+    label_ja: パリ
+    label_en: Paris
+    description: フランス音楽の中心地。
+  - id: versailles
+    label_ja: ベルサイユ
+    label_en: Versailles
+    description: リュリ、クープランなど、フランス・バロック音楽の聖地。
+  - id: strasbourg
+    label_ja: ストラスブール
+    label_en: Strasbourg
+    description: フランス国歌「ラ・マルセイエーズ」誕生の地。
+  - id: lyon
+    label_ja: リヨン
+    label_en: Lyon
+    description: フランス最古の歌劇場の一つがあり、ルネサンス期から音楽出版が盛ん。
+  - id: nice
+    label_ja: ニース
+    label_en: Nice
+    description: ベルリオーズやチャイコフスキーなど、多くの作曲家が静養・執筆した地。
+  - id: rouen
+    label_ja: ルーアン
+    label_en: Rouen
+    description: ボイエルデューの生誕地であり、オルガン音楽の伝統が深い。
+  - id: dijon
+    label_ja: ディジョン
+    label_en: Dijon
+    description: ジャン＝フィリップ・ラモーの生誕地。
+  - id: nantes
+    label_ja: ナント
+    label_en: Nantes
+    description: 「ラ・フォル・ジュルネ」発祥の地。音楽祭の文脈で重要。
+  - id: aix-en-provence
+    label_ja: エクス＝アン＝プロヴァンス
+    label_en: Aix-en-Provence
+    description: ミヨーの生誕地。国際音楽祭で著名。
+  - id: grenoble
+    label_ja: グルノーブル
+    label_en: Grenoble
+    description: ベルリオーズの生誕地（近郊のラ・コート＝サン＝アンドレ）。
+  - id: bordeaux
+    label_ja: ボルドー
+    label_en: Bordeaux
+    description: 18世紀以来の歌劇場文化。サン＝サーンスゆかりの地。
+
+  # --- UK ---
+  - id: london
+    label_ja: ロンドン
+    label_en: London
+    description: ヘンデル、ハイドンが活躍し、多くの音楽家が訪れた大都市。
+  - id: edinburgh
+    label_ja: エディンバラ
+    label_en: Edinburgh
+    description: エディンバラ国際フェスティバルの開催地。メンデルスゾーンの交響曲第3番。
+  - id: gloucester
+    label_ja: グロスター
+    label_en: Gloucester
+    description: 「スリー・クワイア・フェスティバル」の拠点。エルガー、フィンジゆかり。
+  - id: worcester
+    label_ja: ウスター
+    label_en: Worcester
+    description: エルガーの生誕地。上記合唱祭の拠点の一つ。
+  - id: aldeburgh
+    label_ja: オールドバラ
+    label_en: Aldeburgh
+    description: ベンジャミン・ブリテンが創設した音楽祭の地。
+  - id: cambridge
+    label_ja: ケンブリッジ
+    label_en: Cambridge
+    description: キングス・カレッジ聖歌隊など、英国合唱音楽の伝統。
+  - id: oxford
+    label_ja: オックスフォード
+    label_en: Oxford
+    description: ヘ手ルマの演奏会や、ハイドンの「オックスフォード」交響曲。
+  - id: manchester
+    label_ja: マンチェスター
+    label_en: Manchester
+    description: ハレ管弦楽団の本拠地。現代音楽の拠点（マンチェスター派）。
+  - id: birmingham
+    label_ja: バーミンガム
+    label_en: Birmingham
+    description: メンデルスゾーン「エリア」初演地。バーミンガム市交響楽団。
+  - id: liverpool
+    label_ja: リヴァプール
+    label_en: Liverpool
+    description: ロイヤル・リヴァプール・フィル。英国で最も古いオーケストラの一つ。
+  - id: glyndebourne
+    label_ja: グラインドボーン
+    label_en: Glyndebourne
+    description: カントリー・ハウス・オペラ（音楽祭）の代名詞。
+
+  # --- Italy ---
+  - id: rome
+    label_ja: ローマ
+    label_en: Rome
+    description: カトリックの中心地。パレストリーナ、レスピーギらが活躍。
+  - id: venice
+    label_ja: ヴェネツィア
+    label_en: Venice
+    description: ヴィヴァルディ、モンテヴェルディ。オペラ発祥の地の一つ。
+  - id: milan
+    label_ja: ミラノ
+    label_en: Milan
+    description: スカラ座。ヴェルディが活躍。
+  - id: naples
+    label_ja: ナポリ
+    label_en: Naples
+    description: ナポリ楽派、オペラ・ブッファの発祥地。
+  - id: florence
+    label_ja: フィレンツェ
+    label_en: Florence
+    description: ルネサンスの中心。オペラ（カメラータ）誕生の地。
+  - id: cremona
+    label_ja: クレモナ
+    label_en: Cremona
+    description: ストラディヴァリ、モンテヴェルディの生誕地。弦楽器製作の聖地。
+  - id: turin
+    label_ja: トリノ
+    label_en: Turin
+    description: プッチーニ『ラ・ボエーム』初演地（レージョ劇場）。
+  - id: bologna
+    label_ja: ボローニャ
+    label_en: Bologna
+    description: 17世紀合奏協奏曲の発展。マルティーニ神父（モーツァルトの師）の活動地。
+  - id: genoa
+    label_ja: ジェノヴァ
+    label_en: Genoa
+    description: パガニーニの生誕地。
+  - id: parma
+    label_ja: パルマ
+    label_en: Parma
+    description: ヴェルディ、トスカニーニの故郷。
+  - id: busseto
+    label_ja: ブッセート
+    label_en: Busseto
+    description: ヴェルディの青年時代の拠点（ヴィッラ・ヴェルディ）。
+  - id: bergamo
+    label_ja: ベルガモ
+    label_en: Bergamo
+    description: ドニゼッティの生誕地。
+  - id: lucca
+    label_ja: ルッカ
+    label_en: Lucca
+    description: プッチーニ、ボッケリーニの生誕地。
+  - id: catania
+    label_ja: カターニア
+    label_en: Catania
+    description: ベッリーニの生誕地（シチリア島）。
+  - id: pesaro
+    label_ja: ペーザロ
+    label_en: Pesaro
+    description: ロッシーニの生誕地。ロッシーニ・オペラ・フェスティバル。
+  - id: verona
+    label_ja: ヴェローナ
+    label_en: Verona
+    description: アレーナ・ディ・ヴェローナ（野外オペラの殿堂）。
+  - id: mantua
+    label_ja: マントヴァ
+    label_en: Mantua
+    description: モンテヴェルディ『オルフェオ』初演地。ゴンザーガ家の宮廷。
+
+  # --- Russia ---
+  - id: st-petersburg
+    label_ja: サンクトペテルブルク
+    label_en: St. Petersburg
+    description: ロシア帝国の首都。ロシア5人組やチャイコフスキーが活躍。
+  - id: moscow
+    label_ja: モスクワ
+    label_en: Moscow
+    description: ロシアの政治的中心。モスクワ音楽院。
+  - id: kiev
+    label_ja: キエフ（キーウ）
+    label_en: Kiev
+    description: ムソルグスキー「展覧会の絵（キエフの大門）」。ホロヴィッツの生誕地。
+  - id: odessa
+    label_ja: オデッサ
+    label_en: Odessa
+    description: ギレリス、オイストラフなど、偉大な演奏家を輩出した音楽の都。
+  - id: nizhny-novgorod
+    label_ja: ニジニ・ノヴゴロド
+    label_en: Nizhny Novgorod
+    description: バラキレフの生誕地。旧ゴーリキー。
+  - id: yotka-ola
+    label_ja: ヨシュカル・オラ
+    label_en: Yoshkar-Ola
+    description: ※（補足）チャイコフスキーが「四季」や交響曲の着想を得た地方の静養地などの文脈で。
+  - id: votkinsk
+    label_ja: ヴォトキンスク
+    label_en: Votkinsk
+    description: チャイコフスキーの生誕地。
+  - id: klin
+    label_ja: クリン
+    label_en: Klin
+    description: チャイコフスキーが晩年を過ごし、交響曲第6番「悲愴」を書いた地。
+  - id: ivanovka
+    label_ja: イワノフカ
+    label_en: Ivanovka
+    description: ラフマニノフが多くの傑作（ピアノ協奏曲第2番など）を執筆した所領。
+  - id: tbilisi
+    label_ja: トビリシ
+    label_en: Tbilisi
+    description: ハチャトゥリアンゆかりの地（ジョージア）。
+
+  # --- Poland ---
+  - id: warsaw
+    label_ja: ワルシャワ
+    label_en: Warsaw
+    description: ショパンが青年期を過ごした地。ショパンコンクール開催地。
+  - id: krakow
+    label_ja: クラクフ
+    label_en: Krakow
+    description: ポーランドの古都。ペンデレツキの活動拠点。
+  - id: zelazowa-wola
+    label_ja: ジェラゾヴァ・ヴォラ
+    label_en: Zelazowa Wola
+    description: ショパンの生誕地。
+  - id: poznan
+    label_ja: ポズナン
+    label_en: Poznan
+    description: ヴィエニャフスキ国際ヴァイオリン・コンクール開催地。
+  - id: wroclaw
+    label_ja: ヴロツワフ
+    label_en: Wroclaw
+    description: ブラームス『大学祝典序曲』初演の地（ブレスラウ）。
+  - id: katowice
+    label_ja: カトヴィツェ
+    label_en: Katowice
+    description: ポーランド放送交響楽団の本拠地。グレツキゆかりの地。
+  - id: duszniki-zdroj
+    label_ja: ドゥシュニキ・ズドルイ
+    label_en: Duszniki-Zdroj
+    description: 世界最古のショパン・フェスティバル開催地。
+  - id: zakopane
+    label_ja: ザコパネ
+    label_en: Zakopane
+    description: シマノフスキが晩年を過ごし、民族音楽を研究した地。
+
+  # --- Czech Republic ---
+  - id: prague
+    label_ja: プラハ
+    label_en: Prague
+    description: モーツァルトが愛した街。ドヴォルザーク、スメタナの拠点。
+  - id: brno
+    label_ja: ブルノ
+    label_en: Brno
+    description: ヤナーチェクの活動拠点。
+  - id: litomysl
+    label_ja: リトミシュル
+    label_en: Litomysl
+    description: スメタナの生誕地。世界遺産の城で有名な音楽祭が開催される。
+  - id: nelahozeves
+    label_ja: ネラホゼヴェス
+    label_en: Nelahozeves
+    description: ドヴォルザークの生誕地。プラハ近郊の重要な聖地。
+  - id: hukvaldy
+    label_ja: フクヴァルディ
+    label_en: Hukvaldy
+    description: ヤナーチェクの生誕地。彼の音楽の源泉である自然豊かな地。
+  - id: kromeriz
+    label_ja: クロミェジーシュ
+    label_en: Kromeriz
+    description: 大司教の宮廷があり、ビーバーなどバロック期の重要な楽譜が発見された地。
+  - id: pilsen
+    label_ja: ピルゼン（プルゼニ）
+    label_en: Pilsen
+    description: スメタナが学生時代を過ごし、音楽的キャリアをスタートさせた地。
+  - id: jihlava
+    label_ja: イフラヴァ
+    label_en: Jihlava
+    description: マーラーが少年時代を過ごし、彼の軍隊リズムの原風景となった地。
+  - id: olomouc
+    label_ja: オロモウツ
+    label_en: Olomouc
+    description: マーラーが指揮者として活動し、モーツァルトも滞在した歴史的都市。
+  - id: vysoka
+    label_ja: ヴィソカー
+    label_en: Vysoka
+    description: ドヴォルザークが夏を過ごし、オペラ『ルサルカ』などを執筆した別荘がある地。
+
+  # --- Hungary ---
+  - id: budapest
+    label_ja: ブダペスト
+    label_en: Budapest
+    description: リスト音楽院などハンガリー音楽の中心地。
+  - id: sopron
+    label_ja: ショプロン
+    label_en: Sopron
+    description: リストの生誕地（ライディング）に近い主要都市。オーストリア国境付近。
+  - id: szeged
+    label_ja: セゲド
+    label_en: Szeged
+    description: バルトークが初期に活動し、現代もハンガリー音楽界の重要拠点。
+  - id: kecskemet
+    label_ja: ケチケメート
+    label_en: Kecskemet
+    description: ゾルタン・コダーイの生誕地。コダーイ・メソッドの教育拠点。
+  - id: debrecen
+    label_ja: デブレツェン
+    label_en: Debrecen
+    description: ハンガリーのキリスト教文化の中心地。合唱音楽が盛ん。
+  - id: martonvasar
+    label_ja: マルトンヴァーシャール
+    label_en: Martonvasar
+    description: ベートーヴェンが滞在し、「熱情」ソナタ等を書いたブルンスヴィック城がある地。
+  - id: gyor
+    label_ja: ジェール
+    label_en: Gyor
+    description: ハイドンが仕えたエステルハージ家ゆかりの地。
+  - id: fertod
+    label_ja: フェルトゥード
+    label_en: Fertod
+    description: エステルハージ宮殿（ハンガリーのヴェルサイユ）の所在地。ハイドンの主要活動地。
+
+  # --- USA ---
+  - id: new-york
+    label_ja: ニューヨーク
+    label_en: New York
+    description: メトロポリタン歌劇場、カーネギーホール。アメリカ音楽の中心。
+  - id: boston
+    label_ja: ボストン
+    label_en: Boston
+    description: ボストン交響楽団。小澤征爾が長年指揮。
+  - id: philadelphia
+    label_ja: フィラデルフィア
+    label_en: Philadelphia
+    description: フィラデルフィア管弦楽団。ラフマニノフが愛した響き。
+  - id: chicago
+    label_ja: シカゴ
+    label_en: Chicago
+    description: シカゴ交響楽団（強力な金管楽器）。ショルティ時代の黄金期。
+  - id: cleveland
+    label_ja: クリーブランド
+    label_en: Cleveland
+    description: クリーブランド管弦楽団。ジョージ・セルの厳格なアンサンブル。
+  - id: los-angeles
+    label_ja: ロサンゼルス
+    label_en: Los Angeles
+    description: LAフィル。ストラヴィンスキーやシェーンベルクの亡命地。ハリウッド音楽。
+  - id: san-francisco
+    label_ja: サンフランシスコ
+    label_en: San Francisco
+    description: サンフランシスコ交響楽団。現代音楽や実験的試みの拠点。
+  - id: washington-dc
+    label_ja: ワシントンD.C.
+    label_en: Washington D.C.
+    description: ナショナル交響楽団。ケネディ・センター。
+  - id: tanglewood
+    label_ja: タングルウッド
+    label_en: Tanglewood
+    description: ボストン交響楽団の夏の本拠地。バーンスタインゆかりの教育拠点。
+  - id: minneapolis
+    label_ja: ミネアポリス
+    label_en: Minneapolis
+    description: ミネソタ管弦楽団。
+  - id: pittsburgh
+    label_ja: ピッツバーグ
+    label_en: Pittsburgh
+    description: ピッツバーグ交響楽団。
+  - id: new-orleans
+    label_ja: ニューオーリンズ
+    label_en: New Orleans
+    description: ジャズの聖地だが、初期のオペラ上演など西洋音楽受容の歴史も深い。
+
+  # --- Nordic ---
+  - id: copenhagen
+    label_ja: コペンハーゲン
+    label_en: Copenhagen
+    description: デンマークの首都。ニールセン、ガルデの活動拠点。
+  - id: stockholm
+    label_ja: ストックホルム
+    label_en: Stockholm
+    description: スウェーデンの首都。ベルワルド、アルヴェーン。ノーベル賞授賞式会場。
+  - id: helsinki
+    label_ja: ヘルシンキ
+    label_en: Helsinki
+    description: フィンランドの首都。シベリウスの主要活動地。ヘルシンキ・フィル。
+  - id: jarvenpaa
+    label_ja: ヤルヴェンパー
+    label_en: Jarvenpaa
+    description: シベリウスが後半生を過ごした邸宅「アイノラ」がある地。
+  - id: bergen
+    label_ja: ベルゲン
+    label_en: Bergen
+    description: グリーグの生誕地。邸宅「トロルドハウゲン」があり、音楽祭も著名。
+  - id: oslo
+    label_ja: オスロ
+    label_en: Oslo
+    description: ノルウェーの首都。旧クリスチャニア。グリーグの活動拠点。
+  - id: tallinn
+    label_ja: タリン
+    label_en: Tallinn
+    description: エストニアの首都。アルヴォ・ペルトの出身地。合唱音楽の聖地。
+  - id: riga
+    label_ja: リガ
+    label_en: Riga
+    description: ラトビアの首都。ワーグナーが指揮者として滞在した歴史。
+  - id: vilnius
+    label_ja: ヴィリニュス
+    label_en: Vilnius
+    description: リトアニアの首都。チュルリョーニスの活動地。
+  - id: lahti
+    label_ja: ラハティ
+    label_en: Lahti
+    description: シベリウス音楽祭で知られるラハティ交響楽団の本拠地。
+
+  # --- Benelux ---
+  - id: amsterdam
+    label_ja: アムステルダム
+    label_en: Amsterdam
+    description: コンセルトヘボウ管弦楽団。マーラー受容の歴史。
+  - id: brussels
+    label_ja: ブリュッセル
+    label_en: Brussels
+    description: エリザベート王妃国際音楽コンクール開催地。
+
+  # --- South America ---
+  - id: buenos-aires
+    label_ja: ブエノスアイレス
+    label_en: Buenos Aires
+    description: テアトロ・コロン（世界三大劇場の一つ）。ピアソラ、ヒナステラの拠点。
+  - id: rio-de-janeiro
+    label_ja: リオデジャネイロ
+    label_en: Rio de Janeiro
+    description: ヴィラ＝ロボスの生誕地。ブラジル音楽院。
+  - id: sao-paulo
+    label_ja: サンパウロ
+    label_en: Sao Paulo
+    description: サンパウロ交響楽団。現代南米音楽の重要拠点。
+  - id: mexico-city
+    label_ja: メキシコシティ
+    label_en: Mexico City
+    description: ※中米ですが便宜上。ポンセ、チャベス。ラテンアメリカ音楽のハブ。
+  - id: caracas
+    label_ja: カラカス
+    label_en: Caracas
+    description: 「エル・システマ（音楽教育システム）」の発祥地。ドゥダメルゆかりの地。
+  - id: santiago
+    label_ja: サンティアゴ
+    label_en: Santiago
+    description: チリの首都。南米における西洋音楽受容の歴史的拠点。
+  - id: montevideo
+    label_ja: モンテビデオ
+    label_en: Montevideo
+    description: ウルグアイの首都。タンゴのもう一つの故郷。
+
+  # --- Asia ---
+  - id: tokyo
+    label_ja: 東京
+    label_en: Tokyo
+    description: サントリーホール、NHK交響楽団。世界中の巨匠が集まるアジアの音楽的首都。
+  - id: kyoto
+    label_ja: 京都
+    label_en: Kyoto
+    description: 伝統と現代の融合。貴志康一や現代作曲家のゆかり。
+  - id: hiroshima
+    label_ja: 広島
+    label_en: Hiroshima
+    description: 細川俊夫（作曲家）や、平和をテーマにした作品・音楽祭の拠点。
+  - id: beijing
+    label_ja: 北京
+    label_en: Beijing
+    description: 国家大劇院。中国ナショナル交響楽団。
+  - id: shanghai
+    label_ja: 上海
+    label_en: Shanghai
+    description: 上海音楽学院（中国最古）。アジアにおける西洋音楽受容の歴史的窓口。
+  - id: seoul
+    label_ja: ソウル
+    label_en: Seoul
+    description: ソウル・フィル。チョン・ミョンフンゆかり。圧倒的な教育熱と演奏家の輩出。
+  - id: tong-yeong
+    label_ja: トンヨン（統営）
+    label_en: Tong Yeong
+    description: ユン・イサン（尹伊桑）の生誕地。国際音楽祭が著名。
+  - id: taipei
+    label_ja: 台北
+    label_en: Taipei
+    description: 台湾フィル（NSO）。アジアにおける重要な文化拠点。
+  - id: hanoi
+    label_ja: ハノイ
+    label_en: Hanoi
+    description: フランス植民地時代のオペラハウスがあり、東南アジアの西洋音楽史において重要。
+  - id: mumbai
+    label_ja: ムンバイ
+    label_en: Mumbai
+    description: ズービン・メータの生誕地。
+
+  # --- Africa ---
+  - id: cairo
+    label_ja: カイロ
+    label_en: Cairo
+    description: カイロ・オペラハウス。ヴェルディ『アイーダ』初演計画の地。
+  - id: cape-town
+    label_ja: ケープタウン
+    label_en: Cape Town
+    description: ケープタウン・フィル。多くの国際的なオペラ歌手（プリティ・イェンデ等）を輩出。
+  - id: johannesburg
+    label_ja: ヨハネスブルグ
+    label_en: Johannesburg
+    description: 南アフリカの文化経済の中心。現代アフリカのクラシック作曲家の拠点。
+  - id: algiers
+    label_ja: アルジェ
+    label_en: Algiers
+    description: サン＝サーンスが晩年を過ごし、客死した地。
+  - id: casablanca
+    label_ja: カサブランカ
+    label_en: Casablanca
+    description: モロッコの文化拠点。フランス音楽の影響とアラブ音楽の融合。
+  - id: kinshasa
+    label_ja: キンシャサ
+    label_en: Kinshasa
+    description: コンゴ民主共和国。独学のオーケストラ「キンシャサ交響楽団」が世界的に注目。
+  - id: addis-ababa
+    label_ja: アディスアベバ
+    label_en: Addis Ababa
+    description: エチオピア。独自の教会音楽と西洋音楽の接点。
+

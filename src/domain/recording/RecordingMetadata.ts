@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { zInt } from '@/shared/validation/zod';
 import { createMultilingualStringSchema } from '../i18n/Locale';
+import { YearSchema } from '../shared/CommonMetadata';
 
 /**
  * Recording Metadata
@@ -9,8 +9,8 @@ import { createMultilingualStringSchema } from '../i18n/Locale';
 export const RecordingMetadataSchema = z.object({
   /** 演奏者名 (多言語, 最大20文字) */
   performerName: createMultilingualStringSchema({ max: 20 }),
-  /** 録音年 (1800年〜2999年) */
-  recordingYear: zInt().min(1800).max(2999).optional(),
+  /** 録音年 (1000年〜2999年) */
+  recordingYear: YearSchema.optional(),
   /** おすすめ音源フラグ */
   isRecommended: z.boolean().default(false),
 });
