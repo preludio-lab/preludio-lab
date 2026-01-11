@@ -160,24 +160,40 @@ Status: `[/]` 進行中
     - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
     - [ ] **Turso**: 記事・ベクトルデータ用プロジェクトの作成
       - [ ] Turso CLI のインストールと認証 (`brew uninstall turso && brew install tursodatabase/tap/turso`)
-      - [ ] Production / Staging 用のデータベース作成
+      - [ ] **[Update]** 本番用データベース (`preludio-main`) の構築 **[Single DB Strategy]**
+      - [ ] `database-schema.md` に基づいたテーブル作成 (`articles`, `works`, `composers`, `recordings`, etc.)
+      - [ ] ベクトル検索用インデックス (`libsql-vector`) の設定
       - [ ] APIキー・接続情報の管理（Vercel環境変数への連携）
-    - [x] 環境定義: Production (Main) と Staging/Verify (Branch/Preview) の2環境構成を無料枠内で設計
+    - [x] 環境定義: 本番環境（Single DB）とブランチ機能（Fork/Staging）の運用方針策定 (Done)
   - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
     - [x] Master: MDX / Index & Vector: Database という役割分担の定義
     - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
     - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
-  - [ ] **[実装]** ドメインの更新とそれに伴うリファクタリング
-    - [ ] 今回のエンティティ定義に基づき、既存の実装をアップデート
-    - [ ] **[リファクタリング] ArticleRepositoryFactoryの導入**: インフラ実装（Fs/Turso等）を隠蔽し、Page層を純粋な抽象（インターフェース）に依存させるDI基盤の構築
-  - [ ] **[実装]** Database-First Admin UI
+  - [ ] **[実装] 5.5.3 Player Domain & Architecture Update**
+    - [ ] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
+    - [ ] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
+  - [ ] **[実装] 5.5.4 Infrastructure Layer Implementation**
+    - [ ] LibSQL (Turso) ドライバを用いたリポジトリの実装 (`src/infrastructure`)
+    - [ ] Hydration Logic: SQL結果をDomain Entityに変換するMapperの実装
+  - [ ] **[実装] 5.5.5 Application Layer (Use Cases)**
+    - [ ] 参照系ユースケースの実装 (`GetArticle`, `ListWorks`, etc.)
+    - [ ] 実際のDB接続を用いたドメイン・ユースケースの統合テスト
+  - [ ] **[実装] 5.5.6 Database-First Admin UI (Lower Priority)**
     - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
-    - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの簡易トグル管理機能の実装
-    - [ ] **DB Sync**: 編集内容のDB更新およびObject StorageへのMDX保存の実装
-    - [ ] **Direct Build**: Turso/R2からMDXをDirect FetchしてビルドするSSGロジックの実装
+    - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの管理
+    - [ ] **DB Sync/Direct Build**: Turso/R2連携ロジック
   - [ ] **[検証]** AI編集支援とSSGビルドフローの動作確認
 
-- [ ] **5.6 検索機能の実装 (Tiered Hybrid Search)**
+- [ ] **5.6 UI Integration & Player Feature**
+  - [ ] **[実装] 5.6.1 Real Data Integration**
+    - [ ] 既存ページ（Home, Article Detail, Index）のデータ取得を Turso Repository に差し替え
+    - [ ] Server Actions / RSC でのデータ取得フロー確立
+  - [ ] **[実装] 5.6.2 Player Feature Completion**
+    - [ ] `AudioPlayer` コンポーネントと `Player` ドメインの接続
+    - [ ] 録音データ (`Recordings`) の取得と再生制御
+  - [ ] **[検証]** UI上でのデータ表示確認およびプレイヤー動作検証
+
+- [ ] **5.7 検索機能の実装 (Tiered Hybrid Search)**
   - [ ] **[実装]** DB Semantic Search (Tier 2/Long-tail)
     - [ ] Turso `libsql-vector` & `FTS5` インデックス構築
     - [ ] API Route: Semantic Search & Keyword Search Implementation
