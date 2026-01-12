@@ -136,7 +136,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       title: '',
       performer: '',
       image: '',
-      linkUrl: '',
+      sourceUrl: '',
       providerType: PlayerProviderType.GENERIC,
     },
     source: { sourceId: '', provider: PlayerPlatform.YOUTUBE, startSeconds: 0, endSeconds: 0 },
@@ -267,7 +267,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           title: validSource.title || (meta.title as string) || prev.display.title || 'Audio Recording',
           performer: (meta.performer as string) || prev.display.performer,
           image: (meta.thumbnail as string) || (meta.image as string) || prev.display.image,
-          linkUrl: (meta.platformUrl as string) || prev.display.linkUrl,
+          sourceUrl: (meta.platformUrl as string) || prev.display.sourceUrl,
           providerType:
             validSource.provider === PlayerPlatform.YOUTUBE
               ? PlayerProviderType.YOUTUBE
@@ -344,7 +344,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       title: state.display.title || null,
       performer: state.display.performer || null,
       thumbnail: state.display.image || null,
-      platformUrl: state.display.linkUrl || null,
+      platformUrl: state.display.sourceUrl || null,
       platformLabel: state.source.metadata?.platformLabel || null,
       platform: state.source.provider as PlayerPlatformType,
       volume: state.status.volume,

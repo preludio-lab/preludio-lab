@@ -23,7 +23,7 @@ export const PlayerDisplaySchema = z.object({
   /** サムネイル画像URL (内部パスまたは外部URL) */
   image: ResourcePathSchema.optional(),
   /** 元コンテンツへのリンクURL (絶対URL) */
-  linkUrl: UrlSchema.optional(),
+  sourceUrl: UrlSchema.optional(),
   /** UI表示用のアイコン種別 */
   providerType: z.nativeEnum(PlayerProviderType).default(PlayerProviderType.GENERIC),
 });
