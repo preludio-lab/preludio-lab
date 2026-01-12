@@ -12,7 +12,7 @@ const formatTimeHelper = (seconds: number) => {
   return `${m}:${s.toString().padStart(2, '0')}`;
 };
 
-export function FocusAudioPlayer() {
+export function ImmersiveAudioPlayer() {
   const {
     mode,
     setMode,
@@ -35,7 +35,7 @@ export function FocusAudioPlayer() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragTime, setDragTime] = useState(0);
 
-  if (mode !== PlayerMode.FOCUS) return null;
+  if (mode !== PlayerMode.IMMERSIVE) return null;
 
   // Virtual Timeline Calculations
   const startOffset = startSeconds || 0;

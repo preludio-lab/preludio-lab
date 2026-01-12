@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const PlayerMode = {
   HIDDEN: 'hidden',
   MINI: 'mini',
-  FOCUS: 'focus',
+  IMMERSIVE: 'immersive',
 } as const;
 
 export type PlayerMode = (typeof PlayerMode)[keyof typeof PlayerMode];

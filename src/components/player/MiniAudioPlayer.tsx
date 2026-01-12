@@ -24,7 +24,7 @@ export function MiniAudioPlayer() {
     endSeconds,
   } = useAudioPlayer();
 
-  if (mode === PlayerMode.HIDDEN || mode === PlayerMode.FOCUS) return null;
+  if (mode === PlayerMode.HIDDEN || mode === PlayerMode.IMMERSIVE) return null;
 
   // Virtual Timeline Calculations
   const startOffset = startSeconds || 0;
@@ -52,7 +52,7 @@ export function MiniAudioPlayer() {
       {/* Progress Bar */}
       <div
         className="h-1 w-full bg-gray-200 cursor-pointer group"
-        onClick={() => setMode(PlayerMode.FOCUS)}
+        onClick={() => setMode(PlayerMode.IMMERSIVE)}
       >
         <div
           className="h-full bg-accent transition-all duration-300 ease-linear"
@@ -64,7 +64,7 @@ export function MiniAudioPlayer() {
         {/* Track Info */}
         <div
           className="flex items-center gap-4 cursor-pointer flex-1"
-          onClick={() => setMode(PlayerMode.FOCUS)}
+          onClick={() => setMode(PlayerMode.IMMERSIVE)}
           role="button"
           aria-label="Open Full Player"
         >
@@ -123,7 +123,7 @@ export function MiniAudioPlayer() {
         {/* Mode Toggle (Hidden on mobile as clicking the bar expands it) */}
         <div className="hidden sm:block ml-6 pl-6 border-l border-gray-200">
           <button
-            onClick={() => setMode(PlayerMode.FOCUS)}
+            onClick={() => setMode(PlayerMode.IMMERSIVE)}
             className="text-xs font-semibold uppercase tracking-wider text-classic-gold hover:underline"
           >
             Expand
