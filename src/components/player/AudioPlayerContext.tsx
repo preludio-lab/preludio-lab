@@ -12,7 +12,7 @@ import React, {
 import { useTranslations } from 'next-intl';
 import {
   PlayerMode,
-  PlayerSource as PlayableSource,
+  PlayableSource,
   PlayableSourceSchema,
   PlayerDisplay,
   PlayerStatus,
@@ -132,12 +132,14 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     control: { id: crypto.randomUUID(), createdAt: new Date(), updatedAt: new Date() },
     display: {
       title: '',
+      composerName: '',
       performer: '',
       image: '',
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
+      providerLabel: '',
     },
-    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined },
+    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined, title: '' },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -260,13 +262,14 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         }
 
         // Display Mapping
-        const meta = validSource.metadata || {};
         const newDisplay: PlayerDisplay = {
-          title: validSource.title || (meta.title as string) || prev.display.title || 'Audio Recording',
-          performer: (meta.performer as string) || prev.display.performer,
-          image: (meta.thumbnail as string) || (meta.image as string) || prev.display.image,
-          sourceUrl: (meta.platformUrl as string) || prev.display.sourceUrl,
+          title: validSource.title || prev.display.title || 'Audio Recording',
+          composerName: validSource.composerName || prev.display.composerName,
+          performer: validSource.performer || prev.display.performer,
+          image: validSource.image || prev.display.image,
+          sourceUrl: validSource.sourceUrl || prev.display.sourceUrl,
           provider: validSource.provider,
+          providerLabel: validSource.providerLabel || prev.display.providerLabel,
         };
 
         const newStatus: PlayerStatus = {
@@ -340,15 +343,15 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       performer: state.display.performer || null,
       thumbnail: state.display.image || null,
       platformUrl: state.display.sourceUrl || null,
-      platformLabel: state.source.metadata?.platformLabel || null,
-      platform: state.source.provider,
+      platformLabel: state.display.providerLabel || null,
+      platform: state.display.provider,
       volume: state.status.volume,
       isReady: state.isReady,
       playbackId: state.playbackId,
       startSeconds: state.source.startSeconds,
       endSeconds: state.source.endSeconds,
       // Legacy
-      composerName: state.source.metadata?.composerName || null,
+      composerName: state.display.composerName || null,
     }),
     [state],
   );

@@ -24,30 +24,16 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
       const extracted = abcMetadata;
 
       const mergedPlayRequest = {
-        sourceId: extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId, // Backwards compat for 'src'
+        sourceId: extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId,
         provider: extracted?.provider || audioMetadata?.provider,
-        startSeconds:
-          typeof extracted?.startSeconds === 'number'
-            ? extracted.startSeconds
-            : typeof audioMetadata?.startSeconds === 'number'
-              ? audioMetadata.startSeconds
-              : 0,
-        endSeconds:
-          typeof extracted?.endSeconds === 'number'
-            ? extracted.endSeconds
-            : typeof audioMetadata?.endSeconds === 'number'
-              ? audioMetadata.endSeconds
-              : 0,
+        startSeconds: extracted?.startSeconds ?? audioMetadata?.startSeconds,
+        endSeconds: extracted?.endSeconds ?? audioMetadata?.endSeconds,
         title: extracted?.title || audioMetadata?.title,
-        metadata: {
-          title: extracted?.title || audioMetadata?.title,
-          composerName: extracted?.metadata?.composerName || audioMetadata?.composerName,
-          performer: extracted?.metadata?.performer || audioMetadata?.performer,
-          thumbnail: extracted?.metadata?.thumbnail || audioMetadata?.thumbnail,
-          platform: (extracted?.metadata?.platform || audioMetadata?.platform) as any,
-          platformUrl: extracted?.metadata?.platformUrl || audioMetadata?.platformUrl,
-          platformLabel: extracted?.metadata?.platformLabel || audioMetadata?.platformLabel,
-        },
+        composerName: extracted?.composerName || audioMetadata?.composerName,
+        performer: extracted?.performer || audioMetadata?.performer,
+        image: extracted?.image || audioMetadata?.thumbnail || audioMetadata?.image,
+        sourceUrl: extracted?.sourceUrl || audioMetadata?.platformUrl,
+        providerLabel: extracted?.providerLabel || audioMetadata?.platformLabel,
       };
 
       if (!mergedPlayRequest.sourceId) {

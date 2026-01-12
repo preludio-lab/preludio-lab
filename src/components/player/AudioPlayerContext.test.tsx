@@ -39,11 +39,9 @@ describe('AudioPlayerContext', () => {
         sourceId: 'test-video-id',
         provider: 'youtube', // default
         startSeconds: 0,
-        endSeconds: 0,
+        endSeconds: 100,
         title: 'Test Song',
-        metadata: {
-          composerName: 'Test Artist',
-        },
+        composerName: 'Test Artist',
       });
     });
 
@@ -63,18 +61,16 @@ describe('AudioPlayerContext', () => {
         sourceId: 'test-video-id',
         provider: 'generic',
         startSeconds: 0,
-        endSeconds: 0,
-        metadata: {
-          platformUrl: 'https://example.com',
-          platformLabel: 'External Link',
-          platform: 'default',
-        },
+        endSeconds: undefined,
+        title: 'Platform Test',
+        sourceUrl: 'https://example.com',
+        providerLabel: 'External Link',
       });
     });
 
     expect(result.current.platformUrl).toBe('https://example.com');
     expect(result.current.platformLabel).toBe('External Link');
-    expect(result.current.platform).toBe('default');
+    expect(result.current.platform).toBe('generic');
   });
 
   it('shows error toast on invalid play request', async () => {
@@ -84,12 +80,12 @@ describe('AudioPlayerContext', () => {
 
     act(() => {
       // Invalid request: endSeconds < startSeconds
-      // Arguments: (src, metadata, options)
       result.current.play({
         sourceId: 'test-video-id',
         provider: 'youtube',
         startSeconds: 100,
         endSeconds: 50,
+        title: 'Invalid Sample',
       });
     });
 

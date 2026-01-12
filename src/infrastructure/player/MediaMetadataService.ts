@@ -105,8 +105,23 @@ export class MediaMetadataService {
     if (startSeconds !== undefined) result.startSeconds = startSeconds;
     if (endSeconds !== undefined) result.endSeconds = endSeconds;
 
-    // Title extraction logic for flat property
+    // Field mapping
     if (typeof metadata.title === 'string') result.title = metadata.title;
+    if (typeof metadata.composerName === 'string') {
+      result.composerName = metadata.composerName;
+    }
+    if (typeof metadata.performer === 'string') {
+      result.performer = metadata.performer;
+    }
+    if (typeof metadata.thumbnail === 'string') {
+      result.image = metadata.thumbnail;
+    }
+    if (typeof metadata.platformUrl === 'string') {
+      result.sourceUrl = metadata.platformUrl;
+    }
+    if (typeof metadata.platformLabel === 'string') {
+      result.providerLabel = metadata.platformLabel;
+    }
 
     // Provider extraction
     if (typeof metadata.platform === 'string') {
@@ -118,13 +133,6 @@ export class MediaMetadataService {
       } else {
         result.provider = 'generic';
       }
-    }
-    // else if (typeof metadata.platform === 'string') {
-    //   // If we add more platforms, handle here
-    // }
-
-    if (Object.keys(metadata).length > 0) {
-      result.metadata = metadata;
     }
 
     return result;

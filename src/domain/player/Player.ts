@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { PlayerControlSchema, PlayerControl } from './PlayerControl';
 import { PlayerDisplaySchema, PlayerDisplay } from './PlayerDisplay';
-import { PlayerSourceSchema, PlayerSource } from './PlayerSource';
+import { PlayerSourceBaseSchema, PlayerSourceSchema, PlayerSource } from './PlayerSource';
 import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './PlayerStatus';
 import { PlayerProviderSchema, PlayerProvider } from './PlayerProvider';
 
@@ -65,8 +65,23 @@ export { PlayerStatusSchema, PlayerMode };
 export type { PlayerStatus };
 export { PlayerProviderSchema, PlayerProvider };
 
-// Legacy alias and compatibility export (if needed for transition)
-export type PlayableSource = PlayerSource;
-export const PlayableSourceSchema = PlayerSourceSchema;
-export type PlayRequest = PlayerSource;
-export const PlayRequestSchema = PlayerSourceSchema;
+// PlayableSource is the merger of tech source (base) and display metadata
+export const PlayableSourceSchema = PlayerSourceBaseSchema.merge(PlayerDisplaySchema).refine(
+  (data) => {
+    // endSeconds が指定されている場合のみ、startSeconds との整合性をチェック
+    if (data.endSeconds !== undefined) {
+      return data.endSeconds > (data.startSeconds ?? 0);
+    }
+    return true;
+  },
+  {
+    message: 'endSeconds must be greater than startSeconds',
+    path: ['endSeconds'],
+  },
+);
+
+export type PlayableSource = z.infer<typeof PlayableSourceSchema>;
+
+// Legacy compatibility
+export type PlayRequest = PlayableSource;
+export const PlayRequestSchema = PlayableSourceSchema;

@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useMemo } from 'react';
-import { PlayerProvider, PlayerSource as PlayableSource } from '@/domain/player/Player';
+import { PlayerProvider, PlayableSource } from '@/domain/player/Player';
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -76,10 +76,11 @@ export function AudioPlayerBinder({
           ? extractedEnd
           : propEnd,
       title: extracted.title || propRequest?.title,
-      metadata: {
-        ...propRequest?.metadata,
-        ...extracted.metadata,
-      },
+      composerName: extracted.composerName || propRequest?.composerName,
+      performer: extracted.performer || propRequest?.performer,
+      image: extracted.image || propRequest?.image,
+      providerLabel: extracted.providerLabel || propRequest?.providerLabel,
+      sourceUrl: extracted.sourceUrl || propRequest?.sourceUrl,
     };
   }, [source, format, propRequest]);
 
@@ -88,16 +89,12 @@ export function AudioPlayerBinder({
   const handlePlayClick = () => {
     if (!resolvedRequest.sourceId) return;
 
-    // プラットフォームとデフォルト値の決定 logic
-    const meta = resolvedRequest.metadata || {};
-    const platform = (resolvedRequest.provider as PlayerProvider) || PlayerProvider.YOUTUBE;
-    // NOTE: provider vs platform usage is a bit mixed, we stick to what we extract
+    const platform = (resolvedRequest.provider as PlayerProvider) || PlayerProvider.GENERIC;
+    let platformUrl = resolvedRequest.sourceUrl;
+    let platformLabel = resolvedRequest.providerLabel;
 
-    let platformUrl = meta.platformUrl;
-    let platformLabel = meta.platformLabel;
-
-    if (!platformUrl) {
-      platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId!) || undefined;
+    if (!platformUrl && resolvedRequest.sourceId) {
+      platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId) || undefined;
     }
     if (platform === PlayerProvider.YOUTUBE && !platformLabel) {
       platformLabel = 'Watch on YouTube';
@@ -105,19 +102,15 @@ export function AudioPlayerBinder({
 
     play({
       sourceId: resolvedRequest.sourceId!,
-      provider: platform, // or resolvedRequest.provider
-      startSeconds: resolvedRequest.startSeconds || 0,
-      endSeconds: resolvedRequest.endSeconds || 0,
-      title: resolvedRequest.title || meta.title || 'Audio Recording',
-      metadata: {
-        // Keep legacy metadata population if needed
-        composerName: meta.composerName,
-        performer: meta.performer,
-        thumbnail: meta.thumbnail,
-        platformUrl,
-        platformLabel,
-        platform, // Keep for compatibility
-      },
+      provider: platform,
+      startSeconds: resolvedRequest.startSeconds,
+      endSeconds: resolvedRequest.endSeconds,
+      title: resolvedRequest.title || 'Audio Recording',
+      composerName: resolvedRequest.composerName,
+      performer: resolvedRequest.performer,
+      image: resolvedRequest.image,
+      sourceUrl: platformUrl,
+      providerLabel: platformLabel,
     });
   };
 
