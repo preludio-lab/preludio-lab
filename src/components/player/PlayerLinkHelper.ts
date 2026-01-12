@@ -1,4 +1,4 @@
-import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/Player';
+import { PlayerProvider } from '@/domain/player/Player';
 
 /**
  * [UI CONSTANTS] User-facing Platform Hosts
@@ -12,11 +12,11 @@ const YOUTUBE_WATCH_HOST = 'https://www.youtube.com';
  * This belongs in the UI layer (or a shared utility) as it transforms data for display/navigation
  * and handles "Standard" URLs (e.g. www.youtube.com), disjoint from Infrastructure's "Embed" URLs.
  */
-export const generateWatchUrl = (platform: PlayerPlatformType, src: string): string | null => {
+export const generateWatchUrl = (platform: PlayerProvider, src: string): string | null => {
   if (!src) return null;
 
   switch (platform) {
-    case PlayerPlatform.YOUTUBE:
+    case PlayerProvider.YOUTUBE:
       return `${YOUTUBE_WATCH_HOST}/watch?v=${src}`;
     default:
       return null;

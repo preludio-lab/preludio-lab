@@ -1,11 +1,7 @@
 'use client';
 
 import { ReactNode, useMemo } from 'react';
-import {
-  PlayerPlatform,
-  PlayerPlatformType,
-  PlayerSource as PlayableSource,
-} from '@/domain/player/Player';
+import { PlayerProvider, PlayerSource as PlayableSource } from '@/domain/player/Player';
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -68,7 +64,7 @@ export function AudioPlayerBinder({
 
     return {
       sourceId: extracted.sourceId || propRequest?.sourceId,
-      provider: extracted.provider || propRequest?.provider || PlayerPlatform.YOUTUBE,
+      provider: extracted.provider || propRequest?.provider || PlayerProvider.YOUTUBE,
       startSeconds: isExplicitSource
         ? extractedStart
         : extractedStart !== undefined || extractedEnd !== undefined
@@ -94,7 +90,7 @@ export function AudioPlayerBinder({
 
     // プラットフォームとデフォルト値の決定 logic
     const meta = resolvedRequest.metadata || {};
-    const platform = (resolvedRequest.provider as PlayerPlatformType) || PlayerPlatform.YOUTUBE;
+    const platform = (resolvedRequest.provider as PlayerProvider) || PlayerProvider.YOUTUBE;
     // NOTE: provider vs platform usage is a bit mixed, we stick to what we extract
 
     let platformUrl = meta.platformUrl;
@@ -103,7 +99,7 @@ export function AudioPlayerBinder({
     if (!platformUrl) {
       platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId!) || undefined;
     }
-    if (platform === PlayerPlatform.YOUTUBE && !platformLabel) {
+    if (platform === PlayerProvider.YOUTUBE && !platformLabel) {
       platformLabel = 'Watch on YouTube';
     }
 

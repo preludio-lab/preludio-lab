@@ -11,15 +11,13 @@ import React, {
 } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-  PlayerPlatform,
-  PlayerPlatformType,
   PlayerMode,
   PlayerSource as PlayableSource,
   PlayableSourceSchema,
   PlayerDisplay,
   PlayerStatus,
   PlayerControl,
-  PlayerProviderType,
+  PlayerProvider,
 } from '@/domain/player/Player';
 import { handleClientError } from '@/lib/client-error';
 
@@ -104,7 +102,7 @@ export interface PlayerFlatProperties {
   thumbnail: string | null;
   platformUrl: string | null;
   platformLabel: string | null;
-  platform: PlayerPlatformType | null;
+  platform: PlayerProvider | null;
   volume: number;
   isReady: boolean;
   playbackId: number;
@@ -137,9 +135,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       performer: '',
       image: '',
       sourceUrl: '',
-      providerType: PlayerProviderType.GENERIC,
+      provider: PlayerProvider.OTHER,
     },
-    source: { sourceId: '', provider: PlayerPlatform.YOUTUBE, startSeconds: 0, endSeconds: 0 },
+    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: 0, endSeconds: 0 },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -263,32 +261,12 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
         // Display Mapping
         const meta = validSource.metadata || {};
-        // Provider Type Mapping (Technical -> UI)
-        let providerType: PlayerProviderType = PlayerProviderType.GENERIC;
-        switch (validSource.provider) {
-          case PlayerPlatform.YOUTUBE:
-            providerType = PlayerProviderType.YOUTUBE;
-            break;
-          case PlayerPlatform.SPOTIFY:
-            providerType = PlayerProviderType.SPOTIFY;
-            break;
-          case PlayerPlatform.SOUNDCLOUD:
-            providerType = PlayerProviderType.SOUNDCLOUD;
-            break;
-          case PlayerPlatform.APPLE_MUSIC:
-            providerType = PlayerProviderType.APPLE_MUSIC;
-            break;
-          case PlayerPlatform.HTML5_AUDIO:
-            providerType = PlayerProviderType.FILES;
-            break;
-        }
-
         const newDisplay: PlayerDisplay = {
           title: validSource.title || (meta.title as string) || prev.display.title || 'Audio Recording',
           performer: (meta.performer as string) || prev.display.performer,
           image: (meta.thumbnail as string) || (meta.image as string) || prev.display.image,
           sourceUrl: (meta.platformUrl as string) || prev.display.sourceUrl,
-          providerType,
+          provider: validSource.provider,
         };
 
         const newStatus: PlayerStatus = {
@@ -363,7 +341,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       thumbnail: state.display.image || null,
       platformUrl: state.display.sourceUrl || null,
       platformLabel: state.source.metadata?.platformLabel || null,
-      platform: state.source.provider as PlayerPlatformType,
+      platform: state.source.provider,
       volume: state.status.volume,
       isReady: state.isReady,
       playbackId: state.playbackId,

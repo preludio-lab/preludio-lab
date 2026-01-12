@@ -1,13 +1,9 @@
 import { z } from 'zod';
 import { PlayerControlSchema, PlayerControl } from './PlayerControl';
-import { PlayerDisplaySchema, PlayerDisplay, PlayerProviderType } from './PlayerDisplay';
-import {
-  PlayerSourceSchema,
-  PlayerSource,
-  PlayerPlatform,
-  PlayerPlatformType,
-} from './PlayerSource';
+import { PlayerDisplaySchema, PlayerDisplay } from './PlayerDisplay';
+import { PlayerSourceSchema, PlayerSource } from './PlayerSource';
 import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './PlayerStatus';
+import { PlayerProviderSchema, PlayerProvider } from './PlayerProvider';
 
 /**
  * Player Entity
@@ -61,12 +57,13 @@ export class Player implements PlayerProps {
 // --- Re-exports for convenience ---
 export { PlayerControlSchema };
 export type { PlayerControl };
-export { PlayerDisplaySchema, PlayerProviderType };
+export { PlayerDisplaySchema };
 export type { PlayerDisplay };
-export { PlayerSourceSchema, PlayerPlatform };
-export type { PlayerSource, PlayerPlatformType };
+export { PlayerSourceSchema };
+export type { PlayerSource };
 export { PlayerStatusSchema, PlayerMode };
 export type { PlayerStatus };
+export { PlayerProviderSchema, PlayerProvider };
 
 // Legacy alias and compatibility export (if needed for transition)
 export type PlayableSource = PlayerSource;
