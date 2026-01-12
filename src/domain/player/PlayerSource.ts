@@ -13,7 +13,7 @@ export const PlayerSourceSchema = z
     /** 録音ソース識別子 (YouTube Video ID, Spotify URI, Audio URL etc) */
     sourceId: z.string().min(1, 'Source ID is required'),
     /** プロバイダ種別 (PlayerProvider 準拠) */
-    provider: PlayerProviderSchema.default('other'),
+    provider: PlayerProviderSchema.default('generic'),
     /** 再生開始位置 (秒) */
     startSeconds: SecondsSchema.default(0),
     /** 再生終了位置 (秒) */

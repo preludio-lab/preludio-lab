@@ -16,7 +16,7 @@ export const PlayerDisplaySchema = z.object({
   /** 元コンテンツへのリンクURL (絶対URL) */
   sourceUrl: UrlSchema.optional(),
   /** UI表示用のラベル種別 */
-  provider: PlayerProviderSchema.default('other'),
+  provider: PlayerProviderSchema.default('generic'),
 });
 
 export type PlayerDisplay = z.infer<typeof PlayerDisplaySchema>;

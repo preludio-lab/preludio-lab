@@ -13,10 +13,10 @@ export const PlayerProvider = {
     SOUNDCLOUD: 'soundcloud',
     /** Apple Music */
     APPLE_MUSIC: 'apple-music',
-    /** ホストされた音声ファイル (mp3, wav, etc. / Cloudflare R2など) */
-    FILES: 'files',
-    /** その他・汎用 */
-    OTHER: 'other',
+    /** 音声ファイル (mp3, wav, etc. / 特定プラットフォームに依存しないファイル直接再生) */
+    AUDIO_FILE: 'audio-file',
+    /** その他・汎用 (特定のブランドや独自UIを持たないもの) */
+    GENERIC: 'generic',
 } as const;
 
 export type PlayerProvider = (typeof PlayerProvider)[keyof typeof PlayerProvider];

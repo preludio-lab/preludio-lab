@@ -135,7 +135,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       performer: '',
       image: '',
       sourceUrl: '',
-      provider: PlayerProvider.OTHER,
+      provider: PlayerProvider.GENERIC,
     },
     source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: 0, endSeconds: 0 },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },

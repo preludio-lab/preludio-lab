@@ -64,7 +64,7 @@ export function AudioPlayerBinder({
 
     return {
       sourceId: extracted.sourceId || propRequest?.sourceId,
-      provider: extracted.provider || propRequest?.provider || PlayerProvider.YOUTUBE,
+      provider: extracted.provider || propRequest?.provider || PlayerProvider.GENERIC,
       startSeconds: isExplicitSource
         ? extractedStart
         : extractedStart !== undefined || extractedEnd !== undefined

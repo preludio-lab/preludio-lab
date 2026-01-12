@@ -112,11 +112,11 @@ export class MediaMetadataService {
     if (typeof metadata.platform === 'string') {
       const p = metadata.platform;
       if (p === 'audio-file') {
-        result.provider = 'files';
+        result.provider = 'audio-file';
       } else if (['youtube', 'spotify', 'soundcloud', 'apple-music'].includes(p)) {
         result.provider = p as any;
       } else {
-        result.provider = 'other';
+        result.provider = 'generic';
       }
     }
     // else if (typeof metadata.platform === 'string') {

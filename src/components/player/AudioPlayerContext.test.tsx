@@ -61,7 +61,7 @@ describe('AudioPlayerContext', () => {
     act(() => {
       result.current.play({
         sourceId: 'test-video-id',
-        provider: 'other',
+        provider: 'generic',
         startSeconds: 0,
         endSeconds: 0,
         metadata: {
