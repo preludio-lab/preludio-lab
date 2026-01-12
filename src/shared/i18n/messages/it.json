@@ -85,7 +85,15 @@
     "tagline": "Oltre l'ascolto. Immergiti nei classici."
   },
   "Player": {
-    "invalidRequest": "Richiesta di riproduzione non valida"
+    "invalidRequest": "Richiesta di riproduzione non valida",
+    "provider": {
+      "youtube": "Guarda su YouTube",
+      "spotify": "Ascolta su Spotify",
+      "soundcloud": "Ascolta su SoundCloud",
+      "apple-music": "Ascolta su Apple Music",
+      "audio-file": "Riproduci audio",
+      "generic": "Riproduci"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",

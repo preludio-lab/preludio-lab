@@ -35,14 +35,18 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play({
-        sourceId: 'test-video-id',
-        provider: 'youtube', // default
-        startSeconds: 0,
-        endSeconds: 100,
-        title: 'Test Song',
-        composerName: 'Test Artist',
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'youtube', // default
+          startSeconds: 0,
+          endSeconds: 100,
+        },
+        {
+          title: 'Test Song',
+          composerName: 'Test Artist',
+        },
+      );
     });
 
     expect(result.current.isPlaying).toBe(true);
@@ -57,19 +61,22 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play({
-        sourceId: 'test-video-id',
-        provider: 'generic',
-        startSeconds: 0,
-        endSeconds: undefined,
-        title: 'Platform Test',
-        sourceUrl: 'https://example.com',
-        providerLabel: 'External Link',
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'generic',
+          startSeconds: 0,
+          endSeconds: undefined,
+        },
+        {
+          title: 'Platform Test',
+          sourceUrl: 'https://example.com',
+        },
+      );
     });
 
     expect(result.current.platformUrl).toBe('https://example.com');
-    expect(result.current.platformLabel).toBe('External Link');
+    // expect(result.current.platformLabel).toBe('External Link'); // Removed
     expect(result.current.platform).toBe('generic');
   });
 
@@ -80,13 +87,17 @@ describe('AudioPlayerContext', () => {
 
     act(() => {
       // Invalid request: endSeconds < startSeconds
-      result.current.play({
-        sourceId: 'test-video-id',
-        provider: 'youtube',
-        startSeconds: 100,
-        endSeconds: 50,
-        title: 'Invalid Sample',
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'youtube',
+          startSeconds: 100,
+          endSeconds: 50,
+        },
+        {
+          title: 'Invalid Sample',
+        },
+      );
     });
 
     expect(vi.mocked(toast).error).toHaveBeenCalledWith('invalidRequest');

@@ -73,7 +73,15 @@
     "tagline": "Beyond Listening. クラシック音楽を「構造」から理解する体験を。"
   },
   "Player": {
-    "invalidRequest": "再生リクエストが無効です"
+    "invalidRequest": "再生リクエストが無効です",
+    "provider": {
+      "youtube": "YouTubeで見る",
+      "spotify": "Spotifyで聴く",
+      "soundcloud": "SoundCloudで聴く",
+      "apple-music": "Apple Musicで聴く",
+      "audio-file": "音声を再生",
+      "generic": "再生する"
+    }
   },
   "CategoryIndex": {
     "title": "{category}一覧",

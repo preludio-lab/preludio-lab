@@ -19,8 +19,6 @@ export const PlayerDisplaySchema = z.object({
   sourceUrl: UrlSchema.optional(),
   /** UI表示用のプロバイダ種別 */
   provider: PlayerProviderSchema.default('generic'),
-  /** プロバイダ表示ラベル (e.g. "Watch on YouTube") (Optional) */
-  providerLabel: z.string().max(50).optional(),
 });
 
 export type PlayerDisplay = z.infer<typeof PlayerDisplaySchema>;

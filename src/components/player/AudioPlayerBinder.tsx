@@ -1,7 +1,8 @@
 'use client';
 
 import { ReactNode, useMemo } from 'react';
-import { PlayerProvider, PlayableSource } from '@/domain/player/Player';
+import { PlayerProvider, PlayerSource, PlayerDisplay } from '@/domain/player/Player';
+import { useTranslations } from 'next-intl';
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -20,7 +21,7 @@ export interface AudioPlayerBinderProps {
    * 直接指定する再生リクエスト (部分指定可)
    * sourceから抽出された情報とマージされ、こちらが優先されます。
    */
-  playRequest?: Partial<PlayableSource>;
+  playRequest?: Partial<PlayerSource & PlayerDisplay>;
   /**
    * ラップする子要素
    */
@@ -37,11 +38,12 @@ export function AudioPlayerBinder({
   playRequest: propRequest,
   children,
 }: AudioPlayerBinderProps) {
+  const t = useTranslations('Player');
   const { play } = useAudioPlayer();
 
   // メタデータの解決ロジック
   const resolvedRequest = useMemo(() => {
-    let extracted: Partial<PlayableSource> = {};
+    let extracted: Record<string, any> = {};
 
     // ソースがある場合は解析
     if (source && format) {
@@ -79,7 +81,6 @@ export function AudioPlayerBinder({
       composerName: extracted.composerName || propRequest?.composerName,
       performer: extracted.performer || propRequest?.performer,
       image: extracted.image || propRequest?.image,
-      providerLabel: extracted.providerLabel || propRequest?.providerLabel,
       sourceUrl: extracted.sourceUrl || propRequest?.sourceUrl,
     };
   }, [source, format, propRequest]);
@@ -91,27 +92,26 @@ export function AudioPlayerBinder({
 
     const platform = (resolvedRequest.provider as PlayerProvider) || PlayerProvider.GENERIC;
     let platformUrl = resolvedRequest.sourceUrl;
-    let platformLabel = resolvedRequest.providerLabel;
 
     if (!platformUrl && resolvedRequest.sourceId) {
       platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId) || undefined;
     }
-    if (platform === PlayerProvider.YOUTUBE && !platformLabel) {
-      platformLabel = 'Watch on YouTube';
-    }
 
-    play({
-      sourceId: resolvedRequest.sourceId!,
-      provider: platform,
-      startSeconds: resolvedRequest.startSeconds,
-      endSeconds: resolvedRequest.endSeconds,
-      title: resolvedRequest.title || 'Audio Recording',
-      composerName: resolvedRequest.composerName,
-      performer: resolvedRequest.performer,
-      image: resolvedRequest.image,
-      sourceUrl: platformUrl,
-      providerLabel: platformLabel,
-    });
+    play(
+      {
+        sourceId: resolvedRequest.sourceId!,
+        provider: platform,
+        startSeconds: resolvedRequest.startSeconds,
+        endSeconds: resolvedRequest.endSeconds,
+      },
+      {
+        title: resolvedRequest.title || 'Audio Recording',
+        composerName: resolvedRequest.composerName,
+        performer: resolvedRequest.performer,
+        image: resolvedRequest.image,
+        sourceUrl: platformUrl,
+      },
+    );
   };
 
   return (
@@ -124,7 +124,8 @@ export function AudioPlayerBinder({
             onClick={handlePlayClick}
             className="flex items-center gap-1.5 rounded-full bg-gray-900/90 text-white px-3 py-1.5 shadow-sm hover:bg-black hover:scale-105 transition-all text-xs font-medium backdrop-blur-sm"
           >
-            <span>▶ Play Audio</span>
+
+            <span>▶ {t(`provider.${resolvedRequest.provider || 'generic'}`)}</span>
           </button>
         </div>
       )}

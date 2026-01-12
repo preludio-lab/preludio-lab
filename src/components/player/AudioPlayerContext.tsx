@@ -12,9 +12,10 @@ import React, {
 import { useTranslations } from 'next-intl';
 import {
   PlayerMode,
-  PlayableSource,
-  PlayableSourceSchema,
+  PlayerSource,
+  PlayerSourceSchema,
   PlayerDisplay,
+  PlayerDisplaySchema,
   PlayerStatus,
   PlayerControl,
   PlayerProvider,
@@ -35,7 +36,7 @@ export interface PlayerState {
   /** ドメインモデル: 表示情報 */
   display: PlayerDisplay;
   /** ドメインモデル: 技術ソース情報 */
-  source: PlayableSource;
+  source: PlayerSource;
   /** ドメインモデル: 再生状態情報 */
   status: PlayerStatus;
   /** ドメインモデル: 制御情報 */
@@ -50,11 +51,10 @@ export interface PlayerState {
 export interface PlayerActions {
   /**
    * 再生を開始する
-   * @param src メディアソースID (YouTube ID等)
-   * @param metadata 楽曲メタデータ (タイトル、作曲者等)
-   * @param options 再生オプション (開始・終了時間等)
+   * @param source プレイヤーソース (技術情報)
+   * @param display 表示情報 (Optional)
    */
-  play: (source: PlayableSource) => void;
+  play: (source: PlayerSource, display?: Partial<PlayerDisplay>) => void;
   /** 一時停止する */
   pause: () => void;
   /** 再生/一時停止を切り替える */
@@ -101,7 +101,7 @@ export interface PlayerFlatProperties {
   performer: string | null;
   thumbnail: string | null;
   platformUrl: string | null;
-  platformLabel: string | null;
+
   platform: PlayerProvider | null;
   volume: number;
   isReady: boolean;
@@ -137,9 +137,8 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       image: '',
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
-      providerLabel: '',
     },
-    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined, title: '' },
+    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -240,18 +239,21 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   }, []);
 
   const play = useCallback(
-    (source: PlayableSource) => {
-      const validationResult = PlayableSourceSchema.safeParse(source);
-      if (!validationResult.success) {
-        console.error('[AudioPlayerContext] Validation Error:', validationResult.error);
+    (source: PlayerSource, customDisplay?: Partial<PlayerDisplay>) => {
+      const sourceValidation = PlayerSourceSchema.safeParse(source);
+      if (!sourceValidation.success) {
+        console.error('[AudioPlayerContext] Source Validation Error:', sourceValidation.error);
         handleClientError(
-          new Error(`Invalid play request: ${validationResult.error.message}`),
+          new Error(`Invalid play request (source): ${sourceValidation.error.message}`),
           t('invalidRequest'),
         );
         return;
       }
 
-      const validSource = validationResult.data;
+      const validSource = sourceValidation.data;
+
+      // Extract title from source if not provided in display
+      const sourceTitle = (source as any).title; // Backwards compatibility with extracted metadata if any
 
       setState((prev) => {
         const isNewSource = validSource.sourceId !== prev.source.sourceId;
@@ -263,14 +265,21 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
         // Display Mapping
         const newDisplay: PlayerDisplay = {
-          title: validSource.title || prev.display.title || 'Audio Recording',
-          composerName: validSource.composerName || prev.display.composerName,
-          performer: validSource.performer || prev.display.performer,
-          image: validSource.image || prev.display.image,
-          sourceUrl: validSource.sourceUrl || prev.display.sourceUrl,
+          title: customDisplay?.title || sourceTitle || prev.display.title || 'Audio Recording',
+          composerName: customDisplay?.composerName || (source as any).composerName || prev.display.composerName,
+          performer: customDisplay?.performer || (source as any).performer || prev.display.performer,
+          image: customDisplay?.image || (source as any).image || prev.display.image,
+          sourceUrl: customDisplay?.sourceUrl || (source as any).sourceUrl || prev.display.sourceUrl,
           provider: validSource.provider,
-          providerLabel: validSource.providerLabel || prev.display.providerLabel,
         };
+
+        const displayValidation = PlayerDisplaySchema.safeParse(newDisplay);
+        if (!displayValidation.success) {
+          console.error('[AudioPlayerContext] Display Validation Error:', displayValidation.error);
+          // Fallback to previous display if invalid, or just keep it
+        }
+
+        const finalDisplay = displayValidation.success ? displayValidation.data : newDisplay;
 
         const newStatus: PlayerStatus = {
           ...prev.status,
@@ -282,7 +291,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         return {
           ...prev,
           source: validSource,
-          display: newDisplay,
+          display: finalDisplay,
           status: newStatus,
           playbackId: prev.playbackId + 1,
         };
@@ -343,7 +352,6 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       performer: state.display.performer || null,
       thumbnail: state.display.image || null,
       platformUrl: state.display.sourceUrl || null,
-      platformLabel: state.display.providerLabel || null,
       platform: state.display.provider,
       volume: state.status.volume,
       isReady: state.isReady,

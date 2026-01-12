@@ -23,7 +23,7 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
       const abcMetadata = new MediaMetadataService().parse(abcContent, 'abc');
       const extracted = abcMetadata;
 
-      const mergedPlayRequest = {
+      const mergedRequest = {
         sourceId: extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId,
         provider: extracted?.provider || audioMetadata?.provider,
         startSeconds: extracted?.startSeconds ?? audioMetadata?.startSeconds,
@@ -33,10 +33,9 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
         performer: extracted?.performer || audioMetadata?.performer,
         image: extracted?.image || audioMetadata?.thumbnail || audioMetadata?.image,
         sourceUrl: extracted?.sourceUrl || audioMetadata?.platformUrl,
-        providerLabel: extracted?.providerLabel || audioMetadata?.platformLabel,
       };
 
-      if (!mergedPlayRequest.sourceId) {
+      if (!mergedRequest.sourceId) {
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
             <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
@@ -46,7 +45,7 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
 
       return (
         <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-          <AudioPlayerBinder source={abcContent} format="abc" playRequest={mergedPlayRequest}>
+          <AudioPlayerBinder source={abcContent} format="abc" playRequest={mergedRequest}>
             <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
           </AudioPlayerBinder>
         </div>

@@ -65,23 +65,3 @@ export { PlayerStatusSchema, PlayerMode };
 export type { PlayerStatus };
 export { PlayerProviderSchema, PlayerProvider };
 
-// PlayableSource is the merger of tech source (base) and display metadata
-export const PlayableSourceSchema = PlayerSourceBaseSchema.merge(PlayerDisplaySchema).refine(
-  (data) => {
-    // endSeconds が指定されている場合のみ、startSeconds との整合性をチェック
-    if (data.endSeconds !== undefined) {
-      return data.endSeconds > (data.startSeconds ?? 0);
-    }
-    return true;
-  },
-  {
-    message: 'endSeconds must be greater than startSeconds',
-    path: ['endSeconds'],
-  },
-);
-
-export type PlayableSource = z.infer<typeof PlayableSourceSchema>;
-
-// Legacy compatibility
-export type PlayRequest = PlayableSource;
-export const PlayRequestSchema = PlayableSourceSchema;

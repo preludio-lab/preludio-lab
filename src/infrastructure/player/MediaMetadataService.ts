@@ -1,4 +1,4 @@
-import { PlayableSource } from '@/domain/player/Player';
+import { PlayerProvider } from '@/domain/player/Player';
 
 /**
  * MediaMetadataService
@@ -6,11 +6,11 @@ import { PlayableSource } from '@/domain/player/Player';
  */
 export class MediaMetadataService {
   /**
-   * 指定されたフォーマットのテキストコンテンツを解析し、PlayableSource(の一部)を返します。
+   * 指定されたフォーマットのテキストコンテンツを解析し、メタデータの一部を返します。
    * @param content 解析対象のテキスト
    * @param format フォーマット識別子 ('abc' など)
    */
-  public parse(content: string, format: string): Partial<PlayableSource> {
+  public parse(content: string, format: string): Record<string, any> {
     if (typeof content !== 'string') {
       return {};
     }
@@ -27,9 +27,9 @@ export class MediaMetadataService {
    * ABC記法からメタデータを抽出します。
    * %%audio_src, %%audio_title などのカスタムディレクティブを解析します。
    */
-  private parseAbc(abcContent: string): Partial<PlayableSource> {
+  private parseAbc(abcContent: string): Record<string, any> {
     let sourceId: string | undefined;
-    const metadata: Record<string, unknown> = {};
+    const metadata: Record<string, any> = {};
     let startSeconds: number | undefined;
     let endSeconds: number | undefined;
 
@@ -54,8 +54,7 @@ export class MediaMetadataService {
             sourceId = value; // videoId or url
             break;
           case 'audio_title':
-            metadata.title = value; // metadata内に格納しつつ、ルートのtitleにも入れるか検討だが、PlayableSourceにはtitleがある
-            // PlayableSource.title へのマッピングを推奨
+            metadata.title = value;
             break;
           case 'audio_composer':
             metadata.composerName = value;
@@ -68,7 +67,6 @@ export class MediaMetadataService {
             metadata.thumbnail = value;
             break;
           case 'audio_platform':
-            // MEMO: PlayableSource.provider にマッピング
             // 簡易バリデーション
             const p = value.toLowerCase();
             if (
@@ -82,9 +80,7 @@ export class MediaMetadataService {
           case 'audio_platformUrl':
             metadata.platformUrl = value;
             break;
-          case 'audio_platformLabel':
-            metadata.platformLabel = value;
-            break;
+
           case 'audio_startTime':
           case 'audio_startSeconds':
             const start = parseFloat(value);
@@ -100,7 +96,7 @@ export class MediaMetadataService {
     });
 
     // 意味のあるデータが含まれる場合のみ返す
-    const result: Partial<PlayableSource> = {};
+    const result: Record<string, any> = {};
     if (sourceId) result.sourceId = sourceId;
     if (startSeconds !== undefined) result.startSeconds = startSeconds;
     if (endSeconds !== undefined) result.endSeconds = endSeconds;
@@ -119,9 +115,6 @@ export class MediaMetadataService {
     if (typeof metadata.platformUrl === 'string') {
       result.sourceUrl = metadata.platformUrl;
     }
-    if (typeof metadata.platformLabel === 'string') {
-      result.providerLabel = metadata.platformLabel;
-    }
 
     // Provider extraction
     if (typeof metadata.platform === 'string') {
@@ -129,7 +122,7 @@ export class MediaMetadataService {
       if (p === 'audio-file') {
         result.provider = 'audio-file';
       } else if (['youtube', 'spotify', 'soundcloud', 'apple-music'].includes(p)) {
-        result.provider = p as any;
+        result.provider = p;
       } else {
         result.provider = 'generic';
       }

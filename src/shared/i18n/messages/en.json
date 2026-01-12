@@ -73,7 +73,15 @@
     "tagline": "Beyond Listening. Dive deeper into the classics."
   },
   "Player": {
-    "invalidRequest": "Invalid playback request"
+    "invalidRequest": "Invalid playback request",
+    "provider": {
+      "youtube": "Watch on YouTube",
+      "spotify": "Listen on Spotify",
+      "soundcloud": "Listen on SoundCloud",
+      "apple-music": "Listen on Apple Music",
+      "audio-file": "Play Audio",
+      "generic": "Play"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",
