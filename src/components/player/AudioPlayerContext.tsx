@@ -263,15 +263,32 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
         // Display Mapping
         const meta = validSource.metadata || {};
+        // Provider Type Mapping (Technical -> UI)
+        let providerType: PlayerProviderType = PlayerProviderType.GENERIC;
+        switch (validSource.provider) {
+          case PlayerPlatform.YOUTUBE:
+            providerType = PlayerProviderType.YOUTUBE;
+            break;
+          case PlayerPlatform.SPOTIFY:
+            providerType = PlayerProviderType.SPOTIFY;
+            break;
+          case PlayerPlatform.SOUNDCLOUD:
+            providerType = PlayerProviderType.SOUNDCLOUD;
+            break;
+          case PlayerPlatform.APPLE_MUSIC:
+            providerType = PlayerProviderType.APPLE_MUSIC;
+            break;
+          case PlayerPlatform.HTML5_AUDIO:
+            providerType = PlayerProviderType.FILES;
+            break;
+        }
+
         const newDisplay: PlayerDisplay = {
           title: validSource.title || (meta.title as string) || prev.display.title || 'Audio Recording',
           performer: (meta.performer as string) || prev.display.performer,
           image: (meta.thumbnail as string) || (meta.image as string) || prev.display.image,
           sourceUrl: (meta.platformUrl as string) || prev.display.sourceUrl,
-          providerType:
-            validSource.provider === PlayerPlatform.YOUTUBE
-              ? PlayerProviderType.YOUTUBE
-              : PlayerProviderType.GENERIC,
+          providerType,
         };
 
         const newStatus: PlayerStatus = {

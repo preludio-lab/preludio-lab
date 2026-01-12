@@ -4,7 +4,17 @@ import { z } from 'zod';
  * サポートされているオーディオプレイヤーの技術プラットフォーム
  */
 export const PlayerPlatform = {
+  /** YouTube動画 */
   YOUTUBE: 'youtube',
+  /** Spotify */
+  SPOTIFY: 'spotify',
+  /** SoundCloud */
+  SOUNDCLOUD: 'soundcloud',
+  /** Apple Music */
+  APPLE_MUSIC: 'apple-music',
+  /** HTML5 Audio (mp3, wav, etc.) */
+  HTML5_AUDIO: 'audio-file',
+  /** デフォルト / その他 */
   DEFAULT: 'default',
 } as const;
 

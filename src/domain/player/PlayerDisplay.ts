@@ -5,7 +5,17 @@ import { ResourcePathSchema, UrlSchema } from '@/domain/shared/CommonMetadata';
  * 表示用プラットフォーム種別
  */
 export const PlayerProviderType = {
+  /** YouTube動画 */
   YOUTUBE: 'youtube',
+  /** Spotify 埋め込みプレイヤー */
+  SPOTIFY: 'spotify',
+  /** SoundCloud 埋め込みプレイヤー */
+  SOUNDCLOUD: 'soundcloud',
+  /** Apple Music 埋め込みプレイヤー */
+  APPLE_MUSIC: 'apple-music',
+  /** ホストされた音声ファイル (mp3, wav, etc. / Cloudflare R2など) */
+  FILES: 'files',
+  /** その他・汎用 */
   GENERIC: 'generic',
 } as const;
 

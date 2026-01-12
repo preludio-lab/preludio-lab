@@ -70,9 +70,13 @@ export class MediaMetadataService {
           case 'audio_platform':
             // MEMO: PlayableSource.provider にマッピング
             // 簡易バリデーション
-            if (value === 'youtube' || value === 'default') {
-              // metadataにも残すが、providerフィールドが望ましい
-              metadata.platform = value;
+            const p = value.toLowerCase();
+            if (
+              ['youtube', 'spotify', 'soundcloud', 'apple-music', 'audio-file', 'default'].includes(
+                p,
+              )
+            ) {
+              metadata.platform = p;
             }
             break;
           case 'audio_platformUrl':
@@ -105,8 +109,11 @@ export class MediaMetadataService {
     if (typeof metadata.title === 'string') result.title = metadata.title;
 
     // Provider extraction
-    if (metadata.platform === 'youtube' || metadata.platform === 'default') {
-      result.provider = metadata.platform;
+    if (typeof metadata.platform === 'string') {
+      const p = metadata.platform;
+      if (['youtube', 'spotify', 'soundcloud', 'apple-music', 'audio-file', 'default'].includes(p)) {
+        result.provider = p as any;
+      }
     }
     // else if (typeof metadata.platform === 'string') {
     //   // If we add more platforms, handle here
