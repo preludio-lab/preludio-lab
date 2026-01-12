@@ -35,9 +35,15 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play('test-video-id', {
+      result.current.play({
+        sourceId: 'test-video-id',
+        provider: 'youtube', // default
+        startSeconds: 0,
+        endSeconds: 0,
         title: 'Test Song',
-        composerName: 'Test Artist',
+        metadata: {
+          composerName: 'Test Artist',
+        },
       });
     });
 
@@ -53,10 +59,16 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play('test-video-id', {
-        platformUrl: 'https://example.com',
-        platformLabel: 'External Link',
-        platform: 'default',
+      result.current.play({
+        sourceId: 'test-video-id',
+        provider: 'default',
+        startSeconds: 0,
+        endSeconds: 0,
+        metadata: {
+          platformUrl: 'https://example.com',
+          platformLabel: 'External Link',
+          platform: 'default',
+        },
       });
     });
 
@@ -73,7 +85,9 @@ describe('AudioPlayerContext', () => {
     act(() => {
       // Invalid request: endSeconds < startSeconds
       // Arguments: (src, metadata, options)
-      result.current.play('test-video-id', undefined, {
+      result.current.play({
+        sourceId: 'test-video-id',
+        provider: 'youtube',
         startSeconds: 100,
         endSeconds: 50,
       });

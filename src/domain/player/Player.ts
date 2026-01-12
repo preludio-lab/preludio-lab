@@ -1,66 +1,75 @@
 import { z } from 'zod';
-import { PlayerPlatform } from './PlayerConstants';
+import { PlayerControlSchema, PlayerControl } from './PlayerControl';
+import { PlayerDisplaySchema, PlayerDisplay, PlayerProviderType } from './PlayerDisplay';
+import {
+  PlayerSourceSchema,
+  PlayerSource,
+  PlayerPlatform,
+  PlayerPlatformType,
+} from './PlayerSource';
+import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './PlayerStatus';
 
 /**
- * プレイヤー共有のバリデーションスキーマ定義
+ * Player Entity
+ * プレイヤーのドメインエンティティ (Aggregate Root / Coordinator)
+ * 制御(Control)、表示(Display)、ソース(Source)、状態(Status)を束ねる。
  */
-
-// 基本的な時間（秒）のバリデーション
-const SecondsSchema = z.number().min(0).finite();
-
-/** 再生オプション (開始・終了位置など) */
-export const PlayOptionsSchema = z
-  .object({
-    /** 再生開始位置 (秒) */
-    startSeconds: SecondsSchema.optional(),
-    /** 再生終了位置 (秒) */
-    endSeconds: SecondsSchema.optional(),
-  })
-  .refine(
-    (data) => {
-      /** endSeconds がある場合、startSeconds より大きいこと */
-      if (data.startSeconds !== undefined && data.endSeconds !== undefined) {
-        return data.endSeconds > data.startSeconds;
-      }
-      return true;
-    },
-    {
-      message: 'endSeconds must be greater than startSeconds',
-      path: ['endSeconds'],
-    },
-  );
-
-/** 再生中に表示されるメタデータ */
-export const PlayerMetadataSchema = z.object({
-  /** 作品タイトル */
-  title: z.string().optional(),
-  /** 作曲家名 */
-  composerName: z.string().optional(),
-  /** 演奏者名 */
-  performer: z.string().optional(),
-  /** サムネイル画像URL */
-  thumbnail: z.string().url().optional().or(z.literal('')),
-  /** プラットフォームのURL (YouTube等) */
-  platformUrl: z.string().url().optional(),
-  /** プラットフォーム名 */
-  platformLabel: z.string().optional(),
-  /** プラットフォームの種別 (PlayerPlatform) */
-  platform: z.nativeEnum(PlayerPlatform).optional().nullable(),
+export const PlayerSchema = z.object({
+  control: PlayerControlSchema,
+  display: PlayerDisplaySchema,
+  source: PlayerSourceSchema,
+  status: PlayerStatusSchema,
 });
 
-/** 再生リクエスト全体の構造 */
-export const PlayRequestSchema = z.object({
-  /** 音源識別子 (YouTube ID等) */
-  src: z.string().min(1, 'Source ID is required'),
-  /** 付随するメタデータ */
-  metadata: PlayerMetadataSchema.optional(),
-  /** 再生オプション (区間指定等) */
-  options: PlayOptionsSchema.optional(),
-});
+/** プレイヤーのプロパティ定義 */
+export type PlayerProps = z.infer<typeof PlayerSchema>;
 
-/** 再生オプションの型定義 */
-export type PlayOptions = z.infer<typeof PlayOptionsSchema>;
-/** プレイヤーメタデータの型定義 */
-export type PlayerMetadata = z.infer<typeof PlayerMetadataSchema>;
-/** 再生リクエストの型定義 */
-export type PlayRequest = z.infer<typeof PlayRequestSchema>;
+/**
+ * Player
+ * プレイヤーのドメインエンティティ (Aggregate Root / Coordinator)
+ * 制御(Control)、表示(Display)、ソース(Source)、状態(Status)を束ねる。
+ */
+export class Player implements PlayerProps {
+  /** 制御情報: ID、作成・更新日時などのライフサイクル管理 */
+  readonly control: PlayerControl;
+  /** 表示情報: タイトル、演奏者、画像などのUI投影用データ */
+  readonly display: PlayerDisplay;
+  /** 技術ソース: 再生の実体データ（YouTube ID、開始/終了秒数等） */
+  readonly source: PlayerSource;
+  /** 実行状態: 再生中フラグ、現在時間、音量、表示モード等 */
+  readonly status: PlayerStatus;
+
+  constructor(props: PlayerProps) {
+    this.control = props.control;
+    this.display = props.display;
+    this.source = props.source;
+    this.status = props.status;
+  }
+
+  // --- Convenience Getters ---
+  get id() {
+    return this.control.id;
+  }
+  get title() {
+    return this.display.title;
+  }
+  get isPlaying() {
+    return this.status.isPlaying;
+  }
+}
+
+// --- Re-exports for convenience ---
+export { PlayerControlSchema };
+export type { PlayerControl };
+export { PlayerDisplaySchema, PlayerProviderType };
+export type { PlayerDisplay };
+export { PlayerSourceSchema, PlayerPlatform };
+export type { PlayerSource, PlayerPlatformType };
+export { PlayerStatusSchema, PlayerMode };
+export type { PlayerStatus };
+
+// Legacy alias and compatibility export (if needed for transition)
+export type PlayableSource = PlayerSource;
+export const PlayableSourceSchema = PlayerSourceSchema;
+export type PlayRequest = PlayerSource;
+export const PlayRequestSchema = PlayerSourceSchema;

@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { MusicalExampleSchema } from './MusicalExample';
 import { MusicalExampleControlSchema } from './MusicalExampleControl';
 import { MusicalExampleMetadataSchema, NotationFormat } from './MusicalExampleMetadata';
-import { MusicalExampleBindingSchema } from './MusicalExampleBinding';
 
 describe('MusicalExample', () => {
   it('MusicalExample を正しく構成できること', () => {
@@ -17,11 +16,19 @@ describe('MusicalExample', () => {
       format: NotationFormat.ABC,
       notationPath: 'test.abc',
     });
-    const binding = MusicalExampleBindingSchema.parse({ playbackBindings: [] });
-    const example = MusicalExampleSchema.parse({ control, metadata, binding });
+    const samples = [
+      {
+        recordingSourceId: 'src-1',
+        startSeconds: 0,
+        endSeconds: 10,
+        isDefault: true,
+      },
+    ];
+    const example = MusicalExampleSchema.parse({ control, metadata, samples });
 
     expect(example.control).toEqual(control);
     expect(example.metadata).toEqual(metadata);
-    expect(example.binding).toEqual(binding);
+    expect(example.samples).toHaveLength(1);
+    expect(example.samples[0].recordingSourceId).toBe('src-1');
   });
 });

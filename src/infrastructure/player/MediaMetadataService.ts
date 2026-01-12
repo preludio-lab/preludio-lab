@@ -1,4 +1,4 @@
-import { PlayerMetadata, PlayRequest, PlayOptions } from '@/domain/player/Player';
+import { PlayableSource } from '@/domain/player/Player';
 
 /**
  * MediaMetadataService
@@ -6,11 +6,11 @@ import { PlayerMetadata, PlayRequest, PlayOptions } from '@/domain/player/Player
  */
 export class MediaMetadataService {
   /**
-   * 指定されたフォーマットのテキストコンテンツを解析し、PlayRequest(の一部)を返します。
+   * 指定されたフォーマットのテキストコンテンツを解析し、PlayableSource(の一部)を返します。
    * @param content 解析対象のテキスト
    * @param format フォーマット識別子 ('abc' など)
    */
-  public parse(content: string, format: string): Partial<PlayRequest> {
+  public parse(content: string, format: string): Partial<PlayableSource> {
     if (typeof content !== 'string') {
       return {};
     }
@@ -27,10 +27,11 @@ export class MediaMetadataService {
    * ABC記法からメタデータを抽出します。
    * %%audio_src, %%audio_title などのカスタムディレクティブを解析します。
    */
-  private parseAbc(abcContent: string): Partial<PlayRequest> {
-    let src: string | undefined;
-    const metadata: PlayerMetadata = {};
-    const options: PlayOptions = {};
+  private parseAbc(abcContent: string): Partial<PlayableSource> {
+    let sourceId: string | undefined;
+    const metadata: Record<string, unknown> = {};
+    let startSeconds: number | undefined;
+    let endSeconds: number | undefined;
 
     const lines = abcContent.split('\n');
 
@@ -50,10 +51,11 @@ export class MediaMetadataService {
       if (key && value) {
         switch (key) {
           case 'audio_src':
-            src = value; // videoId or url
+            sourceId = value; // videoId or url
             break;
           case 'audio_title':
-            metadata.title = value;
+            metadata.title = value; // metadata内に格納しつつ、ルートのtitleにも入れるか検討だが、PlayableSourceにはtitleがある
+            // PlayableSource.title へのマッピングを推奨
             break;
           case 'audio_composer':
             metadata.composerName = value;
@@ -62,12 +64,14 @@ export class MediaMetadataService {
             metadata.performer = value;
             break;
           case 'audio_thumbnail':
-          case 'audio_artworkSrc': // 後方互換性のため一旦残すが、将来的には削除
+          case 'audio_artworkSrc':
             metadata.thumbnail = value;
             break;
           case 'audio_platform':
-            // 簡易バリデーション: 現在は 'youtube' と 'default' のみサポート
+            // MEMO: PlayableSource.provider にマッピング
+            // 簡易バリデーション
             if (value === 'youtube' || value === 'default') {
+              // metadataにも残すが、providerフィールドが望ましい
               metadata.platform = value;
             }
             break;
@@ -80,22 +84,38 @@ export class MediaMetadataService {
           case 'audio_startTime':
           case 'audio_startSeconds':
             const start = parseFloat(value);
-            if (!isNaN(start)) options.startSeconds = start;
+            if (!isNaN(start)) startSeconds = start;
             break;
           case 'audio_endTime':
           case 'audio_endSeconds':
             const end = parseFloat(value);
-            if (!isNaN(end)) options.endSeconds = end;
+            if (!isNaN(end)) endSeconds = end;
             break;
         }
       }
     });
 
     // 意味のあるデータが含まれる場合のみ返す
-    return {
-      src,
-      metadata,
-      options,
-    };
+    const result: Partial<PlayableSource> = {};
+    if (sourceId) result.sourceId = sourceId;
+    if (startSeconds !== undefined) result.startSeconds = startSeconds;
+    if (endSeconds !== undefined) result.endSeconds = endSeconds;
+
+    // Title extraction logic for flat property
+    if (typeof metadata.title === 'string') result.title = metadata.title;
+
+    // Provider extraction
+    if (metadata.platform === 'youtube' || metadata.platform === 'default') {
+      result.provider = metadata.platform;
+    }
+    // else if (typeof metadata.platform === 'string') {
+    //   // If we add more platforms, handle here
+    // }
+
+    if (Object.keys(metadata).length > 0) {
+      result.metadata = metadata;
+    }
+
+    return result;
   }
 }

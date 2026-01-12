@@ -1,15 +1,7 @@
 import { z } from 'zod';
-import { MusicalExampleControlSchema } from './MusicalExampleControl';
-import { MusicalExampleMetadataSchema } from './MusicalExampleMetadata';
-import { MusicalExampleBindingSchema } from './MusicalExampleBinding';
-
-/**
- * MusicalExample (Component/Excerpt)
- * 記事内に埋め込まれる譜例のルートエンティティ。
- */
-import { MusicalExampleControl } from './MusicalExampleControl';
-import { MusicalExampleMetadata } from './MusicalExampleMetadata';
-import { MusicalExampleBinding } from './MusicalExampleBinding';
+import { MusicalExampleControl, MusicalExampleControlSchema } from './MusicalExampleControl';
+import { MusicalExampleMetadata, MusicalExampleMetadataSchema } from './MusicalExampleMetadata';
+import { RecordingSegment, RecordingSegmentSchema } from '../recording/RecordingSegment';
 
 /**
  * MusicalExample (Component/Excerpt)
@@ -18,7 +10,8 @@ import { MusicalExampleBinding } from './MusicalExampleBinding';
 export const MusicalExampleSchema = z.object({
   control: MusicalExampleControlSchema,
   metadata: MusicalExampleMetadataSchema,
-  binding: MusicalExampleBindingSchema,
+  /** 譜例に関連付けられた録音セグメント (Playback Samples) */
+  samples: z.array(RecordingSegmentSchema).default([]),
 });
 
 export type MusicalExample = z.infer<typeof MusicalExampleSchema>;
@@ -30,11 +23,11 @@ export { type MusicalExampleId } from './MusicalExampleControl';
 export const createMusicalExample = (
   control: MusicalExampleControl,
   metadata: MusicalExampleMetadata,
-  binding: MusicalExampleBinding,
+  samples: RecordingSegment[] = [],
 ): MusicalExample => {
   return MusicalExampleSchema.parse({
     control,
     metadata,
-    binding,
+    samples,
   });
 };

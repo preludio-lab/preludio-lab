@@ -10,11 +10,20 @@ import React, {
   useEffect,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/PlayerConstants';
-import { PlayRequestSchema } from '@/domain/player/Player';
+import {
+  PlayerPlatform,
+  PlayerPlatformType,
+  PlayerMode,
+  PlayerSource as PlayableSource,
+  PlayableSourceSchema,
+  PlayerDisplay,
+  PlayerStatus,
+  PlayerControl,
+  PlayerProviderType,
+} from '@/domain/player/Player';
 import { handleClientError } from '@/lib/client-error';
 
-export type PlayerMode = 'hidden' | 'mini' | 'focus';
+export type PlayerModeType = PlayerMode;
 
 // Define a type for the player instance proxy
 // This should match the methods available on the actual player object (e.g., YouTube Player API)
@@ -25,41 +34,17 @@ export interface PlayerInstanceProxy {
 }
 
 export interface PlayerState {
-  /** 再生中かどうか */
-  isPlaying: boolean;
-  /** 現在の再生時間 (秒) */
-  currentTime: number;
-  /** メディアの総再生時間 (秒) */
-  duration: number;
-  /**
-   * メディアソースの識別子 (旧 videoId)
-   * YouTubeの場合はVideo ID、その他はURLなど
-   */
-  src: string | null;
-  /** プレイヤーの表示モード (hidden: 非表示, mini: ミニプレイヤー, focus: フォーカスモード) */
-  mode: PlayerMode;
-  /** 楽曲タイトル */
-  title: string | null;
-  /** 作曲者名 (例: "J.S. Bach") */
-  composerName: string | null;
-  /** 演奏者名 (例: "Glenn Gould") */
-  performer: string | null;
-  /** アートワーク画像のURL */
-  thumbnail: string | null;
-  /** プラットフォームの元リンクURL (例: YouTubeの動画ページURL) */
-  platformUrl: string | null;
-  /** プラットフォームの表示ラベル (例: "Watch on YouTube") */
-  platformLabel: string | null;
-  /** プラットフォーム種別 (将来的な拡張用) */
-  platform: PlayerPlatformType | null;
-  /** プレイヤーの準備が完了したか */
+  /** ドメインモデル: 表示情報 */
+  display: PlayerDisplay;
+  /** ドメインモデル: 技術ソース情報 */
+  source: PlayableSource;
+  /** ドメインモデル: 再生状態情報 */
+  status: PlayerStatus;
+  /** ドメインモデル: 制御情報 */
+  control: PlayerControl;
+
+  /** プレイヤーの準備が完了したか (UI固有の状態) */
   isReady: boolean;
-  /** 音量 (0-100) */
-  volume: number;
-  /** 再生開始位置 (秒) - 指定された場合、この時間より前にはシークできない等の制限に使われる */
-  startSeconds?: number;
-  /** 再生終了位置 (秒) - 指定された場合、この時間で停止する */
-  endSeconds?: number;
   /** 再生リクエストの度にインクリメントされるID (useEffectのトリガー用) */
   playbackId: number;
 }
@@ -71,19 +56,7 @@ export interface PlayerActions {
    * @param metadata 楽曲メタデータ (タイトル、作曲者等)
    * @param options 再生オプション (開始・終了時間等)
    */
-  play: (
-    src?: string,
-    metadata?: {
-      title?: string;
-      composerName?: string;
-      performer?: string;
-      thumbnail?: string;
-      platformUrl?: string;
-      platformLabel?: string;
-      platform?: 'youtube' | 'default';
-    },
-    options?: { startSeconds?: number; endSeconds?: number },
-  ) => void;
+  play: (source: PlayableSource) => void;
   /** 一時停止する */
   pause: () => void;
   /** 再生/一時停止を切り替える */
@@ -99,7 +72,7 @@ export interface PlayerActions {
    */
   setVolume: (volume: number) => void;
   /** 表示モードを設定する */
-  setMode: (mode: PlayerMode) => void;
+  setMode: (mode: PlayerModeType) => void;
   /**
    * 内部プレイヤーインスタンスを設定する (GlobalAudioPlayer等のSmart Componentから呼ばれる)
    * @param instance プレイヤー操作用プロキシオブジェクト
@@ -117,7 +90,33 @@ export interface PlayerActions {
   _onDuration: (duration: number) => void;
 }
 
-export const AudioPlayerContext = createContext<(PlayerState & PlayerActions) | null>(null);
+/**
+ * UI互換性のためのフラットなプロパティ定義
+ */
+export interface PlayerFlatProperties {
+  isPlaying: boolean;
+  currentTime: number;
+  duration: number;
+  src: string | null;
+  mode: PlayerModeType;
+  title: string | null;
+  performer: string | null;
+  thumbnail: string | null;
+  platformUrl: string | null;
+  platformLabel: string | null;
+  platform: PlayerPlatformType | null;
+  volume: number;
+  isReady: boolean;
+  playbackId: number;
+  startSeconds?: number;
+  endSeconds?: number;
+  // レガシー対応
+  composerName: string | null;
+}
+
+export const AudioPlayerContext = createContext<(PlayerFlatProperties & PlayerActions) | null>(
+  null,
+);
 
 export function useAudioPlayer() {
   const context = useContext(AudioPlayerContext);
@@ -132,22 +131,17 @@ const STORAGE_KEY = 'preludio_player_state';
 export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
   const t = useTranslations('Player');
   const [state, setState] = useState<PlayerState>({
-    isPlaying: false,
-    currentTime: 0,
-    duration: 0,
-    src: null,
-    mode: 'hidden',
-    title: null,
-    composerName: null,
-    performer: null,
-    thumbnail: null,
-    platformUrl: null,
-    platformLabel: null,
-    platform: null,
+    control: { id: crypto.randomUUID(), createdAt: new Date(), updatedAt: new Date() },
+    display: {
+      title: '',
+      performer: '',
+      image: '',
+      linkUrl: '',
+      providerType: PlayerProviderType.GENERIC,
+    },
+    source: { sourceId: '', provider: PlayerPlatform.YOUTUBE, startSeconds: 0, endSeconds: 0 },
+    status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
-    volume: 100,
-    startSeconds: undefined,
-    endSeconds: undefined,
     playbackId: 0,
   });
 
@@ -174,45 +168,23 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     }
   }, []);
 
-  // Save state to localStorage on change
+  // Save logic (Simplified for structured state)
   useEffect(() => {
-    // Only save minimal data needed for restoration
-    // Avoid saving 'isReady', 'isPlaying' (handled separately), etc.
-    if (state.mode === 'hidden' && !state.src) {
-      // If player is effectively cleared, clear storage
+    if (state.status.mode === PlayerMode.HIDDEN && !state.source.sourceId) {
       localStorage.removeItem(STORAGE_KEY);
       return;
     }
 
     const stateToSave = {
-      currentTime: state.currentTime,
-      duration: state.duration,
-      src: state.src,
-      mode: state.mode,
-      title: state.title,
-      composerName: state.composerName,
-      performer: state.performer,
-      thumbnail: state.thumbnail,
-      platformUrl: state.platformUrl,
-      platformLabel: state.platformLabel,
-      platform: state.platform,
-      volume: state.volume,
+      currentTime: state.status.currentTime,
+      duration: state.status.duration,
+      source: state.source,
+      display: state.display,
+      mode: state.status.mode,
+      volume: state.status.volume,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
-  }, [
-    state.currentTime,
-    state.duration,
-    state.src,
-    state.mode,
-    state.title,
-    state.composerName,
-    state.performer,
-    state.thumbnail,
-    state.platformUrl,
-    state.platformLabel,
-    state.platform,
-    state.volume,
-  ]);
+  }, [state.status, state.source, state.display]);
 
   // NOTE: YouTube Playerインスタンスと通信する仕組みが必要です。
   // よりクリーンなアーキテクチャでは、プレイヤーが公開するRefを使用する手もありますが、
@@ -236,45 +208,42 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   // --- Internal Callbacks from Player Component ---
 
   const _onReady = useCallback((duration: number) => {
-    setState((prev) => ({ ...prev, isReady: true, duration }));
+    setState((prev) => ({
+      ...prev,
+      isReady: true,
+      status: { ...prev.status, duration },
+    }));
   }, []);
 
   const _onProgress = useCallback((currentTime: number) => {
-    setState((prev) => ({ ...prev, currentTime }));
+    setState((prev) => ({
+      ...prev,
+      status: { ...prev.status, currentTime },
+    }));
   }, []);
 
   const _onStateChange = useCallback((isPlaying: boolean) => {
-    // Only update if different to avoid loops, though likely fine
     setState((prev) => {
-      if (prev.isPlaying === isPlaying) return prev;
-      return { ...prev, isPlaying };
+      if (prev.status.isPlaying === isPlaying) return prev;
+      return {
+        ...prev,
+        status: { ...prev.status, isPlaying },
+      };
     });
   }, []);
 
   const _onDuration = useCallback((duration: number) => {
-    setState((prev) => ({ ...prev, duration }));
+    setState((prev) => ({
+      ...prev,
+      status: { ...prev.status, duration },
+    }));
   }, []);
 
   const play = useCallback(
-    (
-      src?: string,
-      metadata?: {
-        title?: string;
-        composerName?: string;
-        performer?: string;
-        thumbnail?: string;
-        platformUrl?: string;
-        platformLabel?: string;
-        platform?: 'youtube' | 'default';
-      },
-      options?: { startSeconds?: number; endSeconds?: number },
-    ) => {
-      // [DOMAIN VALIDATION]
-      const validationResult = PlayRequestSchema.safeParse({ src, metadata, options });
+    (source: PlayableSource) => {
+      const validationResult = PlayableSourceSchema.safeParse(source);
       if (!validationResult.success) {
         console.error('[AudioPlayerContext] Validation Error:', validationResult.error);
-        // 本番ではユーザーに通知するか、エラーハンドリングポリシーに従う
-        // ここではコンソールエラーのみとし、処理は継続させない（安全策）
         handleClientError(
           new Error(`Invalid play request: ${validationResult.error.message}`),
           t('invalidRequest'),
@@ -282,77 +251,116 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         return;
       }
 
+      const validSource = validationResult.data;
+
       setState((prev) => {
-        const newState = { ...prev, isPlaying: true, playbackId: prev.playbackId + 1 };
-        if (src && src !== prev.src) {
-          newState.src = src;
-          newState.currentTime = 0; // Reset time on new source
-          if (prev.mode === 'hidden') {
-            newState.mode = 'mini';
-          }
-          // Reset metadata if new source
-          newState.title = null;
-          newState.composerName = null;
-          newState.performer = null;
-          newState.thumbnail = null;
-          newState.platformUrl = null;
-          newState.platformLabel = null;
-          newState.platform = null;
+        const isNewSource = validSource.sourceId !== prev.source.sourceId;
+
+        let newMode = prev.status.mode;
+        if (isNewSource && prev.status.mode === PlayerMode.HIDDEN) {
+          newMode = PlayerMode.MINI;
         }
-        if (metadata) {
-          if (metadata.title) newState.title = metadata.title;
-          if (metadata.composerName) newState.composerName = metadata.composerName;
-          if (metadata.performer) newState.performer = metadata.performer;
-          if (metadata.thumbnail) newState.thumbnail = metadata.thumbnail;
-          if (metadata.platformUrl) newState.platformUrl = metadata.platformUrl;
-          if (metadata.platformLabel) newState.platformLabel = metadata.platformLabel;
-          if (metadata.platform) newState.platform = metadata.platform;
-        }
-        if (options) {
-          newState.startSeconds = options.startSeconds;
-          newState.endSeconds = options.endSeconds;
-        } else {
-          // If checking a new source without options, reset bounds?
-          if (src && src !== prev.src) {
-            newState.startSeconds = undefined;
-            newState.endSeconds = undefined;
-          }
-        }
-        return newState;
+
+        // Display Mapping
+        const meta = validSource.metadata || {};
+        const newDisplay: PlayerDisplay = {
+          title: validSource.title || (meta.title as string) || prev.display.title || 'Audio Recording',
+          performer: (meta.performer as string) || prev.display.performer,
+          image: (meta.thumbnail as string) || (meta.image as string) || prev.display.image,
+          linkUrl: (meta.platformUrl as string) || prev.display.linkUrl,
+          providerType:
+            validSource.provider === PlayerPlatform.YOUTUBE
+              ? PlayerProviderType.YOUTUBE
+              : PlayerProviderType.GENERIC,
+        };
+
+        const newStatus: PlayerStatus = {
+          ...prev.status,
+          isPlaying: true,
+          currentTime: isNewSource ? validSource.startSeconds : prev.status.currentTime,
+          mode: newMode,
+        };
+
+        return {
+          ...prev,
+          source: validSource,
+          display: newDisplay,
+          status: newStatus,
+          playbackId: prev.playbackId + 1,
+        };
       });
     },
-    [],
+    [t],
   );
 
   const pause = useCallback(() => {
-    setState((prev) => ({ ...prev, isPlaying: false }));
+    setState((prev) => ({
+      ...prev,
+      status: { ...prev.status, isPlaying: false },
+    }));
   }, []);
 
   const togglePlay = useCallback(() => {
-    setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
+    setState((prev) => ({
+      ...prev,
+      status: { ...prev.status, isPlaying: !prev.status.isPlaying },
+    }));
   }, []);
 
   const seekTo = useCallback((time: number) => {
     if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
       playerRef.current.seekTo(time, true);
-      setState((prev) => ({ ...prev, currentTime: time }));
+      setState((prev) => ({
+        ...prev,
+        status: { ...prev.status, currentTime: time },
+      }));
     }
   }, []);
 
   const setVolume = useCallback((volume: number) => {
     if (playerRef.current && typeof playerRef.current.setVolume === 'function') {
       playerRef.current.setVolume(volume);
-      setState((prev) => ({ ...prev, volume }));
+      setState((prev) => ({
+        ...prev,
+        status: { ...prev.status, volume },
+      }));
     }
   }, []);
 
-  const setMode = useCallback((mode: PlayerMode) => {
-    setState((prev) => ({ ...prev, mode }));
+  const setMode = useCallback((mode: PlayerModeType) => {
+    setState((prev) => ({
+      ...prev,
+      status: { ...prev.status, mode },
+    }));
   }, []);
+
+  const flatProperties: PlayerFlatProperties = useMemo(
+    () => ({
+      isPlaying: state.status.isPlaying,
+      currentTime: state.status.currentTime,
+      duration: state.status.duration,
+      src: state.source.sourceId || null,
+      mode: state.status.mode,
+      title: state.display.title || null,
+      performer: state.display.performer || null,
+      thumbnail: state.display.image || null,
+      platformUrl: state.display.linkUrl || null,
+      platformLabel: state.source.metadata?.platformLabel || null,
+      platform: state.source.provider as PlayerPlatformType,
+      volume: state.status.volume,
+      isReady: state.isReady,
+      playbackId: state.playbackId,
+      startSeconds: state.source.startSeconds,
+      endSeconds: state.source.endSeconds > 0 ? state.source.endSeconds : undefined,
+      // Legacy
+      composerName: state.source.metadata?.composerName || null,
+    }),
+    [state],
+  );
 
   const value = useMemo(
     () => ({
-      ...state,
+      ...flatProperties,
       play,
       pause,
       togglePlay,
@@ -363,10 +371,10 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       _onProgress,
       _onDuration,
       _onStateChange,
-      setPlayerInstance, // Internal helper to register player
+      setPlayerInstance,
     }),
     [
-      state,
+      flatProperties,
       play,
       pause,
       togglePlay,

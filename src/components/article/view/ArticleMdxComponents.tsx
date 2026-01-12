@@ -24,27 +24,33 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
       const extracted = abcMetadata;
 
       const mergedPlayRequest = {
-        src: extracted?.src || audioMetadata?.src,
+        sourceId: extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId, // Backwards compat for 'src'
+        provider: extracted?.provider || audioMetadata?.provider,
+        startSeconds:
+          typeof extracted?.startSeconds === 'number'
+            ? extracted.startSeconds
+            : typeof audioMetadata?.startSeconds === 'number'
+              ? audioMetadata.startSeconds
+              : 0,
+        endSeconds:
+          typeof extracted?.endSeconds === 'number'
+            ? extracted.endSeconds
+            : typeof audioMetadata?.endSeconds === 'number'
+              ? audioMetadata.endSeconds
+              : 0,
+        title: extracted?.title || audioMetadata?.title,
         metadata: {
-          title: extracted?.metadata?.title || audioMetadata?.title,
+          title: extracted?.title || audioMetadata?.title,
           composerName: extracted?.metadata?.composerName || audioMetadata?.composerName,
           performer: extracted?.metadata?.performer || audioMetadata?.performer,
           thumbnail: extracted?.metadata?.thumbnail || audioMetadata?.thumbnail,
           platform: (extracted?.metadata?.platform || audioMetadata?.platform) as any,
-        },
-        options: {
-          startSeconds:
-            typeof extracted?.options?.startSeconds === 'number'
-              ? extracted.options.startSeconds
-              : undefined,
-          endSeconds:
-            typeof extracted?.options?.endSeconds === 'number'
-              ? extracted.options.endSeconds
-              : undefined,
+          platformUrl: extracted?.metadata?.platformUrl || audioMetadata?.platformUrl,
+          platformLabel: extracted?.metadata?.platformLabel || audioMetadata?.platformLabel,
         },
       };
 
-      if (!mergedPlayRequest.src) {
+      if (!mergedPlayRequest.sourceId) {
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
             <ScoreRenderer score={{ format: 'abc', data: abcContent }} />

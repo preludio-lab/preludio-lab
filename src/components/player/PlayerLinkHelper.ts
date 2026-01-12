@@ -1,4 +1,4 @@
-import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/PlayerConstants';
+import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/Player';
 
 /**
  * [UI CONSTANTS] User-facing Platform Hosts

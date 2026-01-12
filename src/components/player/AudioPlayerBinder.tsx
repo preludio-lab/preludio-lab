@@ -1,8 +1,11 @@
 'use client';
 
 import { ReactNode, useMemo } from 'react';
-import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/PlayerConstants';
-import { PlayRequest } from '@/domain/player/Player';
+import {
+  PlayerPlatform,
+  PlayerPlatformType,
+  PlayerSource as PlayableSource,
+} from '@/domain/player/Player';
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -21,7 +24,7 @@ export interface AudioPlayerBinderProps {
    * 直接指定する再生リクエスト (部分指定可)
    * sourceから抽出された情報とマージされ、こちらが優先されます。
    */
-  playRequest?: Partial<PlayRequest>;
+  playRequest?: Partial<PlayableSource>;
   /**
    * ラップする子要素
    */
@@ -42,7 +45,7 @@ export function AudioPlayerBinder({
 
   // メタデータの解決ロジック
   const resolvedRequest = useMemo(() => {
-    let extracted: Partial<PlayRequest> = {};
+    let extracted: Partial<PlayableSource> = {};
 
     // ソースがある場合は解析
     if (source && format) {
@@ -54,60 +57,72 @@ export function AudioPlayerBinder({
     // コンテンツ固有のメタデータ(extracted)がある場合はそれを優先します。
 
     // ソースが明示的に指定されている場合、時間は継承しません (新しいコンテキストとみなす)
-    const isExplicitSource = !!extracted.src;
-    const extractedOptions = extracted.options || {};
-    const propOptions = propRequest?.options || {};
+
+    const isExplicitSource = !!extracted.sourceId;
+
+    // extracted has flat properties now
+    const extractedStart = extracted.startSeconds;
+    const extractedEnd = extracted.endSeconds;
+    const propStart = propRequest?.startSeconds;
+    const propEnd = propRequest?.endSeconds;
 
     return {
-      src: extracted.src || propRequest?.src,
+      sourceId: extracted.sourceId || propRequest?.sourceId,
+      provider: extracted.provider || propRequest?.provider || PlayerPlatform.YOUTUBE,
+      startSeconds: isExplicitSource
+        ? extractedStart
+        : extractedStart !== undefined || extractedEnd !== undefined
+          ? extractedStart
+          : propStart,
+      endSeconds: isExplicitSource
+        ? extractedEnd
+        : extractedStart !== undefined || extractedEnd !== undefined
+          ? extractedEnd
+          : propEnd,
+      title: extracted.title || propRequest?.title,
       metadata: {
         ...propRequest?.metadata,
         ...extracted.metadata,
       },
-      options: isExplicitSource
-        ? extractedOptions
-        : extractedOptions.startSeconds !== undefined || extractedOptions.endSeconds !== undefined
-          ? extractedOptions
-          : propOptions,
     };
   }, [source, format, propRequest]);
 
-  const hasAudio = !!resolvedRequest.src;
+  const hasAudio = !!resolvedRequest.sourceId;
 
   const handlePlayClick = () => {
-    if (!resolvedRequest.src) return;
-
-    const meta = resolvedRequest.metadata || {};
-    const options = resolvedRequest.options || {};
+    if (!resolvedRequest.sourceId) return;
 
     // プラットフォームとデフォルト値の決定 logic
-    const platform = (meta.platform as PlayerPlatformType) || PlayerPlatform.YOUTUBE;
+    const meta = resolvedRequest.metadata || {};
+    const platform = (resolvedRequest.provider as PlayerPlatformType) || PlayerPlatform.YOUTUBE;
+    // NOTE: provider vs platform usage is a bit mixed, we stick to what we extract
+
     let platformUrl = meta.platformUrl;
     let platformLabel = meta.platformLabel;
 
     if (!platformUrl) {
-      platformUrl = generateWatchUrl(platform, resolvedRequest.src) || undefined;
+      platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId!) || undefined;
     }
     if (platform === PlayerPlatform.YOUTUBE && !platformLabel) {
       platformLabel = 'Watch on YouTube';
     }
 
-    play(
-      resolvedRequest.src,
-      {
-        title: meta.title || 'Audio Recording',
+    play({
+      sourceId: resolvedRequest.sourceId!,
+      provider: platform, // or resolvedRequest.provider
+      startSeconds: resolvedRequest.startSeconds || 0,
+      endSeconds: resolvedRequest.endSeconds || 0,
+      title: resolvedRequest.title || meta.title || 'Audio Recording',
+      metadata: {
+        // Keep legacy metadata population if needed
         composerName: meta.composerName,
         performer: meta.performer,
         thumbnail: meta.thumbnail,
         platformUrl,
         platformLabel,
-        platform,
+        platform, // Keep for compatibility
       },
-      {
-        startSeconds: options.startSeconds,
-        endSeconds: options.endSeconds,
-      },
-    );
+    });
   };
 
   return (

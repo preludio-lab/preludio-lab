@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
-import { PlayerPlatform } from '@/domain/player/PlayerConstants';
+import { PlayerPlatform, PlayerMode } from '@/domain/player/Player';
 // Helper for time formatting if not available
 const formatTimeHelper = (seconds: number) => {
   if (!seconds || isNaN(seconds)) return '00:00';
@@ -35,7 +35,7 @@ export function FocusAudioPlayer() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragTime, setDragTime] = useState(0);
 
-  if (mode !== 'focus') return null;
+  if (mode !== PlayerMode.FOCUS) return null;
 
   // Virtual Timeline Calculations
   const startOffset = startSeconds || 0;
@@ -80,7 +80,7 @@ export function FocusAudioPlayer() {
       {/* Header: Minimize Button */}
       <div className="flex items-center justify-between px-6 py-8">
         <button
-          onClick={() => setMode('mini')}
+          onClick={() => setMode(PlayerMode.MINI)}
           className="p-3 -ml-3 text-3xl text-gray-400 hover:text-preludio-black transition-colors rounded-full hover:bg-gray-100"
           aria-label="Minimize Player"
         >
