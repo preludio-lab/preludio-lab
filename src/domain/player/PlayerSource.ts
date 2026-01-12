@@ -1,8 +1,9 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { PlayerProviderSchema } from './PlayerProvider';
+import { MAX_URL_LENGTH } from '@/domain/shared/CommonMetadata';
 
-/** 基本的な時間（秒）のバリデーション */
-const SecondsSchema = zInt().min(0);
+/** 基本的な時間（秒）のバリデーション (最大24時間 = 86400秒) */
+const SecondsSchema = zInt().min(0).max(86400);
 
 /**
  * PlayerSource
@@ -11,7 +12,7 @@ const SecondsSchema = zInt().min(0);
 export const PlayerSourceSchema = z
   .object({
     /** 録音ソース識別子 (YouTube Video ID, Spotify URI, Audio URL etc) */
-    sourceId: z.string().min(1, 'Source ID is required'),
+    sourceId: z.string().min(1, 'Source ID is required').max(MAX_URL_LENGTH),
     /** プロバイダ種別 (PlayerProvider 準拠) */
     provider: PlayerProviderSchema.default('generic'),
     /** 再生開始位置 (秒) - 未指定の場合は 0 (最初) から再生 */
