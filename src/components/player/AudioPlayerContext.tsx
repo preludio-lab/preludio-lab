@@ -137,7 +137,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
     },
-    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: 0, endSeconds: 0 },
+    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: 0, endSeconds: undefined },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -346,7 +346,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       isReady: state.isReady,
       playbackId: state.playbackId,
       startSeconds: state.source.startSeconds,
-      endSeconds: state.source.endSeconds > 0 ? state.source.endSeconds : undefined,
+      endSeconds: state.source.endSeconds,
       // Legacy
       composerName: state.source.metadata?.composerName || null,
     }),

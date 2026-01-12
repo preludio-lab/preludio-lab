@@ -1,8 +1,8 @@
-import { z } from 'zod';
+import { z, zInt } from '@/shared/validation/zod';
 import { PlayerProviderSchema } from './PlayerProvider';
 
 /** 基本的な時間（秒）のバリデーション */
-const SecondsSchema = z.number().min(0).finite();
+const SecondsSchema = zInt().min(0);
 
 /**
  * PlayerSource
@@ -16,8 +16,8 @@ export const PlayerSourceSchema = z
     provider: PlayerProviderSchema.default('generic'),
     /** 再生開始位置 (秒) */
     startSeconds: SecondsSchema.default(0),
-    /** 再生終了位置 (秒) */
-    endSeconds: SecondsSchema.default(0),
+    /** 再生終了位置 (秒) - 未指定の場合は最後まで再生 */
+    endSeconds: SecondsSchema.optional(),
     /** 表示用タイトル (Optional) - ソース自体が持つタイトル */
     title: z.string().optional(),
     /** 技術用メタデータ (Optional) */
@@ -25,7 +25,8 @@ export const PlayerSourceSchema = z
   })
   .refine(
     (data) => {
-      if (data.endSeconds > 0) {
+      // endSeconds が指定されている場合のみ、startSeconds との整合性をチェック
+      if (data.endSeconds !== undefined) {
         return data.endSeconds > data.startSeconds;
       }
       return true;

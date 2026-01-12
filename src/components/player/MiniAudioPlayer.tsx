@@ -28,7 +28,7 @@ export function MiniAudioPlayer() {
 
   // Virtual Timeline Calculations
   const startOffset = startSeconds || 0;
-  const endCap = endSeconds || duration;
+  const endCap = endSeconds !== undefined ? endSeconds : duration;
   const displayDuration = Math.max(0, endCap - startOffset);
   const rawDisplayTime = Math.max(0, currentTime - startOffset);
 

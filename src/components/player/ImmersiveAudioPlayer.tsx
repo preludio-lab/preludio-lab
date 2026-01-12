@@ -39,7 +39,7 @@ export function ImmersiveAudioPlayer() {
 
   // Virtual Timeline Calculations
   const startOffset = startSeconds || 0;
-  const endCap = endSeconds || duration;
+  const endCap = endSeconds !== undefined ? endSeconds : duration;
   // Prevent negative duration if data isn't ready
   const displayDuration = Math.max(0, endCap - startOffset);
   // Clamp current time to 0 for UI (don't show negative if player is buffering before start)
