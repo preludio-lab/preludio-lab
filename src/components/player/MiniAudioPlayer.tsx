@@ -27,7 +27,7 @@ export function MiniAudioPlayer() {
   if (mode === PlayerMode.HIDDEN || mode === PlayerMode.IMMERSIVE) return null;
 
   // Virtual Timeline Calculations
-  const startOffset = startSeconds || 0;
+  const startOffset = startSeconds ?? 0;
   const endCap = endSeconds !== undefined ? endSeconds : duration;
   const displayDuration = Math.max(0, endCap - startOffset);
   const rawDisplayTime = Math.max(0, currentTime - startOffset);

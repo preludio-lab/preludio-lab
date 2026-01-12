@@ -137,7 +137,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
     },
-    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: 0, endSeconds: undefined },
+    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -272,7 +272,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         const newStatus: PlayerStatus = {
           ...prev.status,
           isPlaying: true,
-          currentTime: isNewSource ? validSource.startSeconds : prev.status.currentTime,
+          currentTime: isNewSource ? (validSource.startSeconds ?? 0) : prev.status.currentTime,
           mode: newMode,
         };
 

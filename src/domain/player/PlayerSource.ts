@@ -14,8 +14,8 @@ export const PlayerSourceSchema = z
     sourceId: z.string().min(1, 'Source ID is required'),
     /** プロバイダ種別 (PlayerProvider 準拠) */
     provider: PlayerProviderSchema.default('generic'),
-    /** 再生開始位置 (秒) */
-    startSeconds: SecondsSchema.default(0),
+    /** 再生開始位置 (秒) - 未指定の場合は 0 (最初) から再生 */
+    startSeconds: SecondsSchema.optional(),
     /** 再生終了位置 (秒) - 未指定の場合は最後まで再生 */
     endSeconds: SecondsSchema.optional(),
     /** 表示用タイトル (Optional) - ソース自体が持つタイトル */
@@ -27,7 +27,7 @@ export const PlayerSourceSchema = z
     (data) => {
       // endSeconds が指定されている場合のみ、startSeconds との整合性をチェック
       if (data.endSeconds !== undefined) {
-        return data.endSeconds > data.startSeconds;
+        return data.endSeconds > (data.startSeconds ?? 0);
       }
       return true;
     },

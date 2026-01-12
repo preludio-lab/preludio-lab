@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z, zInt } from '@/shared/validation/zod';
 
 /**
  * プレイヤーの表示モード
@@ -19,11 +19,11 @@ export const PlayerStatusSchema = z.object({
   /** 再生中かどうか */
   isPlaying: z.boolean().default(false),
   /** 現在の再生時間 (秒) */
-  currentTime: z.number().min(0).default(0),
+  currentTime: zInt().min(0).default(0),
   /** 総再生時間 (秒) */
-  duration: z.number().min(0).default(0),
+  duration: zInt().min(0).default(0),
   /** 音量 (0-100) */
-  volume: z.number().min(0).max(100).default(100),
+  volume: zInt().min(0).max(100).default(100),
   /** プレイヤーの表示モード */
   mode: z.nativeEnum(PlayerMode).default(PlayerMode.HIDDEN),
 });
