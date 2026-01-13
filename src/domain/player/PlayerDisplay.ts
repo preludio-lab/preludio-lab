@@ -3,6 +3,19 @@ import { ResourcePathSchema, UrlSchema } from '@/domain/shared/CommonMetadata';
 import { PlayerProviderSchema } from './PlayerShared';
 
 /**
+ * DisplayType
+ * プレイヤーのコンテンツ表示形式（聴かせるか、見せるか）
+ */
+export const DisplayType = {
+  AUDIO: 'audio',
+  VIDEO: 'video',
+} as const;
+
+export type DisplayType = (typeof DisplayType)[keyof typeof DisplayType];
+
+export const DisplayTypeSchema = z.nativeEnum(DisplayType);
+
+/**
  * PlayerDisplay
  * プレイヤーの表示用メタデータの投影インターフェース。
  */
@@ -19,6 +32,8 @@ export const PlayerDisplaySchema = z.object({
   sourceUrl: UrlSchema.optional(),
   /** UI表示用のプロバイダ種別 */
   provider: PlayerProviderSchema.default('generic'),
+  /** 表示タイプ (audio | video) */
+  displayType: DisplayTypeSchema.default('audio'),
 });
 
 export type PlayerDisplay = z.infer<typeof PlayerDisplaySchema>;

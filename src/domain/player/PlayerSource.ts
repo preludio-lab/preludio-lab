@@ -1,4 +1,4 @@
-import { z, zInt } from '@/shared/validation/zod';
+import { z } from '@/shared/validation/zod';
 import { PlayerProviderSchema } from './PlayerShared';
 import { MAX_URL_LENGTH } from '@/domain/shared/CommonMetadata';
 import { SecondsSchema } from './PlayerShared';

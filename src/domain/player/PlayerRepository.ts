@@ -7,18 +7,18 @@ import { Player } from './Player';
  * 将来的な拡張（LocalStorageへの保存など）のために定義しています。
  */
 export interface PlayerRepository {
-    /**
-     * IDによる取得
-     */
-    findById(id: string): Promise<Player | null>;
+  /**
+   * IDによる取得
+   */
+  findById(id: string): Promise<Player | null>;
 
-    /**
-     * 保存
-     */
-    save(player: Player): Promise<void>;
+  /**
+   * 保存
+   */
+  save(player: Player): Promise<void>;
 
-    /**
-     * 削除
-     */
-    delete(id: string): Promise<void>;
+  /**
+   * 削除
+   */
+  delete(id: string): Promise<void>;
 }

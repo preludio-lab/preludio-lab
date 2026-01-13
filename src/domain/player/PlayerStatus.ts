@@ -7,6 +7,7 @@ import { SecondsSchema } from './PlayerShared';
 export const PlayerMode = {
   HIDDEN: 'hidden',
   MINI: 'mini',
+  INLINE: 'inline',
   IMMERSIVE: 'immersive',
 } as const;
 

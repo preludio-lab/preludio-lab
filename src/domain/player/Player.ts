@@ -1,7 +1,12 @@
 import { z } from 'zod';
 import { PlayerControlSchema, PlayerControl } from './PlayerControl';
-import { PlayerDisplaySchema, PlayerDisplay } from './PlayerDisplay';
-import { PlayerSourceBaseSchema, PlayerSourceSchema, PlayerSource } from './PlayerSource';
+import {
+  PlayerDisplaySchema,
+  PlayerDisplay,
+  DisplayTypeSchema,
+  DisplayType,
+} from './PlayerDisplay';
+import { PlayerSourceSchema, PlayerSource } from './PlayerSource';
 import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './PlayerStatus';
 import { PlayerProviderSchema, PlayerProvider } from './PlayerShared';
 
@@ -64,3 +69,4 @@ export type { PlayerSource };
 export { PlayerStatusSchema, PlayerMode };
 export type { PlayerStatus };
 export { PlayerProviderSchema, PlayerProvider };
+export { DisplayTypeSchema, DisplayType };

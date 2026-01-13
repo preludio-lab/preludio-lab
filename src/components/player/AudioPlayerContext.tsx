@@ -19,6 +19,7 @@ import {
   PlayerStatus,
   PlayerControl,
   PlayerProvider,
+  DisplayType,
 } from '@/domain/player/Player';
 import { handleClientError } from '@/lib/client-error';
 
@@ -137,6 +138,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       image: '',
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
+      displayType: DisplayType.AUDIO,
     },
     source: {
       sourceId: '',
@@ -281,6 +283,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           sourceUrl:
             customDisplay?.sourceUrl || (source as any).sourceUrl || prev.display.sourceUrl,
           provider: validSource.provider,
+          displayType:
+            customDisplay?.displayType ||
+            (source as any).displayType ||
+            prev.display.displayType ||
+            DisplayType.AUDIO,
         };
 
         const displayValidation = PlayerDisplaySchema.safeParse(newDisplay);
