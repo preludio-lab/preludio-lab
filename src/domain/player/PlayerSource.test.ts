@@ -9,7 +9,6 @@ describe('PlayerSource', () => {
         provider: 'generic',
         startSeconds: 0,
         endSeconds: 60,
-        title: 'Test Source',
       };
       const result = PlayerSourceSchema.safeParse(validData);
       expect(result.success).toBe(true);

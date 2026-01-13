@@ -36,8 +36,6 @@ export const PlayerSourceBaseSchema = z.object({
   startSeconds: SecondsSchema.optional(),
   /** 再生終了位置 (秒) - 未指定の場合は最後まで再生 */
   endSeconds: SecondsSchema.optional(),
-  /** 表示用タイトル (Optional) - ソース自体が持つタイトル */
-  title: z.string().optional(),
 });
 
 /**
