@@ -138,7 +138,12 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       sourceUrl: '',
       provider: PlayerProvider.GENERIC,
     },
-    source: { sourceId: '', provider: PlayerProvider.YOUTUBE, startSeconds: undefined, endSeconds: undefined },
+    source: {
+      sourceId: '',
+      provider: PlayerProvider.YOUTUBE,
+      startSeconds: undefined,
+      endSeconds: undefined,
+    },
     status: { isPlaying: false, currentTime: 0, duration: 0, volume: 100, mode: PlayerMode.HIDDEN },
     isReady: false,
     playbackId: 0,
@@ -266,10 +271,15 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         // Display Mapping
         const newDisplay: PlayerDisplay = {
           title: customDisplay?.title || sourceTitle || prev.display.title || 'Audio Recording',
-          composerName: customDisplay?.composerName || (source as any).composerName || prev.display.composerName,
-          performer: customDisplay?.performer || (source as any).performer || prev.display.performer,
+          composerName:
+            customDisplay?.composerName ||
+            (source as any).composerName ||
+            prev.display.composerName,
+          performer:
+            customDisplay?.performer || (source as any).performer || prev.display.performer,
           image: customDisplay?.image || (source as any).image || prev.display.image,
-          sourceUrl: customDisplay?.sourceUrl || (source as any).sourceUrl || prev.display.sourceUrl,
+          sourceUrl:
+            customDisplay?.sourceUrl || (source as any).sourceUrl || prev.display.sourceUrl,
           provider: validSource.provider,
         };
 

@@ -1,7 +1,22 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { ImmersiveAudioPlayer } from './ImmersiveAudioPlayer';
 import { AudioPlayerContext } from './AudioPlayerContext';
+
+const messages = {
+  Player: {
+    invalidRequest: 'Invalid playback request',
+    provider: {
+      youtube: 'Watch on YouTube',
+      spotify: 'Listen on Spotify',
+      soundcloud: 'Listen on SoundCloud',
+      'apple-music': 'Listen on Apple Music',
+      'audio-file': 'Play Audio',
+      generic: 'Play',
+    },
+  },
+};
 
 // Mock context value helper
 const mockContextValue = (overrides = {}) => ({
@@ -39,9 +54,11 @@ const mockContextValue = (overrides = {}) => ({
 describe('ImmersiveAudioPlayer', () => {
   it('renders metadata correctly', () => {
     render(
-      <AudioPlayerContext.Provider value={mockContextValue()}>
-        <ImmersiveAudioPlayer />
-      </AudioPlayerContext.Provider>,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <AudioPlayerContext.Provider value={mockContextValue()}>
+          <ImmersiveAudioPlayer />
+        </AudioPlayerContext.Provider>
+      </NextIntlClientProvider>,
     );
     expect(screen.getByText('Test Title')).toBeInTheDocument();
     expect(screen.getByText('Test Composer')).toBeInTheDocument();
@@ -49,15 +66,17 @@ describe('ImmersiveAudioPlayer', () => {
 
   it('renders "Watch on YouTube" link when platform data is provided', () => {
     render(
-      <AudioPlayerContext.Provider
-        value={mockContextValue({
-          platformUrl: 'https://youtube.com/watch?v=123',
-          platformLabel: 'Watch on YouTube',
-          platform: 'youtube',
-        })}
-      >
-        <ImmersiveAudioPlayer />
-      </AudioPlayerContext.Provider>,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <AudioPlayerContext.Provider
+          value={mockContextValue({
+            platformUrl: 'https://youtube.com/watch?v=123',
+            platformLabel: 'Watch on YouTube',
+            platform: 'youtube',
+          })}
+        >
+          <ImmersiveAudioPlayer />
+        </AudioPlayerContext.Provider>
+      </NextIntlClientProvider>,
     );
 
     const link = screen.getByText('Watch on YouTube').closest('a');
@@ -67,13 +86,15 @@ describe('ImmersiveAudioPlayer', () => {
 
   it('does not render link if platformUrl is missing', () => {
     render(
-      <AudioPlayerContext.Provider
-        value={mockContextValue({
-          platformUrl: null,
-        })}
-      >
-        <ImmersiveAudioPlayer />
-      </AudioPlayerContext.Provider>,
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <AudioPlayerContext.Provider
+          value={mockContextValue({
+            platformUrl: null,
+          })}
+        >
+          <ImmersiveAudioPlayer />
+        </AudioPlayerContext.Provider>
+      </NextIntlClientProvider>,
     );
 
     expect(screen.queryByText('Watch on YouTube')).not.toBeInTheDocument();

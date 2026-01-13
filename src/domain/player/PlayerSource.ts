@@ -1,15 +1,12 @@
 import { z, zInt } from '@/shared/validation/zod';
-import { PlayerProviderSchema } from './PlayerProvider';
+import { PlayerProviderSchema } from './PlayerShared';
 import { MAX_URL_LENGTH } from '@/domain/shared/CommonMetadata';
 import { SecondsSchema } from './PlayerShared';
 /**
  * SecondsSchema 用の時間範囲バリデーションロジック
  * endSeconds が指定されている場合、startSeconds より大きいことを確認する
  */
-const playerTimeRangeValidation = (data: {
-  startSeconds?: number;
-  endSeconds?: number;
-}) => {
+const playerTimeRangeValidation = (data: { startSeconds?: number; endSeconds?: number }) => {
   if (data.endSeconds !== undefined) {
     return data.endSeconds > (data.startSeconds ?? 0);
   }

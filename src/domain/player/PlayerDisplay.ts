@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ResourcePathSchema, UrlSchema } from '@/domain/shared/CommonMetadata';
-import { PlayerProviderSchema } from './PlayerProvider';
+import { PlayerProviderSchema } from './PlayerShared';
 
 /**
  * PlayerDisplay

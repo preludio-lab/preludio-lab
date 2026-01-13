@@ -3,7 +3,7 @@ import { PlayerControlSchema, PlayerControl } from './PlayerControl';
 import { PlayerDisplaySchema, PlayerDisplay } from './PlayerDisplay';
 import { PlayerSourceBaseSchema, PlayerSourceSchema, PlayerSource } from './PlayerSource';
 import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './PlayerStatus';
-import { PlayerProviderSchema, PlayerProvider } from './PlayerProvider';
+import { PlayerProviderSchema, PlayerProvider } from './PlayerShared';
 
 /**
  * Player Entity
@@ -64,4 +64,3 @@ export type { PlayerSource };
 export { PlayerStatusSchema, PlayerMode };
 export type { PlayerStatus };
 export { PlayerProviderSchema, PlayerProvider };
-

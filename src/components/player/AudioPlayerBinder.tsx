@@ -124,7 +124,6 @@ export function AudioPlayerBinder({
             onClick={handlePlayClick}
             className="flex items-center gap-1.5 rounded-full bg-gray-900/90 text-white px-3 py-1.5 shadow-sm hover:bg-black hover:scale-105 transition-all text-xs font-medium backdrop-blur-sm"
           >
-
             <span>▶ {t(`provider.${resolvedRequest.provider || 'generic'}`)}</span>
           </button>
         </div>
