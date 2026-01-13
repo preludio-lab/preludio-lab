@@ -17,12 +17,25 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 
 ### Data Flow Strategy
 
-1.  **HTML配信 (`R2/private` source):**
-    - `User` -> `Cloudflare CDN (DNS)` -> **`Vercel Edge (Cache)`** -> `Next.js App` -> **`R2/private`**
-    - アプリケーションが `private` 配下のMDXを取得してHTMLを生成。その結果がVercel Edge Networkにキャッシュされます。
-2.  **静的アセット配信 (`R2/public` source):**
-    - `User` -> **`Cloudflare CDN (Cache)`** -> `Cloudflare Worker` -> **`R2/public`**
-    - `public` 配下のファイルは、Vercelを通らずにCloudflare CDNから直接高速配信されます。
+#### 1. HTML配信 (`R2/private` source)
+
+- **Cache Hit (Normal):**
+  `User` -> `Cloudflare CDN (DNS)` -> **`Vercel Edge (Return Cached HTML)`**
+  *(高速。Vercel Edgeから即座にレスポンス)*
+
+- **Cache Miss / Revalidation (Origin Fetch):**
+  `User` -> `Cloudflare CDN` -> `Vercel Edge` -> **`Next.js App (SSR/Build)`** -> **`R2/private (Fetch MDX)`**
+  *(MDXを取得してHTMLを生成し、キャッシュを更新してレスポンス)*
+
+#### 2. 静的アセット配信 (`R2/public` source)
+
+- **Cache Hit (Normal):**
+  `User` -> **`Cloudflare CDN (Return Cached Asset)`**
+  *(最速。Cloudflareエッジから即座にレスポンス)*
+
+- **Cache Miss (Origin Fetch):**
+  `User` -> `Cloudflare CDN` -> `Cloudflare Worker` -> **`R2/public (Fetch Object)`**
+  *(R2からオブジェクトを取得し、Cloudflare CDNにキャッシュしてレスポンス)*
 
 ---
 
