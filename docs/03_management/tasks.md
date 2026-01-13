@@ -172,7 +172,8 @@ Status: `[/]` 進行中
     - [ ] `database-schema.md` に基づいたテーブル作成 (`articles`, `works`, `composers` 等)
     - [ ] `articles` テーブルへのMDXパス、メタデータ、Embeddingカラムの定義
   - [ ] **[基盤]** Cloudflare R2 バケット作成
-    - [ ] バケット `preludio-content` (仮) の作成とアクセス権限設定
+    - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/storage-design.md`)
+    - [ ] バケット `preludio-storage` の作成とアクセス権限設定
   - [ ] **[実装]** 初期データ移行スクリプト (Migration Script) の作成
     - [ ] ローカルMDXファイルの解析 (Frontmatter + 本文)
     - [ ] 本文データの R2 へのアップロード
