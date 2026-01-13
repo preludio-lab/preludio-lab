@@ -73,7 +73,15 @@
     "tagline": "Au-delà de l'écoute. Plongez plus profondément dans les classiques."
   },
   "Player": {
-    "invalidRequest": "Demande de lecture non valide"
+    "invalidRequest": "Demande de lecture non valide",
+    "provider": {
+      "youtube": "Regarder sur YouTube",
+      "spotify": "Écouter sur Spotify",
+      "soundcloud": "Écouter sur SoundCloud",
+      "apple-music": "Écouter sur Apple Music",
+      "audio-file": "Lire l'audio",
+      "generic": "Lire"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",

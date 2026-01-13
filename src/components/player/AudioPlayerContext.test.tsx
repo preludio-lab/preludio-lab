@@ -35,10 +35,18 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play('test-video-id', {
-        title: 'Test Song',
-        composerName: 'Test Artist',
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'youtube', // default
+          startSeconds: 0,
+          endSeconds: 100,
+        },
+        {
+          title: 'Test Song',
+          composerName: 'Test Artist',
+        },
+      );
     });
 
     expect(result.current.isPlaying).toBe(true);
@@ -53,16 +61,23 @@ describe('AudioPlayerContext', () => {
     });
 
     act(() => {
-      result.current.play('test-video-id', {
-        platformUrl: 'https://example.com',
-        platformLabel: 'External Link',
-        platform: 'default',
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'generic',
+          startSeconds: 0,
+          endSeconds: undefined,
+        },
+        {
+          title: 'Platform Test',
+          sourceUrl: 'https://example.com',
+        },
+      );
     });
 
     expect(result.current.platformUrl).toBe('https://example.com');
-    expect(result.current.platformLabel).toBe('External Link');
-    expect(result.current.platform).toBe('default');
+    // expect(result.current.platformLabel).toBe('External Link'); // Removed
+    expect(result.current.platform).toBe('generic');
   });
 
   it('shows error toast on invalid play request', async () => {
@@ -72,11 +87,17 @@ describe('AudioPlayerContext', () => {
 
     act(() => {
       // Invalid request: endSeconds < startSeconds
-      // Arguments: (src, metadata, options)
-      result.current.play('test-video-id', undefined, {
-        startSeconds: 100,
-        endSeconds: 50,
-      });
+      result.current.play(
+        {
+          sourceId: 'test-video-id',
+          provider: 'youtube',
+          startSeconds: 100,
+          endSeconds: 50,
+        },
+        {
+          title: 'Invalid Sample',
+        },
+      );
     });
 
     expect(vi.mocked(toast).error).toHaveBeenCalledWith('invalidRequest');

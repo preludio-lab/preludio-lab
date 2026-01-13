@@ -73,7 +73,15 @@
     "tagline": "Jenseits des Zuhörens. Tauchen Sie tiefer in die Klassik ein."
   },
   "Player": {
-    "invalidRequest": "Ungültige Wiedergabeanfrage"
+    "invalidRequest": "Ungültige Wiedergabeanfrage",
+    "provider": {
+      "youtube": "Auf YouTube ansehen",
+      "spotify": "Auf Spotify anhören",
+      "soundcloud": "Auf SoundCloud anhören",
+      "apple-music": "Auf Apple Music anhören",
+      "audio-file": "Audio abspielen",
+      "generic": "Abspielen"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",

@@ -85,7 +85,15 @@
     "tagline": "Más allá de la escucha. Sumérgete más profundo en los clásicos."
   },
   "Player": {
-    "invalidRequest": "Solicitud de reproducción no válida"
+    "invalidRequest": "Solicitud de reproducción no válida",
+    "provider": {
+      "youtube": "Ver en YouTube",
+      "spotify": "Escuchar en Spotify",
+      "soundcloud": "Escuchar en SoundCloud",
+      "apple-music": "Escuchar en Apple Music",
+      "audio-file": "Reproducir audio",
+      "generic": "Reproducir"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",

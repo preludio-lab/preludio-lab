@@ -169,9 +169,9 @@ Status: `[/]` 進行中
     - [x] Master: MDX / Index & Vector: Database という役割分担の定義
     - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
     - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
-  - [ ] **[実装] 5.5.3 Player Domain & Architecture Update**
-    - [ ] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
-    - [ ] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
+  - [x] **[実装] 5.5.3 Player Domain & Architecture Update**
+    - [x] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
+    - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
   - [ ] **[実装] 5.5.4 Infrastructure Layer Implementation**
     - [ ] LibSQL (Turso) ドライバを用いたリポジトリの実装 (`src/infrastructure`)
     - [ ] Hydration Logic: SQL結果をDomain Entityに変換するMapperの実装

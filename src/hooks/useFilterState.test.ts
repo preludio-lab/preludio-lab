@@ -39,7 +39,7 @@ describe('useFilterState', () => {
       category: 'works',
       keyword: 'Bach',
       difficulty: 'Advanced',
-      sort: 'latest', // Default
+      sort: 'publishedAt', // Default
       tags: [], // Default
     });
   });

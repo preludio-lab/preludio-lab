@@ -98,22 +98,24 @@ PreludioLabプロジェクトにおける「ユビキタス言語（Ubiquitous L
 
 システムの構成要素や技術的な概念です。
 
-| Term                       | Code / ID               | Definition                                                               | Nuance / Policy                                                                                            |
-| :------------------------- | :---------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| **Agent**                  | `Agent`                 | 特定の役割（音楽学者、翻訳者）を持つAIプログラム。                       | `agents/` ディレクトリ以下に配置される。                                                                   |
-| **Artifact**               | `Artifact`              | エージェントが出力する最終ファイル（記事MDX、画像等）。                  | ユーザーに価値を提供する成果物。                                                                           |
-| **Slug**                   | `Slug`                  | URLの一部となる、可読性のある識別文字列。                                | 開発者体験 (DX) とSEOのためにIDではなくSlugを優先して使用する。                                            |
-| **Frontmatter**            | `Frontmatter`           | MDXファイルの先頭にあるYAML形式のメタデータ領域。                        | 記事の静的なメタ情報を保持する。                                                                           |
-| **MDX**                    | `MDX`                   | Markdown + JSX。記事コンテンツのフォーマット。                           | コンポーネント（`<ScoreRenderer />`等）を埋め込むことができる。                                            |
-| **Recording Source**       | `RecordingSource`       | YouTubeやSpotifyなど、録音の具体的な提供元とID。                         | 1つの `Recording` は複数の `Source` を持つことができ、環境に応じて切り替える。                             |
-| **Playback Binding**       | `PlaybackBinding`       | 譜例（Musical Example）と音源の特定の時間（秒数）を紐付ける定義。        | 譜例の再生ボタンが録音の「どこ」から再生されるかを司る連携ロジック。                                       |
-| **Player**                 | `Player`                | 音源（Recording）を再生するUIコンポーネントの総称。                      | 以下の `Compact`, `Immersive`, `Video` の各プレイヤーを包含する抽象概念。                                  |
-| **Compact Player**         | `CompactPlayer`         | 画面下部などに常駐し、再生制御を行うバー形式のプレイヤー。               | ユーザーが記事を読みながら操作するメインのコントロール。 (旧: Mini Player)                                 |
-| **Immersive Player**       | `ImmersivePlayer`       | 作品の世界に没入するための、全画面表示の再生装置。                       | 譜面、楽曲解説、音源が1つの画面に統合され、切り替えなしで深く鑑賞できる最高位のモード。 (旧: Focus Player) |
-| **Video Player**           | `VideoPlayer`           | YouTube等の動画コンテンツを埋め込み・再生する装置。                      | 視覚的な演奏情報を含む Recording を表示する際に使用。                                                      |
-| **Recommendation Service** | `RecommendationService` | ユーザーの行動履歴や嗜好に基づき、動的に次のコンテンツを提案する仕組み。 | 記事固有の属性ではなく、ユーザーとの対話（Session/Identity）から生まれる動的な推薦結果を扱う。             |
-| **Musical Media Pipeline** | `MusicalMediaPipeline`  | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。   | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。                                       |
-| **Token**                  | `DesignToken`           | デザインシステムにおける色、余白、フォントサイズ等の最小単位。           | Tailwind Config で定義される値を正とする。                                                                 |
+| Term                       | Code / ID               | Definition                                                               | Nuance / Policy                                                                                |
+| :------------------------- | :---------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| **Agent**                  | `Agent`                 | 特定の役割（音楽学者、翻訳者）を持つAIプログラム。                       | `agents/` ディレクトリ以下に配置される。                                                       |
+| **Artifact**               | `Artifact`              | エージェントが出力する最終ファイル（記事MDX、画像等）。                  | ユーザーに価値を提供する成果物。                                                               |
+| **Slug**                   | `Slug`                  | URLの一部となる、可読性のある識別文字列。                                | 開発者体験 (DX) とSEOのためにIDではなくSlugを優先して使用する。                                |
+| **Frontmatter**            | `Frontmatter`           | MDXファイルの先頭にあるYAML形式のメタデータ領域。                        | 記事の静的なメタ情報を保持する。                                                               |
+| **MDX**                    | `MDX`                   | Markdown + JSX。記事コンテンツのフォーマット。                           | コンポーネント（`<ScoreRenderer />`等）を埋め込むことができる。                                |
+| **Recording Source**       | `RecordingSource`       | YouTubeやSpotifyなど、録音の具体的な提供元とID。                         | 1つの `Recording` は複数の `Source` を持つことができ、環境に応じて切り替える。                 |
+| **Playback Binding**       | `PlaybackBinding`       | 譜例（Musical Example）と音源の特定の時間（秒数）を紐付ける定義。        | 譜例の再生ボタンが録音の「どこ」から再生されるかを司る連携ロジック。                           |
+| **Player**                 | `Player`                | 録音（Recording）を再生する機能を司るドメインエンティティ。              | `Audio` / `Video` の `DisplayType` を持ち、以下の各モードで動作する。                          |
+| **Hidden Mode**            | `HIDDEN`                | プレイヤーが非表示の状態。                                               | 初期状態、または再生が停止されプレイヤーを閉じた際の状態。                                     |
+| **Mini Mode**              | `MINI`                  | 画面下部に常駐する、最小化されたプレイヤー。                             | `Audio`時は下部バー、`Video`時はPiP (Picture in Picture) として振る舞う。                      |
+| **Immersive Mode**         | `IMMERSIVE`             | 作品の世界に没入するための、全画面表示の再生体験。                       | `Audio`時はFocus UI、`Video`時は全画面動画再生となり、ユーザー体験を最大化する。               |
+| **Inline Mode**            | `INLINE`                | 記事コンテンツ内に埋め込まれた状態。                                     | 主に `Video` で使用。記事の文脈に沿って再生される。スクロールアウトで `Mini` 等へ遷移可能。    |
+| **Video Player**           | `VideoPlayer`           | YouTube等の動画コンテンツを埋め込み・再生する装置。                      | `Player` エンティティの一形態として統合された。                                                |
+| **Recommendation Service** | `RecommendationService` | ユーザーの行動履歴や嗜好に基づき、動的に次のコンテンツを提案する仕組み。 | 記事固有の属性ではなく、ユーザーとの対話（Session/Identity）から生まれる動的な推薦結果を扱う。 |
+| **Musical Media Pipeline** | `MusicalMediaPipeline`  | MusicXML/ABCから譜例データを生成し、配置するまでの一連の自動化フロー。   | 個人開発の運用負荷を下げるための、AIと連携したアセット管理プロセス。                           |
+| **Token**                  | `DesignToken`           | デザインシステムにおける色、余白、フォントサイズ等の最小単位。           | Tailwind Config で定義される値を正とする。                                                     |
 
 ## 6. Database & Infrastructure (データベース)
 

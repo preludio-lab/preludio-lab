@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
-import { PlayerPlatform } from '@/domain/player/PlayerConstants';
+import { PlayerProvider } from '@/domain/player/Player';
 import { handleClientError } from '@/lib/client-error';
 import { AudioPlayerAdapter } from './AudioPlayerAdapter';
 
@@ -104,7 +104,7 @@ export default function AudioPlayerController() {
   return (
     <AudioPlayerAdapter
       src={src}
-      platform={platform || PlayerPlatform.YOUTUBE}
+      platform={platform || PlayerProvider.YOUTUBE}
       isPlaying={isPlaying}
       volume={volume}
       startTime={startSeconds} // Adapter uses generic name, mapping from Context's startSeconds

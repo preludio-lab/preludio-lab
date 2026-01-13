@@ -85,7 +85,15 @@
     "tagline": "超越聆听。更深入地沉浸在经典中。"
   },
   "Player": {
-    "invalidRequest": "播放请求无效"
+    "invalidRequest": "播放请求无效",
+    "provider": {
+      "youtube": "在 YouTube 上观看",
+      "spotify": "在 Spotify 上收听",
+      "soundcloud": "在 SoundCloud 上收听",
+      "apple-music": "在 Apple Music 上收听",
+      "audio-file": "播放音频",
+      "generic": "播放"
+    }
   },
   "CategoryIndex": {
     "title": "{category}",

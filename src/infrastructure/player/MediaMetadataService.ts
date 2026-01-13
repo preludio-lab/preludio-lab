@@ -1,4 +1,4 @@
-import { PlayerMetadata, PlayRequest, PlayOptions } from '@/domain/player/Player';
+import { PlayerProvider } from '@/domain/player/Player';
 
 /**
  * MediaMetadataService
@@ -6,11 +6,11 @@ import { PlayerMetadata, PlayRequest, PlayOptions } from '@/domain/player/Player
  */
 export class MediaMetadataService {
   /**
-   * 指定されたフォーマットのテキストコンテンツを解析し、PlayRequest(の一部)を返します。
+   * 指定されたフォーマットのテキストコンテンツを解析し、メタデータの一部を返します。
    * @param content 解析対象のテキスト
    * @param format フォーマット識別子 ('abc' など)
    */
-  public parse(content: string, format: string): Partial<PlayRequest> {
+  public parse(content: string, format: string): Record<string, any> {
     if (typeof content !== 'string') {
       return {};
     }
@@ -27,10 +27,11 @@ export class MediaMetadataService {
    * ABC記法からメタデータを抽出します。
    * %%audio_src, %%audio_title などのカスタムディレクティブを解析します。
    */
-  private parseAbc(abcContent: string): Partial<PlayRequest> {
-    let src: string | undefined;
-    const metadata: PlayerMetadata = {};
-    const options: PlayOptions = {};
+  private parseAbc(abcContent: string): Record<string, any> {
+    let sourceId: string | undefined;
+    const metadata: Record<string, any> = {};
+    let startSeconds: number | undefined;
+    let endSeconds: number | undefined;
 
     const lines = abcContent.split('\n');
 
@@ -50,7 +51,7 @@ export class MediaMetadataService {
       if (key && value) {
         switch (key) {
           case 'audio_src':
-            src = value; // videoId or url
+            sourceId = value; // videoId or url
             break;
           case 'audio_title':
             metadata.title = value;
@@ -62,40 +63,71 @@ export class MediaMetadataService {
             metadata.performer = value;
             break;
           case 'audio_thumbnail':
-          case 'audio_artworkSrc': // 後方互換性のため一旦残すが、将来的には削除
+          case 'audio_artworkSrc':
             metadata.thumbnail = value;
             break;
           case 'audio_platform':
-            // 簡易バリデーション: 現在は 'youtube' と 'default' のみサポート
-            if (value === 'youtube' || value === 'default') {
-              metadata.platform = value;
+            // 簡易バリデーション
+            const p = value.toLowerCase();
+            if (
+              ['youtube', 'spotify', 'soundcloud', 'apple-music', 'audio-file', 'default'].includes(
+                p,
+              )
+            ) {
+              metadata.platform = p;
             }
             break;
           case 'audio_platformUrl':
             metadata.platformUrl = value;
             break;
-          case 'audio_platformLabel':
-            metadata.platformLabel = value;
-            break;
+
           case 'audio_startTime':
           case 'audio_startSeconds':
             const start = parseFloat(value);
-            if (!isNaN(start)) options.startSeconds = start;
+            if (!isNaN(start)) startSeconds = start;
             break;
           case 'audio_endTime':
           case 'audio_endSeconds':
             const end = parseFloat(value);
-            if (!isNaN(end)) options.endSeconds = end;
+            if (!isNaN(end)) endSeconds = end;
             break;
         }
       }
     });
 
     // 意味のあるデータが含まれる場合のみ返す
-    return {
-      src,
-      metadata,
-      options,
-    };
+    const result: Record<string, any> = {};
+    if (sourceId) result.sourceId = sourceId;
+    if (startSeconds !== undefined) result.startSeconds = startSeconds;
+    if (endSeconds !== undefined) result.endSeconds = endSeconds;
+
+    // Field mapping
+    if (typeof metadata.title === 'string') result.title = metadata.title;
+    if (typeof metadata.composerName === 'string') {
+      result.composerName = metadata.composerName;
+    }
+    if (typeof metadata.performer === 'string') {
+      result.performer = metadata.performer;
+    }
+    if (typeof metadata.thumbnail === 'string') {
+      result.image = metadata.thumbnail;
+    }
+    if (typeof metadata.platformUrl === 'string') {
+      result.sourceUrl = metadata.platformUrl;
+    }
+
+    // Provider extraction
+    if (typeof metadata.platform === 'string') {
+      const p = metadata.platform;
+      if (p === 'audio-file') {
+        result.provider = 'audio-file';
+      } else if (['youtube', 'spotify', 'soundcloud', 'apple-music'].includes(p)) {
+        result.provider = p;
+      } else {
+        result.provider = 'generic';
+      }
+    }
+
+    return result;
   }
 }

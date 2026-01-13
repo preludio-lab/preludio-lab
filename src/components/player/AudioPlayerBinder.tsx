@@ -1,8 +1,8 @@
 'use client';
 
 import { ReactNode, useMemo } from 'react';
-import { PlayerPlatform, PlayerPlatformType } from '@/domain/player/PlayerConstants';
-import { PlayRequest } from '@/domain/player/Player';
+import { PlayerProvider, PlayerSource, PlayerDisplay } from '@/domain/player/Player';
+
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -21,7 +21,7 @@ export interface AudioPlayerBinderProps {
    * 直接指定する再生リクエスト (部分指定可)
    * sourceから抽出された情報とマージされ、こちらが優先されます。
    */
-  playRequest?: Partial<PlayRequest>;
+  playRequest?: Partial<PlayerSource & PlayerDisplay>;
   /**
    * ラップする子要素
    */
@@ -42,7 +42,8 @@ export function AudioPlayerBinder({
 
   // メタデータの解決ロジック
   const resolvedRequest = useMemo(() => {
-    let extracted: Partial<PlayRequest> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let extracted: Record<string, any> = {};
 
     // ソースがある場合は解析
     if (source && format) {
@@ -54,58 +55,61 @@ export function AudioPlayerBinder({
     // コンテンツ固有のメタデータ(extracted)がある場合はそれを優先します。
 
     // ソースが明示的に指定されている場合、時間は継承しません (新しいコンテキストとみなす)
-    const isExplicitSource = !!extracted.src;
-    const extractedOptions = extracted.options || {};
-    const propOptions = propRequest?.options || {};
+
+    const isExplicitSource = !!extracted.sourceId;
+
+    // extracted has flat properties now
+    const extractedStart = extracted.startSeconds;
+    const extractedEnd = extracted.endSeconds;
+    const propStart = propRequest?.startSeconds;
+    const propEnd = propRequest?.endSeconds;
 
     return {
-      src: extracted.src || propRequest?.src,
-      metadata: {
-        ...propRequest?.metadata,
-        ...extracted.metadata,
-      },
-      options: isExplicitSource
-        ? extractedOptions
-        : extractedOptions.startSeconds !== undefined || extractedOptions.endSeconds !== undefined
-          ? extractedOptions
-          : propOptions,
+      sourceId: extracted.sourceId || propRequest?.sourceId,
+      provider: extracted.provider || propRequest?.provider || PlayerProvider.GENERIC,
+      startSeconds: isExplicitSource
+        ? extractedStart
+        : extractedStart !== undefined || extractedEnd !== undefined
+          ? extractedStart
+          : propStart,
+      endSeconds: isExplicitSource
+        ? extractedEnd
+        : extractedStart !== undefined || extractedEnd !== undefined
+          ? extractedEnd
+          : propEnd,
+      title: extracted.title || propRequest?.title,
+      composerName: extracted.composerName || propRequest?.composerName,
+      performer: extracted.performer || propRequest?.performer,
+      image: extracted.image || propRequest?.image,
+      sourceUrl: extracted.sourceUrl || propRequest?.sourceUrl,
     };
   }, [source, format, propRequest]);
 
-  const hasAudio = !!resolvedRequest.src;
+  const hasAudio = !!resolvedRequest.sourceId;
 
   const handlePlayClick = () => {
-    if (!resolvedRequest.src) return;
+    if (!resolvedRequest.sourceId) return;
 
-    const meta = resolvedRequest.metadata || {};
-    const options = resolvedRequest.options || {};
+    const platform = (resolvedRequest.provider as PlayerProvider) || PlayerProvider.GENERIC;
+    let platformUrl = resolvedRequest.sourceUrl;
 
-    // プラットフォームとデフォルト値の決定 logic
-    const platform = (meta.platform as PlayerPlatformType) || PlayerPlatform.YOUTUBE;
-    let platformUrl = meta.platformUrl;
-    let platformLabel = meta.platformLabel;
-
-    if (!platformUrl) {
-      platformUrl = generateWatchUrl(platform, resolvedRequest.src) || undefined;
-    }
-    if (platform === PlayerPlatform.YOUTUBE && !platformLabel) {
-      platformLabel = 'Watch on YouTube';
+    if (!platformUrl && resolvedRequest.sourceId) {
+      platformUrl = generateWatchUrl(platform, resolvedRequest.sourceId) || undefined;
     }
 
     play(
-      resolvedRequest.src,
       {
-        title: meta.title || 'Audio Recording',
-        composerName: meta.composerName,
-        performer: meta.performer,
-        thumbnail: meta.thumbnail,
-        platformUrl,
-        platformLabel,
-        platform,
+        sourceId: resolvedRequest.sourceId!,
+        provider: platform,
+        startSeconds: resolvedRequest.startSeconds,
+        endSeconds: resolvedRequest.endSeconds,
       },
       {
-        startSeconds: options.startSeconds,
-        endSeconds: options.endSeconds,
+        title: resolvedRequest.title || 'Audio Recording',
+        composerName: resolvedRequest.composerName,
+        performer: resolvedRequest.performer,
+        image: resolvedRequest.image,
+        sourceUrl: platformUrl,
       },
     );
   };
@@ -120,7 +124,7 @@ export function AudioPlayerBinder({
             onClick={handlePlayClick}
             className="flex items-center gap-1.5 rounded-full bg-gray-900/90 text-white px-3 py-1.5 shadow-sm hover:bg-black hover:scale-105 transition-all text-xs font-medium backdrop-blur-sm"
           >
-            <span>▶ Play Audio</span>
+            <span>▶ Play</span>
           </button>
         </div>
       )}
