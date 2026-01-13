@@ -155,52 +155,53 @@ Status: `[/]` 進行中
   - [x] **[リファクタリング]** フィルターロジックの分離
     - [x] 検索・絞り込みロジックを Custom Hook（`useFilter`）へ抽出し、保守性を向上
 
-- [ ] **5.5 データベース記事管理の構築 (Database Article Management)**
-  - [ ] **[環境構築]** データベース・インフラのセットアップ
+- [x] **5.5 データベース記事管理の構築 (Database Article Management) [Completed]**
+  - [x] **[環境構築]** データベース・インフラのセットアップ
     - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
-    - [ ] **Turso**: 記事・ベクトルデータ用プロジェクトの作成
-      - [ ] Turso CLI のインストールと認証 (`brew uninstall turso && brew install tursodatabase/tap/turso`)
-      - [ ] **[Update]** 本番用データベース (`preludio-main`) の構築 **[Single DB Strategy]**
-      - [ ] `database-schema.md` に基づいたテーブル作成 (`articles`, `works`, `composers`, `recordings`, etc.)
-      - [ ] ベクトル検索用インデックス (`libsql-vector`) の設定
-      - [ ] APIキー・接続情報の管理（Vercel環境変数への連携）
     - [x] 環境定義: 本番環境（Single DB）とブランチ機能（Fork/Staging）の運用方針策定 (Done)
   - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
     - [x] Master: MDX / Index & Vector: Database という役割分担の定義
     - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
-    - [x] **ベクトルデータの最適化**: Embeddingsの次元数（Gemini `text-embedding-004` 768次元等）とストレージ制限の考慮
-  - [x] **[実装] 5.5.3 Player Domain & Architecture Update**
+    - [x] **ベクトルデータの最適化**: Embeddingsの次元数
+  - [x] **[実装] Player Domain & Architecture Update**
     - [x] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
     - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
-  - [ ] **[実装] 5.5.4 Infrastructure Layer Implementation**
-    - [ ] LibSQL (Turso) ドライバを用いたリポジトリの実装 (`src/infrastructure`)
-    - [ ] Hydration Logic: SQL結果をDomain Entityに変換するMapperの実装
-  - [ ] **[実装] 5.5.5 Application Layer (Use Cases)**
-    - [ ] 参照系ユースケースの実装 (`GetArticle`, `ListWorks`, etc.)
-    - [ ] 実際のDB接続を用いたドメイン・ユースケースの統合テスト
-  - [ ] **[実装] 5.5.6 Database-First Admin UI (Lower Priority)**
-    - [ ] **Admin App**: Next.js (App Router) + MDX Editor による編集画面の実装
-    - [ ] **Curation UI**: `is_featured` / `is_recommended` フラグの管理
-    - [ ] **DB Sync/Direct Build**: Turso/R2連携ロジック
-  - [ ] **[検証]** AI編集支援とSSGビルドフローの動作確認
 
-- [ ] **5.6 UI Integration & Player Feature**
-  - [ ] **[実装] 5.6.1 Real Data Integration**
-    - [ ] 既存ページ（Home, Article Detail, Index）のデータ取得を Turso Repository に差し替え
-    - [ ] Server Actions / RSC でのデータ取得フロー確立
-  - [ ] **[実装] 5.6.2 Player Feature Completion**
-    - [ ] `AudioPlayer` コンポーネントと `Player` ドメインの接続
-    - [ ] 録音データ (`Recordings`) の取得と再生制御
-  - [ ] **[検証]** UI上でのデータ表示確認およびプレイヤー動作検証
+- [ ] **5.6 STEP 1: データインフラの物理構築 (The Foundation)**
+  - [ ] **[実装]** Turso (LibSQL) スキーマ適用
+    - [ ] `database-schema.md` に基づいたテーブル作成 (`articles`, `works`, `composers` 等)
+    - [ ] `articles` テーブルへのMDXパス、メタデータ、Embeddingカラムの定義
+  - [ ] **[基盤]** Cloudflare R2 バケット作成
+    - [ ] バケット `preludio-content` (仮) の作成とアクセス権限設定
+  - [ ] **[実装]** 初期データ移行スクリプト (Migration Script) の作成
+    - [ ] ローカルMDXファイルの解析 (Frontmatter + 本文)
+    - [ ] 本文データの R2 へのアップロード
+    - [ ] メタデータおよびEmbeddingの Turso への INSERT
 
-- [ ] **5.7 検索機能の実装 (Tiered Hybrid Search)**
-  - [ ] **[実装]** DB Semantic Search (Tier 2/Long-tail)
-    - [ ] Turso `libsql-vector` & `FTS5` インデックス構築
-    - [ ] API Route: Semantic Search & Keyword Search Implementation
-  - [ ] **[実装]** Pagefind Full-Text Search (Tier 1/Top 1000)
-    - [ ] Build Script: `pagefind` indexing after export
-    - [ ] Client UI: Search Widget integration
-  - [ ] **[検証]** 検索レイテンシと精度の確認 (`pagefind` vs `Turso`)
+- [ ] **5.7 STEP 2: インフラ層の実装 (Infrastructure Layer)**
+  - [ ] **[実装]** Clientセットアップ
+    - [ ] Turso Client & R2 Client の環境変数設定と接続確立
+  - [ ] **[実装]** Repository実装
+    - [ ] `SqliteArticleRepository`: Turso用。SQL結果のDomain Entityへのマッピング (Hydration)
+    - [ ] `R2ContentRepository`: R2からのMDX本文フェッチ処理
+  - [ ] **[実装]** 統合Repository
+    - [ ] メタデータ(DB)と本文(R2)を結合して `Article` エンティティを返す統合リポジトリの実装
+
+- [ ] **5.8 STEP 3: アプリケーション層とUIの結合 (Integration)**
+  - [ ] **[実装]** Use Casesの実装
+    - [ ] `GetArticle(slug)`, `GetLatestArticles(limit)` 等の参照系ユースケース実装
+  - [ ] **[実装]** Server Actions / RSC への接続
+    - [ ] 既存ページ (`page.tsx`) のデータ取得ロジックを Use Case 経由に書き換え
+  - [ ] **[検証]** 表示確認
+    - [ ] ローカル環境でのデータ取得・レンダリング確認
+
+- [ ] **5.9 STEP 4: 検索とプレイヤー (Features)**
+  - [ ] **[実装]** Vector Search (Turso) の有効化
+    - [ ] 移行スクリプトへのEmbedding生成 (Gemini API) 追加
+    - [ ] ベクトル検索用インデックスの構築
+  - [ ] **[実装]** Player実装
+    - [ ] `Player` ドメインとUIの結合
+    - [ ] 録音データ再生のテスト
 
 ## Phase 6: AIエージェント開発 ("Brain") & コンテンツ量産
 
