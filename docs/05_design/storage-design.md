@@ -6,22 +6,24 @@
 
 **「Zero-Cost Architecture」** に基づき、Vercelの帯域制限（Hobby Plan: 100GB）を回避しつつ、最高のパフォーマンスを実現するためのハイブリッド配信構成を採用します。
 
-### The "Restaurant" Metaphor
+### Architecture: Original vs Cache
 
-| Component | Role | Metaphor | Description |
-| :--- | :--- | :--- | :--- |
-| **Cloudflare R2** | **Storage** | **倉庫** | マスターデータ（MDX, 高解像度画像, 音源, SVG）を永続保管する場所。<br>ユーザーは直接立ち入り禁止（Private）。 |
-| **Vercel** | **Compute** | **キッチン** | 倉庫(R2)から食材(MDX)を取り出し、調理(レンダリング)してHTMLを生成する場所。 |
-| **Cloudflare CDN** | **Edge Cache** | **配膳台** | 完成した料理(HTML)や、そのまま出せるドリンク(画像・音源)をユーザーに届ける場所。<br>キャッシュを活用し、高速に提供する。 |
+データの「永続性（Persistence）」と「配信性能（Performance）」の役割を明確に分離します。
+
+| Layer | Component | Description |
+| :--- | :--- | :--- |
+| **Original (Source)** | **Cloudflare R2** | **マスターデータ保管場所**。<br>全てのデータの正本（Source of Truth）として機能し、VercelやCDNからのフェッチ要求に応答する。<br>ユーザーからの直接アクセスは遮断される（Private Bucket）。 |
+| **Cache (HTML)** | **Vercel Edge Network** | **HTML配信キャッシュ**。<br>Next.jsによってMDXから生成された軽量なHTML、およびRSCペイロードをキャッシュ・配信する。 |
+| **Cache (Assets)** | **Cloudflare CDN** | **静的アセット配信キャッシュ**。<br>画像、譜例、音源などのラージバイナリをR2から直接キャッシュし、高速に配信する。<br>Vercelの帯域を消費しない (Zero-Cost strategy)。 |
 
 ### Data Flow Strategy
 
 1.  **HTML配信 (Vercel Edge):**
-    - `User` -> `Cloudflare CDN` -> `Vercel` -> `R2 (Private MDX)`
-    - MDXテキストは軽量であるため、Vercel経由でSSG/ISR配信します。
+    - `User` -> `Cloudflare CDN (DNS)` -> `Vercel Edge` -> `R2 (Private MDX)`
+    - MDXテキストは軽量であるため、Vercel経由でSSG/ISR配信し、その結果をVercel Edgeでキャッシュします。
 2.  **静的アセット配信 (Cloudflare CDN):**
-    - `User` -> `Cloudflare CDN` -> `R2 (Public Assets)`
-    - 画像・音源・譜例は容量が大きいため、**Vercelを通さず**、Cloudflare Worker経由でR2から直接配信します（Bandwidth offloading）。
+    - `User` -> `Cloudflare CDN (Assets)` -> `R2 (Public Assets)`
+    - 画像・音源・譜例は容量が大きいため、**Vercelを通さず**、Cloudflare Worker経由でR2から直接配信します。
 
 ---
 
@@ -44,23 +46,23 @@
 ```
 preludio-storage/
 ├── public/                 # CDN経由で公開 (Cloudflare Worker -> R2)
-│   ├── images/             # 記事画像・サムネイル
-│   │   └── {slug}/         # e.g. works/bach/prelude-1
-│   │       ├── cover.jpg   # サムネイル (統一名称)
-│   │       ├── fig1.png
+│   ├── images/             # 記事画像・サムネイル (Article Unit)
+│   │   └── {article_slug}/ # e.g. works/bach/prelude-1
+│   │       ├── thumbnail.webp # サムネイル
+│   │       ├── fig1.webp
 │   │       └── ...
-│   ├── musical-examples/   # 譜例SVG
-│   │   └── {slug}/
+│   ├── musical-examples/   # 譜例SVG (Work Unit)
+│   │   └── {work_slug}/    # e.g. works/bach/prelude-1
 │   │       ├── ex1.svg
 │   │       ├── ex2.svg
 │   │       └── ...
-│   └── audio/              # 音源ファイル (Free/Public)
-│       └── {slug}/
+│   └── audio/              # 音源ファイル (Article Unit)
+│       └── {article_slug}/
 │           ├── full.mp3
 │           └── ...
 └── private/                # 外部アクセス不可 (Next.js App Only)
-    ├── articles/           # 原稿データ (MDX Source)
-    │   └── {slug}/
+    ├── articles/           # 原稿データ (Article Unit)
+    │   └── {article_slug}/
     │       ├── ja.mdx
     │       ├── en.mdx
     │       └── ...
@@ -74,16 +76,16 @@ preludio-storage/
 
 ### URL Schema
 
-Cloudflare Workerにより、以下のURLパターンで配信します。
+Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。URLパスとR2パスを一致させることで、直感的なアクセスを実現します。
 
 - **Base URL:** `https://cdn.preludiolab.com`
-- **Path Mapping:** `/files/*` -> `R2: public/*`
+- **Path Mapping:** `/*` -> `R2: public/*`
 
 | Asset Type | Public URL Example | R2 Path |
 | :--- | :--- | :--- |
-| **Thumbnail** | `/files/images/{slug}/cover.jpg` | `public/images/{slug}/cover.jpg` |
-| **Score (SVG)** | `/files/musical-examples/{slug}/ex1.svg` | `public/musical-examples/{slug}/ex1.svg` |
-| **Audio** | `/files/audio/{slug}/full.mp3` | `public/audio/{slug}/full.mp3` |
+| **Thumbnail** | `/images/{article_slug}/thumbnail.webp` | `public/images/{article_slug}/thumbnail.webp` |
+| **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg` | `public/musical-examples/{work_slug}/ex1.svg` |
+| **Audio** | `/audio/{article_slug}/full.mp3` | `public/audio/{article_slug}/full.mp3` |
 
 ### Access Control (Worker Logic)
 
@@ -99,7 +101,7 @@ Cloudflare Workerにて以下の制御を行います。
 
 ### MDX Articles
 
-- **Path:** `private/articles/{slug}/{lang}.mdx`
+- **Path:** `private/articles/{article_slug}/{lang}.mdx`
 - **Purpose:** Next.jsアプリケーションのビルド（SSG/ISR）および検索インデックス構築の「原稿（Source of Truth）」として使用。
 - **Sync Flow:**
   1.  執筆（Local/CMS）
@@ -117,7 +119,8 @@ Cloudflare Workerにて以下の制御を行います。
 
 - **Slug:** URLセーフな小文字英数字とハイフンのみ (`^[a-z0-9-]+$`)。
 - **Images:**
-  - サムネイル: `cover.jpg` (JPEG, Optimized)
-  - 汎用画像: `fig{N}.{ext}` または意味のある英単語名。スペースはハイフンに置換。
+  - サムネイル: `thumbnail.webp` (WebP推奨, Fallback to JPG)
+  - 汎用画像: `fig{N}.webp` 等。
+  - **Optimization:** 原則として **WebP** 形式を採用し、ファイルサイズを削減する。Braswer互換性のため必要であればJPG/PNGを併用するが、現代の主要ブラウザはWebPをサポートしているためWebPメインとする。
 - **Audio:**
   - フォーマット: MP3 (128kbps~192kbps for Web), AAC等。Web最適化されたエンコード推奨。
