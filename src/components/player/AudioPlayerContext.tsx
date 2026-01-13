@@ -136,7 +136,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       composerName: '',
       performer: '',
       image: '',
-      sourceUrl: '',
+      sourceUrl: undefined,
       provider: PlayerProvider.GENERIC,
       displayType: DisplayType.AUDIO,
     },
@@ -260,13 +260,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       const validSource = sourceValidation.data;
 
       // Extract title from source if not provided in display
-      const sourceTitle = (source as any).title; // Backwards compatibility with extracted metadata if any
+      const sourceTitle = (source as unknown as Partial<PlayerDisplay>).title; // Backwards compatibility with extracted metadata if any
 
       setState((prev) => {
         const isNewSource = validSource.sourceId !== prev.source.sourceId;
 
         let newMode = prev.status.mode;
-        if (isNewSource && prev.status.mode === PlayerMode.HIDDEN) {
+        if (prev.status.mode === PlayerMode.HIDDEN) {
           newMode = PlayerMode.MINI;
         }
 
@@ -275,17 +275,17 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           title: customDisplay?.title || sourceTitle || prev.display.title || 'Audio Recording',
           composerName:
             customDisplay?.composerName ||
-            (source as any).composerName ||
+            (source as unknown as Partial<PlayerDisplay>).composerName ||
             prev.display.composerName,
           performer:
-            customDisplay?.performer || (source as any).performer || prev.display.performer,
-          image: customDisplay?.image || (source as any).image || prev.display.image,
+            customDisplay?.performer || (source as unknown as Partial<PlayerDisplay>).performer || prev.display.performer,
+          image: customDisplay?.image || (source as unknown as Partial<PlayerDisplay>).image || prev.display.image,
           sourceUrl:
-            customDisplay?.sourceUrl || (source as any).sourceUrl || prev.display.sourceUrl,
+            customDisplay?.sourceUrl || (source as unknown as Partial<PlayerDisplay>).sourceUrl || prev.display.sourceUrl,
           provider: validSource.provider,
           displayType:
             customDisplay?.displayType ||
-            (source as any).displayType ||
+            (source as unknown as Partial<PlayerDisplay>).displayType ||
             prev.display.displayType ||
             DisplayType.AUDIO,
         };

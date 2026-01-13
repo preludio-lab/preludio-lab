@@ -2,7 +2,7 @@
 
 import { ReactNode, useMemo } from 'react';
 import { PlayerProvider, PlayerSource, PlayerDisplay } from '@/domain/player/Player';
-import { useTranslations } from 'next-intl';
+
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
 import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
@@ -38,11 +38,11 @@ export function AudioPlayerBinder({
   playRequest: propRequest,
   children,
 }: AudioPlayerBinderProps) {
-  const t = useTranslations('Player');
   const { play } = useAudioPlayer();
 
   // メタデータの解決ロジック
   const resolvedRequest = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let extracted: Record<string, any> = {};
 
     // ソースがある場合は解析
@@ -124,7 +124,7 @@ export function AudioPlayerBinder({
             onClick={handlePlayClick}
             className="flex items-center gap-1.5 rounded-full bg-gray-900/90 text-white px-3 py-1.5 shadow-sm hover:bg-black hover:scale-105 transition-all text-xs font-medium backdrop-blur-sm"
           >
-            <span>▶ {t(`provider.${resolvedRequest.provider || 'generic'}`)}</span>
+            <span>▶ Play</span>
           </button>
         </div>
       )}

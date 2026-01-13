@@ -200,7 +200,11 @@ export function ImmersiveAudioPlayer() {
           />
           <div className="flex justify-between text-xs font-mono text-gray-500">
             <span>{formatTimeHelper(currentUiTime)}</span>
-            <span>{formatTimeHelper(displayDuration)}</span>
+            <span>
+              {endSeconds === undefined && duration === 0
+                ? '--:--'
+                : formatTimeHelper(displayDuration)}
+            </span>
           </div>
         </div>
 
