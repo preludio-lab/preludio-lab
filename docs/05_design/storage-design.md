@@ -13,7 +13,7 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 | Source Directory | Delivery / Cache Layer | Content Type | Description |
 | :--- | :--- | :--- | :--- |
 | **`R2/public`** | **Cloudflare CDN** | **Static Assets** | 画像、譜例、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。 |
-| **`R2/private`** | **Vercel Edge Network** | **HTML / RSC** | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
+| **`R2/private`** | **Vercel Edge Network** | **MDX** | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
 
 ### Data Flow Strategy
 
