@@ -101,11 +101,35 @@ Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直
 
 ### Access Control (Worker Logic)
 
-Cloudflare Workerにて以下の制御を行います。
+### Worker Implementation Logic
 
-1.  **Scope Restriction:** `public/` 配下のオブジェクトのみ参照を許可する。`private/` へのアクセスリクエストは `403 Forbidden` を返却する。
-2.  **Anti-Hotlinking (Optional):** 必要に応じ、`Referer` ヘッダをチェックし、`preludiolab.com` 以外からの直リンクをブロックする（SNS OGP用クローラは許可する設定が必要）。
-3.  **Cache Control:** `Cache-Control: public, max-age=31536000, immutable` を付与し、ブラウザおよびCDNで強力にキャッシュさせる。
+Cloudflare Workerにて以下の高度な制御を行います。
+
+1.  **Scope Restriction & Sanitization (Security):**
+    - `public/` 配下のオブジェクトのみ参照を許可。
+    - パストラバーサル攻撃（`..` を含むパス）を厳密に検知・ブロックする。
+2.  **Audio Range Requests:**
+    - ブラウザのシークバー対応のため、`Range` ヘッダーを透過的に処理し、部分コンテンツ（206 Partial Content）を返却する（`worktop` 等のライブラリや標準APIを活用）。
+3.  **Content-Type Enforcement:**
+    - `musical-examples/*.svg` に対しては `Content-Type: image/svg+xml` を強制し、インライン表示トラブルを防ぐ。
+4.  **Security Headers:**
+    - 以下のヘッダーを付与し、セキュリティを強化する。
+      - `X-Content-Type-Options: nosniff`
+      - `Access-Control-Allow-Origin: https://preludiolab.com` (CORS)
+      - `Cross-Origin-Resource-Policy: same-site`
+5.  **Cache Control:**
+    - `Cache-Control: public, max-age=31536000, immutable` を付与。
+
+### Image Optimization Strategy (Zero-Cost Resizing)
+
+Cloudflareの有料Image Resizingを使用しないため、ビルド時またはアップロード時に **Pre-generation（事前生成）** を行う戦略を採用します。
+
+- **Naming Schema:**
+  - `thumbnail.webp` (Original / Large for OGP)
+  - `thumbnail-sm.webp` (Small for List View / 300px width)
+- **Responsive Logic:**
+  - `next/image` の `loader` または `<picture>` タグを使用し、デバイス幅に応じて適切なサフィックスの画像をリクエストする。
+
 
 ---
 
@@ -131,7 +155,8 @@ Cloudflare Workerにて以下の制御を行います。
 
 - **Slug:** URLセーフな小文字英数字とハイフンのみ (`^[a-z0-9-]+$`)。
 - **Images:**
-  - サムネイル: `thumbnail.webp` (WebP推奨, Fallback to JPG)
+  - サムネイル: `thumbnail.webp` (Large), `thumbnail-sm.webp` (Small)
+
   - 汎用画像: `fig{N}.webp` 等。
   - **Optimization:** 原則として **WebP** 形式を採用し、ファイルサイズを削減する。Braswer互換性のため必要であればJPG/PNGを併用するが、現代の主要ブラウザはWebPをサポートしているためWebPメインとする。
 - **Audio:**
