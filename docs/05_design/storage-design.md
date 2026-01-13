@@ -24,8 +24,8 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
   *(高速。Vercel Edgeから即座にレスポンス)*
 
 - **Cache Miss / Revalidation (Origin Fetch):**
-  `User` -> `Cloudflare CDN` -> `Vercel Edge` -> **`Next.js App (SSR/Build)`** -> **`R2/private (Fetch MDX)`**
-  *(MDXを取得してHTMLを生成し、キャッシュを更新してレスポンス)*
+  `User` -> `Cloudflare CDN` -> `Vercel Edge` -> **`Next.js App (SSR/Build)`** -> **`R2/private (S3 API)`**
+  *(Next.jsがAWS SDK等を用いて直接MDXを取得しHTMLを生成します。**Cloudflare Workerは経由しません**)*
 
 #### 2. 静的アセット配信 (`R2/public` source)
 
