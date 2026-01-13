@@ -6,24 +6,23 @@
 
 **「Zero-Cost Architecture」** に基づき、Vercelの帯域制限（Hobby Plan: 100GB）を回避しつつ、最高のパフォーマンスを実現するためのハイブリッド配信構成を採用します。
 
-### Architecture: Original vs Cache
+### Architecture: Source to Cache Mapping
 
-データの「永続性（Persistence）」と「配信性能（Performance）」の役割を明確に分離します。
+R2上のディレクトリ区分と、それぞれの配信・キャッシュを担うレイヤーの対応関係は以下の通りです。
 
-| Layer | Component | Description |
-| :--- | :--- | :--- |
-| **Original (Source)** | **Cloudflare R2** | **マスターデータ保管場所**。<br>全てのデータの正本（Source of Truth）として機能し、VercelやCDNからのフェッチ要求に応答する。<br>ユーザーからの直接アクセスは遮断される（Private Bucket）。 |
-| **Cache (HTML)** | **Vercel Edge Network** | **HTML配信キャッシュ**。<br>Next.jsによってMDXから生成された軽量なHTML、およびRSCペイロードをキャッシュ・配信する。 |
-| **Cache (Assets)** | **Cloudflare CDN** | **静的アセット配信キャッシュ**。<br>画像、譜例、音源などのラージバイナリをR2から直接キャッシュし、高速に配信する。<br>Vercelの帯域を消費しない (Zero-Cost strategy)。 |
+| Source Directory | Delivery / Cache Layer | Content Type | Description |
+| :--- | :--- | :--- | :--- |
+| **`R2/public`** | **Cloudflare CDN** | **Static Assets** | 画像、譜例、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。 |
+| **`R2/private`** | **Vercel Edge Network** | **HTML / RSC** | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
 
 ### Data Flow Strategy
 
-1.  **HTML配信 (Vercel Edge):**
-    - `User` -> `Cloudflare CDN (DNS)` -> `Vercel Edge` -> `R2 (Private MDX)`
-    - MDXテキストは軽量であるため、Vercel経由でSSG/ISR配信し、その結果をVercel Edgeでキャッシュします。
-2.  **静的アセット配信 (Cloudflare CDN):**
-    - `User` -> `Cloudflare CDN (Assets)` -> `R2 (Public Assets)`
-    - 画像・音源・譜例は容量が大きいため、**Vercelを通さず**、Cloudflare Worker経由でR2から直接配信します。
+1.  **HTML配信 (`R2/private` source):**
+    - `User` -> `Cloudflare CDN (DNS)` -> **`Vercel Edge (Cache)`** -> `Next.js App` -> **`R2/private`**
+    - アプリケーションが `private` 配下のMDXを取得してHTMLを生成。その結果がVercel Edge Networkにキャッシュされます。
+2.  **静的アセット配信 (`R2/public` source):**
+    - `User` -> **`Cloudflare CDN (Cache)`** -> `Cloudflare Worker` -> **`R2/public`**
+    - `public` 配下のファイルは、Vercelを通らずにCloudflare CDNから直接高速配信されます。
 
 ---
 
