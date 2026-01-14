@@ -42,7 +42,7 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 ## 2. 物理リソース定義 (Resource Definition)
 
 - **Platform:** Cloudflare R2
-- **Bucket Name:** `preludio-storage`
+- **Bucket Name:** `preludiolab-storage`
 - **Region:** `Auto` (Global Distribution)
 - **Access Policy:**
   - **Public Access:** Disabled (Block all direct access)
@@ -161,3 +161,39 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
   - **Optimization:** 原則として **WebP** 形式を採用し、ファイルサイズを削減する。Braswer互換性のため必要であればJPG/PNGを併用するが、現代の主要ブラウザはWebPをサポートしているためWebPメインとする。
 - **Audio:**
   - フォーマット: MP3 (128kbps~192kbps for Web), AAC等。Web最適化されたエンコード推奨。
+
+---
+
+## 7. 開発・デプロイ構造 (Project & Deployment Structure)
+
+Workerを独立したコンポーネントとして管理するため、プロジェクトルート直下の `workers/` ディレクトリに配置します。
+
+### Directory Layout
+
+```text
+/ (Project Root)
+├── workers/
+│   └── cdn-proxy/
+│       ├── src/
+│       │   └── index.ts  # Workerメインコード (Hono)
+│       ├── package.json  # Worker依存関係 (独立)
+│       ├── tsconfig.json
+│       └── wrangler.toml # Worker設定 (R2 Binding等)
+├── src/ (Next.js App)
+│   ├── app/
+│   ├── domain/
+│   └── ...
+└── package.json (Next.js用)
+```
+
+### 独立構成のメリット (Architectural Benefits)
+
+Next.jsアプリ側に同梱せず独立させることで、**Zero-Cost Architecture** の要である「コストとパフォーマンスの最適化」を最大化します。
+
+1.  **デプロイ単位の分離 (Decoupled Deployment)**:
+    - Workerは Cloudflare (`wrangler`)、Next.jsは Vercel と、デプロイサイクルや環境変数を完全に独立させることができます。キャッシュ戦略の微調整程度でNext.js全体の再ビルドは不要です。
+2.  **依存関係の最小化 (Minimized Dependencies)**:
+    - Worker側にはHono等の軽量ライブラリのみを含め、Next.jsの重いエコシステムを排除することで、エッジでの起動（Cold Start）を最速に保ちます。
+3.  **責務の明確な分離 (Separation of Concerns)**:
+    - Next.jsアプリは「Webアプリケーション（UI/UX, 楽曲メタデータ管理）」としての責務に集中し、Workerは「インフラ層（静的アセットの最適配信Proxy）」としての責務に特化させます。これにより、Vercelの帯域制限やEdge Functionの制限を回避しつつ、セキュアで高速なアセット配信を実現します。
+
