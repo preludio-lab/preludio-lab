@@ -17,13 +17,14 @@ node_modules
 /.next/
 /out/
 
-# production
-/build
+# production & build
+dist/
+build/
 
 # misc
 .DS_Store
 *.pem
-.wrangler
+.wrangler/
 
 # debug
 npm-debug.log*
