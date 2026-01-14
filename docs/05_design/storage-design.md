@@ -10,10 +10,10 @@
 
 R2上のディレクトリ区分と、それぞれの配信・キャッシュを担うレイヤーの対応関係は以下の通りです。
 
-| Source Directory | Delivery / Cache Layer | Content Type | Description |
-| :--- | :--- | :--- | :--- |
-| **`R2/public`** | **Cloudflare CDN** | **Static Assets** | 画像、譜例、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。 |
-| **`R2/private`** | **Vercel Edge Network** | **MDX** | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
+| Source Directory | Delivery / Cache Layer  | Content Type      | Description                                                                                                                       |
+| :--------------- | :---------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| **`R2/public`**  | **Cloudflare CDN**      | **Static Assets** | 画像、譜例、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。                   |
+| **`R2/private`** | **Vercel Edge Network** | **MDX**           | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
 
 ### Data Flow Strategy
 
@@ -21,21 +21,21 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 
 - **Cache Hit (Normal):**
   `User` -> `Cloudflare CDN (DNS)` -> **`Vercel Edge (Return Cached HTML)`**
-  *(高速。Vercel Edgeから即座にレスポンス)*
+  _(高速。Vercel Edgeから即座にレスポンス)_
 
 - **Cache Miss / Revalidation (Origin Fetch):**
   `User` -> `Cloudflare CDN` -> `Vercel Edge` -> **`Next.js App (SSR/Build)`** -> **`R2/private (S3 API)`**
-  *(Next.jsがAWS SDK等を用いて直接MDXを取得しHTMLを生成します。**Cloudflare Workerは経由しません**)*
+  _(Next.jsがAWS SDK等を用いて直接MDXを取得しHTMLを生成します。**Cloudflare Workerは経由しません**)_
 
 #### 2. 静的アセット配信 (`R2/public` source)
 
 - **Cache Hit (Normal):**
   `User` -> **`Cloudflare CDN (Return Cached Asset)`**
-  *(最速。Cloudflareエッジから即座にレスポンス)*
+  _(最速。Cloudflareエッジから即座にレスポンス)_
 
 - **Cache Miss (Origin Fetch):**
   `User` -> `Cloudflare CDN` -> `Cloudflare Worker` -> **`R2/public (Fetch Object)`**
-  *(R2からオブジェクトを取得し、Cloudflare CDNにキャッシュしてレスポンス)*
+  _(R2からオブジェクトを取得し、Cloudflare CDNにキャッシュしてレスポンス)_
 
 ---
 
@@ -93,11 +93,11 @@ Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Asset Type | Public URL Example | R2 Path |
-| :--- | :--- | :--- |
-| **Thumbnail** | `/images/{article_slug}/thumbnail.webp` | `public/images/{article_slug}/thumbnail.webp` |
+| Asset Type               | Public URL Example                      | R2 Path                                       |
+| :----------------------- | :-------------------------------------- | :-------------------------------------------- |
+| **Thumbnail**            | `/images/{article_slug}/thumbnail.webp` | `public/images/{article_slug}/thumbnail.webp` |
 | **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg` | `public/musical-examples/{work_slug}/ex1.svg` |
-| **Audio** | `/audio/{article_slug}/full.mp3` | `public/audio/{article_slug}/full.mp3` |
+| **Audio**                | `/audio/{article_slug}/full.mp3`        | `public/audio/{article_slug}/full.mp3`        |
 
 ### Access Control (Worker Logic)
 
@@ -130,7 +130,6 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
 - **Responsive Logic:**
   - `next/image` の `loader` または `<picture>` タグを使用し、デバイス幅に応じて適切なサフィックスの画像をリクエストする。
 
-
 ---
 
 ## 5. 内部データの取扱仕様 (Private Data)
@@ -147,6 +146,7 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
 ### Paid Content (Future)
 
 -将来的に「有料会員限定の高音質音源」などを提供する場合、`private/paid-audio/` 等に配置する。
+
 - 配信時は、Next.jsのAPI Route経由でストリーミングするか、期限付き署名URL（Signed URL）を発行してアクセスさせる。
 
 ---
@@ -159,6 +159,7 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
 
   - 汎用画像: `fig{N}.webp` 等。
   - **Optimization:** 原則として **WebP** 形式を採用し、ファイルサイズを削減する。Braswer互換性のため必要であればJPG/PNGを併用するが、現代の主要ブラウザはWebPをサポートしているためWebPメインとする。
+
 - **Audio:**
   - フォーマット: MP3 (128kbps~192kbps for Web), AAC等。Web最適化されたエンコード推奨。
 
@@ -196,4 +197,3 @@ Next.jsアプリ側に同梱せず独立させることで、**Zero-Cost Archite
     - Worker側にはHono等の軽量ライブラリのみを含め、Next.jsの重いエコシステムを排除することで、エッジでの起動（Cold Start）を最速に保ちます。
 3.  **責務の明確な分離 (Separation of Concerns)**:
     - Next.jsアプリは「Webアプリケーション（UI/UX, 楽曲メタデータ管理）」としての責務に集中し、Workerは「インフラ層（静的アセットの最適配信Proxy）」としての責務に特化させます。これにより、Vercelの帯域制限やEdge Functionの制限を回避しつつ、セキュアで高速なアセット配信を実現します。
-

@@ -1,75 +1,125 @@
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 type Bindings = {
-    R2_BUCKET: R2Bucket
-}
+  R2_BUCKET: R2Bucket;
+};
 
-const app = new Hono<{ Bindings: Bindings }>()
+const app = new Hono<{ Bindings: Bindings }>();
 
-// CORS設定 - 本番環境ではプロジェクトドメインに制限
-app.use('*', cors({
+// CORS設定
+app.use(
+  '*',
+  cors({
     origin: ['https://preludiolab.com', 'https://www.preludiolab.com', 'http://localhost:3000'],
     allowMethods: ['GET', 'HEAD', 'OPTIONS'],
-    exposeHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length'],
+    exposeHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length', 'ETag'],
     maxAge: 86400,
-}))
+  }),
+);
 
 app.get('/:type/:file{.+}', async (c) => {
-    const { type, file } = c.req.param()
+  const { type, file } = c.req.param();
 
-    // マッピングロジック: /{type}/{file} -> public/{type}/{file}
-    // これにより、'public' ディレクトリ内のアセットのみを配信することを保証します
-    const key = `public/${type}/${file}`
+  // パス・トラバーサル対策
+  if (file.includes('..')) {
+    return c.text('Invalid Path', 400);
+  }
 
-    // デバッグログ: リクエストされたファイル
-    console.log(`[CDN] Requesting: ${key}`)
+  const key = `public/${type}/${file}`;
+  console.log(`[CDN] Requesting: ${key}`);
 
-    try {
-        // 最小構成: Range指定なしでオブジェクトを全取得
-        const object = await c.env.R2_BUCKET.get(key)
+  try {
+    const rangeHeader = c.req.header('Range');
+    const r2Options: R2GetOptions = {};
 
-        if (!object) {
-            console.warn(`[CDN] Not Found: ${key}`)
-            return c.text('Not Found', 404)
+    // Rangeヘッダーの簡易パース
+    if (rangeHeader && rangeHeader.startsWith('bytes=')) {
+      const parts = rangeHeader.replace('bytes=', '').split('-');
+      if (parts[0] === '' && parts[1]) {
+        r2Options.range = { suffix: parseInt(parts[1], 10) };
+      } else if (parts[0] !== '') {
+        const offset = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : undefined;
+        if (end !== undefined) {
+          r2Options.range = { offset, length: end - offset + 1 };
+        } else {
+          r2Options.range = { offset };
         }
-
-        const headers = new Headers()
-        object.writeHttpMetadata(headers)
-        headers.set('etag', object.httpEtag)
-
-        // 基本的なセキュリティヘッダー
-        headers.set('X-Content-Type-Options', 'nosniff')
-        headers.set('Access-Origin-Resource-Policy', 'same-site')
-
-        // Content-Typeの明示
-        if (key.endsWith('.svg')) {
-            headers.set('Content-Type', 'image/svg+xml')
-        } else if (key.endsWith('.mp3')) {
-            headers.set('Content-Type', 'audio/mpeg')
-        }
-
-        // キャッシュ戦略
-        headers.set('Cache-Control', 'public, max-age=31536000, immutable')
-
-        if (!object.body) {
-            console.warn(`[CDN] No Body for: ${key}`)
-            return c.body(null, 204)
-        }
-
-        console.log(`[CDN] Serving (Full): ${key}, Type: ${headers.get('Content-Type')}`)
-
-        return new Response(object.body, {
-            headers,
-            status: 200,
-        })
-    } catch (e) {
-        console.error(`[CDN] Critical Error:`, e)
-        return c.text('Internal Server Error', 500)
+      }
     }
-})
+
+    const object = await c.env.R2_BUCKET.get(key, r2Options);
+
+    if (!object) {
+      console.warn(`[CDN] Not Found: ${key}`);
+      return c.text('Not Found', 404);
+    }
+
+    const headers = new Headers();
+    object.writeHttpMetadata(headers);
+    headers.set('etag', object.httpEtag);
+
+    // MIME Type: R2のメタデータを優先し、なければ拡張子判定
+    if (!headers.has('content-type')) {
+      if (key.endsWith('.svg')) headers.set('Content-Type', 'image/svg+xml');
+      else if (key.endsWith('.mp3')) headers.set('Content-Type', 'audio/mpeg');
+    }
+
+    // セキュリティ & キャッシュ
+    headers.set('X-Content-Type-Options', 'nosniff');
+
+    // CORP設定: localhost:3000 からのアクセスのみ緩和し、それ以外は厳格な same-site とする
+    const origin = c.req.header('Origin');
+    if (origin === 'http://localhost:3000') {
+      headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    } else {
+      headers.set('Cross-Origin-Resource-Policy', 'same-site');
+    }
+
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    headers.set('Accept-Ranges', 'bytes');
+
+    // レスポンスの構築
+    if (object.range) {
+      // Partial Content (206)
+      // R2Range is either { offset: number; length?: number } or { suffix: number }
+      const range = object.range as { offset?: number; length?: number; suffix?: number };
+
+      let rangeStart: number;
+      let rangeEnd: number;
+
+      if (range.suffix !== undefined) {
+        rangeStart = object.size - range.suffix;
+        rangeEnd = object.size - 1;
+      } else {
+        rangeStart = range.offset ?? 0;
+        rangeEnd = (range.offset ?? 0) + (range.length ?? object.size - (range.offset ?? 0)) - 1;
+      }
+
+      headers.set('Content-Range', `bytes ${rangeStart}-${rangeEnd}/${object.size}`);
+      headers.set('Content-Length', (rangeEnd - rangeStart + 1).toString());
+
+      return new Response(object.body as ReadableStream, {
+        headers,
+        status: 206,
+      });
+    } else {
+      // Full Content (200)
+      headers.set('Content-Length', object.size.toString());
+
+      return new Response(object.body as ReadableStream, {
+        headers,
+        status: 200,
+      });
+    }
+  } catch (e) {
+    console.error(`[CDN] Critical Error:`, e);
+    return c.text('Internal Server Error', 500);
+  }
+});
 
 // オプション: ヘルスチェックまたはルートルート
-app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'))
+app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'));
 
-export default app
+export default app;

@@ -1,30 +1,31 @@
 var __defProp = Object.defineProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+var __name = (target, value) => __defProp(target, 'name', { value, configurable: true });
 
-// .wrangler/tmp/bundle-RfTV7F/checked-fetch.js
+// .wrangler/tmp/bundle-d09E7d/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
-  const url = request instanceof URL ? request : new URL(
-    (typeof request === "string" ? new Request(request, init) : request).url
-  );
-  if (url.port && url.port !== "443" && url.protocol === "https:") {
+  const url =
+    request instanceof URL
+      ? request
+      : new URL((typeof request === 'string' ? new Request(request, init) : request).url);
+  if (url.port && url.port !== '443' && url.protocol === 'https:') {
     if (!urls.has(url.toString())) {
       urls.add(url.toString());
       console.warn(
         `WARNING: known issue with \`fetch()\` requests to custom HTTPS ports in published Workers:
  - ${url.toString()} - the custom port will be ignored when the Worker is published using the \`wrangler deploy\` command.
-`
+`,
       );
     }
   }
 }
-__name(checkURL, "checkURL");
+__name(checkURL, 'checkURL');
 globalThis.fetch = new Proxy(globalThis.fetch, {
   apply(target, thisArg, argArray) {
     const [request, init] = argArray;
     checkURL(request, init);
     return Reflect.apply(target, thisArg, argArray);
-  }
+  },
 });
 
 // node_modules/hono/dist/compose.js
@@ -34,7 +35,7 @@ var compose = /* @__PURE__ */ __name((middleware, onError, onNotFound) => {
     return dispatch(0);
     async function dispatch(i) {
       if (i <= index) {
-        throw new Error("next() called multiple times");
+        throw new Error('next() called multiple times');
       }
       index = i;
       let res;
@@ -44,7 +45,7 @@ var compose = /* @__PURE__ */ __name((middleware, onError, onNotFound) => {
         handler = middleware[i][0][0];
         context.req.routeIndex = i;
       } else {
-        handler = i === middleware.length && next || void 0;
+        handler = (i === middleware.length && next) || void 0;
       }
       if (handler) {
         try {
@@ -68,23 +69,29 @@ var compose = /* @__PURE__ */ __name((middleware, onError, onNotFound) => {
       }
       return context;
     }
-    __name(dispatch, "dispatch");
+    __name(dispatch, 'dispatch');
   };
-}, "compose");
+}, 'compose');
 
 // node_modules/hono/dist/request/constants.js
 var GET_MATCH_RESULT = /* @__PURE__ */ Symbol();
 
 // node_modules/hono/dist/utils/body.js
-var parseBody = /* @__PURE__ */ __name(async (request, options = /* @__PURE__ */ Object.create(null)) => {
-  const { all = false, dot = false } = options;
-  const headers = request instanceof HonoRequest ? request.raw.headers : request.headers;
-  const contentType = headers.get("Content-Type");
-  if (contentType?.startsWith("multipart/form-data") || contentType?.startsWith("application/x-www-form-urlencoded")) {
-    return parseFormData(request, { all, dot });
-  }
-  return {};
-}, "parseBody");
+var parseBody = /* @__PURE__ */ __name(
+  async (request, options = /* @__PURE__ */ Object.create(null)) => {
+    const { all = false, dot = false } = options;
+    const headers = request instanceof HonoRequest ? request.raw.headers : request.headers;
+    const contentType = headers.get('Content-Type');
+    if (
+      contentType?.startsWith('multipart/form-data') ||
+      contentType?.startsWith('application/x-www-form-urlencoded')
+    ) {
+      return parseFormData(request, { all, dot });
+    }
+    return {};
+  },
+  'parseBody',
+);
 async function parseFormData(request, options) {
   const formData = await request.formData();
   if (formData) {
@@ -92,11 +99,11 @@ async function parseFormData(request, options) {
   }
   return {};
 }
-__name(parseFormData, "parseFormData");
+__name(parseFormData, 'parseFormData');
 function convertFormDataToBodyData(formData, options) {
   const form = /* @__PURE__ */ Object.create(null);
   formData.forEach((value, key) => {
-    const shouldParseAllValues = options.all || key.endsWith("[]");
+    const shouldParseAllValues = options.all || key.endsWith('[]');
     if (!shouldParseAllValues) {
       form[key] = value;
     } else {
@@ -105,7 +112,7 @@ function convertFormDataToBodyData(formData, options) {
   });
   if (options.dot) {
     Object.entries(form).forEach(([key, value]) => {
-      const shouldParseDotValues = key.includes(".");
+      const shouldParseDotValues = key.includes('.');
       if (shouldParseDotValues) {
         handleParsingNestedValues(form, key, value);
         delete form[key];
@@ -114,51 +121,55 @@ function convertFormDataToBodyData(formData, options) {
   }
   return form;
 }
-__name(convertFormDataToBodyData, "convertFormDataToBodyData");
+__name(convertFormDataToBodyData, 'convertFormDataToBodyData');
 var handleParsingAllValues = /* @__PURE__ */ __name((form, key, value) => {
   if (form[key] !== void 0) {
     if (Array.isArray(form[key])) {
-      ;
       form[key].push(value);
     } else {
       form[key] = [form[key], value];
     }
   } else {
-    if (!key.endsWith("[]")) {
+    if (!key.endsWith('[]')) {
       form[key] = value;
     } else {
       form[key] = [value];
     }
   }
-}, "handleParsingAllValues");
+}, 'handleParsingAllValues');
 var handleParsingNestedValues = /* @__PURE__ */ __name((form, key, value) => {
   let nestedForm = form;
-  const keys = key.split(".");
+  const keys = key.split('.');
   keys.forEach((key2, index) => {
     if (index === keys.length - 1) {
       nestedForm[key2] = value;
     } else {
-      if (!nestedForm[key2] || typeof nestedForm[key2] !== "object" || Array.isArray(nestedForm[key2]) || nestedForm[key2] instanceof File) {
+      if (
+        !nestedForm[key2] ||
+        typeof nestedForm[key2] !== 'object' ||
+        Array.isArray(nestedForm[key2]) ||
+        nestedForm[key2] instanceof File
+      ) {
         nestedForm[key2] = /* @__PURE__ */ Object.create(null);
       }
       nestedForm = nestedForm[key2];
     }
   });
-}, "handleParsingNestedValues");
+}, 'handleParsingNestedValues');
 
 // node_modules/hono/dist/utils/url.js
 var splitPath = /* @__PURE__ */ __name((path) => {
-  const paths = path.split("/");
-  if (paths[0] === "") {
+  const paths = path.split('/');
+  if (paths[0] === '') {
     paths.shift();
   }
   return paths;
-}, "splitPath");
+}, 'splitPath');
 var splitRoutingPath = /* @__PURE__ */ __name((routePath) => {
   const { groups, path } = extractGroupsFromPath(routePath);
   const paths = splitPath(path);
   return replaceGroupMarks(paths, groups);
-}, "splitRoutingPath");
+}, 'splitRoutingPath');
 var extractGroupsFromPath = /* @__PURE__ */ __name((path) => {
   const groups = [];
   path = path.replace(/\{[^}]+\}/g, (match2, index) => {
@@ -167,7 +178,7 @@ var extractGroupsFromPath = /* @__PURE__ */ __name((path) => {
     return mark;
   });
   return { groups, path };
-}, "extractGroupsFromPath");
+}, 'extractGroupsFromPath');
 var replaceGroupMarks = /* @__PURE__ */ __name((paths, groups) => {
   for (let i = groups.length - 1; i >= 0; i--) {
     const [mark] = groups[i];
@@ -179,18 +190,21 @@ var replaceGroupMarks = /* @__PURE__ */ __name((paths, groups) => {
     }
   }
   return paths;
-}, "replaceGroupMarks");
+}, 'replaceGroupMarks');
 var patternCache = {};
 var getPattern = /* @__PURE__ */ __name((label, next) => {
-  if (label === "*") {
-    return "*";
+  if (label === '*') {
+    return '*';
   }
   const match2 = label.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
   if (match2) {
     const cacheKey = `${label}#${next}`;
     if (!patternCache[cacheKey]) {
       if (match2[2]) {
-        patternCache[cacheKey] = next && next[0] !== ":" && next[0] !== "*" ? [cacheKey, match2[1], new RegExp(`^${match2[2]}(?=/${next})`)] : [label, match2[1], new RegExp(`^${match2[2]}$`)];
+        patternCache[cacheKey] =
+          next && next[0] !== ':' && next[0] !== '*'
+            ? [cacheKey, match2[1], new RegExp(`^${match2[2]}(?=/${next})`)]
+            : [label, match2[1], new RegExp(`^${match2[2]}$`)];
       } else {
         patternCache[cacheKey] = [label, match2[1], true];
       }
@@ -198,7 +212,7 @@ var getPattern = /* @__PURE__ */ __name((label, next) => {
     return patternCache[cacheKey];
   }
   return null;
-}, "getPattern");
+}, 'getPattern');
 var tryDecode = /* @__PURE__ */ __name((str, decoder) => {
   try {
     return decoder(str);
@@ -211,74 +225,74 @@ var tryDecode = /* @__PURE__ */ __name((str, decoder) => {
       }
     });
   }
-}, "tryDecode");
-var tryDecodeURI = /* @__PURE__ */ __name((str) => tryDecode(str, decodeURI), "tryDecodeURI");
+}, 'tryDecode');
+var tryDecodeURI = /* @__PURE__ */ __name((str) => tryDecode(str, decodeURI), 'tryDecodeURI');
 var getPath = /* @__PURE__ */ __name((request) => {
   const url = request.url;
-  const start = url.indexOf("/", url.indexOf(":") + 4);
+  const start = url.indexOf('/', url.indexOf(':') + 4);
   let i = start;
   for (; i < url.length; i++) {
     const charCode = url.charCodeAt(i);
     if (charCode === 37) {
-      const queryIndex = url.indexOf("?", i);
+      const queryIndex = url.indexOf('?', i);
       const path = url.slice(start, queryIndex === -1 ? void 0 : queryIndex);
-      return tryDecodeURI(path.includes("%25") ? path.replace(/%25/g, "%2525") : path);
+      return tryDecodeURI(path.includes('%25') ? path.replace(/%25/g, '%2525') : path);
     } else if (charCode === 63) {
       break;
     }
   }
   return url.slice(start, i);
-}, "getPath");
+}, 'getPath');
 var getPathNoStrict = /* @__PURE__ */ __name((request) => {
   const result = getPath(request);
-  return result.length > 1 && result.at(-1) === "/" ? result.slice(0, -1) : result;
-}, "getPathNoStrict");
+  return result.length > 1 && result.at(-1) === '/' ? result.slice(0, -1) : result;
+}, 'getPathNoStrict');
 var mergePath = /* @__PURE__ */ __name((base, sub, ...rest) => {
   if (rest.length) {
     sub = mergePath(sub, ...rest);
   }
-  return `${base?.[0] === "/" ? "" : "/"}${base}${sub === "/" ? "" : `${base?.at(-1) === "/" ? "" : "/"}${sub?.[0] === "/" ? sub.slice(1) : sub}`}`;
-}, "mergePath");
+  return `${base?.[0] === '/' ? '' : '/'}${base}${sub === '/' ? '' : `${base?.at(-1) === '/' ? '' : '/'}${sub?.[0] === '/' ? sub.slice(1) : sub}`}`;
+}, 'mergePath');
 var checkOptionalParameter = /* @__PURE__ */ __name((path) => {
-  if (path.charCodeAt(path.length - 1) !== 63 || !path.includes(":")) {
+  if (path.charCodeAt(path.length - 1) !== 63 || !path.includes(':')) {
     return null;
   }
-  const segments = path.split("/");
+  const segments = path.split('/');
   const results = [];
-  let basePath = "";
+  let basePath = '';
   segments.forEach((segment) => {
-    if (segment !== "" && !/\:/.test(segment)) {
-      basePath += "/" + segment;
+    if (segment !== '' && !/\:/.test(segment)) {
+      basePath += '/' + segment;
     } else if (/\:/.test(segment)) {
       if (/\?/.test(segment)) {
-        if (results.length === 0 && basePath === "") {
-          results.push("/");
+        if (results.length === 0 && basePath === '') {
+          results.push('/');
         } else {
           results.push(basePath);
         }
-        const optionalSegment = segment.replace("?", "");
-        basePath += "/" + optionalSegment;
+        const optionalSegment = segment.replace('?', '');
+        basePath += '/' + optionalSegment;
         results.push(basePath);
       } else {
-        basePath += "/" + segment;
+        basePath += '/' + segment;
       }
     }
   });
   return results.filter((v, i, a) => a.indexOf(v) === i);
-}, "checkOptionalParameter");
+}, 'checkOptionalParameter');
 var _decodeURI = /* @__PURE__ */ __name((value) => {
   if (!/[%+]/.test(value)) {
     return value;
   }
-  if (value.indexOf("+") !== -1) {
-    value = value.replace(/\+/g, " ");
+  if (value.indexOf('+') !== -1) {
+    value = value.replace(/\+/g, ' ');
   }
-  return value.indexOf("%") !== -1 ? tryDecode(value, decodeURIComponent_) : value;
-}, "_decodeURI");
+  return value.indexOf('%') !== -1 ? tryDecode(value, decodeURIComponent_) : value;
+}, '_decodeURI');
 var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
   let encoded;
   if (!multiple && key && !/[%+]/.test(key)) {
-    let keyIndex2 = url.indexOf("?", 8);
+    let keyIndex2 = url.indexOf('?', 8);
     if (keyIndex2 === -1) {
       return void 0;
     }
@@ -289,10 +303,10 @@ var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
       const trailingKeyCode = url.charCodeAt(keyIndex2 + key.length + 1);
       if (trailingKeyCode === 61) {
         const valueIndex = keyIndex2 + key.length + 2;
-        const endIndex = url.indexOf("&", valueIndex);
+        const endIndex = url.indexOf('&', valueIndex);
         return _decodeURI(url.slice(valueIndex, endIndex === -1 ? void 0 : endIndex));
       } else if (trailingKeyCode == 38 || isNaN(trailingKeyCode)) {
-        return "";
+        return '';
       }
       keyIndex2 = url.indexOf(`&${key}`, keyIndex2 + 1);
     }
@@ -303,27 +317,27 @@ var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
   }
   const results = {};
   encoded ??= /[%+]/.test(url);
-  let keyIndex = url.indexOf("?", 8);
+  let keyIndex = url.indexOf('?', 8);
   while (keyIndex !== -1) {
-    const nextKeyIndex = url.indexOf("&", keyIndex + 1);
-    let valueIndex = url.indexOf("=", keyIndex);
+    const nextKeyIndex = url.indexOf('&', keyIndex + 1);
+    let valueIndex = url.indexOf('=', keyIndex);
     if (valueIndex > nextKeyIndex && nextKeyIndex !== -1) {
       valueIndex = -1;
     }
     let name = url.slice(
       keyIndex + 1,
-      valueIndex === -1 ? nextKeyIndex === -1 ? void 0 : nextKeyIndex : valueIndex
+      valueIndex === -1 ? (nextKeyIndex === -1 ? void 0 : nextKeyIndex) : valueIndex,
     );
     if (encoded) {
       name = _decodeURI(name);
     }
     keyIndex = nextKeyIndex;
-    if (name === "") {
+    if (name === '') {
       continue;
     }
     let value;
     if (valueIndex === -1) {
-      value = "";
+      value = '';
     } else {
       value = url.slice(valueIndex + 1, nextKeyIndex === -1 ? void 0 : nextKeyIndex);
       if (encoded) {
@@ -334,25 +348,27 @@ var _getQueryParam = /* @__PURE__ */ __name((url, key, multiple) => {
       if (!(results[name] && Array.isArray(results[name]))) {
         results[name] = [];
       }
-      ;
       results[name].push(value);
     } else {
       results[name] ??= value;
     }
   }
   return key ? results[key] : results;
-}, "_getQueryParam");
+}, '_getQueryParam');
 var getQueryParam = _getQueryParam;
 var getQueryParams = /* @__PURE__ */ __name((url, key) => {
   return _getQueryParam(url, key, true);
-}, "getQueryParams");
+}, 'getQueryParams');
 var decodeURIComponent_ = decodeURIComponent;
 
 // node_modules/hono/dist/request.js
-var tryDecodeURIComponent = /* @__PURE__ */ __name((str) => tryDecode(str, decodeURIComponent_), "tryDecodeURIComponent");
+var tryDecodeURIComponent = /* @__PURE__ */ __name(
+  (str) => tryDecode(str, decodeURIComponent_),
+  'tryDecodeURIComponent',
+);
 var HonoRequest = class {
   static {
-    __name(this, "HonoRequest");
+    __name(this, 'HonoRequest');
   }
   /**
    * `.raw` can get the raw Request object.
@@ -387,7 +403,7 @@ var HonoRequest = class {
    */
   path;
   bodyCache = {};
-  constructor(request, path = "/", matchResult = [[]]) {
+  constructor(request, path = '/', matchResult = [[]]) {
     this.raw = request;
     this.path = path;
     this.#matchResult = matchResult;
@@ -432,7 +448,7 @@ var HonoRequest = class {
     return headerData;
   }
   async parseBody(options) {
-    return this.bodyCache.parsedBody ??= await parseBody(this, options);
+    return (this.bodyCache.parsedBody ??= await parseBody(this, options));
   }
   #cachedBody = /* @__PURE__ */ __name((key) => {
     const { bodyCache, raw: raw2 } = this;
@@ -443,14 +459,14 @@ var HonoRequest = class {
     const anyCachedKey = Object.keys(bodyCache)[0];
     if (anyCachedKey) {
       return bodyCache[anyCachedKey].then((body) => {
-        if (anyCachedKey === "json") {
+        if (anyCachedKey === 'json') {
           body = JSON.stringify(body);
         }
         return new Response(body)[key]();
       });
     }
-    return bodyCache[key] = raw2[key]();
-  }, "#cachedBody");
+    return (bodyCache[key] = raw2[key]());
+  }, '#cachedBody');
   /**
    * `.json()` can parse Request body of type `application/json`
    *
@@ -464,7 +480,7 @@ var HonoRequest = class {
    * ```
    */
   json() {
-    return this.#cachedBody("text").then((text) => JSON.parse(text));
+    return this.#cachedBody('text').then((text) => JSON.parse(text));
   }
   /**
    * `.text()` can parse Request body of type `text/plain`
@@ -479,7 +495,7 @@ var HonoRequest = class {
    * ```
    */
   text() {
-    return this.#cachedBody("text");
+    return this.#cachedBody('text');
   }
   /**
    * `.arrayBuffer()` parse Request body as an `ArrayBuffer`
@@ -494,7 +510,7 @@ var HonoRequest = class {
    * ```
    */
   arrayBuffer() {
-    return this.#cachedBody("arrayBuffer");
+    return this.#cachedBody('arrayBuffer');
   }
   /**
    * Parses the request body as a `Blob`.
@@ -507,7 +523,7 @@ var HonoRequest = class {
    * @see https://hono.dev/docs/api/request#blob
    */
   blob() {
-    return this.#cachedBody("blob");
+    return this.#cachedBody('blob');
   }
   /**
    * Parses the request body as `FormData`.
@@ -520,7 +536,7 @@ var HonoRequest = class {
    * @see https://hono.dev/docs/api/request#formdata
    */
   formData() {
-    return this.#cachedBody("formData");
+    return this.#cachedBody('formData');
   }
   /**
    * Adds validated data to the request.
@@ -623,55 +639,58 @@ var HonoRequest = class {
 var HtmlEscapedCallbackPhase = {
   Stringify: 1,
   BeforeStream: 2,
-  Stream: 3
+  Stream: 3,
 };
 var raw = /* @__PURE__ */ __name((value, callbacks) => {
   const escapedString = new String(value);
   escapedString.isEscaped = true;
   escapedString.callbacks = callbacks;
   return escapedString;
-}, "raw");
-var resolveCallback = /* @__PURE__ */ __name(async (str, phase, preserveCallbacks, context, buffer) => {
-  if (typeof str === "object" && !(str instanceof String)) {
-    if (!(str instanceof Promise)) {
-      str = str.toString();
+}, 'raw');
+var resolveCallback = /* @__PURE__ */ __name(
+  async (str, phase, preserveCallbacks, context, buffer) => {
+    if (typeof str === 'object' && !(str instanceof String)) {
+      if (!(str instanceof Promise)) {
+        str = str.toString();
+      }
+      if (str instanceof Promise) {
+        str = await str;
+      }
     }
-    if (str instanceof Promise) {
-      str = await str;
+    const callbacks = str.callbacks;
+    if (!callbacks?.length) {
+      return Promise.resolve(str);
     }
-  }
-  const callbacks = str.callbacks;
-  if (!callbacks?.length) {
-    return Promise.resolve(str);
-  }
-  if (buffer) {
-    buffer[0] += str;
-  } else {
-    buffer = [str];
-  }
-  const resStr = Promise.all(callbacks.map((c) => c({ phase, buffer, context }))).then(
-    (res) => Promise.all(
-      res.filter(Boolean).map((str2) => resolveCallback(str2, phase, false, context, buffer))
-    ).then(() => buffer[0])
-  );
-  if (preserveCallbacks) {
-    return raw(await resStr, callbacks);
-  } else {
-    return resStr;
-  }
-}, "resolveCallback");
+    if (buffer) {
+      buffer[0] += str;
+    } else {
+      buffer = [str];
+    }
+    const resStr = Promise.all(callbacks.map((c) => c({ phase, buffer, context }))).then((res) =>
+      Promise.all(
+        res.filter(Boolean).map((str2) => resolveCallback(str2, phase, false, context, buffer)),
+      ).then(() => buffer[0]),
+    );
+    if (preserveCallbacks) {
+      return raw(await resStr, callbacks);
+    } else {
+      return resStr;
+    }
+  },
+  'resolveCallback',
+);
 
 // node_modules/hono/dist/context.js
-var TEXT_PLAIN = "text/plain; charset=UTF-8";
+var TEXT_PLAIN = 'text/plain; charset=UTF-8';
 var setDefaultContentType = /* @__PURE__ */ __name((contentType, headers) => {
   return {
-    "Content-Type": contentType,
-    ...headers
+    'Content-Type': contentType,
+    ...headers,
   };
-}, "setDefaultContentType");
+}, 'setDefaultContentType');
 var Context = class {
   static {
-    __name(this, "Context");
+    __name(this, 'Context');
   }
   #rawRequest;
   #req;
@@ -746,10 +765,10 @@ var Context = class {
    * @throws Will throw an error if the context does not have a FetchEvent.
    */
   get event() {
-    if (this.#executionCtx && "respondWith" in this.#executionCtx) {
+    if (this.#executionCtx && 'respondWith' in this.#executionCtx) {
       return this.#executionCtx;
     } else {
-      throw Error("This context has no FetchEvent");
+      throw Error('This context has no FetchEvent');
     }
   }
   /**
@@ -762,7 +781,7 @@ var Context = class {
     if (this.#executionCtx) {
       return this.#executionCtx;
     } else {
-      throw Error("This context has no ExecutionContext");
+      throw Error('This context has no ExecutionContext');
     }
   }
   /**
@@ -770,9 +789,9 @@ var Context = class {
    * The Response object for the current request.
    */
   get res() {
-    return this.#res ||= new Response(null, {
-      headers: this.#preparedHeaders ??= new Headers()
-    });
+    return (this.#res ||= new Response(null, {
+      headers: (this.#preparedHeaders ??= new Headers()),
+    }));
   }
   /**
    * Sets the Response object for the current request.
@@ -783,14 +802,14 @@ var Context = class {
     if (this.#res && _res) {
       _res = new Response(_res.body, _res);
       for (const [k, v] of this.#res.headers.entries()) {
-        if (k === "content-type") {
+        if (k === 'content-type') {
           continue;
         }
-        if (k === "set-cookie") {
+        if (k === 'set-cookie') {
           const cookies = this.#res.headers.getSetCookie();
-          _res.headers.delete("set-cookie");
+          _res.headers.delete('set-cookie');
           for (const cookie of cookies) {
-            _res.headers.append("set-cookie", cookie);
+            _res.headers.append('set-cookie', cookie);
           }
         } else {
           _res.headers.set(k, v);
@@ -815,20 +834,20 @@ var Context = class {
   render = /* @__PURE__ */ __name((...args) => {
     this.#renderer ??= (content) => this.html(content);
     return this.#renderer(...args);
-  }, "render");
+  }, 'render');
   /**
    * Sets the layout for the response.
    *
    * @param layout - The layout to set.
    * @returns The layout function.
    */
-  setLayout = /* @__PURE__ */ __name((layout) => this.#layout = layout, "setLayout");
+  setLayout = /* @__PURE__ */ __name((layout) => (this.#layout = layout), 'setLayout');
   /**
    * Gets the current layout for the response.
    *
    * @returns The current layout function.
    */
-  getLayout = /* @__PURE__ */ __name(() => this.#layout, "getLayout");
+  getLayout = /* @__PURE__ */ __name(() => this.#layout, 'getLayout');
   /**
    * `.setRenderer()` can set the layout in the custom middleware.
    *
@@ -852,7 +871,7 @@ var Context = class {
    */
   setRenderer = /* @__PURE__ */ __name((renderer) => {
     this.#renderer = renderer;
-  }, "setRenderer");
+  }, 'setRenderer');
   /**
    * `.header()` can set headers.
    *
@@ -873,7 +892,7 @@ var Context = class {
     if (this.finalized) {
       this.#res = new Response(this.#res.body, this.#res);
     }
-    const headers = this.#res ? this.#res.headers : this.#preparedHeaders ??= new Headers();
+    const headers = this.#res ? this.#res.headers : (this.#preparedHeaders ??= new Headers());
     if (value === void 0) {
       headers.delete(name);
     } else if (options?.append) {
@@ -881,10 +900,10 @@ var Context = class {
     } else {
       headers.set(name, value);
     }
-  }, "header");
+  }, 'header');
   status = /* @__PURE__ */ __name((status) => {
     this.#status = status;
-  }, "status");
+  }, 'status');
   /**
    * `.set()` can set the value specified by the key.
    *
@@ -901,7 +920,7 @@ var Context = class {
   set = /* @__PURE__ */ __name((key, value) => {
     this.#var ??= /* @__PURE__ */ new Map();
     this.#var.set(key, value);
-  }, "set");
+  }, 'set');
   /**
    * `.get()` can use the value specified by the key.
    *
@@ -917,7 +936,7 @@ var Context = class {
    */
   get = /* @__PURE__ */ __name((key) => {
     return this.#var ? this.#var.get(key) : void 0;
-  }, "get");
+  }, 'get');
   /**
    * `.var` can access the value of a variable.
    *
@@ -936,11 +955,13 @@ var Context = class {
     return Object.fromEntries(this.#var);
   }
   #newResponse(data, arg, headers) {
-    const responseHeaders = this.#res ? new Headers(this.#res.headers) : this.#preparedHeaders ?? new Headers();
-    if (typeof arg === "object" && "headers" in arg) {
+    const responseHeaders = this.#res
+      ? new Headers(this.#res.headers)
+      : (this.#preparedHeaders ?? new Headers());
+    if (typeof arg === 'object' && 'headers' in arg) {
       const argHeaders = arg.headers instanceof Headers ? arg.headers : new Headers(arg.headers);
       for (const [key, value] of argHeaders) {
-        if (key.toLowerCase() === "set-cookie") {
+        if (key.toLowerCase() === 'set-cookie') {
           responseHeaders.append(key, value);
         } else {
           responseHeaders.set(key, value);
@@ -949,7 +970,7 @@ var Context = class {
     }
     if (headers) {
       for (const [k, v] of Object.entries(headers)) {
-        if (typeof v === "string") {
+        if (typeof v === 'string') {
           responseHeaders.set(k, v);
         } else {
           responseHeaders.delete(k);
@@ -959,10 +980,10 @@ var Context = class {
         }
       }
     }
-    const status = typeof arg === "number" ? arg : arg?.status ?? this.#status;
+    const status = typeof arg === 'number' ? arg : (arg?.status ?? this.#status);
     return new Response(data, { status, headers: responseHeaders });
   }
-  newResponse = /* @__PURE__ */ __name((...args) => this.#newResponse(...args), "newResponse");
+  newResponse = /* @__PURE__ */ __name((...args) => this.#newResponse(...args), 'newResponse');
   /**
    * `.body()` can return the HTTP response.
    * You can set headers with `.header()` and set HTTP status code with `.status`.
@@ -984,7 +1005,10 @@ var Context = class {
    * })
    * ```
    */
-  body = /* @__PURE__ */ __name((data, arg, headers) => this.#newResponse(data, arg, headers), "body");
+  body = /* @__PURE__ */ __name(
+    (data, arg, headers) => this.#newResponse(data, arg, headers),
+    'body',
+  );
   /**
    * `.text()` can render text as `Content-Type:text/plain`.
    *
@@ -998,12 +1022,10 @@ var Context = class {
    * ```
    */
   text = /* @__PURE__ */ __name((text, arg, headers) => {
-    return !this.#preparedHeaders && !this.#status && !arg && !headers && !this.finalized ? new Response(text) : this.#newResponse(
-      text,
-      arg,
-      setDefaultContentType(TEXT_PLAIN, headers)
-    );
-  }, "text");
+    return !this.#preparedHeaders && !this.#status && !arg && !headers && !this.finalized
+      ? new Response(text)
+      : this.#newResponse(text, arg, setDefaultContentType(TEXT_PLAIN, headers));
+  }, 'text');
   /**
    * `.json()` can render JSON as `Content-Type:application/json`.
    *
@@ -1020,13 +1042,19 @@ var Context = class {
     return this.#newResponse(
       JSON.stringify(object),
       arg,
-      setDefaultContentType("application/json", headers)
+      setDefaultContentType('application/json', headers),
     );
-  }, "json");
+  }, 'json');
   html = /* @__PURE__ */ __name((html, arg, headers) => {
-    const res = /* @__PURE__ */ __name((html2) => this.#newResponse(html2, arg, setDefaultContentType("text/html; charset=UTF-8", headers)), "res");
-    return typeof html === "object" ? resolveCallback(html, HtmlEscapedCallbackPhase.Stringify, false, {}).then(res) : res(html);
-  }, "html");
+    const res = /* @__PURE__ */ __name(
+      (html2) =>
+        this.#newResponse(html2, arg, setDefaultContentType('text/html; charset=UTF-8', headers)),
+      'res',
+    );
+    return typeof html === 'object'
+      ? resolveCallback(html, HtmlEscapedCallbackPhase.Stringify, false, {}).then(res)
+      : res(html);
+  }, 'html');
   /**
    * `.redirect()` can Redirect, default status code is 302.
    *
@@ -1045,13 +1073,13 @@ var Context = class {
   redirect = /* @__PURE__ */ __name((location, status) => {
     const locationString = String(location);
     this.header(
-      "Location",
+      'Location',
       // Multibyes should be encoded
       // eslint-disable-next-line no-control-regex
-      !/[^\x00-\xFF]/.test(locationString) ? locationString : encodeURI(locationString)
+      !/[^\x00-\xFF]/.test(locationString) ? locationString : encodeURI(locationString),
     );
     return this.newResponse(null, status ?? 302);
-  }, "redirect");
+  }, 'redirect');
   /**
    * `.notFound()` can return the Not Found Response.
    *
@@ -1067,38 +1095,38 @@ var Context = class {
   notFound = /* @__PURE__ */ __name(() => {
     this.#notFoundHandler ??= () => new Response();
     return this.#notFoundHandler(this);
-  }, "notFound");
+  }, 'notFound');
 };
 
 // node_modules/hono/dist/router.js
-var METHOD_NAME_ALL = "ALL";
-var METHOD_NAME_ALL_LOWERCASE = "all";
-var METHODS = ["get", "post", "put", "delete", "options", "patch"];
-var MESSAGE_MATCHER_IS_ALREADY_BUILT = "Can not add a route since the matcher is already built.";
+var METHOD_NAME_ALL = 'ALL';
+var METHOD_NAME_ALL_LOWERCASE = 'all';
+var METHODS = ['get', 'post', 'put', 'delete', 'options', 'patch'];
+var MESSAGE_MATCHER_IS_ALREADY_BUILT = 'Can not add a route since the matcher is already built.';
 var UnsupportedPathError = class extends Error {
   static {
-    __name(this, "UnsupportedPathError");
+    __name(this, 'UnsupportedPathError');
   }
 };
 
 // node_modules/hono/dist/utils/constants.js
-var COMPOSED_HANDLER = "__COMPOSED_HANDLER";
+var COMPOSED_HANDLER = '__COMPOSED_HANDLER';
 
 // node_modules/hono/dist/hono-base.js
 var notFoundHandler = /* @__PURE__ */ __name((c) => {
-  return c.text("404 Not Found", 404);
-}, "notFoundHandler");
+  return c.text('404 Not Found', 404);
+}, 'notFoundHandler');
 var errorHandler = /* @__PURE__ */ __name((err, c) => {
-  if ("getResponse" in err) {
+  if ('getResponse' in err) {
     const res = err.getResponse();
     return c.newResponse(res.body, res);
   }
   console.error(err);
-  return c.text("Internal Server Error", 500);
-}, "errorHandler");
+  return c.text('Internal Server Error', 500);
+}, 'errorHandler');
 var Hono = class _Hono {
   static {
-    __name(this, "_Hono");
+    __name(this, '_Hono');
   }
   get;
   post;
@@ -1116,14 +1144,14 @@ var Hono = class _Hono {
   router;
   getPath;
   // Cannot use `#` because it requires visibility at JavaScript runtime.
-  _basePath = "/";
-  #path = "/";
+  _basePath = '/';
+  #path = '/';
   routes = [];
   constructor(options = {}) {
     const allMethods = [...METHODS, METHOD_NAME_ALL_LOWERCASE];
     allMethods.forEach((method) => {
       this[method] = (args1, ...args) => {
-        if (typeof args1 === "string") {
+        if (typeof args1 === 'string') {
           this.#path = args1;
         } else {
           this.#addRoute(method, this.#path, args1);
@@ -1146,10 +1174,10 @@ var Hono = class _Hono {
       return this;
     };
     this.use = (arg1, ...handlers) => {
-      if (typeof arg1 === "string") {
+      if (typeof arg1 === 'string') {
         this.#path = arg1;
       } else {
-        this.#path = "*";
+        this.#path = '*';
         handlers.unshift(arg1);
       }
       handlers.forEach((handler) => {
@@ -1159,12 +1187,12 @@ var Hono = class _Hono {
     };
     const { strict, ...optionsWithoutStrict } = options;
     Object.assign(this, optionsWithoutStrict);
-    this.getPath = strict ?? true ? options.getPath ?? getPath : getPathNoStrict;
+    this.getPath = (strict ?? true) ? (options.getPath ?? getPath) : getPathNoStrict;
   }
   #clone() {
     const clone = new _Hono({
       router: this.router,
-      getPath: this.getPath
+      getPath: this.getPath,
     });
     clone.errorHandler = this.errorHandler;
     clone.#notFoundHandler = this.#notFoundHandler;
@@ -1199,7 +1227,11 @@ var Hono = class _Hono {
       if (app2.errorHandler === errorHandler) {
         handler = r.handler;
       } else {
-        handler = /* @__PURE__ */ __name(async (c, next) => (await compose([], app2.errorHandler)(c, () => r.handler(c, next))).res, "handler");
+        handler = /* @__PURE__ */ __name(
+          async (c, next) =>
+            (await compose([], app2.errorHandler)(c, () => r.handler(c, next))).res,
+          'handler',
+        );
         handler[COMPOSED_HANDLER] = r.handler;
       }
       subApp.#addRoute(r.method, r.path, handler);
@@ -1243,7 +1275,7 @@ var Hono = class _Hono {
   onError = /* @__PURE__ */ __name((handler) => {
     this.errorHandler = handler;
     return this;
-  }, "onError");
+  }, 'onError');
   /**
    * `.notFound()` allows you to customize a Not Found Response.
    *
@@ -1262,7 +1294,7 @@ var Hono = class _Hono {
   notFound = /* @__PURE__ */ __name((handler) => {
     this.#notFoundHandler = handler;
     return this;
-  }, "notFound");
+  }, 'notFound');
   /**
    * `.mount()` allows you to mount applications built with other frameworks into your Hono application.
    *
@@ -1299,34 +1331,35 @@ var Hono = class _Hono {
     let replaceRequest;
     let optionHandler;
     if (options) {
-      if (typeof options === "function") {
+      if (typeof options === 'function') {
         optionHandler = options;
       } else {
         optionHandler = options.optionHandler;
         if (options.replaceRequest === false) {
-          replaceRequest = /* @__PURE__ */ __name((request) => request, "replaceRequest");
+          replaceRequest = /* @__PURE__ */ __name((request) => request, 'replaceRequest');
         } else {
           replaceRequest = options.replaceRequest;
         }
       }
     }
-    const getOptions = optionHandler ? (c) => {
-      const options2 = optionHandler(c);
-      return Array.isArray(options2) ? options2 : [options2];
-    } : (c) => {
-      let executionContext = void 0;
-      try {
-        executionContext = c.executionCtx;
-      } catch {
-      }
-      return [c.env, executionContext];
-    };
+    const getOptions = optionHandler
+      ? (c) => {
+          const options2 = optionHandler(c);
+          return Array.isArray(options2) ? options2 : [options2];
+        }
+      : (c) => {
+          let executionContext = void 0;
+          try {
+            executionContext = c.executionCtx;
+          } catch {}
+          return [c.env, executionContext];
+        };
     replaceRequest ||= (() => {
       const mergedPath = mergePath(this._basePath, path);
-      const pathPrefixLength = mergedPath === "/" ? 0 : mergedPath.length;
+      const pathPrefixLength = mergedPath === '/' ? 0 : mergedPath.length;
       return (request) => {
         const url = new URL(request.url);
-        url.pathname = url.pathname.slice(pathPrefixLength) || "/";
+        url.pathname = url.pathname.slice(pathPrefixLength) || '/';
         return new Request(url, request);
       };
     })();
@@ -1336,8 +1369,8 @@ var Hono = class _Hono {
         return res;
       }
       await next();
-    }, "handler");
-    this.#addRoute(METHOD_NAME_ALL, mergePath(path, "*"), handler);
+    }, 'handler');
+    this.#addRoute(METHOD_NAME_ALL, mergePath(path, '*'), handler);
     return this;
   }
   #addRoute(method, path, handler) {
@@ -1354,8 +1387,9 @@ var Hono = class _Hono {
     throw err;
   }
   #dispatch(request, executionCtx, env, method) {
-    if (method === "HEAD") {
-      return (async () => new Response(null, await this.#dispatch(request, executionCtx, env, "GET")))();
+    if (method === 'HEAD') {
+      return (async () =>
+        new Response(null, await this.#dispatch(request, executionCtx, env, 'GET')))();
     }
     const path = this.getPath(request, { env });
     const matchResult = this.router.match(method, path);
@@ -1364,7 +1398,7 @@ var Hono = class _Hono {
       matchResult,
       env,
       executionCtx,
-      notFoundHandler: this.#notFoundHandler
+      notFoundHandler: this.#notFoundHandler,
     });
     if (matchResult[0].length === 1) {
       let res;
@@ -1375,9 +1409,11 @@ var Hono = class _Hono {
       } catch (err) {
         return this.#handleError(err, c);
       }
-      return res instanceof Promise ? res.then(
-        (resolved) => resolved || (c.finalized ? c.res : this.#notFoundHandler(c))
-      ).catch((err) => this.#handleError(err, c)) : res ?? this.#notFoundHandler(c);
+      return res instanceof Promise
+        ? res
+            .then((resolved) => resolved || (c.finalized ? c.res : this.#notFoundHandler(c)))
+            .catch((err) => this.#handleError(err, c))
+        : (res ?? this.#notFoundHandler(c));
     }
     const composed = compose(matchResult[0], this.errorHandler, this.#notFoundHandler);
     return (async () => {
@@ -1385,7 +1421,7 @@ var Hono = class _Hono {
         const context = await composed(c);
         if (!context.finalized) {
           throw new Error(
-            "Context is not finalized. Did you forget to return a Response object or `await next()`?"
+            'Context is not finalized. Did you forget to return a Response object or `await next()`?',
           );
         }
         return context.res;
@@ -1407,7 +1443,7 @@ var Hono = class _Hono {
    */
   fetch = /* @__PURE__ */ __name((request, ...rest) => {
     return this.#dispatch(request, rest[1], rest[0], request.method);
-  }, "fetch");
+  }, 'fetch');
   /**
    * `.request()` is a useful method for testing.
    * You can pass a URL or pathname to send a GET request.
@@ -1427,13 +1463,13 @@ var Hono = class _Hono {
     input = input.toString();
     return this.fetch(
       new Request(
-        /^https?:\/\//.test(input) ? input : `http://localhost${mergePath("/", input)}`,
-        requestInit
+        /^https?:\/\//.test(input) ? input : `http://localhost${mergePath('/', input)}`,
+        requestInit,
       ),
       Env,
-      executionCtx
+      executionCtx,
     );
-  }, "request");
+  }, 'request');
   /**
    * `.fire()` automatically adds a global fetch event listener.
    * This can be useful for environments that adhere to the Service Worker API, such as non-ES module Cloudflare Workers.
@@ -1452,17 +1488,17 @@ var Hono = class _Hono {
    * @see https://developers.cloudflare.com/workers/reference/migrate-to-module-workers/
    */
   fire = /* @__PURE__ */ __name(() => {
-    addEventListener("fetch", (event) => {
+    addEventListener('fetch', (event) => {
       event.respondWith(this.#dispatch(event.request, event, void 0, event.request.method));
     });
-  }, "fire");
+  }, 'fire');
 };
 
 // node_modules/hono/dist/router/reg-exp-router/matcher.js
 var emptyParam = [];
 function match(method, path) {
   const matchers = this.buildAllMatchers();
-  const match2 = /* @__PURE__ */ __name(((method2, path2) => {
+  const match2 = /* @__PURE__ */ __name((method2, path2) => {
     const matcher = matchers[method2] || matchers[METHOD_NAME_ALL];
     const staticMatch = matcher[2][path2];
     if (staticMatch) {
@@ -1472,23 +1508,23 @@ function match(method, path) {
     if (!match3) {
       return [[], emptyParam];
     }
-    const index = match3.indexOf("", 1);
+    const index = match3.indexOf('', 1);
     return [matcher[1][index], match3];
-  }), "match2");
+  }, 'match2');
   this.match = match2;
   return match2(method, path);
 }
-__name(match, "match");
+__name(match, 'match');
 
 // node_modules/hono/dist/router/reg-exp-router/node.js
-var LABEL_REG_EXP_STR = "[^/]+";
-var ONLY_WILDCARD_REG_EXP_STR = ".*";
-var TAIL_WILDCARD_REG_EXP_STR = "(?:|/.*)";
+var LABEL_REG_EXP_STR = '[^/]+';
+var ONLY_WILDCARD_REG_EXP_STR = '.*';
+var TAIL_WILDCARD_REG_EXP_STR = '(?:|/.*)';
 var PATH_ERROR = /* @__PURE__ */ Symbol();
-var regExpMetaChars = new Set(".\\+*[^]$()");
+var regExpMetaChars = new Set('.\\+*[^]$()');
 function compareKey(a, b) {
   if (a.length === 1) {
-    return b.length === 1 ? a < b ? -1 : 1 : -1;
+    return b.length === 1 ? (a < b ? -1 : 1) : -1;
   }
   if (b.length === 1) {
     return 1;
@@ -1503,12 +1539,12 @@ function compareKey(a, b) {
   } else if (b === LABEL_REG_EXP_STR) {
     return -1;
   }
-  return a.length === b.length ? a < b ? -1 : 1 : b.length - a.length;
+  return a.length === b.length ? (a < b ? -1 : 1) : b.length - a.length;
 }
-__name(compareKey, "compareKey");
+__name(compareKey, 'compareKey');
 var Node = class _Node {
   static {
-    __name(this, "_Node");
+    __name(this, '_Node');
   }
   #index;
   #varIndex;
@@ -1525,44 +1561,56 @@ var Node = class _Node {
       return;
     }
     const [token, ...restTokens] = tokens;
-    const pattern = token === "*" ? restTokens.length === 0 ? ["", "", ONLY_WILDCARD_REG_EXP_STR] : ["", "", LABEL_REG_EXP_STR] : token === "/*" ? ["", "", TAIL_WILDCARD_REG_EXP_STR] : token.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
+    const pattern =
+      token === '*'
+        ? restTokens.length === 0
+          ? ['', '', ONLY_WILDCARD_REG_EXP_STR]
+          : ['', '', LABEL_REG_EXP_STR]
+        : token === '/*'
+          ? ['', '', TAIL_WILDCARD_REG_EXP_STR]
+          : token.match(/^\:([^\{\}]+)(?:\{(.+)\})?$/);
     let node;
     if (pattern) {
       const name = pattern[1];
       let regexpStr = pattern[2] || LABEL_REG_EXP_STR;
       if (name && pattern[2]) {
-        if (regexpStr === ".*") {
+        if (regexpStr === '.*') {
           throw PATH_ERROR;
         }
-        regexpStr = regexpStr.replace(/^\((?!\?:)(?=[^)]+\)$)/, "(?:");
+        regexpStr = regexpStr.replace(/^\((?!\?:)(?=[^)]+\)$)/, '(?:');
         if (/\((?!\?:)/.test(regexpStr)) {
           throw PATH_ERROR;
         }
       }
       node = this.#children[regexpStr];
       if (!node) {
-        if (Object.keys(this.#children).some(
-          (k) => k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR
-        )) {
+        if (
+          Object.keys(this.#children).some(
+            (k) => k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR,
+          )
+        ) {
           throw PATH_ERROR;
         }
         if (pathErrorCheckOnly) {
           return;
         }
         node = this.#children[regexpStr] = new _Node();
-        if (name !== "") {
+        if (name !== '') {
           node.#varIndex = context.varIndex++;
         }
       }
-      if (!pathErrorCheckOnly && name !== "") {
+      if (!pathErrorCheckOnly && name !== '') {
         paramMap.push([name, node.#varIndex]);
       }
     } else {
       node = this.#children[token];
       if (!node) {
-        if (Object.keys(this.#children).some(
-          (k) => k.length > 1 && k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR
-        )) {
+        if (
+          Object.keys(this.#children).some(
+            (k) =>
+              k.length > 1 && k !== ONLY_WILDCARD_REG_EXP_STR && k !== TAIL_WILDCARD_REG_EXP_STR,
+          )
+        ) {
           throw PATH_ERROR;
         }
         if (pathErrorCheckOnly) {
@@ -1577,25 +1625,31 @@ var Node = class _Node {
     const childKeys = Object.keys(this.#children).sort(compareKey);
     const strList = childKeys.map((k) => {
       const c = this.#children[k];
-      return (typeof c.#varIndex === "number" ? `(${k})@${c.#varIndex}` : regExpMetaChars.has(k) ? `\\${k}` : k) + c.buildRegExpStr();
+      return (
+        (typeof c.#varIndex === 'number'
+          ? `(${k})@${c.#varIndex}`
+          : regExpMetaChars.has(k)
+            ? `\\${k}`
+            : k) + c.buildRegExpStr()
+      );
     });
-    if (typeof this.#index === "number") {
+    if (typeof this.#index === 'number') {
       strList.unshift(`#${this.#index}`);
     }
     if (strList.length === 0) {
-      return "";
+      return '';
     }
     if (strList.length === 1) {
       return strList[0];
     }
-    return "(?:" + strList.join("|") + ")";
+    return '(?:' + strList.join('|') + ')';
   }
 };
 
 // node_modules/hono/dist/router/reg-exp-router/trie.js
 var Trie = class {
   static {
-    __name(this, "Trie");
+    __name(this, 'Trie');
   }
   #context = { varIndex: 0 };
   #root = new Node();
@@ -1630,7 +1684,7 @@ var Trie = class {
   }
   buildRegExp() {
     let regexp = this.#root.buildRegExpStr();
-    if (regexp === "") {
+    if (regexp === '') {
       return [/^$/, [], []];
     }
     let captureIndex = 0;
@@ -1639,13 +1693,13 @@ var Trie = class {
     regexp = regexp.replace(/#(\d+)|@(\d+)|\.\*\$/g, (_, handlerIndex, paramIndex) => {
       if (handlerIndex !== void 0) {
         indexReplacementMap[++captureIndex] = Number(handlerIndex);
-        return "$()";
+        return '$()';
       }
       if (paramIndex !== void 0) {
         paramReplacementMap[Number(paramIndex)] = ++captureIndex;
-        return "";
+        return '';
       }
-      return "";
+      return '';
     });
     return [new RegExp(`^${regexp}`), indexReplacementMap, paramReplacementMap];
   }
@@ -1655,34 +1709,38 @@ var Trie = class {
 var nullMatcher = [/^$/, [], /* @__PURE__ */ Object.create(null)];
 var wildcardRegExpCache = /* @__PURE__ */ Object.create(null);
 function buildWildcardRegExp(path) {
-  return wildcardRegExpCache[path] ??= new RegExp(
-    path === "*" ? "" : `^${path.replace(
-      /\/\*$|([.\\+*[^\]$()])/g,
-      (_, metaChar) => metaChar ? `\\${metaChar}` : "(?:|/.*)"
-    )}$`
-  );
+  return (wildcardRegExpCache[path] ??= new RegExp(
+    path === '*'
+      ? ''
+      : `^${path.replace(/\/\*$|([.\\+*[^\]$()])/g, (_, metaChar) =>
+          metaChar ? `\\${metaChar}` : '(?:|/.*)',
+        )}$`,
+  ));
 }
-__name(buildWildcardRegExp, "buildWildcardRegExp");
+__name(buildWildcardRegExp, 'buildWildcardRegExp');
 function clearWildcardRegExpCache() {
   wildcardRegExpCache = /* @__PURE__ */ Object.create(null);
 }
-__name(clearWildcardRegExpCache, "clearWildcardRegExpCache");
+__name(clearWildcardRegExpCache, 'clearWildcardRegExpCache');
 function buildMatcherFromPreprocessedRoutes(routes) {
   const trie = new Trie();
   const handlerData = [];
   if (routes.length === 0) {
     return nullMatcher;
   }
-  const routesWithStaticPathFlag = routes.map(
-    (route) => [!/\*|\/:/.test(route[0]), ...route]
-  ).sort(
-    ([isStaticA, pathA], [isStaticB, pathB]) => isStaticA ? 1 : isStaticB ? -1 : pathA.length - pathB.length
-  );
+  const routesWithStaticPathFlag = routes
+    .map((route) => [!/\*|\/:/.test(route[0]), ...route])
+    .sort(([isStaticA, pathA], [isStaticB, pathB]) =>
+      isStaticA ? 1 : isStaticB ? -1 : pathA.length - pathB.length,
+    );
   const staticMap = /* @__PURE__ */ Object.create(null);
   for (let i = 0, j = -1, len = routesWithStaticPathFlag.length; i < len; i++) {
     const [pathErrorCheckOnly, path, handlers] = routesWithStaticPathFlag[i];
     if (pathErrorCheckOnly) {
-      staticMap[path] = [handlers.map(([h]) => [h, /* @__PURE__ */ Object.create(null)]), emptyParam];
+      staticMap[path] = [
+        handlers.map(([h]) => [h, /* @__PURE__ */ Object.create(null)]),
+        emptyParam,
+      ];
     } else {
       j++;
     }
@@ -1724,7 +1782,7 @@ function buildMatcherFromPreprocessedRoutes(routes) {
   }
   return [regexp, handlerMap, staticMap];
 }
-__name(buildMatcherFromPreprocessedRoutes, "buildMatcherFromPreprocessedRoutes");
+__name(buildMatcherFromPreprocessedRoutes, 'buildMatcherFromPreprocessedRoutes');
 function findMiddleware(middleware, path) {
   if (!middleware) {
     return void 0;
@@ -1736,12 +1794,12 @@ function findMiddleware(middleware, path) {
   }
   return void 0;
 }
-__name(findMiddleware, "findMiddleware");
+__name(findMiddleware, 'findMiddleware');
 var RegExpRouter = class {
   static {
-    __name(this, "RegExpRouter");
+    __name(this, 'RegExpRouter');
   }
-  name = "RegExpRouter";
+  name = 'RegExpRouter';
   #middleware;
   #routes;
   constructor() {
@@ -1755,7 +1813,6 @@ var RegExpRouter = class {
       throw new Error(MESSAGE_MATCHER_IS_ALREADY_BUILT);
     }
     if (!middleware[method]) {
-      ;
       [middleware, routes].forEach((handlerMap) => {
         handlerMap[method] = /* @__PURE__ */ Object.create(null);
         Object.keys(handlerMap[METHOD_NAME_ALL]).forEach((p) => {
@@ -1763,18 +1820,24 @@ var RegExpRouter = class {
         });
       });
     }
-    if (path === "/*") {
-      path = "*";
+    if (path === '/*') {
+      path = '*';
     }
     const paramCount = (path.match(/\/:/g) || []).length;
     if (/\*$/.test(path)) {
       const re = buildWildcardRegExp(path);
       if (method === METHOD_NAME_ALL) {
         Object.keys(middleware).forEach((m) => {
-          middleware[m][path] ||= findMiddleware(middleware[m], path) || findMiddleware(middleware[METHOD_NAME_ALL], path) || [];
+          middleware[m][path] ||=
+            findMiddleware(middleware[m], path) ||
+            findMiddleware(middleware[METHOD_NAME_ALL], path) ||
+            [];
         });
       } else {
-        middleware[method][path] ||= findMiddleware(middleware[method], path) || findMiddleware(middleware[METHOD_NAME_ALL], path) || [];
+        middleware[method][path] ||=
+          findMiddleware(middleware[method], path) ||
+          findMiddleware(middleware[METHOD_NAME_ALL], path) ||
+          [];
       }
       Object.keys(middleware).forEach((m) => {
         if (method === METHOD_NAME_ALL || method === m) {
@@ -1786,7 +1849,7 @@ var RegExpRouter = class {
       Object.keys(routes).forEach((m) => {
         if (method === METHOD_NAME_ALL || method === m) {
           Object.keys(routes[m]).forEach(
-            (p) => re.test(p) && routes[m][p].push([handler, paramCount])
+            (p) => re.test(p) && routes[m][p].push([handler, paramCount]),
           );
         }
       });
@@ -1798,7 +1861,9 @@ var RegExpRouter = class {
       Object.keys(routes).forEach((m) => {
         if (method === METHOD_NAME_ALL || method === m) {
           routes[m][path2] ||= [
-            ...findMiddleware(middleware[m], path2) || findMiddleware(middleware[METHOD_NAME_ALL], path2) || []
+            ...(findMiddleware(middleware[m], path2) ||
+              findMiddleware(middleware[METHOD_NAME_ALL], path2) ||
+              []),
           ];
           routes[m][path2].push([handler, paramCount - len + i + 1]);
         }
@@ -1808,9 +1873,11 @@ var RegExpRouter = class {
   match = match;
   buildAllMatchers() {
     const matchers = /* @__PURE__ */ Object.create(null);
-    Object.keys(this.#routes).concat(Object.keys(this.#middleware)).forEach((method) => {
-      matchers[method] ||= this.#buildMatcher(method);
-    });
+    Object.keys(this.#routes)
+      .concat(Object.keys(this.#middleware))
+      .forEach((method) => {
+        matchers[method] ||= this.#buildMatcher(method);
+      });
     this.#middleware = this.#routes = void 0;
     clearWildcardRegExpCache();
     return matchers;
@@ -1819,13 +1886,15 @@ var RegExpRouter = class {
     const routes = [];
     let hasOwnRoute = method === METHOD_NAME_ALL;
     [this.#middleware, this.#routes].forEach((r) => {
-      const ownRoute = r[method] ? Object.keys(r[method]).map((path) => [path, r[method][path]]) : [];
+      const ownRoute = r[method]
+        ? Object.keys(r[method]).map((path) => [path, r[method][path]])
+        : [];
       if (ownRoute.length !== 0) {
         hasOwnRoute ||= true;
         routes.push(...ownRoute);
       } else if (method !== METHOD_NAME_ALL) {
         routes.push(
-          ...Object.keys(r[METHOD_NAME_ALL]).map((path) => [path, r[METHOD_NAME_ALL][path]])
+          ...Object.keys(r[METHOD_NAME_ALL]).map((path) => [path, r[METHOD_NAME_ALL][path]]),
         );
       }
     });
@@ -1840,9 +1909,9 @@ var RegExpRouter = class {
 // node_modules/hono/dist/router/smart-router/router.js
 var SmartRouter = class {
   static {
-    __name(this, "SmartRouter");
+    __name(this, 'SmartRouter');
   }
-  name = "SmartRouter";
+  name = 'SmartRouter';
   #routers = [];
   #routes = [];
   constructor(init) {
@@ -1856,7 +1925,7 @@ var SmartRouter = class {
   }
   match(method, path) {
     if (!this.#routes) {
-      throw new Error("Fatal error");
+      throw new Error('Fatal error');
     }
     const routers = this.#routers;
     const routes = this.#routes;
@@ -1882,14 +1951,14 @@ var SmartRouter = class {
       break;
     }
     if (i === len) {
-      throw new Error("Fatal error");
+      throw new Error('Fatal error');
     }
     this.name = `SmartRouter + ${this.activeRouter.name}`;
     return res;
   }
   get activeRouter() {
     if (this.#routes || this.#routers.length !== 1) {
-      throw new Error("No active router has been determined yet.");
+      throw new Error('No active router has been determined yet.');
     }
     return this.#routers[0];
   }
@@ -1899,7 +1968,7 @@ var SmartRouter = class {
 var emptyParams = /* @__PURE__ */ Object.create(null);
 var Node2 = class _Node2 {
   static {
-    __name(this, "_Node");
+    __name(this, '_Node');
   }
   #methods;
   #children;
@@ -1944,8 +2013,8 @@ var Node2 = class _Node2 {
       [method]: {
         handler,
         possibleKeys: possibleKeys.filter((v, i, a) => a.indexOf(v) === i),
-        score: this.#order
-      }
+        score: this.#order,
+      },
     });
     return curNode;
   }
@@ -1958,11 +2027,12 @@ var Node2 = class _Node2 {
       if (handlerSet !== void 0) {
         handlerSet.params = /* @__PURE__ */ Object.create(null);
         handlerSets.push(handlerSet);
-        if (nodeParams !== emptyParams || params && params !== emptyParams) {
+        if (nodeParams !== emptyParams || (params && params !== emptyParams)) {
           for (let i2 = 0, len2 = handlerSet.possibleKeys.length; i2 < len2; i2++) {
             const key = handlerSet.possibleKeys[i2];
             const processed = processedSet[handlerSet.score];
-            handlerSet.params[key] = params?.[key] && !processed ? params[key] : nodeParams[key] ?? params?.[key];
+            handlerSet.params[key] =
+              params?.[key] && !processed ? params[key] : (nodeParams[key] ?? params?.[key]);
             processedSet[handlerSet.score] = true;
           }
         }
@@ -1987,9 +2057,9 @@ var Node2 = class _Node2 {
         if (nextNode) {
           nextNode.#params = node.#params;
           if (isLast) {
-            if (nextNode.#children["*"]) {
+            if (nextNode.#children['*']) {
               handlerSets.push(
-                ...this.#getHandlerSets(nextNode.#children["*"], method, node.#params)
+                ...this.#getHandlerSets(nextNode.#children['*'], method, node.#params),
               );
             }
             handlerSets.push(...this.#getHandlerSets(nextNode, method, node.#params));
@@ -2000,8 +2070,8 @@ var Node2 = class _Node2 {
         for (let k = 0, len3 = node.#patterns.length; k < len3; k++) {
           const pattern = node.#patterns[k];
           const params = node.#params === emptyParams ? {} : { ...node.#params };
-          if (pattern === "*") {
-            const astNode = node.#children["*"];
+          if (pattern === '*') {
+            const astNode = node.#children['*'];
             if (astNode) {
               handlerSets.push(...this.#getHandlerSets(astNode, method, node.#params));
               astNode.#params = params;
@@ -2014,7 +2084,7 @@ var Node2 = class _Node2 {
             continue;
           }
           const child = node.#children[key];
-          const restPathString = parts.slice(i).join("/");
+          const restPathString = parts.slice(i).join('/');
           if (matcher instanceof RegExp) {
             const m = matcher.exec(restPathString);
             if (m) {
@@ -2023,7 +2093,7 @@ var Node2 = class _Node2 {
               if (Object.keys(child.#children).length) {
                 child.#params = params;
                 const componentCount = m[0].match(/\//)?.length ?? 0;
-                const targetCurNodes = curNodesQueue[componentCount] ||= [];
+                const targetCurNodes = (curNodesQueue[componentCount] ||= []);
                 targetCurNodes.push(child);
               }
               continue;
@@ -2033,9 +2103,9 @@ var Node2 = class _Node2 {
             params[name] = part;
             if (isLast) {
               handlerSets.push(...this.#getHandlerSets(child, method, params, node.#params));
-              if (child.#children["*"]) {
+              if (child.#children['*']) {
                 handlerSets.push(
-                  ...this.#getHandlerSets(child.#children["*"], method, params, node.#params)
+                  ...this.#getHandlerSets(child.#children['*'], method, params, node.#params),
                 );
               }
             } else {
@@ -2059,9 +2129,9 @@ var Node2 = class _Node2 {
 // node_modules/hono/dist/router/trie-router/router.js
 var TrieRouter = class {
   static {
-    __name(this, "TrieRouter");
+    __name(this, 'TrieRouter');
   }
-  name = "TrieRouter";
+  name = 'TrieRouter';
   #node;
   constructor() {
     this.#node = new Node2();
@@ -2084,7 +2154,7 @@ var TrieRouter = class {
 // node_modules/hono/dist/hono.js
 var Hono2 = class extends Hono {
   static {
-    __name(this, "Hono");
+    __name(this, 'Hono');
   }
   /**
    * Creates an instance of the Hono class.
@@ -2093,39 +2163,41 @@ var Hono2 = class extends Hono {
    */
   constructor(options = {}) {
     super(options);
-    this.router = options.router ?? new SmartRouter({
-      routers: [new RegExpRouter(), new TrieRouter()]
-    });
+    this.router =
+      options.router ??
+      new SmartRouter({
+        routers: [new RegExpRouter(), new TrieRouter()],
+      });
   }
 };
 
 // node_modules/hono/dist/middleware/cors/index.js
 var cors = /* @__PURE__ */ __name((options) => {
   const defaults = {
-    origin: "*",
-    allowMethods: ["GET", "HEAD", "PUT", "POST", "DELETE", "PATCH"],
+    origin: '*',
+    allowMethods: ['GET', 'HEAD', 'PUT', 'POST', 'DELETE', 'PATCH'],
     allowHeaders: [],
-    exposeHeaders: []
+    exposeHeaders: [],
   };
   const opts = {
     ...defaults,
-    ...options
+    ...options,
   };
   const findAllowOrigin = ((optsOrigin) => {
-    if (typeof optsOrigin === "string") {
-      if (optsOrigin === "*") {
+    if (typeof optsOrigin === 'string') {
+      if (optsOrigin === '*') {
         return () => optsOrigin;
       } else {
-        return (origin) => optsOrigin === origin ? origin : null;
+        return (origin) => (optsOrigin === origin ? origin : null);
       }
-    } else if (typeof optsOrigin === "function") {
+    } else if (typeof optsOrigin === 'function') {
       return optsOrigin;
     } else {
-      return (origin) => optsOrigin.includes(origin) ? origin : null;
+      return (origin) => (optsOrigin.includes(origin) ? origin : null);
     }
   })(opts.origin);
   const findAllowMethods = ((optsAllowMethods) => {
-    if (typeof optsAllowMethods === "function") {
+    if (typeof optsAllowMethods === 'function') {
       return optsAllowMethods;
     } else if (Array.isArray(optsAllowMethods)) {
       return () => optsAllowMethods;
@@ -2137,98 +2209,140 @@ var cors = /* @__PURE__ */ __name((options) => {
     function set(key, value) {
       c.res.headers.set(key, value);
     }
-    __name(set, "set");
-    const allowOrigin = await findAllowOrigin(c.req.header("origin") || "", c);
+    __name(set, 'set');
+    const allowOrigin = await findAllowOrigin(c.req.header('origin') || '', c);
     if (allowOrigin) {
-      set("Access-Control-Allow-Origin", allowOrigin);
+      set('Access-Control-Allow-Origin', allowOrigin);
     }
     if (opts.credentials) {
-      set("Access-Control-Allow-Credentials", "true");
+      set('Access-Control-Allow-Credentials', 'true');
     }
     if (opts.exposeHeaders?.length) {
-      set("Access-Control-Expose-Headers", opts.exposeHeaders.join(","));
+      set('Access-Control-Expose-Headers', opts.exposeHeaders.join(','));
     }
-    if (c.req.method === "OPTIONS") {
-      if (opts.origin !== "*") {
-        set("Vary", "Origin");
+    if (c.req.method === 'OPTIONS') {
+      if (opts.origin !== '*') {
+        set('Vary', 'Origin');
       }
       if (opts.maxAge != null) {
-        set("Access-Control-Max-Age", opts.maxAge.toString());
+        set('Access-Control-Max-Age', opts.maxAge.toString());
       }
-      const allowMethods = await findAllowMethods(c.req.header("origin") || "", c);
+      const allowMethods = await findAllowMethods(c.req.header('origin') || '', c);
       if (allowMethods.length) {
-        set("Access-Control-Allow-Methods", allowMethods.join(","));
+        set('Access-Control-Allow-Methods', allowMethods.join(','));
       }
       let headers = opts.allowHeaders;
       if (!headers?.length) {
-        const requestHeaders = c.req.header("Access-Control-Request-Headers");
+        const requestHeaders = c.req.header('Access-Control-Request-Headers');
         if (requestHeaders) {
           headers = requestHeaders.split(/\s*,\s*/);
         }
       }
       if (headers?.length) {
-        set("Access-Control-Allow-Headers", headers.join(","));
-        c.res.headers.append("Vary", "Access-Control-Request-Headers");
+        set('Access-Control-Allow-Headers', headers.join(','));
+        c.res.headers.append('Vary', 'Access-Control-Request-Headers');
       }
-      c.res.headers.delete("Content-Length");
-      c.res.headers.delete("Content-Type");
+      c.res.headers.delete('Content-Length');
+      c.res.headers.delete('Content-Type');
       return new Response(null, {
         headers: c.res.headers,
         status: 204,
-        statusText: "No Content"
+        statusText: 'No Content',
       });
     }
     await next();
-    if (opts.origin !== "*") {
-      c.header("Vary", "Origin", { append: true });
+    if (opts.origin !== '*') {
+      c.header('Vary', 'Origin', { append: true });
     }
-  }, "cors2");
-}, "cors");
+  }, 'cors2');
+}, 'cors');
 
 // src/index.ts
 var app = new Hono2();
-app.use("*", cors({
-  origin: ["https://preludiolab.com", "https://www.preludiolab.com", "http://localhost:3000"],
-  allowMethods: ["GET", "HEAD", "OPTIONS"],
-  exposeHeaders: ["Content-Range", "Accept-Ranges", "Content-Length"],
-  maxAge: 86400
-}));
-app.get("/:type/:file{.+}", async (c) => {
+app.use(
+  '*',
+  cors({
+    origin: ['https://preludiolab.com', 'https://www.preludiolab.com', 'http://localhost:3000'],
+    allowMethods: ['GET', 'HEAD', 'OPTIONS'],
+    exposeHeaders: ['Content-Range', 'Accept-Ranges', 'Content-Length', 'ETag'],
+    maxAge: 86400,
+  }),
+);
+app.get('/:type/:file{.+}', async (c) => {
   const { type, file } = c.req.param();
+  if (file.includes('..')) {
+    return c.text('Invalid Path', 400);
+  }
   const key = `public/${type}/${file}`;
   console.log(`[CDN] Requesting: ${key}`);
   try {
-    const object = await c.env.R2_BUCKET.get(key);
+    const rangeHeader = c.req.header('Range');
+    const r2Options = {};
+    if (rangeHeader && rangeHeader.startsWith('bytes=')) {
+      const parts = rangeHeader.replace('bytes=', '').split('-');
+      if (parts[0] === '' && parts[1]) {
+        r2Options.range = { suffix: parseInt(parts[1], 10) };
+      } else if (parts[0] !== '') {
+        const offset = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : void 0;
+        if (end !== void 0) {
+          r2Options.range = { offset, length: end - offset + 1 };
+        } else {
+          r2Options.range = { offset };
+        }
+      }
+    }
+    const object = await c.env.R2_BUCKET.get(key, r2Options);
     if (!object) {
       console.warn(`[CDN] Not Found: ${key}`);
-      return c.text("Not Found", 404);
+      return c.text('Not Found', 404);
     }
     const headers = new Headers();
     object.writeHttpMetadata(headers);
-    headers.set("etag", object.httpEtag);
-    headers.set("X-Content-Type-Options", "nosniff");
-    headers.set("Access-Origin-Resource-Policy", "same-site");
-    if (key.endsWith(".svg")) {
-      headers.set("Content-Type", "image/svg+xml");
-    } else if (key.endsWith(".mp3")) {
-      headers.set("Content-Type", "audio/mpeg");
+    headers.set('etag', object.httpEtag);
+    if (!headers.has('content-type')) {
+      if (key.endsWith('.svg')) headers.set('Content-Type', 'image/svg+xml');
+      else if (key.endsWith('.mp3')) headers.set('Content-Type', 'audio/mpeg');
     }
-    headers.set("Cache-Control", "public, max-age=31536000, immutable");
-    if (!object.body) {
-      console.warn(`[CDN] No Body for: ${key}`);
-      return c.body(null, 204);
+    headers.set('X-Content-Type-Options', 'nosniff');
+    const origin = c.req.header('Origin');
+    if (origin === 'http://localhost:3000') {
+      headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    } else {
+      headers.set('Cross-Origin-Resource-Policy', 'same-site');
     }
-    console.log(`[CDN] Serving (Full): ${key}, Type: ${headers.get("Content-Type")}`);
-    return new Response(object.body, {
-      headers,
-      status: 200
-    });
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    headers.set('Accept-Ranges', 'bytes');
+    if (object.range) {
+      const range = object.range;
+      let rangeStart;
+      let rangeEnd;
+      if (range.suffix !== void 0) {
+        rangeStart = object.size - range.suffix;
+        rangeEnd = object.size - 1;
+      } else {
+        rangeStart = range.offset ?? 0;
+        rangeEnd = (range.offset ?? 0) + (range.length ?? object.size - (range.offset ?? 0)) - 1;
+      }
+      headers.set('Content-Range', `bytes ${rangeStart}-${rangeEnd}/${object.size}`);
+      headers.set('Content-Length', (rangeEnd - rangeStart + 1).toString());
+      return new Response(object.body, {
+        headers,
+        status: 206,
+      });
+    } else {
+      headers.set('Content-Length', object.size.toString());
+      return new Response(object.body, {
+        headers,
+        status: 200,
+      });
+    }
   } catch (e) {
     console.error(`[CDN] Critical Error:`, e);
-    return c.text("Internal Server Error", 500);
+    return c.text('Internal Server Error', 500);
   }
 });
-app.get("/", (c) => c.text("PreludioLab CDN Proxy is active."));
+app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'));
 var src_default = app;
 
 // node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
@@ -2239,20 +2353,17 @@ var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
     try {
       if (request.body !== null && !request.bodyUsed) {
         const reader = request.body.getReader();
-        while (!(await reader.read()).done) {
-        }
+        while (!(await reader.read()).done) {}
       }
     } catch (e) {
-      console.error("Failed to drain the unused request body.", e);
+      console.error('Failed to drain the unused request body.', e);
     }
   }
-}, "drainBody");
+}, 'drainBody');
 var middleware_ensure_req_body_drained_default = drainBody;
 
-// .wrangler/tmp/bundle-RfTV7F/middleware-insertion-facade.js
-var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
-  middleware_ensure_req_body_drained_default
-];
+// .wrangler/tmp/bundle-d09E7d/middleware-insertion-facade.js
+var __INTERNAL_WRANGLER_MIDDLEWARE__ = [middleware_ensure_req_body_drained_default];
 var middleware_insertion_facade_default = src_default;
 
 // node_modules/wrangler/templates/middleware/common.ts
@@ -2260,27 +2371,27 @@ var __facade_middleware__ = [];
 function __facade_register__(...args) {
   __facade_middleware__.push(...args.flat());
 }
-__name(__facade_register__, "__facade_register__");
+__name(__facade_register__, '__facade_register__');
 function __facade_invokeChain__(request, env, ctx, dispatch, middlewareChain) {
   const [head, ...tail] = middlewareChain;
   const middlewareCtx = {
     dispatch,
     next(newRequest, newEnv) {
       return __facade_invokeChain__(newRequest, newEnv, ctx, dispatch, tail);
-    }
+    },
   };
   return head(request, env, ctx, middlewareCtx);
 }
-__name(__facade_invokeChain__, "__facade_invokeChain__");
+__name(__facade_invokeChain__, '__facade_invokeChain__');
 function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
   return __facade_invokeChain__(request, env, ctx, dispatch, [
     ...__facade_middleware__,
-    finalMiddleware
+    finalMiddleware,
   ]);
 }
-__name(__facade_invoke__, "__facade_invoke__");
+__name(__facade_invoke__, '__facade_invoke__');
 
-// .wrangler/tmp/bundle-RfTV7F/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-d09E7d/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
@@ -2288,50 +2399,55 @@ var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
     this.#noRetry = noRetry;
   }
   static {
-    __name(this, "__Facade_ScheduledController__");
+    __name(this, '__Facade_ScheduledController__');
   }
   #noRetry;
   noRetry() {
     if (!(this instanceof ___Facade_ScheduledController__)) {
-      throw new TypeError("Illegal invocation");
+      throw new TypeError('Illegal invocation');
     }
     this.#noRetry();
   }
 };
 function wrapExportedHandler(worker) {
-  if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
+  if (
+    __INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 ||
+    __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0
+  ) {
     return worker;
   }
   for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
     __facade_register__(middleware);
   }
-  const fetchDispatcher = /* @__PURE__ */ __name(function(request, env, ctx) {
+  const fetchDispatcher = /* @__PURE__ */ __name(function (request, env, ctx) {
     if (worker.fetch === void 0) {
-      throw new Error("Handler does not export a fetch() function.");
+      throw new Error('Handler does not export a fetch() function.');
     }
     return worker.fetch(request, env, ctx);
-  }, "fetchDispatcher");
+  }, 'fetchDispatcher');
   return {
     ...worker,
     fetch(request, env, ctx) {
-      const dispatcher = /* @__PURE__ */ __name(function(type, init) {
-        if (type === "scheduled" && worker.scheduled !== void 0) {
+      const dispatcher = /* @__PURE__ */ __name(function (type, init) {
+        if (type === 'scheduled' && worker.scheduled !== void 0) {
           const controller = new __Facade_ScheduledController__(
             Date.now(),
-            init.cron ?? "",
-            () => {
-            }
+            init.cron ?? '',
+            () => {},
           );
           return worker.scheduled(controller, env, ctx);
         }
-      }, "dispatcher");
+      }, 'dispatcher');
       return __facade_invoke__(request, env, ctx, dispatcher, fetchDispatcher);
-    }
+    },
   };
 }
-__name(wrapExportedHandler, "wrapExportedHandler");
+__name(wrapExportedHandler, 'wrapExportedHandler');
 function wrapWorkerEntrypoint(klass) {
-  if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
+  if (
+    __INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 ||
+    __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0
+  ) {
     return klass;
   }
   for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
@@ -2342,42 +2458,38 @@ function wrapWorkerEntrypoint(klass) {
       this.env = env;
       this.ctx = ctx;
       if (super.fetch === void 0) {
-        throw new Error("Entrypoint class does not define a fetch() function.");
+        throw new Error('Entrypoint class does not define a fetch() function.');
       }
       return super.fetch(request);
-    }, "#fetchDispatcher");
+    }, '#fetchDispatcher');
     #dispatcher = /* @__PURE__ */ __name((type, init) => {
-      if (type === "scheduled" && super.scheduled !== void 0) {
+      if (type === 'scheduled' && super.scheduled !== void 0) {
         const controller = new __Facade_ScheduledController__(
           Date.now(),
-          init.cron ?? "",
-          () => {
-          }
+          init.cron ?? '',
+          () => {},
         );
         return super.scheduled(controller);
       }
-    }, "#dispatcher");
+    }, '#dispatcher');
     fetch(request) {
       return __facade_invoke__(
         request,
         this.env,
         this.ctx,
         this.#dispatcher,
-        this.#fetchDispatcher
+        this.#fetchDispatcher,
       );
     }
   };
 }
-__name(wrapWorkerEntrypoint, "wrapWorkerEntrypoint");
+__name(wrapWorkerEntrypoint, 'wrapWorkerEntrypoint');
 var WRAPPED_ENTRY;
-if (typeof middleware_insertion_facade_default === "object") {
+if (typeof middleware_insertion_facade_default === 'object') {
   WRAPPED_ENTRY = wrapExportedHandler(middleware_insertion_facade_default);
-} else if (typeof middleware_insertion_facade_default === "function") {
+} else if (typeof middleware_insertion_facade_default === 'function') {
   WRAPPED_ENTRY = wrapWorkerEntrypoint(middleware_insertion_facade_default);
 }
 var middleware_loader_entry_default = WRAPPED_ENTRY;
-export {
-  __INTERNAL_WRANGLER_MIDDLEWARE__,
-  middleware_loader_entry_default as default
-};
+export { __INTERNAL_WRANGLER_MIDDLEWARE__, middleware_loader_entry_default as default };
 //# sourceMappingURL=index.js.map

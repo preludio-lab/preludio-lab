@@ -278,10 +278,17 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
             (source as unknown as Partial<PlayerDisplay>).composerName ||
             prev.display.composerName,
           performer:
-            customDisplay?.performer || (source as unknown as Partial<PlayerDisplay>).performer || prev.display.performer,
-          image: customDisplay?.image || (source as unknown as Partial<PlayerDisplay>).image || prev.display.image,
+            customDisplay?.performer ||
+            (source as unknown as Partial<PlayerDisplay>).performer ||
+            prev.display.performer,
+          image:
+            customDisplay?.image ||
+            (source as unknown as Partial<PlayerDisplay>).image ||
+            prev.display.image,
           sourceUrl:
-            customDisplay?.sourceUrl || (source as unknown as Partial<PlayerDisplay>).sourceUrl || prev.display.sourceUrl,
+            customDisplay?.sourceUrl ||
+            (source as unknown as Partial<PlayerDisplay>).sourceUrl ||
+            prev.display.sourceUrl,
           provider: validSource.provider,
           displayType:
             customDisplay?.displayType ||
