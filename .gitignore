@@ -21,10 +21,12 @@ node_modules
 dist/
 build/
 
+# cloudflare workers
+.wrangler/
+
 # misc
 .DS_Store
 *.pem
-.wrangler/
 
 # debug
 npm-debug.log*
