@@ -168,12 +168,12 @@ Status: `[/]` 進行中
     - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
 
 - [ ] **5.6 STEP 1: データインフラの物理構築 (The Foundation)**
-  - [ ] **[実装]** Turso (LibSQL) スキーマ適用
-    - [ ] `database-schema.md` に基づいたテーブル作成 (`articles`, `works`, `composers` 等)
-    - [ ] `articles` テーブルへのMDXパス、メタデータ、Embeddingカラムの定義
-  - [ ] **[基盤]** Cloudflare R2 バケット作成
-    - [ ] バケット `preludio-content` (仮) の作成とアクセス権限設定
-  - [ ] **[実装]** 初期データ移行スクリプト (Migration Script) の作成
+  - [x] **[基盤]** Cloudflare R2 バケット作成
+    - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/storage-design.md`)
+    - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
+    - [x] CDN Proxy Worker (`cdn-proxy`) の実装と配備準備
+    - [x] **[検証]** ユーザーによる実機再生確認 (最小構成にて成功)
+  - [/] **[準備]** 初期データ移行スクリプトの作成
     - [ ] ローカルMDXファイルの解析 (Frontmatter + 本文)
     - [ ] 本文データの R2 へのアップロード
     - [ ] メタデータおよびEmbeddingの Turso への INSERT

@@ -17,8 +17,12 @@ node_modules
 /.next/
 /out/
 
-# production
-/build
+# production & build
+dist/
+build/
+
+# cloudflare workers
+.wrangler/
 
 # misc
 .DS_Store
