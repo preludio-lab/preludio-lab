@@ -2,8 +2,8 @@ import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/Artic
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Article } from '@/domain/article/Article';
 import { PagedResponse } from '@/domain/shared/Pagination';
-import { ArticleMetadataDataSource } from './turso-metadata.ds';
-import { ArticleContentDataSource } from './r2-content.ds';
+import { ArticleMetadataDataSource } from './turso-article-metadata.ds';
+import { ArticleContentDataSource } from './r2-article-content.ds';
 import { TursoArticleMapper } from './turso-article.mapper';
 
 export class TursoArticleRepository implements ArticleRepository {

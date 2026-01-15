@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FsArticleRepository } from './fs-article.repository';
-import { FsArticleMetadataDataSource } from './fs-metadata.ds';
-import { FsArticleContentDataSource } from './fs-content.ds';
+import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
+import { FsArticleContentDataSource } from './fs-article-content.ds';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 
 // Mock DataSources
-vi.mock('./fs-metadata.ds');
-vi.mock('./fs-content.ds');
+vi.mock('./fs-article-metadata.ds');
+vi.mock('./fs-article-content.ds');
 
 describe('FsArticleRepository', () => {
   let repository: FsArticleRepository;

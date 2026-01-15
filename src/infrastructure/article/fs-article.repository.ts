@@ -4,8 +4,8 @@ import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
-import { FsArticleMetadataDataSource, FsArticleContext } from './fs-metadata.ds';
-import { FsArticleContentDataSource } from './fs-content.ds';
+import { FsArticleMetadataDataSource, FsArticleContext } from './fs-article-metadata.ds';
+import { FsArticleContentDataSource } from './fs-article-content.ds';
 
 export class FsArticleRepository implements ArticleRepository {
   constructor(

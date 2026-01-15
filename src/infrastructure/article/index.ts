@@ -1,7 +1,7 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { FsArticleRepository } from './fs-article.repository';
-import { FsArticleMetadataDataSource } from './fs-metadata.ds';
-import { FsArticleContentDataSource } from './fs-content.ds';
+import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
+import { FsArticleContentDataSource } from './fs-article-content.ds';
 
 /**
  * ArticleRepository の共有インスタンス (Singleton)
