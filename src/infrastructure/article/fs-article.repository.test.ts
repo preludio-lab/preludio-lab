@@ -1,137 +1,81 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FsArticleRepository } from './fs-article.repository';
+import { FsArticleMetadataDataSource } from './fs-metadata.ds';
+import { FsArticleContentDataSource } from './fs-content.ds';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import fs from 'fs';
-import path from 'path';
+import { ArticleSortOption } from '@/domain/article/ArticleConstants';
 
-// fs のモック
-vi.mock('fs', () => ({
-  default: {
-    existsSync: vi.fn(),
-    readFileSync: vi.fn(),
-    readdirSync: vi.fn(),
-    mkdirSync: vi.fn(),
-    writeFileSync: vi.fn(),
-    unlinkSync: vi.fn(),
-    statSync: vi.fn(),
-  },
-  existsSync: vi.fn(),
-  readFileSync: vi.fn(),
-  readdirSync: vi.fn(),
-  mkdirSync: vi.fn(),
-  writeFileSync: vi.fn(),
-  unlinkSync: vi.fn(),
-  statSync: vi.fn(),
-}));
+// Mock DataSources
+vi.mock('./fs-metadata.ds');
+vi.mock('./fs-content.ds');
 
 describe('FsArticleRepository', () => {
   let repository: FsArticleRepository;
+  let mockMetadataDS: any;
+  let mockContentDS: any;
 
-  // 有効な MDX のモック (新スキーマ)
-  const validMdx = `---
-title: "Prelude 1"
-displayTitle: "Prelude 1"
-composerName: "J.S. Bach"
-readingLevel: 3
-status: "published"
-isFeatured: true
-tags: ["Piano", "Baroque"]
----
-## Introduction
-Text body`;
+  // Mock Data
+  const validContext = {
+    id: 'prelude',
+    slug: 'prelude',
+    lang: 'en',
+    category: ArticleCategory.WORKS,
+    status: 'published',
+    filePath: '/path/to/works/prelude.mdx',
+    metadata: {
+      title: 'Prelude 1',
+      composerName: 'J.S. Bach',
+      readingLevel: 3,
+      isFeatured: true,
+      tags: ['Piano', 'Baroque'],
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
-  // レガシーな MDX のモック (旧スキーマ)
-  const legacyMdx = `---
-title: "Legacy Piece"
-composer: "Mozart"
-difficulty: "Advanced"
-tags: ["Classical"]
-audioSrc: "/audio/legacy.mp3"
----
-Content`;
+  const validBody = `## Introduction\nText body`;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    repository = new FsArticleRepository();
-    // デフォルトのモック挙動
-    vi.mocked(fs.statSync).mockImplementation(
-      (p: any) =>
-        ({
-          isDirectory: () => !p.toString().endsWith('.mdx'),
-        }) as any,
-    );
+
+    // Setup Mock Instances
+    mockMetadataDS = new FsArticleMetadataDataSource() as any;
+    mockContentDS = new FsArticleContentDataSource() as any;
+
+    repository = new FsArticleRepository(mockMetadataDS, mockContentDS);
   });
 
   describe('findBySlug', () => {
-    it('ファイルが存在する場合に記事を返すこと (新スキーマ)', async () => {
-      // 'works' カテゴリにファイルが存在するようにモックを設定
-      vi.mocked(fs.existsSync).mockImplementation((p) => {
-        return p.toString().includes('works/prelude.mdx');
-      });
-      vi.mocked(fs.readFileSync).mockReturnValue(validMdx);
+    it('returns article if context exists', async () => {
+      mockMetadataDS.findBySlug.mockResolvedValue(validContext);
+      mockContentDS.getContent.mockResolvedValue(validBody);
 
       const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'prelude');
 
       expect(result).not.toBeNull();
-      // expect(result?.title).toBe('Prelude 1'); // Entity は metadata.title を使用
-
       expect(result?.metadata.title).toBe('Prelude 1');
       expect(result?.metadata.composerName).toBe('J.S. Bach');
-      expect(result?.metadata.readingLevel).toBe(3);
-      expect(result?.isFeatured).toBe(true);
-      expect(result?.category).toBe(ArticleCategory.WORKS);
+
+      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('en', ArticleCategory.WORKS, 'prelude');
+      expect(mockContentDS.getContent).toHaveBeenCalledWith('/path/to/works/prelude.mdx');
     });
 
-    it('レガシーなフロントマターを正しくマッピングすること', async () => {
-      // 'works' カテゴリにファイルが存在するようにモックを設定
-      vi.mocked(fs.existsSync).mockImplementation((p) => {
-        return p.toString().includes('works/legacy.mdx');
-      });
-      vi.mocked(fs.readFileSync).mockReturnValue(legacyMdx);
-
-      const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'legacy');
-
-      expect(result).not.toBeNull();
-      expect(result?.metadata.title).toBe('Legacy Piece');
-      expect(result?.metadata.composerName).toBe('Mozart'); // 'composer' からマッピング
-      expect(result?.metadata.readingLevel).toBe(5); // Mapped from 'Advanced'
-      expect(result?.metadata.performanceDifficulty).toBe(5); // 'Advanced' からマッピング
-      expect(result?.metadata.playback?.audioSrc).toBe('/audio/legacy.mp3');
-    });
-
-    it('ファイルが見つからない場合に null を返すこと', async () => {
-      vi.mocked(fs.existsSync).mockReturnValue(false);
+    it('returns null if validation fails or file missing (DS returns null)', async () => {
+      mockMetadataDS.findBySlug.mockResolvedValue(null);
       const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
       expect(result).toBeNull();
     });
   });
 
   describe('findMany', () => {
-    // findMany をテストするために getAllArticles (private) をモック。
-    // または readdirSync をモックしてディレクトリ構造をシミュレート。
-
-    it('条件に従って記事をフィルタリングすること', async () => {
-      // ディレクトリ構造をモック
-      vi.mocked(fs.readdirSync).mockImplementation((p) => {
-        const pathStr = p.toString();
-        // pathStr will be relative to process.cwd() or absolute
-        if (pathStr.endsWith('article')) return ['en'] as any;
-        if (pathStr.includes('en') && !pathStr.includes('works') && !pathStr.includes('composers'))
-          return ['works', 'composers'] as any;
-        if (pathStr.includes('works')) return ['prelude.mdx'] as any;
-        if (pathStr.includes('composers')) return ['bach.mdx'] as any;
-        return [] as any;
-      });
-
-      // ディレクトリの存在チェックをモック
-      vi.mocked(fs.existsSync).mockReturnValue(true);
-
-      // コンテンツ読み込みをモック
-      vi.mocked(fs.readFileSync).mockImplementation((p) => {
-        if (p.toString().includes('prelude.mdx')) return validMdx;
-        if (p.toString().includes('bach.mdx')) return legacyMdx;
-        return '';
-      });
+    it('filters articles by criteria', async () => {
+      const mockAllContexts = [
+        { ...validContext, id: '1', lang: 'en', category: ArticleCategory.WORKS, metadata: { ...validContext.metadata, tags: ['Piano'] } },
+        { ...validContext, id: '2', lang: 'en', category: ArticleCategory.COMPOSERS, metadata: { ...validContext.metadata, tags: ['Baroque'] } },
+        { ...validContext, id: '3', lang: 'ja', category: ArticleCategory.WORKS },
+      ];
+      mockMetadataDS.findAll.mockResolvedValue(mockAllContexts);
+      mockContentDS.getContent.mockResolvedValue(validBody);
 
       const result = await repository.findMany({
         lang: 'en',
@@ -139,7 +83,8 @@ Content`;
       });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].slug).toBe('prelude');
+      expect(result.items[0].control.id).toBe('1');
+      expect(mockMetadataDS.findAll).toHaveBeenCalled();
     });
   });
 });
