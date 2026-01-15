@@ -385,6 +385,7 @@ sequenceDiagram
 | `gtin`            | `text` | -       | NO       | -                                      | 国際標準商品識別コード (JAN/EAN/UPC)           |
 | `affiliate_links` | `text` | `[]`    | YES      | -                                      | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
 | `preview_url`     | `text` | -       | NO       | -                                      | 閲覧用プレビューURL (PDF等)                    |
+| `format`          | `text` | -       | NO       | `IN ('physical', 'digital')`           | **[New]** 提供形態 (`ScoreFormat`)             |
 | `created_at`      | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                       |
 | `updated_at`      | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                       |
 
@@ -434,20 +435,19 @@ sequenceDiagram
 
 記事内で解説のために使用される「譜例」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
 
-| Column              | Type   | Default | NOT NULL | CHECK                                  | Description                                                 |
-| :------------------ | :----- | :------ | :------- | :------------------------------------- | :---------------------------------------------------------- |
-| **`id`**            | `text` | -       | YES      | -                                      | **PK**. UUID v7                                             |
-| **`work_id`**       | `text` | -       | YES      | -                                      | **FK to `works.id`**                                        |
-| **`work_part_id`**  | `text` | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有の譜例、NULLは全体)      |
-| **`score_id`**      | `text` | -       | NO       | -                                      | **FK to `scores.id`** (出典。指定なしは自作/不明)           |
-| `slug`              | `text` | -       | YES      | -                                      | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)           |
-| `format`            | `text` | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式                                                  |
-| `data_storage_path` | `text` | -       | YES      | -                                      | **[R2]** 譜面データパス                                     |
-| `measure_range`     | `text` | -       | NO       | -                                      | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
-| `playback_bindings` | `text` | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `PlaybackBinding[]`)            |
-| `created_at`        | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
-| `updated_at`        | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
-| `format`            | `text` | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式 (Constants referencing `ScoreFormat`)            |
+| Column               | Type   | Default | NOT NULL | CHECK                                  | Description                                                 |
+| :------------------- | :----- | :------ | :------- | :------------------------------------- | :---------------------------------------------------------- |
+| **`id`**             | `text` | -       | YES      | -                                      | **PK**. UUID v7                                             |
+| **`work_id`**        | `text` | -       | YES      | -                                      | **FK to `works.id`**                                        |
+| **`work_part_id`**   | `text` | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有の譜例、NULLは全体)      |
+| **`score_id`**       | `text` | -       | NO       | -                                      | **FK to `scores.id`** (出典。指定なしは自作/不明)           |
+| `slug`               | `text` | -       | YES      | -                                      | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)           |
+| `format`             | `text` | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式                                                  |
+| `data_storage_path`  | `text` | -       | YES      | -                                      | **[R2]** 譜面データパス                                     |
+| `measure_range`      | `text` | -       | NO       | -                                      | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
+| `recording_segments` | `text` | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
+| `created_at`         | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
+| `updated_at`         | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
 
 #### 4.3.1 Indexes (Musical Examples)
 
@@ -470,10 +470,10 @@ type MeasureRange = {
 };
 ```
 
-##### 4.3.2.2 `playback_bindings`
+##### 4.3.2.2 `recording_segments`
 
 ```typescript
-type PlaybackBinding = {
+type RecordingSegment = {
   recording_source_id: string; // FK to recording_sources.id
   start_seconds: number;
   end_seconds: number;
@@ -643,6 +643,7 @@ type ComposerImpressionDimensions = {
 | `ts_display_string`      | `text`    | -       | NO       | -                                        | 拍子 特記 (e.g. `C`)                                  |
 | `bpm`                    | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                 | メトロノーム記号                                      |
 | `metronome_unit`         | `text`    | -       | NO       | -                                        | メトロノーム単位                                      |
+| `impression_dimensions`  | `text`    | -       | NO       | -                                        | **[New]** 印象評価 (JSON: `ImpressionDimensions`)     |
 | `genres`                 | `text`    | `[]`    | YES      | -                                        | ジャンルリスト (JSON: `MusicalGenre[]`)               |
 | `composition_year`       | `integer` | -       | NO       | -                                        | 作曲年（代表値、ソート・検索用）                      |
 | `composition_period`     | `text`    | -       | NO       | -                                        | 作曲時期のマスター表記 (English, e.g. "c. 1805")      |
