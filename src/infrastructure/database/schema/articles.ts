@@ -1,37 +1,41 @@
-import { sqliteTable, text, integer, index, uniqueIndex, customType } from 'drizzle-orm/sqlite-core';
+import {
+    sqliteTable,
+    text,
+    integer,
+    index,
+    uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 import { libsqlVector } from './custom-types';
 import { sql } from 'drizzle-orm';
+import { works } from './works';
 
 // Domain Types (for JSON columns)
-import type {
-    ContentStructure,
-} from '@/domain/article/ArticleContent';
-import type {
-    SeriesAssignment,
-} from '@/domain/article/ArticleContext';
-import type {
-    ArticleMetadata,
-    ImpressionDimensions,
-} from '@/domain/article/ArticleMetadata';
+import type { ContentStructure } from '@/domain/article/ArticleContent';
+import type { SeriesAssignment } from '@/domain/article/ArticleContext';
+import type { ArticleMetadata, ImpressionDimensions } from '@/domain/article/ArticleMetadata';
 
 // --- Articles Table ---
 export const articles = sqliteTable(
     'articles',
     {
         id: text('id').primaryKey(), // UUID v7
-        workId: text('work_id'), // 外部キー: works.id (現在は外部キー制約なし)
-        slug: text('slug'), // ユニバーサルスラグ
-        isFeatured: integer('is_featured', { mode: 'boolean' }).default(false),
-        readingTimeSeconds: integer('reading_time_seconds').default(0),
+        workId: text('work_id').references(() => works.id, { onDelete: 'set null' }),
+        slug: text('slug').notNull(), // ユニバーサルスラグ
+        isFeatured: integer('is_featured', { mode: 'boolean' }).default(false).notNull(),
+        readingTimeSeconds: integer('reading_time_seconds').default(0).notNull(),
         thumbnailPath: text('thumbnail_path'), // [Universal Asset]
-        createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-        updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+        createdAt: text('created_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
+        updatedAt: text('updated_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
     },
     (table) => ({
         workIdIdx: index('idx_articles_work_id').on(table.workId),
         slugIdx: uniqueIndex('idx_articles_slug').on(table.slug),
         featuredIdx: index('idx_articles_featured').on(table.isFeatured, table.createdAt),
-    })
+    }),
 );
 
 // --- Article Translations Table ---
@@ -51,7 +55,7 @@ export const articleTranslations = sqliteTable(
         catchcopy: text('catchcopy'),
         excerpt: text('excerpt'),
         publishedAt: text('published_at'), // ISO8601 または NULL
-        isFeatured: integer('is_featured', { mode: 'boolean' }).default(false),
+        isFeatured: integer('is_featured', { mode: 'boolean' }).default(false).notNull(),
         mdxPath: text('mdx_path'),
 
         // --- 非正規化カラム (Snapshots) ---
@@ -76,19 +80,29 @@ export const articleTranslations = sqliteTable(
         // --- Metadata & Structure ---
         slSeriesAssignments: text('sl_series_assignments', { mode: 'json' })
             .default('[]')
+            .notNull()
             .$type<SeriesAssignment[]>(),
-        metadata: text('metadata', { mode: 'json' }).default('{}').$type<ArticleMetadata>(),
+        metadata: text('metadata', { mode: 'json' }).default('{}').notNull().$type<ArticleMetadata>(),
         contentStructure: text('content_structure', { mode: 'json' })
             .default('{}')
+            .notNull()
             .$type<ContentStructure>(),
 
-        createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-        updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+        createdAt: text('created_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
+        updatedAt: text('updated_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
     },
     (table) => ({
         lookupIdx: uniqueIndex('idx_art_trans_article_lookup').on(table.articleId, table.lang),
         statusPubIdx: index('idx_art_trans_status_pub').on(table.lang, table.status, table.publishedAt),
-        featuredIdx: index('idx_art_trans_featured').on(table.lang, table.isFeatured, table.publishedAt),
+        featuredIdx: index('idx_art_trans_featured').on(
+            table.lang,
+            table.isFeatured,
+            table.publishedAt,
+        ),
         genreIdx: index('idx_art_trans_search_genre').on(table.lang, table.slGenre),
         eraIdx: index('idx_art_trans_search_era').on(table.lang, table.slEra),
         compIdx: index('idx_art_trans_search_comp').on(table.lang, table.slComposerName),
@@ -96,10 +110,10 @@ export const articleTranslations = sqliteTable(
             table.lang,
             table.status,
             table.isFeatured,
-            table.publishedAt
+            table.publishedAt,
         ),
         // vector index は通常、生のSQLで作成されます
-    })
+    }),
 );
 
 // --- Series Table ---
@@ -110,12 +124,16 @@ export const series = sqliteTable(
         articleId: text('article_id')
             .notNull()
             .references(() => articles.id, { onDelete: 'restrict' }), // "このシリーズの親記事"
-        createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-        updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+        createdAt: text('created_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
+        updatedAt: text('updated_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
     },
     (table) => ({
         articleIdIdx: uniqueIndex('idx_series_article_id').on(table.articleId),
-    })
+    }),
 );
 
 // --- Series Articles Table ---
@@ -128,13 +146,17 @@ export const seriesArticles = sqliteTable(
         articleId: text('article_id')
             .notNull()
             .references(() => articles.id, { onDelete: 'cascade' }),
-        sortOrder: integer('sort_order').default(0),
-        createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-        updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+        sortOrder: integer('sort_order').default(0).notNull(),
+        createdAt: text('created_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
+        updatedAt: text('updated_at')
+            .default(sql`CURRENT_TIMESTAMP`)
+            .notNull(),
     },
     (table) => ({
         lookupIdx: uniqueIndex('idx_ser_art_lookup').on(table.seriesId, table.articleId),
         orderIdx: index('idx_ser_art_order').on(table.seriesId, table.sortOrder),
         articleIdx: index('idx_ser_art_article').on(table.articleId),
-    })
+    }),
 );
