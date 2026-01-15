@@ -385,6 +385,7 @@ sequenceDiagram
 | `gtin`            | `text` | -       | NO       | -                                      | 国際標準商品識別コード (JAN/EAN/UPC)           |
 | `affiliate_links` | `text` | `[]`    | YES      | -                                      | アフィリエイトリンク (JSON: `AffiliateLink[]`) |
 | `preview_url`     | `text` | -       | NO       | -                                      | 閲覧用プレビューURL (PDF等)                    |
+| `format`          | `text` | -       | NO       | `IN ('physical', 'digital')`           | **[New]** 提供形態 (`ScoreFormat`)             |
 | `created_at`      | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                       |
 | `updated_at`      | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                       |
 
@@ -447,7 +448,7 @@ sequenceDiagram
 | `playback_bindings` | `text` | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `PlaybackBinding[]`)            |
 | `created_at`        | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
 | `updated_at`        | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
-| `format`            | `text` | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式 (Constants referencing `ScoreFormat`)            |
+
 
 #### 4.3.1 Indexes (Musical Examples)
 
@@ -643,6 +644,7 @@ type ComposerImpressionDimensions = {
 | `ts_display_string`      | `text`    | -       | NO       | -                                        | 拍子 特記 (e.g. `C`)                                  |
 | `bpm`                    | `integer` | -       | NO       | `bpm BETWEEN 10 AND 500`                 | メトロノーム記号                                      |
 | `metronome_unit`         | `text`    | -       | NO       | -                                        | メトロノーム単位                                      |
+| `impression_dimensions`  | `text`    | -       | NO       | -                                        | **[New]** 印象評価 (JSON: `ImpressionDimensions`)     |
 | `genres`                 | `text`    | `[]`    | YES      | -                                        | ジャンルリスト (JSON: `MusicalGenre[]`)               |
 | `composition_year`       | `integer` | -       | NO       | -                                        | 作曲年（代表値、ソート・検索用）                      |
 | `composition_period`     | `text`    | -       | NO       | -                                        | 作曲時期のマスター表記 (English, e.g. "c. 1805")      |

@@ -155,19 +155,22 @@ Status: `[/]` 進行中
   - [x] **[リファクタリング]** フィルターロジックの分離
     - [x] 検索・絞り込みロジックを Custom Hook（`useFilter`）へ抽出し、保守性を向上
 
-- [x] **5.5 データベース記事管理の構築 (Database Article Management) [Completed]**
-  - [x] **[環境構築]** データベース・インフラのセットアップ
-    - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
-    - [x] 環境定義: 本番環境（Single DB）とブランチ機能（Fork/Staging）の運用方針策定 (Done)
-  - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
-    - [x] Master: MDX / Index & Vector: Database という役割分担の定義
-    - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
-    - [x] **ベクトルデータの最適化**: Embeddingsの次元数
-  - [x] **[実装] Player Domain & Architecture Update**
-    - [x] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
-    - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
+  - [x] **5.5 データベース記事管理の構築 (Database Article Management) [Completed]**
+    - [x] **[環境構築]** データベース・インフラのセットアップ
+      - [x] **Supabase**: 認証およびコアデータ用プロジェクトの作成
+      - [x] 環境定義: 本番環境（Single DB）とブランチ機能（Fork/Staging）の運用方針策定 (Done)
+    - [x] **[仕様策定]** DBスキーマとMDX Split-Storage Model
+      - [x] Master: MDX / Index & Vector: Database という役割分担の定義
+      - [x] テーブル設計 (`articles`, `works`, `composers`, `embeddings`)
+      - [x] **ベクトルデータの最適化**: Embeddingsの次元数
+    - [x] **[実装] Player Domain & Architecture Update**
+      - [x] **Player Domain**: `src/domain/player` のブラッシュアップ（PlaybackState, Playerエンティティの最終化）
+      - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
 
-- [ ] **5.6 STEP 1: データインフラの物理構築 (The Foundation)**
+- [/] **5.6 STEP 1: データインフラの物理構築 (The Foundation)**
+  - [/] **[基盤]** Turso テーブル作成 (Articles Domain)
+    - [x] Drizzle ORM スキーマ定義 (`src/infrastructure/database/schema`)
+    - [x] Articles/Series テーブルの作成 (`drizzle-kit push`)
   - [x] **[基盤]** Cloudflare R2 バケット作成
     - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/storage-design.md`)
     - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
