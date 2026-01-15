@@ -15,6 +15,7 @@ export const articles = sqliteTable(
     id: text('id').primaryKey(), // UUID v7
     workId: text('work_id').references(() => works.id, { onDelete: 'set null' }),
     slug: text('slug').notNull(), // ユニバーサルスラグ
+    category: text('category').notNull(), // [Master] Article Category
     isFeatured: integer('is_featured', { mode: 'boolean' }).default(false).notNull(),
     readingTimeSeconds: integer('reading_time_seconds').default(0).notNull(),
     thumbnailPath: text('thumbnail_path'), // [Universal Asset]
@@ -53,6 +54,8 @@ export const articleTranslations = sqliteTable(
     mdxPath: text('mdx_path'),
 
     // --- 非正規化カラム (Snapshots) ---
+    slSlug: text('sl_slug'), // [Snapshot/Localized]
+    slCategory: text('sl_category'), // [Snapshot]
     slComposerName: text('sl_composer_name'),
     slWorkCatalogueId: text('sl_work_catalogue_id'),
     slWorkNicknames: text('sl_work_nicknames', { mode: 'json' }).$type<string[]>(),

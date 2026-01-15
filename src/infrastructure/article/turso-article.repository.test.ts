@@ -37,14 +37,17 @@ describe('TursoArticleRepository', () => {
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
       const mockRow = {
-        articles: { id: '1', slug: 'slug', createdAt: '2023-01-01' },
+        articles: { id: '1', slug: 'slug', category: 'work', createdAt: '2023-01-01' },
         article_translations: {
           articleId: '1',
           lang: 'en',
           status: 'PUBLISHED',
           title: 'Title',
+          displayTitle: 'Display Title',
           updatedAt: '2023-01-01',
-          metadata: { category: 'works' },
+          slSlug: 'slug',
+          slComposerName: 'Composer',
+          metadata: { category: 'works', tags: [] },
           mdxPath: 'path/to/content.mdx',
         },
       };
@@ -76,6 +79,7 @@ describe('TursoArticleRepository', () => {
       articles: {
         id: '1',
         slug: 'slug',
+        category: 'work',
         isFeatured: false,
         createdAt: '2023-01-01',
       },
@@ -84,8 +88,11 @@ describe('TursoArticleRepository', () => {
         lang: 'en',
         status: 'PUBLISHED',
         title: 'Title',
+        displayTitle: 'Display Title',
         updatedAt: '2023-01-01',
-        metadata: { category: 'works' },
+        slSlug: 'slug',
+        slComposerName: 'Composer',
+        metadata: { category: 'works', tags: [] },
         mdxPath: 'path/to/content.mdx',
       },
     };
@@ -122,13 +129,15 @@ describe('TursoArticleRepository', () => {
 
   it('findBySlug should return Article with empty content if mdxPath missing', async () => {
     const mockRow = {
-      articles: { id: '1', slug: 'slug', createdAt: '2023-01-01' },
+      articles: { id: '1', slug: 'slug', category: 'work', createdAt: '2023-01-01' },
       article_translations: {
         articleId: '1',
         lang: 'en',
         title: 'Title',
+        displayTitle: 'Display Title',
         updatedAt: '2023-01-01',
-        metadata: { category: 'works' },
+        slComposerName: 'Composer',
+        metadata: { category: 'works', tags: [] },
         mdxPath: null, // パスなし
       },
     };

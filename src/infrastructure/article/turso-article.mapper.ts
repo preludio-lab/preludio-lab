@@ -1,13 +1,24 @@
 import { AppLocale } from '@/domain/i18n/Locale';
 import { Article } from '@/domain/article/Article';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
-import { ArticleCategory, ArticleMetadata } from '@/domain/article/ArticleMetadata';
+import {
+  ArticleCategory,
+  ArticleMetadata,
+  ArticleMetadataSchema,
+} from '@/domain/article/ArticleMetadata';
 import { articles, articleTranslations } from '../database/schema';
 import { InferSelectModel } from 'drizzle-orm';
+
+import { AppError } from '@/domain/shared/AppError';
 
 // Drizzle Result Type
 type ArticleRow = InferSelectModel<typeof articles>;
 type TranslationRow = InferSelectModel<typeof articleTranslations>;
+
+// Zod Schema for Metadata JSON Validation
+// JSONカラムの中身を検証するためのスキーマ (防腐層)
+// ドメイン層のスキーマを流用し、JSONには全フィールドが含まれない可能性があるため partial() を適用
+const MetadataSchema = ArticleMetadataSchema.partial().passthrough();
 
 export class TursoArticleMapper {
   static toDomain(
@@ -15,65 +26,87 @@ export class TursoArticleMapper {
     translationRow: TranslationRow,
     mdxContent: string,
   ): Article {
-    // 1. Control
+    // 1. Language Validation
+    // 簡易的なチェック。厳密には AppLocales 定数などと比較すべき
+    const lang = translationRow.lang as AppLocale;
+    // 必要であればここで isValidLocale(lang) のようなチェックを行う
+
+    // 2. Metadata Parsing & Validation
+    const rawMetadata = translationRow.metadata || {};
+    const parsedMetadataResult = MetadataSchema.safeParse(rawMetadata);
+
+    if (!parsedMetadataResult.success) {
+      // エンタープライズ品質: データの不整合を許容せずエラーにする
+      throw new AppError(
+        `Invalid metadata structure for article: ${articleRow.id}`,
+        'INTERNAL_SERVER_ERROR',
+        500,
+        parsedMetadataResult.error,
+      );
+    }
+    const safeBaseMetadata = parsedMetadataResult.data;
+
+    // 3. Control
     const control = {
       id: articleRow.id,
-      lang: translationRow.lang as AppLocale,
-      status: translationRow.status as ArticleStatus,
+      lang: lang,
+      status: translationRow.status as ArticleStatus, // statusもZodで検証可能だが今回は省略
       createdAt: new Date(articleRow.createdAt),
       updatedAt: new Date(translationRow.updatedAt),
-      version: 1, // Default
+      version: 1,
     };
 
-    // 2. Metadata
-    // メモ: translationRow.metadata はスキーマ上で ArticleMetadata として型定義されていますが、ランタイムでは JSON の可能性があります。
-    // 'mode: json' が設定されていれば、Drizzle が JSON のパースを処理します。
-    // ここでは、正規化されていないスナップショットや固有のフィールドをドメインメタデータにマージします。
+    // 4. Resolve Category & Slug
+    // Snapshot (sl_) -> Master Fallback
+    const categoryName = translationRow.slCategory || articleRow.category;
+    // Category文字列をEnumにキャスト（検証推奨）
+    // ここでは安全のため、もし不正な文字列なら 'WORK' 等にするかエラーにする
+    // 今回はキャストとして扱うが、実運用では isValidCategory チェックを入れるべき
+    const category = categoryName as ArticleCategory;
 
-    // DBは 'slGenre' などを個別に保存します。ドメインメタデータはそれらを集約します。
-    // 型が ArticleMetadata インターフェースと一致することを確認する必要があります。
-    // 現時点では基本的な構造を想定しています。
+    const slug = translationRow.slSlug || articleRow.slug;
 
-    // メタデータまたはデフォルトからカテゴリを解決しますか？
-    // 新しいスキーマの articles テーブルには 'category' が明示的に存在しないため（タグに含まれている可能性があります）、
-    // 導出するか、メタデータ JSON に含まれている必要があります。
-    // 'metadata.category' が存在するか、バリデーションルールが適用されると仮定します。
-    // なければ、今のところ 'WORK' にフォールバックします（または厳密にチェックします）。
+    // 5. Metadata Assembly
+    const metadata: ArticleMetadata = {
+      // JSON由来のデータ
+      ...safeBaseMetadata,
 
-    const baseMetadata = translationRow.metadata || {};
-
-    const metadata = {
-      ...baseMetadata,
-      slug: articleRow.slug,
+      // DBカラム由来のデータ (優先/上書き)
+      slug: slug,
+      category: category,
       title: translationRow.title,
-      // Map other fields
-      category: (baseMetadata.category as ArticleCategory) || 'WORK', // Temporary fallback
-      tags: baseMetadata.tags || [],
-      publishedAt: translationRow.publishedAt ? new Date(translationRow.publishedAt) : undefined,
-      isFeatured: articleRow.isFeatured || translationRow.isFeatured,
+      publishedAt: translationRow.publishedAt ? new Date(translationRow.publishedAt) : null,
+      isFeatured: articleRow.isFeatured || translationRow.isFeatured || false,
+      displayTitle: translationRow.displayTitle,
+      readingTimeSeconds: articleRow.readingTimeSeconds,
+
+      // Snapshot / JSON values (with fallbacks for required fields)
+      composerName: translationRow.slComposerName || safeBaseMetadata.composerName || '',
+      thumbnail: articleRow.thumbnailPath || safeBaseMetadata.thumbnail || undefined,
+      // tags are already mapped above, but need default
+      tags: safeBaseMetadata.tags || [],
     };
 
-    // 3. Content
-    // contentStructure is managed in DB
+    // 6. Content
     const content = {
       body: mdxContent,
       structure: translationRow.contentStructure || [],
     };
 
-    // 4. Context
+    // 7. Context
     const context = {
       seriesAssignments: translationRow.slSeriesAssignments || [],
-      relatedArticles: [], // Populated by separate query or UseCase if needed
+      relatedArticles: [],
       sourceAttributions: [],
       monetizationElements: [],
     };
 
-    // 5. Engagement (今のところプレースホルダー)
+    // 8. Engagement
     const engagement = undefined;
 
     return new Article({
       control,
-      metadata: metadata as ArticleMetadata,
+      metadata,
       content,
       context,
       engagement,

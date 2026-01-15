@@ -2,6 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { TursoArticleMapper } from './turso-article.mapper';
 import { AppLocale } from '@/domain/i18n/Locale';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { articles, articleTranslations } from '@/infrastructure/database/schema';
+import { InferSelectModel } from 'drizzle-orm';
+
+type ArticleRow = InferSelectModel<typeof articles>;
+type TranslationRow = InferSelectModel<typeof articleTranslations>;
 
 describe('TursoArticleMapper', () => {
   it('should map database rows to Article domain object correctly', () => {
@@ -9,7 +14,9 @@ describe('TursoArticleMapper', () => {
     const mockArticleRow = {
       id: 'article-123',
       slug: 'my-article',
+      category: 'work',
       isFeatured: false,
+      readingTimeSeconds: 120,
       createdAt: '2023-01-01T00:00:00Z',
     };
 
@@ -18,11 +25,15 @@ describe('TursoArticleMapper', () => {
       lang: 'en',
       status: 'PUBLISHED',
       title: 'My Article Title',
+      displayTitle: 'Display Title',
       publishedAt: '2023-01-02T00:00:00Z',
       updatedAt: '2023-01-03T00:00:00Z',
       isFeatured: true, // articleRow を上書きする
+      slSlug: 'my-localized-slug',
+      slCategory: 'theory',
+      slComposerName: 'J.S. Bach',
       metadata: {
-        category: 'theory',
+        // Validation check: tags exist
         tags: ['music', 'bach'],
       },
       contentStructure: [{ type: 'paragraph', content: 'intro' }],
@@ -33,8 +44,8 @@ describe('TursoArticleMapper', () => {
 
     // 実行
     const article = TursoArticleMapper.toDomain(
-      mockArticleRow as any,
-      mockTranslationRow as any,
+      mockArticleRow as unknown as ArticleRow,
+      mockTranslationRow as unknown as TranslationRow,
       mdxContent,
     );
 
@@ -47,10 +58,13 @@ describe('TursoArticleMapper', () => {
     expect(article.control.updatedAt).toEqual(new Date('2023-01-03T00:00:00Z'));
 
     // Metadata
-    expect(article.metadata.slug).toBe('my-article');
+    expect(article.metadata.slug).toBe('my-localized-slug'); // Localized slug preferred
     expect(article.metadata.title).toBe('My Article Title');
+    expect(article.metadata.displayTitle).toBe('Display Title');
     expect(article.metadata.category).toBe(ArticleCategory.THEORY);
+    expect(article.metadata.composerName).toBe('J.S. Bach');
     expect(article.metadata.tags).toEqual(['music', 'bach']);
+    expect(article.metadata.readingTimeSeconds).toBe(120);
     expect(article.metadata.publishedAt).toEqual(new Date('2023-01-02T00:00:00Z'));
     expect(article.metadata.isFeatured).toBe(true);
 
@@ -66,7 +80,9 @@ describe('TursoArticleMapper', () => {
     const mockArticleRow = {
       id: 'article-456',
       slug: 'default-article',
+      category: 'work',
       isFeatured: false,
+      readingTimeSeconds: 0,
       createdAt: '2023-01-01T00:00:00Z',
     };
 
@@ -75,6 +91,7 @@ describe('TursoArticleMapper', () => {
       lang: 'ja',
       status: 'DRAFT',
       title: 'Draft Title',
+      displayTitle: 'Draft Display',
       updatedAt: '2023-01-01T00:00:00Z',
       // metadata, publishedAt 等が欠落
       metadata: null,
@@ -83,15 +100,17 @@ describe('TursoArticleMapper', () => {
     };
 
     const article = TursoArticleMapper.toDomain(
-      mockArticleRow as any,
-      mockTranslationRow as any,
+      mockArticleRow as unknown as ArticleRow,
+      mockTranslationRow as unknown as TranslationRow,
       '',
     );
 
     // デフォルト値の検証
-    expect(article.metadata.category).toBe('WORK'); // フォールバック
+    expect(article.metadata.category).toBe('work'); // Fallback to ArticleRow.category
+    expect(article.metadata.slug).toBe('default-article'); // Fallback to ArticleRow.slug
+    expect(article.metadata.composerName).toBe('');
     expect(article.metadata.tags).toEqual([]);
-    expect(article.metadata.publishedAt).toBeUndefined();
+    expect(article.metadata.publishedAt).toBeNull();
     expect(article.content.structure).toEqual([]);
     expect(article.context.seriesAssignments).toEqual([]);
   });
