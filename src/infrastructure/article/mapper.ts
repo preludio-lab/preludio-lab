@@ -26,19 +26,19 @@ export class ArticleMapper {
     };
 
     // 2. Metadata
-    // Note: translationRow.metadata is typed as ArticleMetadata in schema, but might be JSON in runtime.
-    // Drizzle handles JSON parsing if 'mode: json' is set.
-    // We merge non-normalized snapshots and specific fields into domain metadata.
+    // メモ: translationRow.metadata はスキーマ上で ArticleMetadata として型定義されていますが、ランタイムでは JSON の可能性があります。
+    // 'mode: json' が設定されていれば、Drizzle が JSON のパースを処理します。
+    // ここでは、正規化されていないスナップショットや固有のフィールドをドメインメタデータにマージします。
 
-    // DB stores 'slGenre' etc. separately. Domain Metadata aggregates them.
-    // We need to ensure types match ArticleMetadata interface.
-    // For now we assume the basic structure.
+    // DBは 'slGenre' などを個別に保存します。ドメインメタデータはそれらを集約します。
+    // 型が ArticleMetadata インターフェースと一致することを確認する必要があります。
+    // 現時点では基本的な構造を想定しています。
 
-    // Resolve Category from Metadata or defaults?
-    // Since 'category' is not explicitly in articles table in the new schema (it might be in tags?),
-    // we might need to derive it or it should be in metadata json.
-    // Assuming 'metadata.category' exists or validation rules apply.
-    // Falls back to 'WORK' if unknown for now (or strictly checked).
+    // メタデータまたはデフォルトからカテゴリを解決しますか？
+    // 新しいスキーマの articles テーブルには 'category' が明示的に存在しないため（タグに含まれている可能性があります）、
+    // 導出するか、メタデータ JSON に含まれている必要があります。
+    // 'metadata.category' が存在するか、バリデーションルールが適用されると仮定します。
+    // なければ、今のところ 'WORK' にフォールバックします（または厳密にチェックします）。
 
     const baseMetadata = translationRow.metadata || {};
 
@@ -68,7 +68,7 @@ export class ArticleMapper {
       monetizationElements: [],
     };
 
-    // 5. Engagement (Placeholder for now)
+    // 5. Engagement (今のところプレースホルダー)
     const engagement = undefined;
 
     return new Article({

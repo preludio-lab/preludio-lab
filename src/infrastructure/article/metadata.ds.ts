@@ -4,7 +4,7 @@ import { articles, articleTranslations } from '../database/schema';
 
 export class ArticleMetadataDataSource {
   /**
-   * Find raw article data by ID and Language
+   * IDと言語で記事の生データを取得する
    */
   async findById(id: string, lang: string) {
     const result = await db
@@ -18,7 +18,7 @@ export class ArticleMetadataDataSource {
   }
 
   /**
-   * Find raw article data by Slug and Language
+   * Slugと言語で記事の生データを取得する
    */
   async findBySlug(slug: string, lang: string) {
     const result = await db

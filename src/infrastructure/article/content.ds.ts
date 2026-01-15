@@ -9,8 +9,8 @@ export class ArticleContentDataSource {
   }
 
   /**
-   * Fetch MDX content string from R2
-   * @param path Relative path in the bucket (e.g. 'private/articles/bach/prelude.mdx')
+   * R2からMDXコンテンツの文字列を取得する
+   * @param path バケット内の相対パス (例: 'private/articles/bach/prelude.mdx')
    */
   async getContent(path: string): Promise<string> {
     if (!path) return '';
@@ -29,7 +29,7 @@ export class ArticleContentDataSource {
       // AWS SDK V3 stream to string
       return await response.Body.transformToString();
     } catch (error) {
-      // Handle 404 or other errors gracefully
+      // 404やその他のエラーを適切に処理する
       console.warn(`Failed to fetch content from R2: ${path}`, error);
       return '';
     }

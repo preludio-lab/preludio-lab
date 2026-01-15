@@ -6,13 +6,13 @@ const url = process.env.TURSO_DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
 if (!url) {
-  // In build time or CI without env, we might want to skip this or warn.
-  // But for runtime, it's critical.
+  // ビルド時やCIで環境変数がない場合、スキップするか警告を出す可能性があります。
+  // しかし、実行時には必須です。
   console.warn('TURSO_DATABASE_URL is not defined. DB connection will fail.');
 }
 
 const client = createClient({
-  url: url || 'file:local.db', // Fallback for build phase if strictly needed, or just fail.
+  url: url || 'file:local.db', // ビルドフェーズで厳密に必要な場合のフォールバック、または失敗させる。
   authToken,
 });
 

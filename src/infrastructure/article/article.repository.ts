@@ -13,29 +13,29 @@ export class ArticleRepositoryImpl implements ArticleRepository {
   ) { }
 
   async findById(_id: string): Promise<Article | null> {
-    // For ID lookup, we might need language context?
-    // ArticleRepository interface's findById usually implies fetching for a specific context or returning a default lang?
-    // In this system, Article Entity is localized. So we probably need Lang.
-    // However, the interface definition `findById(id: string)` doesn't take lang.
-    // This implies either ID is unique per translation (it is in article_translations),
-    // OR we need to change/clarify the interface.
+    // IDでの検索には言語コンテキストが必要かもしれません。
+    // ArticleRepositoryインターフェースのfindByIdは、通常、特定のコンテキストでの取得、またはデフォルト言語を返すことを意味しますか？
+    // このシステムでは、Article Entityはローカライズされています。したがって、おそらくLangが必要です。
+    // しかし、インターフェース定義 `findById(id: string)` は言語を受け取りません。
+    // これは、IDが翻訳ごとに一意であるか（article_translationsにある）、
+    // またはインターフェースを変更/明確化する必要があることを意味します。
     //
-    // Looking at schema: `article_translations.id` is PK.
-    // If the Domain `Article.id` corresponds to `articles.id` (Universal ID), then findById is ambiguous without lang.
-    // If Domain `Article.id` corresponds to `article_translations.id`, it is unique.
+    // スキーマを見ると: `article_translations.id` がPKです。
+    // ドメイン `Article.id` が `articles.id` (Universal ID) に対応する場合、言語なしではfindByIdは曖昧です。
+    // ドメイン `Article.id` が `article_translations.id` に対応する場合、一意です。
 
-    // Assumption: We usually access by Slug + Lang.
-    // For findById, let's assume valid ID refers to Universal ID and we default to 'en' or fetch all?
-    // Actually, clean architecture wise, Repository should probably handle this.
-    // Let's defer findById implementation details or throw generic error if not supported yet,
-    // but looking at `metadata.ds.ts`, I implemented `findById(id, lang)`.
+    // 仮定: 通常は Slug + Lang でアクセスします。
+    // findByIdについては、有効なIDがUniversal IDを参照していると仮定し、デフォルトで 'en' とするべきか、すべて取得するべきか？
+    // 実際、クリーンアーキテクチャ的には、リポジトリがこれを処理するべきです。
+    // findByIdの実装詳細は保留するか、まだサポートされていない場合は汎用エラーをスローさせますが、
+    // `metadata.ds.ts` を見ると `findById(id, lang)` を実装しました。
 
-    // For now, let's fetch 'en' default if not specified or just fail?
-    // Or maybe the ID passed here IS the translation ID?
-    // Let's assume Universal ID and default lang 'ja' for local dev context if unsure,
-    // but better to stick to findBySlug for main use case.
+    // 今のところ、指定されていない場合はデフォルトの 'en' を取得するか、失敗させるか？
+    // あるいは、ここで渡されるIDは翻訳IDなのかもしれません。
+    // 確信が持てない場合は、Universal IDと仮定し、ローカル開発コンテキスト用にデフォルト言語 'ja' としますが、
+    // メインのユースケースとしては findBySlug に固執するのが良さそうです。
 
-    return null; // Not implemented strictly yet as it requires Lang context.
+    return null; // 言語コンテキストが必要なため、厳密には未実装です。
   }
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
@@ -54,7 +54,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
-    // Implementation for list view
+    // リストビューの実装
     return {
       items: [],
       totalCount: 0,
@@ -63,7 +63,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   async save(_article: Article): Promise<void> {
-    // Read-only implementation for now
+    // 現時点では読み取り専用の実装
     throw new Error('Method not implemented.');
   }
 
