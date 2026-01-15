@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { FsArticleRepository } from './FsArticleRepository';
+import { FsArticleRepository } from './fs-article.repository';
 
 /**
  * ArticleRepository の共有インスタンス (Singleton)
