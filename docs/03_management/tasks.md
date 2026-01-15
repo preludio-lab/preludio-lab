@@ -168,9 +168,9 @@ Status: `[/]` 進行中
       - [x] **Repository Interfaces**: 各ドメインのリポジトリ定義 (`src/application`)
 
 - [/] **5.6 STEP 1: データインフラの物理構築 (The Foundation)**
-  - [/] **[基盤]** Turso テーブル作成 (Articles Domain)
+  - [x] **[基盤]** Turso テーブル作成 (All Domains)
     - [x] Drizzle ORM スキーマ定義 (`src/infrastructure/database/schema`)
-    - [x] Articles/Series テーブルの作成 (`drizzle-kit push`)
+    - [x] 全ドメイン（Articles, Works, Composers, Scores, Recordings）のテーブル作成 (`drizzle-kit push`)
   - [x] **[基盤]** Cloudflare R2 バケット作成
     - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/storage-design.md`)
     - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
