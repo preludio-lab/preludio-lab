@@ -9,7 +9,7 @@ import { InferSelectModel } from 'drizzle-orm';
 type ArticleRow = InferSelectModel<typeof articles>;
 type TranslationRow = InferSelectModel<typeof articleTranslations>;
 
-export class ArticleMapper {
+export class TursoArticleMapper {
   static toDomain(
     articleRow: ArticleRow,
     translationRow: TranslationRow,

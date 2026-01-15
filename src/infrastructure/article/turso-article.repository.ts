@@ -4,9 +4,9 @@ import { Article } from '@/domain/article/Article';
 import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleMetadataDataSource } from './turso-metadata.ds';
 import { ArticleContentDataSource } from './r2-content.ds';
-import { ArticleMapper } from './mapper';
+import { TursoArticleMapper } from './turso-article.mapper';
 
-export class ArticleRepositoryImpl implements ArticleRepository {
+export class TursoArticleRepository implements ArticleRepository {
   constructor(
     private metadataDS: ArticleMetadataDataSource,
     private contentDS: ArticleContentDataSource,
@@ -50,7 +50,7 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     // 3. Map to Domain
-    return ArticleMapper.toDomain(row.articles, row.article_translations, content);
+    return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
   }
 
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
