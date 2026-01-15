@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { FsArticleRepository } from './fs-article.repository';
 import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';
@@ -11,8 +11,8 @@ vi.mock('./fs-article-content.ds');
 
 describe('FsArticleRepository', () => {
   let repository: FsArticleRepository;
-  let mockMetadataDS: any;
-  let mockContentDS: any;
+  let mockMetadataDS: { findBySlug: Mock; findAll: Mock };
+  let mockContentDS: { getContent: Mock };
 
   // Mock Data
   const validContext = {
@@ -39,10 +39,13 @@ describe('FsArticleRepository', () => {
     vi.clearAllMocks();
 
     // Setup Mock Instances
-    mockMetadataDS = new FsArticleMetadataDataSource() as any;
-    mockContentDS = new FsArticleContentDataSource() as any;
+    mockMetadataDS = { findBySlug: vi.fn(), findAll: vi.fn() };
+    mockContentDS = { getContent: vi.fn() };
 
-    repository = new FsArticleRepository(mockMetadataDS, mockContentDS);
+    repository = new FsArticleRepository(
+      mockMetadataDS as unknown as FsArticleMetadataDataSource,
+      mockContentDS as unknown as FsArticleContentDataSource
+    );
   });
 
   describe('findBySlug', () => {
@@ -56,7 +59,11 @@ describe('FsArticleRepository', () => {
       expect(result?.metadata.title).toBe('Prelude 1');
       expect(result?.metadata.composerName).toBe('J.S. Bach');
 
-      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('en', ArticleCategory.WORKS, 'prelude');
+      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith(
+        'en',
+        ArticleCategory.WORKS,
+        'prelude',
+      );
       expect(mockContentDS.getContent).toHaveBeenCalledWith('/path/to/works/prelude.mdx');
     });
 
@@ -70,8 +77,20 @@ describe('FsArticleRepository', () => {
   describe('findMany', () => {
     it('filters articles by criteria', async () => {
       const mockAllContexts = [
-        { ...validContext, id: '1', lang: 'en', category: ArticleCategory.WORKS, metadata: { ...validContext.metadata, tags: ['Piano'] } },
-        { ...validContext, id: '2', lang: 'en', category: ArticleCategory.COMPOSERS, metadata: { ...validContext.metadata, tags: ['Baroque'] } },
+        {
+          ...validContext,
+          id: '1',
+          lang: 'en',
+          category: ArticleCategory.WORKS,
+          metadata: { ...validContext.metadata, tags: ['Piano'] },
+        },
+        {
+          ...validContext,
+          id: '2',
+          lang: 'en',
+          category: ArticleCategory.COMPOSERS,
+          metadata: { ...validContext.metadata, tags: ['Baroque'] },
+        },
         { ...validContext, id: '3', lang: 'ja', category: ArticleCategory.WORKS },
       ];
       mockMetadataDS.findAll.mockResolvedValue(mockAllContexts);

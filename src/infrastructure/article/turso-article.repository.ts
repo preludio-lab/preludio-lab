@@ -10,7 +10,7 @@ export class TursoArticleRepository implements ArticleRepository {
   constructor(
     private metadataDS: ArticleMetadataDataSource,
     private contentDS: ArticleContentDataSource,
-  ) { }
+  ) {}
 
   async findById(_id: string): Promise<Article | null> {
     // IDでの検索には言語コンテキストが必要かもしれません。

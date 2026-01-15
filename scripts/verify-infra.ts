@@ -47,8 +47,10 @@ async function main() {
   // 4. Repository Integration
   console.log('\n[4] Verifying Repository Integration (Dry Run)...');
   try {
-    const { ArticleMetadataDataSource } = await import('../src/infrastructure/article/turso-article-metadata.ds');
-    const { ArticleContentDataSource } = await import('../src/infrastructure/article/r2-article-content.ds');
+    const { ArticleMetadataDataSource } =
+      await import('../src/infrastructure/article/turso-article-metadata.ds');
+    const { ArticleContentDataSource } =
+      await import('../src/infrastructure/article/r2-article-content.ds');
     const { TursoArticleRepository } =
       await import('../src/infrastructure/article/turso-article.repository');
 

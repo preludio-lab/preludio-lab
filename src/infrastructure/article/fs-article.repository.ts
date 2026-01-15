@@ -10,8 +10,8 @@ import { FsArticleContentDataSource } from './fs-article-content.ds';
 export class FsArticleRepository implements ArticleRepository {
   constructor(
     private metadataDS: FsArticleMetadataDataSource,
-    private contentDS: FsArticleContentDataSource
-  ) { }
+    private contentDS: FsArticleContentDataSource,
+  ) {}
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     const context = await this.metadataDS.findBySlug(lang, category, slug);
@@ -24,7 +24,7 @@ export class FsArticleRepository implements ArticleRepository {
   async findById(id: string): Promise<Article | null> {
     // FS implementation assumes slug usually, but we can scan
     const all = await this.metadataDS.findAll();
-    const match = all.find(c => c.id === id); // id is slug in FS context
+    const match = all.find((c) => c.id === id); // id is slug in FS context
     if (!match) return null;
 
     const contentBody = await this.contentDS.getContent(match.filePath);
@@ -42,35 +42,39 @@ export class FsArticleRepository implements ArticleRepository {
 
     // 1. Language
     if (criteria.lang) {
-      candidates = candidates.filter(c => c.lang === criteria.lang);
+      candidates = candidates.filter((c) => c.lang === criteria.lang);
     }
 
     // 2. Status
     if (criteria.status && criteria.status.length > 0) {
-      candidates = candidates.filter(c => criteria.status!.includes(c.status));
+      candidates = candidates.filter((c) => criteria.status!.includes(c.status));
     }
 
     // 3. Category
     if (criteria.category) {
-      candidates = candidates.filter(c => c.category === criteria.category);
+      candidates = candidates.filter((c) => c.category === criteria.category);
     }
 
     // 4. Tags
     if (criteria.tags && criteria.tags.length > 0) {
-      candidates = candidates.filter(c =>
-        criteria.tags!.every(tag => c.metadata.tags.includes(tag))
+      candidates = candidates.filter((c) =>
+        criteria.tags!.every((tag) => c.metadata.tags.includes(tag)),
       );
     }
 
     // Series, Features, Metadata filters...
     if (criteria.isFeatured !== undefined) {
-      candidates = candidates.filter(c => c.metadata.isFeatured === criteria.isFeatured);
+      candidates = candidates.filter((c) => c.metadata.isFeatured === criteria.isFeatured);
     }
     if (criteria.minReadingLevel) {
-      candidates = candidates.filter(c => (c.metadata.readingLevel || 0) >= criteria.minReadingLevel!);
+      candidates = candidates.filter(
+        (c) => (c.metadata.readingLevel || 0) >= criteria.minReadingLevel!,
+      );
     }
     if (criteria.maxReadingLevel) {
-      candidates = candidates.filter(c => (c.metadata.readingLevel || 0) <= criteria.maxReadingLevel!);
+      candidates = candidates.filter(
+        (c) => (c.metadata.readingLevel || 0) <= criteria.maxReadingLevel!,
+      );
     }
 
     // Sort
@@ -80,7 +84,8 @@ export class FsArticleRepository implements ArticleRepository {
 
     candidates.sort((a, b) => {
       /* Simplified Sort Logic for Context */
-      let valA: any = 0, valB: any = 0;
+      let valA: any = 0,
+        valB: any = 0;
       switch (sortOption) {
         case ArticleSortOption.PUBLISHED_AT:
           valA = a.metadata.publishedAt ? a.metadata.publishedAt.getTime() : 0;
@@ -120,7 +125,9 @@ export class FsArticleRepository implements ArticleRepository {
   }
 
   async save(article: Article): Promise<void> {
-    throw new Error('Save not implemented in Composed Repository (Use legacy or finish implementation)');
+    throw new Error(
+      'Save not implemented in Composed Repository (Use legacy or finish implementation)',
+    );
   }
 
   async delete(id: string): Promise<void> {
@@ -149,7 +156,7 @@ export class FsArticleRepository implements ArticleRepository {
         relatedArticles: [],
         sourceAttributions: [],
         monetizationElements: [],
-      }
+      },
     });
   }
 
@@ -178,6 +185,10 @@ export class FsArticleRepository implements ArticleRepository {
   }
 
   private slugify(text: string): string {
-    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]+/g, '');
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]+/g, '');
   }
 }
