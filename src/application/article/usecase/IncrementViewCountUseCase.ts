@@ -17,7 +17,7 @@ export class IncrementViewCountUseCase {
     // This serves as a placeholder for Future DB implementation.
     // We might log it for analytics.
 
-    // const article = await this.articleRepository.findById(id);
+    // const article = await this.articleRepository.findById(id, 'en');
     // if (article) {
     //    // Update view count logic...
     // }

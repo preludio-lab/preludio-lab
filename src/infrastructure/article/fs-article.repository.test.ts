@@ -81,6 +81,23 @@ describe('FsArticleRepository', () => {
     });
   });
 
+  describe('findById', () => {
+    it('returns article if context exists matching id and lang', async () => {
+      const mockAll = [{ ...validContext, id: 'prelude', lang: 'en' }];
+      mockMetadataDS.findAll.mockResolvedValue(mockAll);
+      mockContentDS.getContent.mockResolvedValue(validBody);
+
+      const result = await repository.findById('prelude', 'en');
+      expect(result).not.toBeNull();
+      expect(result?.control.id).toBe('prelude');
+    });
+
+    it('throws AppError(NOT_FOUND) if no match', async () => {
+      mockMetadataDS.findAll.mockResolvedValue([]);
+      await expect(repository.findById('missing', 'en')).rejects.toThrow();
+    });
+  });
+
   describe('findMany', () => {
     it('filters articles by criteria', async () => {
       const mockAllContexts = [

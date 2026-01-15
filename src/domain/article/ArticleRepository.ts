@@ -43,7 +43,10 @@ export interface ArticleRepository {
   /**
    * Find a single article by ID
    */
-  findById(id: string): Promise<Article | null>;
+  /**
+   * Find a single article by ID
+   */
+  findById(id: string, lang: string): Promise<Article | null>;
 
   /**
    * Find articles matching criteria

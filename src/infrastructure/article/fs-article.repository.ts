@@ -15,7 +15,7 @@ export class FsArticleRepository implements ArticleRepository {
     private metadataDS: FsArticleMetadataDataSource,
     private contentDS: FsArticleContentDataSource,
     private logger: Logger,
-  ) { }
+  ) {}
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
@@ -44,23 +44,24 @@ export class FsArticleRepository implements ArticleRepository {
     }
   }
 
-  async findById(id: string): Promise<Article | null> {
+  async findById(id: string, lang: string): Promise<Article | null> {
     try {
       // FS実装は通常slugを想定しているが、全件スキャンで対応可能
       const all = await this.metadataDS.findAll();
-      const match = all.find((c) => c.id === id); // id is slug in FS context
+      // FS context treats id as slug. Ensure we also match the lang.
+      const match = all.find((c) => c.id === id && c.lang === lang);
       if (!match) {
-        throw new AppError(`Article not found (id: ${id})`, 'NOT_FOUND', 404);
+        throw new AppError(`Article not found (id: ${id}, lang: ${lang})`, 'NOT_FOUND', 404);
       }
 
       const contentBody = await this.contentDS.getContent(match.filePath);
       return this.mapToDomain(match, contentBody);
     } catch (err) {
       if (err instanceof AppError && err.code === 'NOT_FOUND') {
-        this.logger.warn(`Article not found by ID: ${id}`, { id });
+        this.logger.warn(`Article not found by ID: ${id}`, { id, lang });
         throw err;
       }
-      this.logger.error(`Failed to find article by id: ${id}`, err as Error, { id });
+      this.logger.error(`Failed to find article by id: ${id}`, err as Error, { id, lang });
       throw new AppError('Failed to find article by id', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }

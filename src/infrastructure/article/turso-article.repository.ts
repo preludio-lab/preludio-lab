@@ -13,86 +13,85 @@ export class TursoArticleRepository implements ArticleRepository {
     private metadataDS: ArticleMetadataDataSource,
     private contentDS: ArticleContentDataSource,
     private logger: Logger,
-  ) { }
+  ) {}
 
-  async findById(_id: string): Promise<Article | null> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const unusedId = _id;
-    // IDでの検索には言語コンテキストが必要かもしれません。
-    // ArticleRepositoryインターフェースのfindByIdは、通常、特定のコンテキストでの取得、またはデフォルト言語を返すことを意味しますか？
-    // このシステムでは、Article Entityはローカライズされています。したがって、おそらくLangが必要です。
-    // しかし、インターフェース定義 `findById(id: string)` は言語を受け取りません。
-    // これは、IDが翻訳ごとに一意であるか（article_translationsにある）、
-    // またはインターフェースを変更/明確化する必要があることを意味します。
-    //
-    // スキーマを見ると: `article_translations.id` がPKです。
-    // ドメイン `Article.id` が `articles.id` (Universal ID) に対応する場合、言語なしではfindByIdは曖昧です。
-    // ドメイン `Article.id` が `article_translations.id` に対応する場合、一意です。
+  async findById(id: string, lang: string): Promise<Article | null> {
+    // 1. Fetch Metadata
+    let row;
+    try {
+      row = await this.metadataDS.findById(id, lang);
+    } catch (err) {
+      this.logger.error(`Metadata fetch failed: ${id}`, err as Error, { id, lang });
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
 
-    // 仮定: 通常は Slug + Lang でアクセスします。
-    // findByIdについては、有効なIDがUniversal IDを参照していると仮定し、デフォルトで 'en' とするべきか、すべて取得するべきか？
-    // 実際、クリーンアーキテクチャ的には、リポジトリがこれを処理するべきです。
-    // findByIdの実装詳細は保留するか、まだサポートされていない場合は汎用エラーをスローさせますが、
-    // `metadata.ds.ts` を見ると `findById(id, lang)` を実装しました。
+    // 2. Handle Not Found (Business Logic)
+    if (!row) {
+      this.logger.warn(`Article not found by ID: ${id} (${lang})`, { id, lang });
+      throw new AppError(`Article not found: ${id}`, 'NOT_FOUND', 404);
+    }
 
-    // 今のところ、指定されていない場合はデフォルトの 'en' を取得するか、失敗させるか？
-    // あるいは、ここで渡されるIDは翻訳IDなのかもしれません。
-    // 確信が持てない場合は、Universal IDと仮定し、ローカル開発コンテキスト用にデフォルト言語 'ja' としますが、
-    // メインのユースケースとしては findBySlug に固執するのが良さそうです。
+    // 3. Fetch Content (MDX)
+    let content = '';
+    if (row.article_translations.mdxPath) {
+      try {
+        content = await this.contentDS.getContent(row.article_translations.mdxPath);
+      } catch (err) {
+        this.logger.error(
+          `Content fetch failed: ${row.article_translations.mdxPath}`,
+          err as Error,
+          { id },
+        );
+        throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
+      }
+    }
 
-    return null; // 言語コンテキストが必要なため、厳密には未実装です。
+    // 4. Map to Domain
+    try {
+      return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
+    } catch (err) {
+      this.logger.error(`Mapping failed for article: ${id}`, err as Error, { id });
+      throw new AppError('Data mapping error', 'INTERNAL_SERVER_ERROR', 500, err);
+    }
   }
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
+    // 1. Fetch Metadata
+    let row;
     try {
-      // 1. Fetch Metadata
-      const row = await this.metadataDS.findBySlug(slug, lang);
-      if (!row) {
-        this.logger.warn(`Article not found (slug: ${slug}, lang: ${lang})`, {
-          category,
-          slug,
-          lang,
-        });
-        // ビジネスルール: 見つからない場合は null を返す（リポジトリパターンでは通常 null を返すか EntityNotFound をスローする）
-        // 実装計画では "AppError(..., 'NOT_FOUND') をスローする" と定義
-        // ArticleRepository インターフェースのシグネチャは `Promise<Article | null>` だが、
-        // フィードバック「404 (NOT_FOUND) の扱い...」に従い、AppError をスローする方針とする。
-        // インフラ層での try/catch と再スローにより一貫性を保つ。
-        throw new AppError(`Article not found: ${slug}`, 'NOT_FOUND', 404);
-      }
+      row = await this.metadataDS.findBySlug(slug, lang);
+    } catch (err) {
+      this.logger.error(`Metadata fetch failed: ${slug}`, err as Error, { slug, lang });
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
 
-      // 2. Fetch Content (MDX)
-      let content = '';
-      if (row.article_translations.mdxPath) {
-        try {
-          content = await this.contentDS.getContent(row.article_translations.mdxPath);
-        } catch (e) {
-          // コンテンツの欠落は部分的失敗か？致命的か？
-          // 翻訳は存在するがコンテンツがない場合 -> エラーか警告か？
-          // インフラストラクチャエラーとして扱うが、回復可能かもしれない？
-          // 現時点では、一貫性を保つためにハードフェイル（例外スロー）とする。
-          throw e; // Caught below
-        }
-      }
+    // 2. Handle Not Found (Business Logic)
+    if (!row) {
+      this.logger.warn(`Article not found: ${slug} (${lang})`, { category, slug, lang });
+      throw new AppError(`Article not found: ${slug}`, 'NOT_FOUND', 404);
+    }
 
-      // 3. Map to Domain
+    // 3. Fetch Content (MDX)
+    let content = '';
+    if (row.article_translations.mdxPath) {
+      try {
+        content = await this.contentDS.getContent(row.article_translations.mdxPath);
+      } catch (err) {
+        this.logger.error(
+          `Content fetch failed: ${row.article_translations.mdxPath}`,
+          err as Error,
+          { slug },
+        );
+        throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
+      }
+    }
+
+    // 4. Map to Domain
+    try {
       return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
     } catch (err) {
-      if (err instanceof AppError) {
-        // 既に処理済み（例: NOT_FOUND）
-        if (err.code === 'NOT_FOUND') {
-          // NOT_FOUND をスローすることにした場合、警告ログを出力して再スローすべき
-          this.logger.warn(err.message, { code: err.code, slug, lang });
-          throw err;
-        }
-      }
-
-      this.logger.error(`Failed to find article by slug: ${slug}`, err as Error, {
-        slug,
-        lang,
-        category,
-      });
-      throw new AppError('Failed to find article', 'INFRASTRUCTURE_ERROR', 500, err);
+      this.logger.error(`Mapping failed for article: ${slug}`, err as Error, { slug });
+      throw new AppError('Data mapping error', 'INTERNAL_SERVER_ERROR', 500, err);
     }
   }
 
