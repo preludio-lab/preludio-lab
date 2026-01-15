@@ -121,7 +121,8 @@ date: 2022-01-01
       vi.mocked(fs.statSync).mockImplementation((p: fs.PathLike) => {
         const pStr = p.toString();
         if (pStr.endsWith('en')) return { isDirectory: () => true } as fs.Stats;
-        if (pStr.endsWith('.mdx')) return { isDirectory: () => false, mtime: new Date() } as fs.Stats;
+        if (pStr.endsWith('.mdx'))
+          return { isDirectory: () => false, mtime: new Date() } as fs.Stats;
         return { isDirectory: () => false } as fs.Stats;
       });
 

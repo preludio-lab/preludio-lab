@@ -3,9 +3,9 @@ import { FsArticleRepository } from './fs-article.repository';
 import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { Logger } from '@/shared/logging/logger';
 
-// Mock DataSources
+// DataSource のモック
 vi.mock('./fs-article-metadata.ds');
 vi.mock('./fs-article-content.ds');
 
@@ -14,7 +14,7 @@ describe('FsArticleRepository', () => {
   let mockMetadataDS: { findBySlug: Mock; findAll: Mock };
   let mockContentDS: { getContent: Mock };
 
-  // Mock Data
+  // モックデータ
   const validContext = {
     id: 'prelude',
     slug: 'prelude',
@@ -38,13 +38,21 @@ describe('FsArticleRepository', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup Mock Instances
+    // モックインスタンスのセットアップ
     mockMetadataDS = { findBySlug: vi.fn(), findAll: vi.fn() };
     mockContentDS = { getContent: vi.fn() };
 
+    const mockLogger = {
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    };
+
     repository = new FsArticleRepository(
       mockMetadataDS as unknown as FsArticleMetadataDataSource,
-      mockContentDS as unknown as FsArticleContentDataSource
+      mockContentDS as unknown as FsArticleContentDataSource,
+      mockLogger as unknown as Logger,
     );
   });
 
@@ -67,10 +75,9 @@ describe('FsArticleRepository', () => {
       expect(mockContentDS.getContent).toHaveBeenCalledWith('/path/to/works/prelude.mdx');
     });
 
-    it('returns null if validation fails or file missing (DS returns null)', async () => {
+    it('throws AppError(NOT_FOUND) if validation fails or file missing (DS returns null)', async () => {
       mockMetadataDS.findBySlug.mockResolvedValue(null);
-      const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
-      expect(result).toBeNull();
+      await expect(repository.findBySlug('en', ArticleCategory.WORKS, 'missing')).rejects.toThrow();
     });
   });
 

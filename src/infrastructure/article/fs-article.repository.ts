@@ -6,131 +6,172 @@ import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConsta
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
 import { FsArticleMetadataDataSource, FsArticleContext } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';
+import { Logger } from '@/shared/logging/logger';
+import { AppError } from '@/domain/shared/AppError';
+import { AppLocale } from '@/domain/i18n/Locale';
 
 export class FsArticleRepository implements ArticleRepository {
   constructor(
     private metadataDS: FsArticleMetadataDataSource,
     private contentDS: FsArticleContentDataSource,
-  ) {}
+    private logger: Logger,
+  ) { }
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
-    const context = await this.metadataDS.findBySlug(lang, category, slug);
-    if (!context) return null;
+    try {
+      const context = await this.metadataDS.findBySlug(lang, category, slug);
+      if (!context) {
+        // ビジネスルール: 見つからない場合は null を返すか？
+        // 計画に従い: AppError('NOT_FOUND') をスローする。
+        // ここでスローすれば、下でキャッチして WARN ログに変換できる。
+        // 標準的なプラクティスとして、一意のエラーをスローし、catch ブロックでログ出力/変換を行う。
+        throw new AppError(`Article not found (slug: ${slug})`, 'NOT_FOUND', 404);
+      }
 
-    const contentBody = await this.contentDS.getContent(context.filePath);
-    return this.mapToDomain(context, contentBody);
+      const contentBody = await this.contentDS.getContent(context.filePath);
+      return this.mapToDomain(context, contentBody);
+    } catch (err) {
+      if (err instanceof AppError && err.code === 'NOT_FOUND') {
+        this.logger.warn(`Article not found: ${slug}`, { lang, category, slug });
+        throw err;
+      }
+      this.logger.error(`Failed to find article by slug: ${slug}`, err as Error, {
+        slug,
+        lang,
+        category,
+      });
+      throw new AppError('Failed to find article', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
   }
 
   async findById(id: string): Promise<Article | null> {
-    // FS implementation assumes slug usually, but we can scan
-    const all = await this.metadataDS.findAll();
-    const match = all.find((c) => c.id === id); // id is slug in FS context
-    if (!match) return null;
+    try {
+      // FS実装は通常slugを想定しているが、全件スキャンで対応可能
+      const all = await this.metadataDS.findAll();
+      const match = all.find((c) => c.id === id); // id is slug in FS context
+      if (!match) {
+        throw new AppError(`Article not found (id: ${id})`, 'NOT_FOUND', 404);
+      }
 
-    const contentBody = await this.contentDS.getContent(match.filePath);
-    return this.mapToDomain(match, contentBody);
+      const contentBody = await this.contentDS.getContent(match.filePath);
+      return this.mapToDomain(match, contentBody);
+    } catch (err) {
+      if (err instanceof AppError && err.code === 'NOT_FOUND') {
+        this.logger.warn(`Article not found by ID: ${id}`, { id });
+        throw err;
+      }
+      this.logger.error(`Failed to find article by id: ${id}`, err as Error, { id });
+      throw new AppError('Failed to find article by id', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
   }
 
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
-    const allContexts = await this.metadataDS.findAll();
-    // In-memory filtering (could be optimized deeply in DS but composed repo does it here for now)
+    try {
+      const allContexts = await this.metadataDS.findAll();
+      // インメモリフィルタリング（DS内で深く最適化可能だが、現在は構成されたリポジトリがここで行う）
+      // パフォーマンスのために、まずはコンテキスト/メタデータでフィルタリングする。
 
-    // Convert to domain objects for filtering (or filter contexts first? Context has metadata)
-    // Filter by context/metadata first for perf.
+      let candidates = allContexts;
 
-    let candidates = allContexts;
-
-    // 1. Language
-    if (criteria.lang) {
-      candidates = candidates.filter((c) => c.lang === criteria.lang);
-    }
-
-    // 2. Status
-    if (criteria.status && criteria.status.length > 0) {
-      candidates = candidates.filter((c) => criteria.status!.includes(c.status));
-    }
-
-    // 3. Category
-    if (criteria.category) {
-      candidates = candidates.filter((c) => c.category === criteria.category);
-    }
-
-    // 4. Tags
-    if (criteria.tags && criteria.tags.length > 0) {
-      candidates = candidates.filter((c) =>
-        criteria.tags!.every((tag) => c.metadata.tags.includes(tag)),
-      );
-    }
-
-    // Series, Features, Metadata filters...
-    if (criteria.isFeatured !== undefined) {
-      candidates = candidates.filter((c) => c.metadata.isFeatured === criteria.isFeatured);
-    }
-    if (criteria.minReadingLevel) {
-      candidates = candidates.filter(
-        (c) => (c.metadata.readingLevel || 0) >= criteria.minReadingLevel!,
-      );
-    }
-    if (criteria.maxReadingLevel) {
-      candidates = candidates.filter(
-        (c) => (c.metadata.readingLevel || 0) <= criteria.maxReadingLevel!,
-      );
-    }
-
-    // Sort
-    const sortOption = criteria.sortBy || ArticleSortOption.PUBLISHED_AT;
-    const direction = criteria.sortDirection || SortDirection.DESC;
-    const modifier = direction === SortDirection.ASC ? 1 : -1;
-
-    candidates.sort((a, b) => {
-      /* Simplified Sort Logic for Context */
-      let valA: any = 0,
-        valB: any = 0;
-      switch (sortOption) {
-        case ArticleSortOption.PUBLISHED_AT:
-          valA = a.metadata.publishedAt ? a.metadata.publishedAt.getTime() : 0;
-          valB = b.metadata.publishedAt ? b.metadata.publishedAt.getTime() : 0;
-          break;
-        // ... implement other sorts if needed
-        default:
-          valA = a.createdAt.getTime();
-          valB = b.createdAt.getTime();
+      // 1. 言語
+      if (criteria.lang) {
+        candidates = candidates.filter((c) => c.lang === criteria.lang);
       }
-      if (valA < valB) return -1 * modifier;
-      if (valA > valB) return 1 * modifier;
-      return 0;
-    });
 
-    // Pagination
-    const totalCount = candidates.length;
-    const offset = criteria.offset || 0;
-    const limit = criteria.limit || 20;
-    const pagedCandidates = candidates.slice(offset, offset + limit);
+      // 2. ステータス
+      if (criteria.status && criteria.status.length > 0) {
+        candidates = candidates.filter((c) => criteria.status!.includes(c.status));
+      }
 
-    // Map to Domain (Heavy lifting: reading content)
-    // Note: findMany typically returns Articles which contain Content (Body).
-    // In many real systems list view might return "Light Article" (no body).
-    // Domain definition requires 'content'.
-    const items: Article[] = [];
-    for (const c of pagedCandidates) {
-      const body = await this.contentDS.getContent(c.filePath);
-      items.push(this.mapToDomain(c, body));
+      // 3. カテゴリ
+      if (criteria.category) {
+        candidates = candidates.filter((c) => c.category === criteria.category);
+      }
+
+      // 4. タグ
+      if (criteria.tags && criteria.tags.length > 0) {
+        candidates = candidates.filter((c) =>
+          criteria.tags!.every((tag) => c.metadata.tags.includes(tag)),
+        );
+      }
+
+      // シリーズ、特集、メタデータフィルタ...
+      if (criteria.isFeatured !== undefined) {
+        candidates = candidates.filter((c) => c.metadata.isFeatured === criteria.isFeatured);
+      }
+      if (criteria.minReadingLevel) {
+        candidates = candidates.filter(
+          (c) => (c.metadata.readingLevel || 0) >= criteria.minReadingLevel!,
+        );
+      }
+      if (criteria.maxReadingLevel) {
+        candidates = candidates.filter(
+          (c) => (c.metadata.readingLevel || 0) <= criteria.maxReadingLevel!,
+        );
+      }
+
+      // ソート
+      const sortOption = criteria.sortBy || ArticleSortOption.PUBLISHED_AT;
+      const direction = criteria.sortDirection || SortDirection.DESC;
+      const modifier = direction === SortDirection.ASC ? 1 : -1;
+
+      candidates.sort((a, b) => {
+        /* コンテキスト用の簡易ソートロジック */
+        let valA = 0;
+        let valB = 0;
+        switch (sortOption) {
+          case ArticleSortOption.PUBLISHED_AT:
+            valA = a.metadata.publishedAt ? a.metadata.publishedAt.getTime() : 0;
+            valB = b.metadata.publishedAt ? b.metadata.publishedAt.getTime() : 0;
+            break;
+          // ... implement other sorts if needed
+          default:
+            valA = a.createdAt.getTime();
+            valB = b.createdAt.getTime();
+        }
+        if (valA < valB) return -1 * modifier;
+        if (valA > valB) return 1 * modifier;
+        return 0;
+      });
+
+      // ページネーション
+      const totalCount = candidates.length;
+      const offset = criteria.offset || 0;
+      const limit = criteria.limit || 20;
+      const pagedCandidates = candidates.slice(offset, offset + limit);
+
+      // ドメインへのマッピング（重い処理：コンテンツの読み込み）
+      // 注: findMany は通常、コンテンツ（本文）を含む Article を返します。
+      // 実際のシステムの多くでは、リストビューは「軽量な Article」（本文なし）を返す場合があります。
+      // ドメイン定義では 'content' が必要です。
+      const items: Article[] = [];
+      for (const c of pagedCandidates) {
+        const body = await this.contentDS.getContent(c.filePath);
+        items.push(this.mapToDomain(c, body));
+      }
+
+      return {
+        items,
+        totalCount,
+        hasNextPage: offset + limit < totalCount,
+      };
+    } catch (err) {
+      this.logger.error('Failed to find articles', err as Error, { criteria });
+      throw new AppError('Failed to find articles', 'INFRASTRUCTURE_ERROR', 500, err);
     }
-
-    return {
-      items,
-      totalCount,
-      hasNextPage: offset + limit < totalCount,
-    };
   }
 
   async save(article: Article): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const a = article;
     throw new Error(
       'Save not implemented in Composed Repository (Use legacy or finish implementation)',
     );
   }
 
   async delete(id: string): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const i = id;
     throw new Error('Delete not implemented');
   }
 
@@ -140,7 +181,7 @@ export class FsArticleRepository implements ArticleRepository {
     return new Article({
       control: {
         id: context.id,
-        lang: context.lang as any,
+        lang: context.lang as AppLocale,
         status: context.status,
         createdAt: context.createdAt,
         updatedAt: context.updatedAt,
@@ -161,7 +202,7 @@ export class FsArticleRepository implements ArticleRepository {
   }
 
   private extractToc(content: string): ContentStructure {
-    // Copy regex logic logic
+    // 正規表現ロジックのコピー
     const lines = content.split('\n');
     const sections: ContentStructure = [];
     let currentH2: ContentSection | null = null;

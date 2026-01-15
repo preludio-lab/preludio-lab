@@ -3,6 +3,8 @@ import { FsArticleRepository } from './fs-article.repository';
 import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';
 
+import { logger } from '@/infrastructure/logging';
+
 /**
  * ArticleRepository の共有インスタンス (Singleton)
  *
@@ -11,4 +13,8 @@ import { FsArticleContentDataSource } from './fs-article-content.ds';
  */
 const metadataDS = new FsArticleMetadataDataSource();
 const contentDS = new FsArticleContentDataSource();
-export const articleRepository: ArticleRepository = new FsArticleRepository(metadataDS, contentDS);
+export const articleRepository: ArticleRepository = new FsArticleRepository(
+  metadataDS,
+  contentDS,
+  logger,
+);

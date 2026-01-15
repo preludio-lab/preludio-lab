@@ -53,10 +53,11 @@ async function main() {
       await import('../src/infrastructure/article/r2-article-content.ds');
     const { TursoArticleRepository } =
       await import('../src/infrastructure/article/turso-article.repository');
+    const { logger } = await import('../src/infrastructure/logging');
 
     const metaDS = new ArticleMetadataDataSource();
     const contentDS = new ArticleContentDataSource();
-    const repo = new TursoArticleRepository(metaDS, contentDS);
+    const repo = new TursoArticleRepository(metaDS, contentDS, logger);
 
     // Try to fetch non-existent article to test query execution
     const article = await repo.findBySlug('en', 'WORK' as ArticleCategory, 'non-existent-slug-123');

@@ -60,7 +60,7 @@ describe('ArticleContentDataSource', () => {
   });
 
   it('should return empty string and log warning on error', async () => {
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.mocked(r2Client.send).mockRejectedValue(new Error('Access Denied'));
 
     const result = await dataSource.getContent('error.mdx');

@@ -1,8 +1,10 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TursoArticleRepository } from './turso-article.repository';
 import { ArticleMetadataDataSource } from './turso-article-metadata.ds';
 import { ArticleContentDataSource } from './r2-article-content.ds';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { Logger } from '@/shared/logging/logger';
+import { AppError } from '@/domain/shared/AppError';
 
 describe('TursoArticleRepository', () => {
     let repo: TursoArticleRepository;
@@ -16,10 +18,18 @@ describe('TursoArticleRepository', () => {
         getContent: vi.fn(),
     };
 
+    const mockLogger = {
+        debug: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+    };
+
     beforeEach(() => {
         repo = new TursoArticleRepository(
             mockMetadataDS as unknown as ArticleMetadataDataSource,
-            mockContentDS as unknown as ArticleContentDataSource
+            mockContentDS as unknown as ArticleContentDataSource,
+            mockLogger as unknown as Logger,
         );
         vi.clearAllMocks();
     });
@@ -58,12 +68,19 @@ describe('TursoArticleRepository', () => {
         expect(mockContentDS.getContent).toHaveBeenCalledWith('path/to/content.mdx');
     });
 
-    it('findBySlug should return null if metadata not found', async () => {
+    it('findBySlug should throw AppError(NOT_FOUND) if metadata not found', async () => {
         mockMetadataDS.findBySlug.mockResolvedValue(null);
 
-        const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
+        // 警告ログを出力し、AppError をスローすることを確認
+        await expect(repo.findBySlug('en', ArticleCategory.WORKS, 'slug')).rejects.toThrow();
 
-        expect(result).toBeNull();
+        try {
+            await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
+        } catch (e) {
+            expect((e as AppError).code).toBe('NOT_FOUND');
+        }
+
+        expect(mockLogger.warn).toHaveBeenCalled();
         expect(mockContentDS.getContent).not.toHaveBeenCalled();
     });
 
