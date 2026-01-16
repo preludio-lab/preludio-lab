@@ -50,4 +50,12 @@ export const ArticleContentSchema = z.object({
   structure: ContentStructureSchema,
 });
 
-export type ArticleContent = z.infer<typeof ArticleContentSchema>;
+export class ArticleContent {
+  public readonly body: string | null;
+  public readonly structure: ContentStructure;
+
+  constructor(props: { body: string | null; structure: ContentStructure }) {
+    this.body = props.body;
+    this.structure = props.structure;
+  }
+}

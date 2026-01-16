@@ -1,5 +1,6 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
 import { Article, ContentStructure, ContentSection } from '@/domain/article/Article';
+import { ArticleContent } from '@/domain/article/ArticleContent';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
@@ -188,10 +189,10 @@ export class FsArticleRepository implements ArticleRepository {
         updatedAt: context.updatedAt,
       },
       metadata: context.metadata,
-      content: {
+      content: new ArticleContent({
         body: body,
         structure: structure,
-      },
+      }),
       engagement: { metrics: INITIAL_ENGAGEMENT_METRICS },
       context: {
         seriesAssignments: [],

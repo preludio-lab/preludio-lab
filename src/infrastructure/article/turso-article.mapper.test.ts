@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { TursoArticleMapper } from './turso-article.mapper';
+import { AppError } from '@/domain/shared/AppError'; // Add import
 import { AppLocale } from '@/domain/i18n/Locale';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { articles, articleTranslations } from '@/infrastructure/database/schema';
 import { InferSelectModel } from 'drizzle-orm';
 
@@ -14,7 +16,7 @@ describe('TursoArticleMapper', () => {
     const mockArticleRow = {
       id: 'article-123',
       slug: 'my-article',
-      category: 'work',
+      category: ArticleCategory.WORKS,
       isFeatured: false,
       readingTimeSeconds: 120,
       createdAt: '2023-01-01T00:00:00Z',
@@ -23,7 +25,7 @@ describe('TursoArticleMapper', () => {
     const mockTranslationRow = {
       articleId: 'article-123',
       lang: 'en',
-      status: 'PUBLISHED',
+      status: ArticleStatus.PUBLISHED,
       title: 'My Article Title',
       displayTitle: 'Display Title',
       publishedAt: '2023-01-02T00:00:00Z',
@@ -53,7 +55,7 @@ describe('TursoArticleMapper', () => {
     // Control
     expect(article.control.id).toBe('article-123');
     expect(article.control.lang).toBe(AppLocale.EN);
-    expect(article.control.status).toBe('PUBLISHED');
+    expect(article.control.status).toBe(ArticleStatus.PUBLISHED);
     expect(article.control.createdAt).toEqual(new Date('2023-01-01T00:00:00Z'));
     expect(article.control.updatedAt).toEqual(new Date('2023-01-03T00:00:00Z'));
 
@@ -76,11 +78,11 @@ describe('TursoArticleMapper', () => {
     expect(article.context.seriesAssignments).toEqual([{ seriesId: 's1' }]);
   });
 
-  it('should handle missing optional fields and defaults', () => {
+  it('should throw AppError given invalid category', () => {
     const mockArticleRow = {
       id: 'article-456',
       slug: 'default-article',
-      category: 'work',
+      category: 'invalid-cat', // Invalid
       isFeatured: false,
       readingTimeSeconds: 0,
       createdAt: '2023-01-01T00:00:00Z',
@@ -89,36 +91,28 @@ describe('TursoArticleMapper', () => {
     const mockTranslationRow = {
       articleId: 'article-456',
       lang: 'ja',
-      status: 'DRAFT',
+      status: ArticleStatus.DRAFT,
       title: 'Draft Title',
       displayTitle: 'Draft Display',
       updatedAt: '2023-01-01T00:00:00Z',
-      // metadata, publishedAt 等が欠落
-      metadata: null,
-      contentStructure: null,
+      metadata: {},
+      contentStructure: [],
       slSeriesAssignments: null,
     };
 
-    const article = TursoArticleMapper.toDomain(
-      mockArticleRow as unknown as ArticleRow,
-      mockTranslationRow as unknown as TranslationRow,
-      '',
-    );
-
-    // デフォルト値の検証
-    expect(article.metadata.category).toBe('work'); // Fallback to ArticleRow.category
-    expect(article.metadata.slug).toBe('default-article'); // Fallback to ArticleRow.slug
-    expect(article.metadata.composerName).toBe('');
-    expect(article.metadata.tags).toEqual([]);
-    expect(article.metadata.publishedAt).toBeNull();
-    expect(article.content.structure).toEqual([]);
-    expect(article.context.seriesAssignments).toEqual([]);
+    expect(() =>
+      TursoArticleMapper.toDomain(
+        mockArticleRow as unknown as ArticleRow,
+        mockTranslationRow as unknown as TranslationRow,
+        '',
+      ),
+    ).toThrowError(AppError);
   });
   it('should map undefined content to null body', () => {
     const mockArticleRow = {
       id: 'article-789',
       slug: 'no-content-article',
-      category: 'work',
+      category: ArticleCategory.WORKS,
       isFeatured: false,
       readingTimeSeconds: 0,
       createdAt: '2023-01-01T00:00:00Z',
@@ -127,7 +121,7 @@ describe('TursoArticleMapper', () => {
     const mockTranslationRow = {
       articleId: 'article-789',
       lang: 'en',
-      status: 'PUBLISHED',
+      status: ArticleStatus.PUBLISHED,
       title: 'No Content Title',
       displayTitle: 'Display',
       updatedAt: '2023-01-01T00:00:00Z',

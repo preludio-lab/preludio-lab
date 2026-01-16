@@ -6,6 +6,7 @@ import {
   ArticleMetadata,
   ArticleMetadataSchema,
 } from '@/domain/article/ArticleMetadata';
+import { ArticleContent } from '@/domain/article/ArticleContent';
 import { articles, articleTranslations } from '../database/schema';
 import { InferSelectModel } from 'drizzle-orm';
 
@@ -46,11 +47,18 @@ export class TursoArticleMapper {
     }
     const safeBaseMetadata = parsedMetadataResult.data;
 
-    // 3. Control
+    // 3. Control & Status Safety
+    // DBの値がDomainのEnumに存在するかチェック
+    const rawStatus = translationRow.status;
+    const status = rawStatus as ArticleStatus;
+    if (!Object.values(ArticleStatus).includes(status)) {
+      throw new AppError(`Invalid status detected: ${rawStatus}`, 'INTERNAL_SERVER_ERROR', 500);
+    }
+
     const control = {
       id: articleRow.id,
       lang: lang,
-      status: translationRow.status as ArticleStatus, // statusもZodで検証可能だが今回は省略
+      status: status,
       createdAt: new Date(articleRow.createdAt),
       updatedAt: new Date(translationRow.updatedAt),
       version: 1,
@@ -59,10 +67,18 @@ export class TursoArticleMapper {
     // 4. Resolve Category & Slug
     // Snapshot (sl_) -> Master Fallback
     const categoryName = translationRow.slCategory || articleRow.category;
-    // Category文字列をEnumにキャスト（検証推奨）
-    // ここでは安全のため、もし不正な文字列なら 'WORK' 等にするかエラーにする
-    // 今回はキャストとして扱うが、実運用では isValidCategory チェックを入れるべき
+
+    // Category Safety Check
+    // カテゴリが不正な場合、エラーにするかデフォルト('WORK'等)にするか。
+    // ここではデータ不整合として検知するためにエラーログに近い挙動を想定しつつ、安全に倒す
     const category = categoryName as ArticleCategory;
+    if (!Object.values(ArticleCategory).includes(category)) {
+      throw new AppError(
+        `Invalid category detected: ${categoryName}`,
+        'INTERNAL_SERVER_ERROR',
+        500,
+      );
+    }
 
     const slug = translationRow.slSlug || articleRow.slug;
 
@@ -88,11 +104,16 @@ export class TursoArticleMapper {
     };
 
     // 6. Content
-    // mdxContentが明示的に渡されない場合は null (未取得) とする
-    const content = {
+    // contentStructureの型安全性を少し向上
+    const rawStructure = translationRow.contentStructure;
+    const structure = Array.isArray(rawStructure) ? rawStructure : [];
+
+    // 重要: ArticleContentドメインモデルが body: string | null を許容している前提
+    // クラスインスタンスを生成
+    const content = new ArticleContent({
       body: mdxContent ?? null,
-      structure: translationRow.contentStructure || [],
-    };
+      structure: structure,
+    });
 
     // 7. Context
     const context = {

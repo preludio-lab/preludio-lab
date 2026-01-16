@@ -4,6 +4,7 @@ import { ArticleMetadata } from '@/domain/article/ArticleMetadata';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
+import { ArticleContent } from '@/domain/article/ArticleContent';
 
 export interface CreateArticleCommand {
   slug: string;
@@ -54,10 +55,10 @@ export class CreateArticleUseCase {
         updatedAt: new Date(),
       },
       metadata,
-      content: {
+      content: new ArticleContent({
         body: command.content,
         structure: [],
-      },
+      }),
       engagement: {
         metrics: INITIAL_ENGAGEMENT_METRICS,
       },

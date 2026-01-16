@@ -35,15 +35,15 @@ export async function ArticleViewFeature({
 
   const audioMetadata = hasAudio
     ? {
-      src: metadata.playback!.audioSrc,
-      title: metadata.displayTitle,
-      composerName: metadata.composerName,
-      performer: metadata.playback!.performer,
-      thumbnail: metadata.thumbnail,
-      startSeconds: metadata.playback!.startSeconds,
-      endSeconds: metadata.playback!.endSeconds,
-      platform: 'youtube',
-    }
+        src: metadata.playback!.audioSrc,
+        title: metadata.displayTitle,
+        composerName: metadata.composerName,
+        performer: metadata.playback!.performer,
+        thumbnail: metadata.thumbnail,
+        startSeconds: metadata.playback!.startSeconds,
+        endSeconds: metadata.playback!.endSeconds,
+        platform: 'youtube',
+      }
     : undefined;
 
   const mdxComponents = createArticleMdxComponents(audioMetadata);
