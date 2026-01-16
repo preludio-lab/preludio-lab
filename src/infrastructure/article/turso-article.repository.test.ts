@@ -61,15 +61,11 @@ describe('TursoArticleRepository', () => {
       expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
     });
 
-    it('should throw AppError(NOT_FOUND) if metadata not found', async () => {
+    it('should return null if metadata not found', async () => {
       mockMetadataDS.findById.mockResolvedValue(null);
 
-      await expect(repo.findById('999', 'en')).rejects.toThrow();
-      try {
-        await repo.findById('999', 'en');
-      } catch (e) {
-        expect((e as AppError).code).toBe('NOT_FOUND');
-      }
+      const result = await repo.findById('999', 'en');
+      expect(result).toBeNull();
     });
   });
 
@@ -107,22 +103,16 @@ describe('TursoArticleRepository', () => {
     expect(result?.metadata.title).toBe('Title');
     expect(result?.content.body).toBe('# Hello');
 
-    expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en');
+    expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en', ArticleCategory.WORKS);
     expect(mockContentDS.getContent).toHaveBeenCalledWith('path/to/content.mdx');
   });
 
-  it('findBySlug should throw AppError(NOT_FOUND) if metadata not found', async () => {
+  it('findBySlug should return null if metadata not found', async () => {
     mockMetadataDS.findBySlug.mockResolvedValue(null);
 
-    // 警告ログを出力し、AppError をスローすることを確認
-    await expect(repo.findBySlug('en', ArticleCategory.WORKS, 'slug')).rejects.toThrow();
+    const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
 
-    try {
-      await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
-    } catch (e) {
-      expect((e as AppError).code).toBe('NOT_FOUND');
-    }
-
+    expect(result).toBeNull();
     expect(mockLogger.warn).toHaveBeenCalled();
     expect(mockContentDS.getContent).not.toHaveBeenCalled();
   });
@@ -146,7 +136,33 @@ describe('TursoArticleRepository', () => {
     const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
 
     expect(result).not.toBeNull();
-    expect(result?.content.body).toBe('');
+    expect(result?.content.body).toBe(''); // mdxPathがない場合は空文字 (Mapperの仕様)
     expect(mockContentDS.getContent).not.toHaveBeenCalled();
+  });
+
+  it('findMany should return articles with null content', async () => {
+    // mock findMany implementation
+    (mockMetadataDS as any).findMany = vi.fn().mockResolvedValue({
+      rows: [
+        {
+          articles: { id: '1', slug: 'slug1', category: 'work' },
+          article_translations: {
+            title: 'Title 1',
+            lang: 'en',
+            metadata: { category: 'works' },
+            slSlug: 'slug1', // Add required fields for mapper
+            slCategory: 'works',
+          },
+        },
+      ],
+      totalCount: 1,
+    });
+
+    const result = await repo.findMany({ lang: 'en' });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].content.body).toBeNull();
+    expect(result.totalCount).toBe(1);
+    expect((mockMetadataDS as any).findMany).toHaveBeenCalled();
   });
 });

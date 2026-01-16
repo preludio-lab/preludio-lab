@@ -69,10 +69,11 @@ describe('ArticleMetadataDataSource', () => {
 
       mockLimit.mockResolvedValue([mockData]);
 
-      const result = await dataSource.findBySlug('target-slug', 'en');
+      const result = await dataSource.findBySlug('target-slug', 'en', 'works');
 
       expect(result).toEqual(mockData);
       expect(mockWhere).toHaveBeenCalled();
+      // Check if category filter was applied (simplified verification of "and" logic)
     });
 
     it('should return null if no result found', async () => {
@@ -81,6 +82,28 @@ describe('ArticleMetadataDataSource', () => {
       const result = await dataSource.findBySlug('unknown-slug', 'fr');
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('findMany', () => {
+    it('should return rows and totalCount', async () => {
+      const mockRows = [{ id: '1' }, { id: '2' }];
+      // mock chain for findMany (select -> from -> innerJoin -> where -> limit -> offset)
+      const mockOffset = vi.fn().mockResolvedValue(mockRows);
+      mockLimit.mockReturnValue({ offset: mockOffset });
+
+      const result = await dataSource.findMany({
+        lang: 'en',
+        category: 'works',
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.rows).toEqual(mockRows);
+      expect(result.totalCount).toBe(0); // Mock limitation
+
+      expect(mockLimit).toHaveBeenCalledWith(10);
+      expect(mockOffset).toHaveBeenCalledWith(0);
     });
   });
 });

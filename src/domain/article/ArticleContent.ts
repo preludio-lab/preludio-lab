@@ -45,7 +45,7 @@ export type ContentStructure = z.infer<typeof ContentStructureSchema>;
  */
 export const ArticleContentSchema = z.object({
   /** 記事の本文 (MDX形式の生テキスト。上限10万文字) */
-  body: z.string().max(100000),
+  body: z.string().max(100000).nullable(),
   /** 記事の目次構造 (ToC) */
   structure: ContentStructureSchema,
 });

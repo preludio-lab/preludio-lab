@@ -114,4 +114,35 @@ describe('TursoArticleMapper', () => {
     expect(article.content.structure).toEqual([]);
     expect(article.context.seriesAssignments).toEqual([]);
   });
+  it('should map undefined content to null body', () => {
+    const mockArticleRow = {
+      id: 'article-789',
+      slug: 'no-content-article',
+      category: 'work',
+      isFeatured: false,
+      readingTimeSeconds: 0,
+      createdAt: '2023-01-01T00:00:00Z',
+    };
+
+    const mockTranslationRow = {
+      articleId: 'article-789',
+      lang: 'en',
+      status: 'PUBLISHED',
+      title: 'No Content Title',
+      displayTitle: 'Display',
+      updatedAt: '2023-01-01T00:00:00Z',
+      metadata: {},
+      contentStructure: [],
+      slSeriesAssignments: [],
+    };
+
+    const article = TursoArticleMapper.toDomain(
+      mockArticleRow as unknown as ArticleRow,
+      mockTranslationRow as unknown as TranslationRow,
+      undefined, // undefined passed
+    );
+
+    expect(article.content.body).toBeNull();
+    expect(article.metadata.slug).toBe('no-content-article');
+  });
 });

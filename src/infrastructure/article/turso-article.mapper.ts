@@ -24,7 +24,7 @@ export class TursoArticleMapper {
   static toDomain(
     articleRow: ArticleRow,
     translationRow: TranslationRow,
-    mdxContent: string,
+    mdxContent?: string | null, // Optional for list views
   ): Article {
     // 1. Language Validation
     // 簡易的なチェック。厳密には AppLocales 定数などと比較すべき
@@ -88,8 +88,9 @@ export class TursoArticleMapper {
     };
 
     // 6. Content
+    // mdxContentが明示的に渡されない場合は null (未取得) とする
     const content = {
-      body: mdxContent,
+      body: mdxContent ?? null,
       structure: translationRow.contentStructure || [],
     };
 
