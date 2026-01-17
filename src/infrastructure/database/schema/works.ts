@@ -1,9 +1,9 @@
 import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { composers } from './composers';
-import type { ImpressionDimensions } from '@/domain/work/WorkShared';
-import type { MultilingualString } from '@/domain/i18n/Locale';
-import type { MusicalGenre } from '@/domain/shared/MusicalGenre';
+import type { ImpressionDimensions } from '@/domain/work/work.shared';
+import type { MultilingualString } from '@/domain/i18n/locale';
+import type { MusicalGenre } from '@/domain/shared/musical-genre';
 
 // Local interface for InstrumentationFlags (avoiding complex Zod import/inference in schema)
 type InstrumentationFlags = {

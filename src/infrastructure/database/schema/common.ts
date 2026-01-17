@@ -1,6 +1,6 @@
 import { sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
-import type { MultilingualString } from '@/domain/i18n/Locale';
+import type { MultilingualString } from '@/domain/i18n/locale';
 
 // --- Tags Table ---
 export const tags = sqliteTable(

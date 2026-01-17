@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { ArticleCard } from './ArticleCard';
 import { ArticleHeroCard } from './ArticleHeroCard';
 import { ArticleGrid } from './ArticleGrid';

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ContentSection, ContentStructure } from '@/domain/article/Article';
+import { ContentSection, ContentStructure } from '@/domain/article/article';
 
 type Props = {
   items: ContentStructure;

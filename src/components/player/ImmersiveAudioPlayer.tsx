@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
 import { useTranslations } from 'next-intl';
-import { PlayerProvider, PlayerMode } from '@/domain/player/Player';
+import { PlayerProvider, PlayerMode } from '@/domain/player/player';
 // Helper for time formatting if not available
 const formatTimeHelper = (seconds: number) => {
   if (!seconds || isNaN(seconds)) return '00:00';

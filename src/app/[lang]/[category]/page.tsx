@@ -1,12 +1,12 @@
 import { articleRepository } from '@/infrastructure/article';
-import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
+import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.usecase';
 import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
-import { supportedLocales } from '@/domain/i18n/Locale';
+import { ArticleCategory } from '@/domain/article/article.metadata';
+import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
+import { supportedLocales } from '@/domain/i18n/locale';
 
 type Props = {
   params: Promise<{

@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { works, workParts } from './works';
-import type { MultilingualString } from '@/domain/i18n/Locale';
+import type { MultilingualString } from '@/domain/i18n/locale';
 
 // --- Recordings Table ---
 export const recordings = sqliteTable(

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAudioPlayer } from './AudioPlayerContext';
-import { PlayerMode } from '@/domain/player/Player';
+import { PlayerMode } from '@/domain/player/player';
 
 /**
  * [REQ-UI-004-02] Mini Player

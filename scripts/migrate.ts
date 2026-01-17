@@ -3,7 +3,7 @@ dotenv.config({ path: '.env.local' });
 dotenv.config();
 
 import { migrate } from 'drizzle-orm/libsql/migrator';
-import { db } from '../src/infrastructure/database/turso-client';
+import { db } from '../src/infrastructure/database/turso.client';
 
 async function main() {
   console.log('Running migrations...');

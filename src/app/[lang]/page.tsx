@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { LOCALES } from '@/lib/constants';
 import { getTranslations } from 'next-intl/server';
 import { articleRepository } from '@/infrastructure/article';
-import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
+import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.usecase';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleCategory } from '@/domain/article/article.metadata';
+import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 
 // ホーム画面のDiscoverセクションに表示するカテゴリ
 const HOME_DISPLAY_CATEGORIES: ArticleCategory[] = [

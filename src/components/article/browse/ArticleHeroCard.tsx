@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { m } from 'framer-motion';
 
 export interface ArticleHeroCardProps {

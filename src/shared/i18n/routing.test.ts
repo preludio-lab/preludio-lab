@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { routing } from './routing';
-import { supportedLocales, defaultLocale } from '@/domain/i18n/Locale';
+import { supportedLocales, defaultLocale } from '@/domain/i18n/locale';
 
 describe('Infrastructure: Routing', () => {
   it('should be configured with domain locales', () => {

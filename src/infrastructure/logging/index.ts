@@ -1,5 +1,5 @@
 import { Logger } from '@/shared/logging/logger';
-import { PinoLogger } from './pino-logger';
+import { PinoLogger } from './pino.logger';
 
 // アプリケーション全体で共有されるサーバーサイドロガーのインスタンス (Singleton)
 // 将来的にロギングライブラリを変更する場合は、このファイルでインスタンス化するクラスを差し替えます。

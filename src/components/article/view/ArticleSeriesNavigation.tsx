@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 
 type Props = {
   prev: ArticleMetadataDto | null;

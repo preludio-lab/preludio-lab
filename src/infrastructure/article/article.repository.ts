@@ -1,15 +1,15 @@
-import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { Article } from '@/domain/article/Article';
-import { PagedResponse } from '@/domain/shared/Pagination';
+import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
+import { ArticleCategory } from '@/domain/article/article.metadata';
+import { Article } from '@/domain/article/article';
+import { PagedResponse } from '@/domain/shared/pagination';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article-metadata-data-source.interface';
-import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
+} from './interfaces/article.metadata.ds.interface';
+import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
 import { Logger } from '@/shared/logging/logger';
-import { AppError } from '@/domain/shared/AppError';
-import { TursoArticleMapper } from './turso-article.mapper';
+import { AppError } from '@/domain/shared/app-error';
+import { TursoArticleMapper } from './turso.article.mapper';
 
 export class ArticleRepositoryImpl implements ArticleRepository {
   constructor(
