@@ -11,22 +11,13 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/AppError';
 import { TursoArticleMapper } from './turso-article.mapper';
 
-export class TursoArticleRepository implements ArticleRepository {
+export class ArticleRepositoryImpl implements ArticleRepository {
   constructor(
     private metadataDS: IArticleMetadataDataSource,
     private contentDS: IArticleContentDataSource,
     private logger: Logger,
   ) {}
 
-  /**
-   * IDによる記事取得
-   * メタデータとMDXコンテンツを取得し、ドメインモデルを構築して返します。
-   *
-   * @param id 記事ID
-   * @param lang 言語コード
-   * @returns Articleオブジェクト、見つからない場合はnull
-   * @throws AppError データベース接続エラーやマッピングエラー時
-   */
   async findById(id: string, lang: string): Promise<Article | null> {
     try {
       const row = await this.metadataDS.findById(id, lang);
@@ -43,17 +34,6 @@ export class TursoArticleRepository implements ArticleRepository {
     }
   }
 
-  /**
-   * スラグによる記事取得
-   * メタデータとMDXコンテンツを取得し、ドメインモデルを構築して返します。
-   * カテゴリも検索条件に含まれます。
-   *
-   * @param lang 言語コード
-   * @param category 記事カテゴリ
-   * @param slug URLスラグ
-   * @returns Articleオブジェクト、見つからない場合はnull
-   * @throws AppError データベース接続エラーやマッピングエラー時
-   */
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
       const row = await this.metadataDS.findBySlug(slug, lang, category);
@@ -70,25 +50,16 @@ export class TursoArticleRepository implements ArticleRepository {
     }
   }
 
-  /**
-   * 記事一覧取得
-   * 検索条件に基づいて記事を検索します。
-   * パフォーマンス最適化のため、メタデータのみを取得し、コンテンツ（MDX）は取得しません。
-   * 返却されるArticleオブジェクトの `content.body` は `null` となります。
-   *
-   * @param criteria 検索条件 (言語、カテゴリ、ページネーション等)
-   * @returns 記事一覧とページネーション情報
-   */
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
-      // 1. メタデータのみ取得 (R2へのアクセスはしない = 高速 & 低コスト)
+      // 1. Get metadata rows (Content fetch skipped for performance)
       const { rows, totalCount } = await this.metadataDS.findMany(criteria);
 
-      // 2. マッピング (Contentはnullとして扱う)
+      // 2. Map to domain
       const items = rows
         .map((row) => {
           try {
-            // リスト用なので mdxContent は null
+            // Null content for list view
             return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
           } catch (e) {
             this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
@@ -97,14 +68,11 @@ export class TursoArticleRepository implements ArticleRepository {
         })
         .filter((item): item is Article => item !== null);
 
-      // 3. ページネーション情報の構築
-      const hasNextPage =
-        (criteria.pagination.offset || 0) + criteria.pagination.limit < totalCount;
-
       return {
         items,
-        totalCount, // 現在は0が返る仮実装
-        hasNextPage, // TODO: totalCount実装後に機能する
+        totalCount,
+        hasNextPage:
+          (criteria.pagination.offset || 0) + (criteria.pagination.limit || 20) < totalCount,
       };
     } catch (err) {
       this.logger.error('FindMany failed', err as Error);
@@ -112,19 +80,11 @@ export class TursoArticleRepository implements ArticleRepository {
     }
   }
 
-  /**
-   * 記事保存 (未実装)
-   * 現時点では読み取り専用のため、呼び出すとエラーになります。
-   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async save(_: Article): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  /**
-   * 記事削除 (未実装)
-   * 現時点では読み取り専用のため、呼び出すとエラーになります。
-   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async delete(_: string): Promise<void> {
     throw new Error('Method not implemented.');
@@ -132,26 +92,34 @@ export class TursoArticleRepository implements ArticleRepository {
 
   // --- Private Helpers ---
 
-  /**
-   * データベース行からArticleドメインオブジェクトを組み立てる内部メソッド
-   * R2からコンテンツを取得し、Mapperを使用してドメインモデルに変換します。
-   */
   private async _assembleArticle(row: MetadataRow, contextId: string): Promise<Article> {
     let content = '';
 
-    // R2からのコンテンツ取得 (mdxPathがある場合のみ)
+    // Fetch Content if path exists
     if (row.article_translations.mdxPath) {
-      const fullPath = `${row.article_translations.mdxPath}.mdx`;
+      // Ensure extension if missing (FS DS might provide path without extension or with)
+      // Turso mapper usually expects just path.
+      // The contentDS usually takes the full path or relative path.
+      // FsContentDS expects relative path, R2 expects key.
+      // Let's assume standard behavior: mdxPath should be complete or we append .mdx if likely missing
+      // However, FsArticleMetadataDS now sets mdxPath as "lang/category/slug" (no ext).
+      // R2 likely sets it with extension or without?
+      // Check TursoArticleRepository:
+      //     const fullPath = `${row.article_translations.mdxPath}.mdx`;
+      // It appends .mdx. So we should do the same here for consistency.
+
+      const fullPath = row.article_translations.mdxPath.endsWith('.mdx')
+        ? row.article_translations.mdxPath
+        : `${row.article_translations.mdxPath}.mdx`;
+
       try {
         content = await this.contentDS.getContent(fullPath);
       } catch (err) {
-        // コンテンツ取得失敗は致命的エラーとして扱う
         this.logger.error(`Content fetch failed: ${fullPath}`, err as Error, { contextId });
         throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
       }
     }
 
-    // ドメインマッピング
     try {
       return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
     } catch (err) {

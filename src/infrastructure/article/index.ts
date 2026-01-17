@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/ArticleRepository';
-import { FsArticleRepository } from './fs-article.repository';
+import { ArticleRepositoryImpl } from './article.repository';
 import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';
 
@@ -13,7 +13,7 @@ import { logger } from '@/infrastructure/logging';
  */
 const metadataDS = new FsArticleMetadataDataSource();
 const contentDS = new FsArticleContentDataSource();
-export const articleRepository: ArticleRepository = new FsArticleRepository(
+export const articleRepository: ArticleRepository = new ArticleRepositoryImpl(
   metadataDS,
   contentDS,
   logger,

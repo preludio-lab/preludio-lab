@@ -43,6 +43,8 @@ category: ${category}
 date: 2023-01-01
 status: published
 ---
+## Heading 1
+### Heading 1-1
 `);
 
       const result = await dataSource.findBySlug(slug, lang, category);
@@ -56,6 +58,14 @@ status: published
       expect(result?.article_translations.lang).toBe(lang);
       expect(result?.article_translations.status).toBe(ArticleStatus.PUBLISHED);
       expect(result?.article_translations.mdxPath).toBe(`${lang}/${category}/${slug}`);
+
+      // Verify TOC
+      expect(result?.article_translations.contentStructure).toHaveLength(1);
+      expect(result?.article_translations.contentStructure[0].heading).toBe('Heading 1');
+      expect(result?.article_translations.contentStructure[0].children).toHaveLength(1);
+      expect(result?.article_translations.contentStructure[0].children?.[0].heading).toBe(
+        'Heading 1-1',
+      );
     });
 
     it('should return undefined when file does not exist', async () => {
@@ -83,6 +93,7 @@ status: published
         if (pStr === mockContentDir) return ['en'];
         if (pStr.endsWith('works')) return ['test.mdx'];
         return [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any);
 
       vi.mocked(fs.statSync).mockImplementation((p: fs.PathLike) => {

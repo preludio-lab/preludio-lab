@@ -6,6 +6,7 @@ import {
   ArticleMetadata,
   ArticleMetadataSchema,
 } from '@/domain/article/ArticleMetadata';
+import { ContentStructure, ContentSection } from '@/domain/article/Article';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 import { logger } from '@/infrastructure/logging';
 import {
@@ -22,6 +23,7 @@ export interface FsArticleContext {
   status: ArticleStatus;
   filePath: string;
   metadata: ArticleMetadata;
+  contentStructure: ContentStructure;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -171,7 +173,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
   ): Promise<FsArticleContext | null> {
     try {
       const fileContents = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContents);
+      const { data, content } = matter(fileContents);
 
       const dataToValidate = {
         ...data,
@@ -200,6 +202,9 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
 
       const status = (data.status as ArticleStatus) || ArticleStatus.PUBLISHED;
 
+      // Extract TOC
+      const contentStructure = this.extractToc(content);
+
       return {
         id: slug, // Using slug as ID for FS
         slug,
@@ -208,6 +213,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
         status,
         filePath,
         metadata,
+        contentStructure,
         createdAt: date || new Date(),
         updatedAt: fs.statSync(filePath).mtime,
       };
@@ -217,6 +223,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapLegacyMetadata(data: any): ArticleMetadata {
     const difficultyMap: Record<string, number> = {
       Beginner: 1,
@@ -248,11 +255,11 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       readingTimeSeconds: data.readingTimeSeconds || 0,
       playback: data.audioSrc
         ? {
-            audioSrc: data.audioSrc,
-            performer: data.performer,
-            startSeconds: data.startSeconds,
-            endSeconds: data.endSeconds,
-          }
+          audioSrc: data.audioSrc,
+          performer: data.performer,
+          startSeconds: data.startSeconds,
+          endSeconds: data.endSeconds,
+        }
         : undefined,
       thumbnail: data.thumbnail,
       tags: data.tags || [],
@@ -303,10 +310,50 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
         contentEmbedding: null,
         slSeriesAssignments: [],
         metadata: context.metadata,
-        contentStructure: [],
+        contentStructure: context.contentStructure,
         createdAt: context.createdAt.toISOString(),
         updatedAt: context.updatedAt.toISOString(),
       },
     };
+  }
+
+  private extractToc(content: string): ContentStructure {
+    const lines = content.split('\n');
+    const sections: ContentStructure = [];
+    let currentH2: ContentSection | null = null;
+    const h2Regex = /^##\s+(.+)$/;
+    const h3Regex = /^###\s+(.+)$/;
+
+    for (const line of lines) {
+      const h2Match = line.match(h2Regex);
+      if (h2Match) {
+        currentH2 = {
+          id: this.slugify(h2Match[1]),
+          heading: h2Match[1],
+          level: 2,
+          children: [],
+        };
+        sections.push(currentH2);
+        continue;
+      }
+      const h3Match = line.match(h3Regex);
+      if (h3Match && currentH2) {
+        currentH2.children = currentH2.children || [];
+        currentH2.children.push({
+          id: this.slugify(h3Match[1]),
+          heading: h3Match[1],
+          level: 3,
+        });
+      }
+    }
+    return sections;
+  }
+
+  private slugify(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\-]+/g, '');
   }
 }
