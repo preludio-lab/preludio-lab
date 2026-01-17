@@ -48,7 +48,7 @@ describe('TursoArticleRepository', () => {
           slSlug: 'slug',
           slComposerName: 'Composer',
           metadata: { category: 'works', tags: [] },
-          mdxPath: 'path/to/content.mdx',
+          mdxPath: 'works/slug',
         },
       };
       mockMetadataDS.findById.mockResolvedValue(mockRow);
@@ -89,7 +89,7 @@ describe('TursoArticleRepository', () => {
         slSlug: 'slug',
         slComposerName: 'Composer',
         metadata: { category: 'works', tags: [] },
-        mdxPath: 'path/to/content.mdx',
+        mdxPath: 'works/slug',
       },
     };
     mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
@@ -104,7 +104,7 @@ describe('TursoArticleRepository', () => {
     expect(result?.content.body).toBe('# Hello');
 
     expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en', ArticleCategory.WORKS);
-    expect(mockContentDS.getContent).toHaveBeenCalledWith('path/to/content.mdx');
+    expect(mockContentDS.getContent).toHaveBeenCalledWith('works/slug/en.mdx');
   });
 
   it('findBySlug should return null if metadata not found', async () => {

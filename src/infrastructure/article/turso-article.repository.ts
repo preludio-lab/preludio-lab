@@ -16,7 +16,7 @@ export class TursoArticleRepository implements ArticleRepository {
     private metadataDS: IArticleMetadataDataSource,
     private contentDS: IArticleContentDataSource,
     private logger: Logger,
-  ) {}
+  ) { }
 
   /**
    * IDによる記事取得
@@ -141,15 +141,12 @@ export class TursoArticleRepository implements ArticleRepository {
 
     // R2からのコンテンツ取得 (mdxPathがある場合のみ)
     if (row.article_translations.mdxPath) {
+      const fullPath = `${row.article_translations.mdxPath}/${row.article_translations.lang}.mdx`;
       try {
-        content = await this.contentDS.getContent(row.article_translations.mdxPath);
+        content = await this.contentDS.getContent(fullPath);
       } catch (err) {
         // コンテンツ取得失敗は致命的エラーとして扱う
-        this.logger.error(
-          `Content fetch failed: ${row.article_translations.mdxPath}`,
-          err as Error,
-          { contextId },
-        );
+        this.logger.error(`Content fetch failed: ${fullPath}`, err as Error, { contextId });
         throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
       }
     }

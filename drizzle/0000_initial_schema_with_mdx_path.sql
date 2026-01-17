@@ -9,7 +9,7 @@ CREATE TABLE `article_translations` (
 	`excerpt` text,
 	`published_at` text,
 	`is_featured` integer DEFAULT false NOT NULL,
-	`mdx_path` text GENERATED ALWAYS AS (lang || '/' || sl_category || '/' || sl_slug || '.mdx') STORED,
+	`mdx_path` text GENERATED ALWAYS AS (sl_category || '/' || sl_slug) STORED,
 	`sl_slug` text NOT NULL,
 	`sl_category` text NOT NULL,
 	`sl_composer_name` text,

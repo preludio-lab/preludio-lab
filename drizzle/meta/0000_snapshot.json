@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9df74335-e073-4f52-b0ba-3a4ad81a3f4d",
+  "id": "24243d07-9938-404c-a545-ba4830ff06b0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "article_translations": {
@@ -85,7 +85,7 @@
           "notNull": false,
           "autoincrement": false,
           "generated": {
-            "as": "(lang || '/' || sl_category || '/' || sl_slug || '.mdx')",
+            "as": "(sl_category || '/' || sl_slug)",
             "type": "stored"
           }
         },

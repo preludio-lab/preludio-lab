@@ -5,8 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1768628491608,
-      "tag": "0000_add_mdx_path_generated_column",
+      "when": 1768628904014,
+      "tag": "0000_initial_schema_with_mdx_path",
       "breakpoints": true
     }
   ]
