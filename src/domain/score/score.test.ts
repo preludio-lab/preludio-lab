@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { ScoreSchema } from './score';
 import { ScoreControlSchema } from './score.control';
-import { ScoreMetadataSchema } from './score-metadata';
+import { ScoreMetadataSchema } from './score.metadata';
 
 describe('Score', () => {
   it('control と metadata から Score を構成できること', () => {

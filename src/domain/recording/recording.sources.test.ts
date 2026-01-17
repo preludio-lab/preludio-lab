@@ -3,7 +3,7 @@ import {
   RecordingSourcesSchema,
   RecordingProvider,
   RecordingAudioQuality,
-} from './recording-sources';
+} from './recording.sources';
 
 describe('RecordingSources', () => {
   // 正常なソースのサンプルデータ

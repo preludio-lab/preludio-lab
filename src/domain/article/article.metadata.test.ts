@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ArticleMetadataSchema, ArticleCategory } from './article-metadata';
+import { ArticleMetadataSchema, ArticleCategory } from './article.metadata';
 
 describe('ArticleMetadataSchema', () => {
   const validMetadata = {

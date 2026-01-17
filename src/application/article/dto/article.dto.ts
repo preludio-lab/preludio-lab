@@ -4,10 +4,10 @@ import {
   ArticleMetadataSchema,
   PlaybackSchema,
   ArticleCategory,
-} from '@/domain/article/article-metadata';
-import { ArticleContentSchema } from '@/domain/article/article-content';
-import { ArticleContextSchema } from '@/domain/article/article-context';
-import { EngagementMetricsSchema } from '@/domain/article/article-engagement';
+} from '@/domain/article/article.metadata';
+import { ArticleContentSchema } from '@/domain/article/article.content';
+import { ArticleContextSchema } from '@/domain/article/article.context';
+import { EngagementMetricsSchema } from '@/domain/article/article.engagement';
 
 /**
  * Article Metadata DTO (List view)

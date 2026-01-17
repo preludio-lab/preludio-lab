@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ArticleContextSchema } from './article-context';
-import { ArticleCategory } from './article-metadata';
+import { ArticleContextSchema } from './article.context';
+import { ArticleCategory } from './article.metadata';
 
 describe('ArticleContextSchema', () => {
   it('should allow empty context lists by default', () => {

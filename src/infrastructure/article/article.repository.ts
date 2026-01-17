@@ -1,5 +1,5 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { Article } from '@/domain/article/article';
 import { PagedResponse } from '@/domain/shared/pagination';
 import {

@@ -8,7 +8,7 @@ import { createArticleMdxComponents } from './ArticleMdxComponents';
 import rehypeSlug from 'rehype-slug';
 import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
 import { ArticleListeningGuide } from './ArticleListeningGuide';
-import { Playback } from '@/domain/article/article-metadata';
+import { Playback } from '@/domain/article/article.metadata';
 
 interface ArticleViewFeatureProps {
   article: ArticleDto;

@@ -1,6 +1,6 @@
 import { Article } from './article';
 import { ArticleStatus } from './article.control';
-import { ArticleCategory } from './article-metadata';
+import { ArticleCategory } from './article.metadata';
 import { ArticleSortOption, SortDirection } from './article.constants';
 import { PagedResponse } from '../shared/pagination';
 

@@ -1,5 +1,5 @@
 import { z, zInt } from '@/shared/validation/zod';
-import { SecondsSchema } from './player-shared';
+import { SecondsSchema } from './player.shared';
 
 /**
  * プレイヤーの表示モード

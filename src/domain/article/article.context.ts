@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { zInt } from '@/shared/validation/zod';
-import { ArticleCategory } from './article-metadata';
+import { ArticleCategory } from './article.metadata';
 
 import { UrlSchema, SlugSchema } from '../shared/common-metadata';
 

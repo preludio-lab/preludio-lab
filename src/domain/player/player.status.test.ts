@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PlayerStatusSchema, PlayerMode } from './player-status';
+import { PlayerStatusSchema, PlayerMode } from './player.status';
 
 describe('PlayerStatus', () => {
   describe('Schema Validation', () => {

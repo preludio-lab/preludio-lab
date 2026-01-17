@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ArticleContentSchema } from './article-content';
+import { ArticleContentSchema } from './article.content';
 
 describe('ArticleContentSchema', () => {
   it('should validate body and structure', () => {

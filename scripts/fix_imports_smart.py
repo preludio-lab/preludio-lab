@@ -16,22 +16,41 @@ def predict_logic_filename(name):
     roles = [
         'Repository', 'UseCase', 'Dto', 'Service', 'Controller', 'Presenter', 
         'Adapter', 'Mapper', 'Display', 'Control', 'Constants', 'Client', 'Parser', 'Renderer',
-        'DataSource', 'Provider', 'Factory', 'Strategy', 'Observer'
+        'DataSource', 'Provider', 'Factory', 'Strategy', 'Observer',
+        'Metadata', 'Context', 'Content', 'Engagement', 'Status', 'Source', 'Segment', 'Shared'
     ]
     
     found_role = None
     name_without_role = name
     
+    # Normalize name to hyphenated to check for role suffixes if they are hyphenated
+    # But usually imports match the file name. 
+    # If import is "./composer-metadata", name is "composer-metadata".
+    
     for role in roles:
+        # Check PascalCase end
         if name.endswith(role):
             if name == role: continue
             found_role = role
             name_without_role = name[:-len(role)]
             break
+        # Check kebab-case end
+        kebab_role = camel_to_kebab(role)
+        if name.endswith('-' + kebab_role):
+             found_role = role
+             name_without_role = name[:-len(kebab_role)-1] # remove hyphen too
+             break
+        elif name.endswith(kebab_role): # case where it might not have hyphen?
+             if name == kebab_role: continue
+             found_role = role
+             name_without_role = name[:-len(kebab_role)]
+             break
             
     if found_role:
         base = camel_to_kebab(name_without_role)
         suffix = camel_to_kebab(found_role)
+        # remove trailing hyphen from base if any (from naive slice)
+        if base.endswith('-'): base = base[:-1]
         return f"{base}.{suffix}"
     else:
         return camel_to_kebab(name)
@@ -121,6 +140,12 @@ def check_and_fix_import(import_path, file_dir_path):
     # Candidate C: UI Rename
     candidates.append(predict_ui_filename(basename))
     
+    # Candidate D: Hyphen to Dot replacement (domain naming convention)
+    # Check if basename has hyphens
+    if '-' in basename:
+        dot_name = basename.replace('-', '.')
+        candidates.append(dot_name)
+        
     for cand in candidates:
         candidate_path = os.path.join(dirname, cand)
         exists_cand, _ = file_exists_with_ext(candidate_path)

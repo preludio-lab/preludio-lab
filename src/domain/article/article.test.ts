@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { Article } from './article';
-import { ArticleContent } from './article-content';
+import { ArticleContent } from './article.content';
 import { ArticleStatus } from './article.control';
-import { ArticleCategory } from './article-metadata';
-import { INITIAL_ENGAGEMENT_METRICS } from './article-engagement';
+import { ArticleCategory } from './article.metadata';
+import { INITIAL_ENGAGEMENT_METRICS } from './article.engagement';
 
 describe('Article Entity', () => {
   const createBaseArticle = (overrides: any = {}) => {

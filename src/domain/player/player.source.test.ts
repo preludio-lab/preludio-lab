@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PlayerSourceSchema } from './player-source';
+import { PlayerSourceSchema } from './player.source';
 
 describe('PlayerSource', () => {
   describe('Schema Validation', () => {

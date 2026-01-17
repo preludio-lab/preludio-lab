@@ -1,6 +1,6 @@
 import { z, zInt } from '@/shared/validation/zod';
 
-import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/work-shared';
+import { ImpressionDimensionsSchema, PerformanceDifficultySchema } from '../work/work.shared';
 import {
   ResourcePathSchema,
   TagsSchema,

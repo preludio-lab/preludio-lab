@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { articleRepository } from '@/infrastructure/article';
 import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.use-case';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 

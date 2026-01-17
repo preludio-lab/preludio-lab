@@ -5,7 +5,7 @@ dotenv.config();
 import { ListObjectsCommand } from '@aws-sdk/client-s3';
 import { articles } from '../src/infrastructure/database/schema';
 import { count } from 'drizzle-orm';
-import { ArticleCategory } from '../src/domain/article/article-metadata';
+import { ArticleCategory } from '../src/domain/article/article.metadata';
 
 async function main() {
   console.log('--- Infrastructure Verification Start ---');

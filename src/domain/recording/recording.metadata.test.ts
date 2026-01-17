@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { RecordingMetadataSchema } from './recording-metadata';
+import { RecordingMetadataSchema } from './recording.metadata';
 
 describe('RecordingMetadata', () => {
   it('有効なメタデータをバリデーションできること', () => {

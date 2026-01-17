@@ -5,8 +5,8 @@ import {
   ArticleCategory,
   ArticleMetadata,
   ArticleMetadataSchema,
-} from '@/domain/article/article-metadata';
-import { ArticleContent } from '@/domain/article/article-content';
+} from '@/domain/article/article.metadata';
+import { ArticleContent } from '@/domain/article/article.content';
 import { articles, articleTranslations } from '../database/schema';
 import { InferSelectModel } from 'drizzle-orm';
 

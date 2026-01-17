@@ -1,5 +1,5 @@
 import { WorkControl } from './work.control';
-import { WorkMetadata } from './work-metadata';
+import { WorkMetadata } from './work.metadata';
 
 export type { WorkControl, WorkMetadata };
 

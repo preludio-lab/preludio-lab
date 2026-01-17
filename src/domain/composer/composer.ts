@@ -1,5 +1,5 @@
 import { ComposerControl } from './composer.control';
-import { ComposerMetadata } from './composer-metadata';
+import { ComposerMetadata } from './composer.metadata';
 
 export type { ComposerControl, ComposerMetadata };
 

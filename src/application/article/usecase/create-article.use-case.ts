@@ -1,10 +1,10 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { Article } from '@/domain/article/article';
-import { ArticleMetadata } from '@/domain/article/article-metadata';
+import { ArticleMetadata } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { ArticleCategory } from '@/domain/article/article-metadata';
-import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article-engagement';
-import { ArticleContent } from '@/domain/article/article-content';
+import { ArticleCategory } from '@/domain/article/article.metadata';
+import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
+import { ArticleContent } from '@/domain/article/article.content';
 
 export interface CreateArticleCommand {
   slug: string;

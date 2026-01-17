@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Player, PlayerProps } from './player';
-import { PlayerMode } from './player-status';
+import { PlayerMode } from './player.status';
 
 describe('Player Entity', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

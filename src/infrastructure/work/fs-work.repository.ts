@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { WorkRepository, WorkSearchCriteria } from '@/domain/work/work.repository';
 import { Work } from '@/domain/work/work';
-import { WorkMetadataSchema } from '@/domain/work/work-metadata';
+import { WorkMetadataSchema } from '@/domain/work/work.metadata';
 import { WorkControlSchema } from '@/domain/work/work.control';
 import { logger } from '@/infrastructure/logging';
 

@@ -9,11 +9,11 @@ import {
   PerformanceDifficultySchema,
   NicknamesSchema,
   ImpressionDimensionsSchema,
-} from './work-shared';
+} from './work.shared';
 import { TagsSchema, YearSchema } from '../shared/common-metadata';
 
 // Re-export common types and schemas for convenience
-export * from './work-shared';
+export * from './work.shared';
 
 /**
  * 楽器編成フラグ (検索・フィルタリング用)

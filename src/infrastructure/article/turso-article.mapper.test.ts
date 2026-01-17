@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { TursoArticleMapper } from './turso-article.mapper';
 import { AppError } from '@/domain/shared/app-error'; // Add import
 import { AppLocale } from '@/domain/i18n/locale';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { articles, articleTranslations } from '@/infrastructure/database/schema';
 import { InferSelectModel } from 'drizzle-orm';

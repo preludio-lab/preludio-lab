@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Composer } from './composer';
-import { ComposerMetadataSchema } from './composer-metadata';
+import { ComposerMetadataSchema } from './composer.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { Nationality } from '../shared/nationality';
 import { MusicalInstrument } from '../shared/musical-instrument';

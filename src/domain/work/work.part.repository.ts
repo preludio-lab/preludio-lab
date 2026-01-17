@@ -1,4 +1,4 @@
-import { WorkPart } from './work-part';
+import { WorkPart } from './work.part';
 
 /**
  * WorkPartRepository

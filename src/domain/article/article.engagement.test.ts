@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { EngagementMetricsSchema } from './article-engagement';
+import { EngagementMetricsSchema } from './article.engagement';
 
 describe('EngagementMetricsSchema', () => {
   const validMetrics = {

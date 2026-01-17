@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Recording } from './recording';
-import { RecordingProvider } from './recording-sources';
+import { RecordingProvider } from './recording.sources';
 
 describe('Recording Entity', () => {
   // 制御情報のモック (ID, 楽曲紐付け, タイムスタンプ)

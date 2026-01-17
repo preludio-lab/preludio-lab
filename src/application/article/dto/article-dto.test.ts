@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ArticleDtoSchema, ArticleMetadataDtoSchema } from './article.dto';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 
 describe('ArticleDtoSchema', () => {
   const validData = {

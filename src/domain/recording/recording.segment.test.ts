@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { RecordingSegmentSchema } from './recording-segment';
+import { RecordingSegmentSchema } from './recording.segment';
 
 describe('RecordingSegment', () => {
   it('正しい RecordingSegment を作成できること', () => {

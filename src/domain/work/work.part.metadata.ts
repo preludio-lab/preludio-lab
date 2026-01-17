@@ -6,7 +6,7 @@ import {
   PerformanceDifficultySchema,
   NicknamesSchema,
   ImpressionDimensionsSchema,
-} from './work-shared';
+} from './work.shared';
 
 /**
  * Work Part Type

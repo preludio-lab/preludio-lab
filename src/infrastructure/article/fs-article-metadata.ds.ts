@@ -5,7 +5,7 @@ import {
   ArticleCategory,
   ArticleMetadata,
   ArticleMetadataSchema,
-} from '@/domain/article/article-metadata';
+} from '@/domain/article/article.metadata';
 import { ContentStructure, ContentSection } from '@/domain/article/article';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { logger } from '@/infrastructure/logging';

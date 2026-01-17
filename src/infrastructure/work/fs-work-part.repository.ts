@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { WorkPartRepository } from '@/domain/work/work-part.repository';
-import { WorkPart } from '@/domain/work/work-part';
-import { WorkPartMetadataSchema } from '@/domain/work/work-part-metadata';
-import { WorkPartControlSchema } from '@/domain/work/work-part.control';
+import { WorkPartRepository } from '@/domain/work/work.part.repository';
+import { WorkPart } from '@/domain/work/work.part';
+import { WorkPartMetadataSchema } from '@/domain/work/work.part.metadata';
+import { WorkPartControlSchema } from '@/domain/work/work.part.control';
 import { logger } from '@/infrastructure/logging';
 
 /**

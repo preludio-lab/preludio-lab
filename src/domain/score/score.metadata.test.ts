@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ScoreMetadataSchema } from './score-metadata';
-import { ScoreFormat } from './score-metadata';
+import { ScoreMetadataSchema } from './score.metadata';
+import { ScoreFormat } from './score.metadata';
 
 describe('ScoreMetadata', () => {
   it('すべてのプロパティを持つ ScoreMetadata を作成できること', () => {

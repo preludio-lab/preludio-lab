@@ -6,9 +6,9 @@ import {
   DisplayTypeSchema,
   DisplayType,
 } from './player.display';
-import { PlayerSourceSchema, PlayerSource } from './player-source';
-import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './player-status';
-import { PlayerProviderSchema, PlayerProvider } from './player-shared';
+import { PlayerSourceSchema, PlayerSource } from './player.source';
+import { PlayerStatusSchema, PlayerStatus, PlayerMode } from './player.status';
+import { PlayerProviderSchema, PlayerProvider } from './player.shared';
 
 /**
  * Player Entity

@@ -1,7 +1,7 @@
 import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
 import { db } from '../database/turso-client';
 import { articles, articleTranslations } from '../database/schema';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSearchCriteria, ArticleKeywordScope } from '@/domain/article/article.repository';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';

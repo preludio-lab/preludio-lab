@@ -5,7 +5,7 @@ import { Article } from '@/domain/article/article';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { SearchArticlesUseCase } from './search-articles.use-case';
 
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 
 /**
  * GetRelatedArticlesUseCase

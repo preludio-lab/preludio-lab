@@ -2,7 +2,7 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleDto } from '@/application/article/dto/article.dto';
 import { Article } from '@/domain/article/article';
 
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 
 /**
  * GetArticleBySlugUseCase

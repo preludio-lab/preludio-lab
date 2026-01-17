@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { composers } from './composers';
-import type { ImpressionDimensions } from '@/domain/work/work-shared';
+import type { ImpressionDimensions } from '@/domain/work/work.shared';
 import type { MultilingualString } from '@/domain/i18n/locale';
 import type { MusicalGenre } from '@/domain/shared/musical-genre';
 

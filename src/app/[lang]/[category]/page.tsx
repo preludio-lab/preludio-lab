@@ -4,7 +4,7 @@ import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseF
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { supportedLocales } from '@/domain/i18n/locale';
 

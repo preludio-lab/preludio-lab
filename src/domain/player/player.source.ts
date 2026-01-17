@@ -1,7 +1,7 @@
 import { z } from '@/shared/validation/zod';
-import { PlayerProviderSchema } from './player-shared';
+import { PlayerProviderSchema } from './player.shared';
 import { MAX_URL_LENGTH } from '@/domain/shared/common-metadata';
-import { SecondsSchema } from './player-shared';
+import { SecondsSchema } from './player.shared';
 /**
  * SecondsSchema 用の時間範囲バリデーションロジック
  * endSeconds が指定されている場合、startSeconds より大きいことを確認する
