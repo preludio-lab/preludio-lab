@@ -1,5 +1,5 @@
-import { GetArticleBySlugUseCase } from '@/application/article/usecase/get-article-by-slug.use-case';
-import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.use-case';
+import { GetArticleBySlugUseCase } from '@/application/article/usecase/get-article-by-slug.usecase';
+import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.usecase';
 import { articleRepository } from '@/infrastructure/article';
 import { logger } from '@/infrastructure/logging';
 import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';

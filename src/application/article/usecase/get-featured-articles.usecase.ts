@@ -3,7 +3,7 @@ import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { PagedResponse } from '@/domain/shared/pagination';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
-import { ListArticlesUseCase } from './list-articles.use-case';
+import { ListArticlesUseCase } from './list-articles.usecase';
 
 /**
  * GetFeaturedArticlesUseCase

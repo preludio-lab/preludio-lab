@@ -1,5 +1,5 @@
 import { articleRepository } from '@/infrastructure/article';
-import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.use-case';
+import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.usecase';
 import { ArticleBrowseFeature } from '@/components/article/browse/ArticleBrowseFeature';
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
