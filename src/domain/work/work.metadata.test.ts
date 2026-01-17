@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { WorkMetadataSchema, MetronomeUnit } from './work.metadata';
-import { WorkPartMetadataSchema } from './work.part.metadata';
+import { WorkPartMetadataSchema } from './work-part.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { MusicalGenre } from '../shared/musical-genre';
 import { MusicalCataloguePrefix } from './musical-catalogue-prefix';

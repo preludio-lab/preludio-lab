@@ -1,5 +1,5 @@
-import { WorkPartControl } from './work.part.control';
-import { WorkPartMetadata } from './work.part.metadata';
+import { WorkPartControl } from './work-part.control';
+import { WorkPartMetadata } from './work-part.metadata';
 
 /**
  * WorkPart Entity

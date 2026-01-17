@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { WorkPart } from './work.part';
-import { WorkPartControl, WorkPartControlSchema } from './work.part.control';
-import { WorkPartMetadata } from './work.part.metadata';
+import { WorkPart } from './work-part';
+import { WorkPartControl, WorkPartControlSchema } from './work-part.control';
+import { WorkPartMetadata } from './work-part.metadata';
 import { MusicalGenre } from '../shared/musical-genre';
 
 describe('WorkPart Entity', () => {

@@ -145,7 +145,36 @@ def check_and_fix_import(import_path, file_dir_path):
     if '-' in basename:
         dot_name = basename.replace('-', '.')
         candidates.append(dot_name)
+
+    # Candidate E: Dot to Hyphen replacement (for work-part reversion)
+    if '.' in basename:
+        # naive replacement of all dots? No.
+        # work.part.repository -> work-part.repository.
+        # Only replace dots that are NOT separators for role?
+        # But we don't know which dot is role separator easily without role analysis.
+        # But `predict_logic_filename` handles roles.
+        # Let's just try replacing dots with hyphens for the base part?
         
+        # If I just replace all dots with hyphens?
+        # work.part.repository -> work-part-repository.
+        # But new name is work-part.repository.ts.
+        # So we want to replace `work.part` with `work-part`.
+        
+        parts = basename.split('.')
+        if len(parts) > 1:
+             # Try combinations?
+             # Just try replacing the first dot?
+             hyphen_name = basename.replace('.', '-', 1)
+             candidates.append(hyphen_name)
+             
+             # Try replacing all dots?
+             all_hyphen = basename.replace('.', '-')
+             candidates.append(all_hyphen)
+             
+             # Try replacing internal dots but keep role separator? 
+             # If last part is role.
+             pass
+
     for cand in candidates:
         candidate_path = os.path.join(dirname, cand)
         exists_cand, _ = file_exists_with_ext(candidate_path)
