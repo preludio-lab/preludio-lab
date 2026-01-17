@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { MusicalExampleMetadataSchema, NotationFormat } from './musical-example-metadata';
+import { MusicalExampleMetadataSchema, NotationFormat } from './musical-example.metadata';
 
 describe('MusicalExampleMetadata', () => {
   const validParams = {

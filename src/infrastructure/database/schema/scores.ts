@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 import { works, workParts } from './works';
 import type { MonetizationElement } from '@/domain/monetization/monetization';
 import type { RecordingSegment } from '@/domain/recording/recording.segment';
-import type { MeasureRange } from '@/domain/score/musical-example-metadata';
+import type { MeasureRange } from '@/domain/score/musical-example.metadata';
 
 // --- Scores Table ---
 export const scores = sqliteTable(

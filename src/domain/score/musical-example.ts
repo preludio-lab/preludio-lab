@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { MusicalExampleControl, MusicalExampleControlSchema } from './musical-example.control';
-import { MusicalExampleMetadata, MusicalExampleMetadataSchema } from './musical-example-metadata';
+import { MusicalExampleMetadata, MusicalExampleMetadataSchema } from './musical-example.metadata';
 import { RecordingSegment, RecordingSegmentSchema } from '../recording/recording.segment';
 
 /**

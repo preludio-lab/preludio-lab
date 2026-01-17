@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ScoreControlSchema } from './score.control';
 import { ScoreMetadataSchema, ScoreFormat } from './score.metadata';
-import { NotationFormat } from './musical-example-metadata';
+import { NotationFormat } from './musical-example.metadata';
 
 /**
  * Score (Asset/Edition)

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { MusicalExampleSchema } from './musical-example';
 import { MusicalExampleControlSchema } from './musical-example.control';
-import { MusicalExampleMetadataSchema, NotationFormat } from './musical-example-metadata';
+import { MusicalExampleMetadataSchema, NotationFormat } from './musical-example.metadata';
 
 describe('MusicalExample', () => {
   it('MusicalExample を正しく構成できること', () => {
