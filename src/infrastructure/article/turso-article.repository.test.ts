@@ -4,6 +4,7 @@ import { IArticleMetadataDataSource } from './interfaces/article-metadata-data-s
 import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Logger } from '@/shared/logging/logger';
+import { articles, articleTranslations } from '../database/schema/articles';
 
 describe('TursoArticleRepository', () => {
   let repo: TursoArticleRepository;
@@ -147,17 +148,48 @@ describe('TursoArticleRepository', () => {
     vi.mocked(mockMetadataDS.findMany).mockResolvedValue({
       rows: [
         {
-          articles: { id: '1', slug: 'slug1', category: 'works' } as any, // 簡略化のため cast
+          articles: {
+            id: '1',
+            slug: 'slug1',
+            category: 'works',
+            isFeatured: false,
+            readingTimeSeconds: 60,
+            thumbnailPath: null,
+            createdAt: '2023-01-01',
+            updatedAt: '2023-01-01',
+            workId: null,
+          } as typeof articles.$inferSelect,
           article_translations: {
+            id: '1',
+            articleId: '1',
             title: 'Title 1',
+            displayTitle: 'Title 1',
             lang: 'en',
             status: 'published',
             metadata: { category: 'works' },
-            slSlug: 'slug1', // Add required fields for mapper
+            slSlug: 'slug1',
             slCategory: 'works',
-            updatedAt: '2023-01-01', // Add required fields
-            slComposerName: 'Composer', // Add required fields
-          },
+            updatedAt: '2023-01-01',
+            slComposerName: 'Composer',
+            publishedAt: '2023-01-01',
+            catchcopy: null,
+            excerpt: null,
+            isFeatured: false,
+            mdxPath: 'works/slug1',
+            slEra: null,
+            slGenre: [],
+            slImpressionDimensions: null,
+            slInstrumentations: [],
+            slKey: null,
+            slNationality: null,
+            slPerformanceDifficulty: null,
+            slSeriesAssignments: [],
+            slWorkCatalogueId: null,
+            slWorkNicknames: [],
+            contentEmbedding: null,
+            contentStructure: {},
+            createdAt: '2023-01-01',
+          } as unknown as typeof articleTranslations.$inferSelect,
         },
       ],
       totalCount: 1,

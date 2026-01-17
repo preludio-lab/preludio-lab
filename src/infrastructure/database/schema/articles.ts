@@ -55,7 +55,7 @@ export const articleTranslations = sqliteTable(
     mdxPath: text('mdx_path').generatedAlwaysAs(
       // 例: "symphony/beethoven-5" (末尾スラッシュなし)
       sql`sl_category || '/' || sl_slug`,
-      { mode: 'stored' }
+      { mode: 'stored' },
     ),
 
     // --- 非正規化カラム (Snapshots) ---

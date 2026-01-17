@@ -1,14 +1,4 @@
-import {
-  eq,
-  and,
-  desc,
-  asc,
-  inArray,
-  like,
-  or,
-  sql,
-  AnyColumn,
-} from 'drizzle-orm';
+import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
 import { db } from '../database/turso-client';
 import { articles, articleTranslations } from '../database/schema';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
@@ -24,7 +14,7 @@ import {
 } from './interfaces/article-metadata-data-source.interface';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
-  constructor(private readonly logger: Logger) { }
+  constructor(private readonly logger: Logger) {}
   /**
    * IDと言語コードを指定して記事のメタデータを取得します。
    * 公開ステータスに関わらず、指定されたIDの記事が存在すれば返却します。
