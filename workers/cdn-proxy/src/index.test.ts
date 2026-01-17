@@ -46,7 +46,7 @@ describe('CDN Proxy Worker', () => {
       get: vi.fn().mockResolvedValue({
         body: new ReadableStream(),
         httpEtag: 'test-etag',
-        writeHttpMetadata: () => { },
+        writeHttpMetadata: () => {},
         range: { offset: 0, length: 100 },
         size: 1000,
       }),
