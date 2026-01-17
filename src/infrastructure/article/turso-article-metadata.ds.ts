@@ -1,4 +1,4 @@
-import { eq, and, desc, asc, inArray, like, or, sql, InferSelectModel } from 'drizzle-orm';
+import { eq, and, desc, asc, inArray, like, or, sql, InferSelectModel, AnyColumn } from 'drizzle-orm';
 import { db } from '../database/turso-client';
 import { articles, articleTranslations } from '../database/schema';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
@@ -125,15 +125,14 @@ export class ArticleMetadataDataSource {
 
     // --- 2. Sort Strategy ---
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sortMapping: Partial<Record<ArticleSortOption, any>> = {
+    const sortMapping: Partial<Record<ArticleSortOption, AnyColumn>> = {
       [ArticleSortOption.TITLE]: articleTranslations.displayTitle,
       [ArticleSortOption.PERFORMANCE_DIFFICULTY]: articleTranslations.slPerformanceDifficulty,
       [ArticleSortOption.PUBLISHED_AT]: articleTranslations.publishedAt,
     };
 
     const sortField = sort?.field || ArticleSortOption.PUBLISHED_AT;
-    const targetColumn = sortMapping[sortField] || articleTranslations.publishedAt;
+    const targetColumn = sortMapping[sortField] ?? articleTranslations.publishedAt;
 
     const direction = sort?.direction === SortDirection.ASC ? asc : desc;
     const orderByClause = direction(targetColumn);
