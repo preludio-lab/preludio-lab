@@ -5,7 +5,7 @@ import { AudioPlayerAdapter } from './AudioPlayerAdapter';
 // Mock react-youtube
 vi.mock('react-youtube', () => {
   return {
-    default: (props: any) => {
+    default: (props: { videoId?: string; onReady?: (event: { target: unknown }) => void }) => {
       // Simulate onReady execution immediately for testing
       setTimeout(() => {
         const mockTarget = {

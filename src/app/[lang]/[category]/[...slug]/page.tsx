@@ -6,7 +6,6 @@ import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
-import { supportedLocales } from '@/domain/i18n/locale';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/article.dto';

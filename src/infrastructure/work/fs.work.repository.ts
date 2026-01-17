@@ -4,6 +4,7 @@ import { WorkRepository, WorkSearchCriteria } from '@/domain/work/work.repositor
 import { Work } from '@/domain/work/work';
 import { WorkMetadataSchema } from '@/domain/work/work.metadata';
 import { WorkControlSchema } from '@/domain/work/work.control';
+import { MusicalGenre } from '@/domain/shared/musical-genre';
 import { logger } from '@/infrastructure/logging';
 
 /**
@@ -41,7 +42,7 @@ export class FsWorkRepository implements WorkRepository {
     }
     if (criteria.genre) {
       works = works.filter((w) =>
-        w.metadata.musicalIdentity?.genres.includes(criteria.genre as any),
+        w.metadata.musicalIdentity?.genres.includes(criteria.genre as MusicalGenre),
       );
     }
     if (criteria.era) {

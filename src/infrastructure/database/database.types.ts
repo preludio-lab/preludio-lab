@@ -4,6 +4,7 @@ export interface Database {
   public: {
     Tables: {
       // TODO: Run "supabase gen types typescript --project-id ..." to generate types
+      [key: string]: Json | undefined;
     };
     Views: {
       [_ in never]: never;

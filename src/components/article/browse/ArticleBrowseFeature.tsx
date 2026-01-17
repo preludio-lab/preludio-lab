@@ -4,7 +4,7 @@ import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
-import { useFilterState } from '@/hooks/useFilterState';
+import { useFilterState, FilterState } from '@/hooks/useFilterState';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 import { ArticleFilterPanel } from './ArticleFilterPanel';
 import { ArticleCard } from './ArticleCard';
@@ -26,7 +26,7 @@ export function ArticleBrowseFeature({ lang, category, contents }: ArticleBrowse
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const setFilter = (key: any, value: any) => {
+  const setFilter = (key: keyof FilterState, value: string | string[] | undefined) => {
     startTransition(() => {
       originalSetFilter(key, value);
     });

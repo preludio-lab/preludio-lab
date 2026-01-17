@@ -24,7 +24,7 @@ export interface AudioPlayerAdapterProps {
   onProgress: (currentTime: number) => void;
   onDuration?: (duration: number) => void;
   onEnded: () => void;
-  onError: (error: any) => void;
+  onError: (error: unknown) => void;
   onStateChange?: (isPlaying: boolean) => void;
 }
 

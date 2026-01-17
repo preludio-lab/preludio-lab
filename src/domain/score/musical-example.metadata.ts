@@ -57,6 +57,6 @@ export type MusicalExampleMetadata = z.infer<typeof MusicalExampleMetadataSchema
 /**
  * MusicalExampleMetadata の生成
  */
-export const createMusicalExampleMetadata = (params: any): MusicalExampleMetadata => {
+export const createMusicalExampleMetadata = (params: unknown): MusicalExampleMetadata => {
   return MusicalExampleMetadataSchema.parse(params);
 };

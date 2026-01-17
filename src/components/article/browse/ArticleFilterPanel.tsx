@@ -22,7 +22,6 @@ interface ArticleFilterPanelProps {
 export function ArticleFilterPanel({
   state,
   onFilterChange,
-  lang,
   totalCount,
 }: ArticleFilterPanelProps) {
   const t = useTranslations('CategoryIndex');
@@ -46,6 +45,7 @@ export function ArticleFilterPanel({
 
   // ローカル状態の同期
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     setSearchTerm(state.keyword || '');
   }, [state.keyword]);
 
@@ -140,11 +140,10 @@ export function ArticleFilterPanel({
                           onFilterChange('sort', sort);
                           setIsSortOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center justify-between ${
-                          isActive
-                            ? 'bg-primary/5 text-primary'
-                            : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
-                        }`}
+                        className={`w-full text-left px-4 py-2.5 rounded-full text-sm font-medium transition-colors flex items-center justify-between ${isActive
+                          ? 'bg-primary/5 text-primary'
+                          : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                          }`}
                       >
                         <div className="flex items-center gap-2">
                           <SortIcon
@@ -178,11 +177,10 @@ export function ArticleFilterPanel({
           <div className="flex items-center gap-3 flex-nowrap sm:flex-wrap">
             <button
               onClick={() => onFilterChange('difficulty', undefined)}
-              className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform whitespace-nowrap flex-shrink-0 ${
-                !state.difficulty
-                  ? 'bg-primary text-paper shadow-lg shadow-primary/20 scale-105'
-                  : 'bg-white text-neutral-600 hover:bg-neutral-50 border border-transparent hover:scale-105'
-              }`}
+              className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform whitespace-nowrap flex-shrink-0 ${!state.difficulty
+                ? 'bg-primary text-paper shadow-lg shadow-primary/20 scale-105'
+                : 'bg-white text-neutral-600 hover:bg-neutral-50 border border-transparent hover:scale-105'
+                }`}
             >
               {t('filter.all')}
             </button>
@@ -193,11 +191,10 @@ export function ArticleFilterPanel({
                 <button
                   key={diff.value}
                   onClick={() => onFilterChange('difficulty', isSelected ? undefined : diff.value)}
-                  className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform whitespace-nowrap flex-shrink-0 shadow-sm ${
-                    isSelected
-                      ? `bg-primary text-white shadow-md scale-105`
-                      : 'bg-white text-neutral-600 hover:bg-neutral-50 hover:scale-105'
-                  }`}
+                  className={`px-5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 transform whitespace-nowrap flex-shrink-0 shadow-sm ${isSelected
+                    ? `bg-primary text-white shadow-md scale-105`
+                    : 'bg-white text-neutral-600 hover:bg-neutral-50 hover:scale-105'
+                    }`}
                 >
                   {diff.label}
                 </button>

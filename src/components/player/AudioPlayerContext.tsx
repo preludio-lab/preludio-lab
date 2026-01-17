@@ -161,6 +161,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         // Force isPlaying to false to prevent auto-start policy issues on reload,
         // unless we implement specific "resume" logic interaction.
         // For now, let's keep isPlaying false but restore everything else (metadata, progress).
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setState((prev) => ({
           ...prev,
           ...parsed,

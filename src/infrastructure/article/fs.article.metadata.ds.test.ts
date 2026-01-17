@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { FsArticleMetadataDataSource } from './fs.article.metadata.ds';
 import fs from 'fs';
-import path from 'path';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 
@@ -31,7 +30,6 @@ describe('FsArticleMetadataDataSource', () => {
       const lang = 'en';
       const category = ArticleCategory.WORKS;
       const slug = 'test-slug';
-      const filePath = path.join(mockContentDir, lang, category, `${slug}.mdx`);
 
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.statSync).mockReturnValue({ mtime: new Date() } as fs.Stats);

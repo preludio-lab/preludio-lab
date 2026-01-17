@@ -12,7 +12,7 @@ export default function middleware(req: NextRequest) {
   const firstSegment = segments[1];
 
   // ルートパス、または有効なロケールの場合は next-intl に任せる
-  if (!firstSegment || routing.locales.includes(firstSegment as any)) {
+  if (!firstSegment || (routing.locales as readonly string[]).includes(firstSegment)) {
     const response = intlMiddleware(req);
 
     // UX 向上: スムーズな遷移のために BFcache (Back/Forward Cache) を有効化

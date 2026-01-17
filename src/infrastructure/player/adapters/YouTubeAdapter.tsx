@@ -4,6 +4,19 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 import { AudioPlayerAdapterProps } from '@/components/player/AudioPlayerAdapter';
 
+interface YouTubePlayer {
+  loadVideoById: (options: { videoId: string; startSeconds?: number; endSeconds?: number }) => void;
+  playVideo: () => void;
+  pauseVideo: () => void;
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+  setVolume: (volume: number) => void;
+  getCurrentTime: () => number;
+  getDuration: () => number;
+  getVideoData: () => { video_id?: string; title?: string };
+  getPlayerState: () => number;
+  cueVideoById: (options: { videoId: string; startSeconds?: number; endSeconds?: number }) => void;
+}
+
 /**
  * [INFRASTRUCTURE] YouTube Host Configuration
  * Defined here as it's an implementation detail of the adapter.
@@ -31,7 +44,7 @@ export function YouTubeAdapter({
   onError,
   onStateChange,
 }: AudioPlayerAdapterProps) {
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YouTubePlayer | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
   const lastPlaybackIdRef = useRef<number | undefined>(undefined);
   const lastSeekToRef = useRef<number | null | undefined>(undefined);
@@ -53,24 +66,18 @@ export function YouTubeAdapter({
   };
 
   // loadVideoById を安全に呼び出すヘルパー関数
-  const safeLoadVideo = useCallback((
-    target: any,
-    options: { videoId: string; startSeconds?: number; endSeconds?: number },
-  ) => {
-    try {
-      console.debug('[YouTubeAdapter] 動画ロード開始:', options);
-      const result = target.loadVideoById(options);
-      if (result && typeof result.catch === 'function') {
-        result.catch((e: any) => {
-          console.error('[YouTubeAdapter] 非同期ロードエラー:', e);
-          onError(e);
-        });
+  const safeLoadVideo = useCallback(
+    (target: YouTubePlayer, options: { videoId: string; startSeconds?: number; endSeconds?: number }) => {
+      try {
+        console.debug('[YouTubeAdapter] 動画ロード開始:', options);
+        target.loadVideoById(options);
+      } catch (e) {
+        console.error('[YouTubeAdapter] 同期ロードエラー:', e);
+        onError(e);
       }
-    } catch (e) {
-      console.error('[YouTubeAdapter] 同期ロードエラー:', e);
-      onError(e);
-    }
-  }, [onError]);
+    },
+    [onError],
+  );
 
   /**
    * Effect: 再生状態とソース変更のハンドリング
@@ -87,7 +94,7 @@ export function YouTubeAdapter({
       if (isNewRequest || currentVideoId !== src) {
         // 新しい動画をロード
         lastPlaybackIdRef.current = playbackId;
-        const loadOpts: any = {
+        const loadOpts: { videoId: string; startSeconds: number; endSeconds?: number } = {
           videoId: src,
           startSeconds: startTime || 0,
         };
@@ -167,7 +174,7 @@ export function YouTubeAdapter({
 
     // 初期ロード制御（srcがある場合）
     if (src) {
-      const loadOpts: any = { videoId: src, startSeconds: startTime || 0 };
+      const loadOpts: { videoId: string; startSeconds: number; endSeconds?: number } = { videoId: src, startSeconds: startTime || 0 };
       if (endTime) loadOpts.endSeconds = endTime;
 
       // 準備完了時点ですぐに操作可能になるよう調整
@@ -201,6 +208,7 @@ export function YouTubeAdapter({
     }
   };
 
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const _onError = (event: any) => {
     // react-youtube は onError イベントオブジェクトを返すが、実際のエラーコードは event.data にある
     console.error('[YouTubeAdapter] 内部エラーイベント:', event);

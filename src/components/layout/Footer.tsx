@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-import { SITE_NAME } from '@/lib/constants';
 
 export const Footer = async () => {
   const t = await getTranslations('Footer');

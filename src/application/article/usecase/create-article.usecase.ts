@@ -1,5 +1,6 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { Article } from '@/domain/article/article';
+import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleCategory } from '@/domain/article/article.metadata';
@@ -20,7 +21,7 @@ export interface CreateArticleCommand {
  * 新規記事作成
  */
 export class CreateArticleUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(private readonly articleRepository: ArticleRepository) { }
 
   async execute(command: CreateArticleCommand): Promise<string> {
     // Check if exists
@@ -49,7 +50,7 @@ export class CreateArticleUseCase {
     const article = new Article({
       control: {
         id: command.slug, // ID generation strategy (use slug for FS)
-        lang: command.lang as any,
+        lang: command.lang as AppLocale,
         status: ArticleStatus.DRAFT,
         createdAt: new Date(),
         updatedAt: new Date(),

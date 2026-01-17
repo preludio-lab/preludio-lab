@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 
-export const MdxLink = async (props: any) => {
-  const href = props.href;
+import { AnchorHTMLAttributes } from 'react';
+
+export const MdxLink = async (props: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+  const { href, ...rest } = props;
   const isInternal = href && (href.startsWith('/') || href.startsWith('#'));
 
   if (isInternal) {
@@ -17,7 +19,8 @@ export const MdxLink = async (props: any) => {
     }
 
     return (
-      <Link href={finalHref} className={props.className} {...props}>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      <Link href={finalHref} {...(rest as any)}>
         {props.children}
       </Link>
     );

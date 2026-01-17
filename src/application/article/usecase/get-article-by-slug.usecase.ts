@@ -1,4 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
+import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleDto } from '@/application/article/dto/article.dto';
 import { Article } from '@/domain/article/article';
 
@@ -9,7 +10,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
  * スラグ（URL）による単一記事の取得（詳細画面用）
  */
 export class GetArticleBySlugUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) {}
+  constructor(private readonly articleRepository: ArticleRepository) { }
 
   async execute(lang: string, category: string, slug: string): Promise<ArticleDto | null> {
     const article = await this.articleRepository.findBySlug(
@@ -29,7 +30,7 @@ export class GetArticleBySlugUseCase {
     return {
       control: {
         id: article.control.id,
-        lang: article.control.lang as any,
+        lang: article.control.lang as AppLocale,
         status: article.control.status,
         createdAt: article.control.createdAt,
         updatedAt: article.control.updatedAt,

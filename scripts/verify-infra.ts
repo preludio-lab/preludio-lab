@@ -38,7 +38,7 @@ async function main() {
       Bucket: r2Bucket,
       MaxKeys: 1,
     });
-    const result = await r2Client.send(command);
+    await r2Client.send(command);
     console.log('✅ R2 Connected! Bucket is accessible.');
   } catch (e) {
     console.error('❌ R2 Connection Failed:', e);
