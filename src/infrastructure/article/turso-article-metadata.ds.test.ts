@@ -160,10 +160,14 @@ describe('ArticleMetadataDataSource', () => {
       // `orderBy` is on the object.
 
       const result = await dataSource.findMany({
-        lang: 'en',
-        category: ArticleCategory.WORKS,
-        limit: 10,
-        offset: 0,
+        filter: {
+          lang: 'en',
+          category: ArticleCategory.WORKS,
+        },
+        pagination: {
+          limit: 10,
+          offset: 0,
+        },
       });
 
       expect(result.rows).toEqual(mockRows);

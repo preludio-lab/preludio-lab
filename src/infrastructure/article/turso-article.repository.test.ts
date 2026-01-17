@@ -37,11 +37,11 @@ describe('TursoArticleRepository', () => {
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
       const mockRow = {
-        articles: { id: '1', slug: 'slug', category: 'work', createdAt: '2023-01-01' },
+        articles: { id: '1', slug: 'slug', category: 'works', createdAt: '2023-01-01' },
         article_translations: {
           articleId: '1',
           lang: 'en',
-          status: 'PUBLISHED',
+          status: 'published',
           title: 'Title',
           displayTitle: 'Display Title',
           updatedAt: '2023-01-01',
@@ -75,14 +75,14 @@ describe('TursoArticleRepository', () => {
       articles: {
         id: '1',
         slug: 'slug',
-        category: 'work',
+        category: 'works',
         isFeatured: false,
         createdAt: '2023-01-01',
       },
       article_translations: {
         articleId: '1',
         lang: 'en',
-        status: 'PUBLISHED',
+        status: 'published',
         title: 'Title',
         displayTitle: 'Display Title',
         updatedAt: '2023-01-01',
@@ -119,16 +119,18 @@ describe('TursoArticleRepository', () => {
 
   it('findBySlug should return Article with empty content if mdxPath missing', async () => {
     const mockRow = {
-      articles: { id: '1', slug: 'slug', category: 'work', createdAt: '2023-01-01' },
+      articles: { id: '1', slug: 'slug', category: 'works', createdAt: '2023-01-01' },
       article_translations: {
         articleId: '1',
         lang: 'en',
+        status: 'published',
         title: 'Title',
         displayTitle: 'Display Title',
         updatedAt: '2023-01-01',
         slComposerName: 'Composer',
         metadata: { category: 'works', tags: [] },
         mdxPath: null, // パスなし
+        slSlug: 'slug', // Added missing fields
       },
     };
     mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
@@ -145,20 +147,26 @@ describe('TursoArticleRepository', () => {
     (mockMetadataDS as any).findMany = vi.fn().mockResolvedValue({
       rows: [
         {
-          articles: { id: '1', slug: 'slug1', category: 'work' },
+          articles: { id: '1', slug: 'slug1', category: 'works' },
           article_translations: {
             title: 'Title 1',
             lang: 'en',
+            status: 'published',
             metadata: { category: 'works' },
             slSlug: 'slug1', // Add required fields for mapper
             slCategory: 'works',
+            updatedAt: '2023-01-01', // Add required fields
+            slComposerName: 'Composer', // Add required fields
           },
         },
       ],
       totalCount: 1,
     });
 
-    const result = await repo.findMany({ lang: 'en' });
+    const result = await repo.findMany({
+      filter: { lang: 'en' },
+      pagination: { limit: 10, offset: 0 },
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].content.body).toBeNull();

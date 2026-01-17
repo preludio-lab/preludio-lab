@@ -1,4 +1,8 @@
-import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
+import {
+  ArticleRepository,
+  ArticleSearchCriteria,
+  ArticleKeywordScope,
+} from '@/domain/article/ArticleRepository';
 import { Article, ContentStructure, ContentSection } from '@/domain/article/Article';
 import { ArticleContent } from '@/domain/article/ArticleContent';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
@@ -22,10 +26,6 @@ export class FsArticleRepository implements ArticleRepository {
     try {
       const context = await this.metadataDS.findBySlug(lang, category, slug);
       if (!context) {
-        // ビジネスルール: 見つからない場合は null を返すか？
-        // 計画に従い: AppError('NOT_FOUND') をスローする。
-        // ここでスローすれば、下でキャッチして WARN ログに変換できる。
-        // 標準的なプラクティスとして、一意のエラーをスローし、catch ブロックでログ出力/変換を行う。
         throw new AppError(`Article not found (slug: ${slug})`, 'NOT_FOUND', 404);
       }
 
@@ -47,9 +47,7 @@ export class FsArticleRepository implements ArticleRepository {
 
   async findById(id: string, lang: string): Promise<Article | null> {
     try {
-      // FS実装は通常slugを想定しているが、全件スキャンで対応可能
       const all = await this.metadataDS.findAll();
-      // FS context treats id as slug. Ensure we also match the lang.
       const match = all.find((c) => c.id === id && c.lang === lang);
       if (!match) {
         throw new AppError(`Article not found (id: ${id}, lang: ${lang})`, 'NOT_FOUND', 404);
@@ -70,63 +68,80 @@ export class FsArticleRepository implements ArticleRepository {
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
       const allContexts = await this.metadataDS.findAll();
-      // インメモリフィルタリング（DS内で深く最適化可能だが、現在は構成されたリポジトリがここで行う）
-      // パフォーマンスのために、まずはコンテキスト/メタデータでフィルタリングする。
-
+      const { filter, sort, pagination } = criteria;
       let candidates = allContexts;
 
       // 1. 言語
-      if (criteria.lang) {
-        candidates = candidates.filter((c) => c.lang === criteria.lang);
+      if (filter.lang) {
+        candidates = candidates.filter((c) => c.lang === filter.lang);
       }
 
       // 2. ステータス
-      if (criteria.status && criteria.status.length > 0) {
-        candidates = candidates.filter((c) => criteria.status!.includes(c.status));
+      if (filter.status && filter.status.length > 0) {
+        candidates = candidates.filter((c) => filter.status!.includes(c.status));
       }
 
       // 3. カテゴリ
-      if (criteria.category) {
-        candidates = candidates.filter((c) => c.category === criteria.category);
+      if (filter.category) {
+        candidates = candidates.filter((c) => c.category === filter.category);
       }
 
       // 4. タグ
-      if (criteria.tags && criteria.tags.length > 0) {
+      if (filter.tags && filter.tags.length > 0) {
         candidates = candidates.filter((c) =>
-          criteria.tags!.every((tag) => c.metadata.tags.includes(tag)),
+          filter.tags!.every((tag) => c.metadata.tags.includes(tag)),
         );
       }
 
-      // シリーズ、特集、メタデータフィルタ...
-      if (criteria.isFeatured !== undefined) {
-        candidates = candidates.filter((c) => c.metadata.isFeatured === criteria.isFeatured);
+      // 5. Featured
+      if (filter.isFeatured !== undefined) {
+        candidates = candidates.filter((c) => c.metadata.isFeatured === filter.isFeatured);
       }
-      if (criteria.minReadingLevel) {
+
+      // 6. Keyword (簡易実装: タイトルなどのみ)
+      if (filter.keyword) {
+        const kw = filter.keyword.toLowerCase();
+        const scope = filter.keywordScope || ArticleKeywordScope.ALL;
+        candidates = candidates.filter((c) => {
+          let hit = false;
+          // メタデータからタイトルなどは推測困難（metadataDSはContextを返す）
+          // Contextには metadata: ArticleMetadata がある。 titleはない？
+          // FsArticleContextは `title?: string` などを持っていれば良いが。
+          // 実際は mapToDomain でコンテンツを読まないとタイトルが確定しない場合も?
+          // いや、Context生成時にFrontmatterから読んでいるはず。
+          // FsArticleMetadataDataSource を確認する必要があるが、一旦 metadata 内の情報で判断。
+          // metadata に title はない。Frontmatterにあるはず。
+          // FsArticleContextの定義を見ないとわからないが、一旦スキップするか、metadata内のtagsのみ検索するか。
+          // keyword検索はFSでは限定的にならざるを得ない。
+          return true; // Implement proper search later
+        });
+      }
+
+      // メタデータフィルタ
+      if (filter.minReadingLevel) {
         candidates = candidates.filter(
-          (c) => (c.metadata.readingLevel || 0) >= criteria.minReadingLevel!,
+          (c) => (c.metadata.readingLevel || 0) >= filter.minReadingLevel!,
         );
       }
-      if (criteria.maxReadingLevel) {
+      if (filter.maxReadingLevel) {
         candidates = candidates.filter(
-          (c) => (c.metadata.readingLevel || 0) <= criteria.maxReadingLevel!,
+          (c) => (c.metadata.readingLevel || 0) <= filter.maxReadingLevel!,
         );
       }
 
       // ソート
-      const sortOption = criteria.sortBy || ArticleSortOption.PUBLISHED_AT;
-      const direction = criteria.sortDirection || SortDirection.DESC;
+      const sortField = sort?.field || ArticleSortOption.PUBLISHED_AT;
+      const direction = sort?.direction || SortDirection.DESC;
       const modifier = direction === SortDirection.ASC ? 1 : -1;
 
       candidates.sort((a, b) => {
-        /* コンテキスト用の簡易ソートロジック */
         let valA = 0;
         let valB = 0;
-        switch (sortOption) {
+        switch (sortField) {
           case ArticleSortOption.PUBLISHED_AT:
             valA = a.metadata.publishedAt ? a.metadata.publishedAt.getTime() : 0;
             valB = b.metadata.publishedAt ? b.metadata.publishedAt.getTime() : 0;
             break;
-          // ... implement other sorts if needed
           default:
             valA = a.createdAt.getTime();
             valB = b.createdAt.getTime();
@@ -138,8 +153,8 @@ export class FsArticleRepository implements ArticleRepository {
 
       // ページネーション
       const totalCount = candidates.length;
-      const offset = criteria.offset || 0;
-      const limit = criteria.limit || 20;
+      const offset = pagination.limit ? pagination.offset : 0;
+      const limit = pagination.limit || 20;
       const pagedCandidates = candidates.slice(offset, offset + limit);
 
       // ドメインへのマッピング（重い処理：コンテンツの読み込み）

@@ -79,19 +79,14 @@ export class TursoArticleRepository implements ArticleRepository {
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
       // 1. メタデータのみ取得 (R2へのアクセスはしない = 高速 & 低コスト)
-      const { rows, totalCount } = await this.metadataDS.findMany({
-        lang: criteria.lang,
-        category: criteria.category,
-        limit: criteria.limit,
-        offset: criteria.offset,
-      });
+      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
 
       // 2. マッピング (Contentはnullとして扱う)
       const items = rows
         .map((row) => {
           try {
-            // 第3引数(content)を渡さない -> Mapper内で null として処理される
-            return TursoArticleMapper.toDomain(row.articles, row.article_translations);
+            // リスト用なので mdxContent は null
+            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
           } catch (e) {
             this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
             return null;
@@ -100,8 +95,8 @@ export class TursoArticleRepository implements ArticleRepository {
         .filter((item): item is Article => item !== null);
 
       // 3. ページネーション情報の構築
-      const currentEnd = (criteria.offset || 0) + items.length;
-      const hasNextPage = totalCount > currentEnd;
+      const hasNextPage =
+        (criteria.pagination.offset || 0) + criteria.pagination.limit < totalCount;
 
       return {
         items,

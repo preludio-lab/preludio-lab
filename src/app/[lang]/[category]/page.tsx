@@ -5,7 +5,7 @@ import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
 import { supportedLocales } from '@/domain/i18n/Locale';
 
 type Props = {
@@ -40,13 +40,21 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const criteriaSort = sort ? (sort as ArticleSortOption) : ArticleSortOption.PUBLISHED_AT;
 
   const response = await useCase.execute({
-    lang,
-    category: category as ArticleCategory,
-    sortBy: criteriaSort,
-    minReadingLevel: difficulty ? parseInt(difficulty) : undefined,
-    maxReadingLevel: difficulty ? parseInt(difficulty) : undefined,
-    // Note: FsArticleRepository currently filters by exact level if min/max are same
-    limit: 100,
+    filter: {
+      lang,
+      category: category as ArticleCategory,
+      minReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+      maxReadingLevel: difficulty ? parseInt(difficulty) : undefined,
+      keyword: keyword,
+    },
+    sort: {
+      field: criteriaSort,
+      direction: SortDirection.DESC, // Default to DESC
+    },
+    pagination: {
+      limit: 100,
+      offset: 0,
+    },
   });
 
   return <ArticleBrowseFeature lang={lang} category={category} contents={response.items} />;

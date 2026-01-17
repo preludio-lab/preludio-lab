@@ -121,8 +121,14 @@ describe('FsArticleRepository', () => {
       mockContentDS.getContent.mockResolvedValue(validBody);
 
       const result = await repository.findMany({
-        lang: 'en',
-        category: ArticleCategory.WORKS,
+        filter: {
+          lang: 'en',
+          category: ArticleCategory.WORKS,
+        },
+        pagination: {
+          limit: 10,
+          offset: 0,
+        },
       });
 
       expect(result.items).toHaveLength(1);

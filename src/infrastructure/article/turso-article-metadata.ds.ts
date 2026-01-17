@@ -83,40 +83,39 @@ export class ArticleMetadataDataSource {
     // 言語 (必須)
     filters.push(eq(articleTranslations.lang, filter.lang));
 
-    // ステータス (指定がなければ PUBLISHED のみ)
-    const targetStatuses = filter.status || [ArticleStatus.PUBLISHED];
-    if (targetStatuses.length > 0) {
-      filters.push(inArray(articleTranslations.status, targetStatuses));
-    }
+    // ステータス: 空配列の場合はフィルタしない、あるいはデフォルト(PUBLISHED)を設定
+    const targetStatuses = filter.status?.length ? filter.status : [ArticleStatus.PUBLISHED];
+    filters.push(inArray(articleTranslations.status, targetStatuses));
 
-    // カテゴリ
     if (filter.category) {
       filters.push(eq(articles.category, filter.category));
     }
 
-    // featured
     if (filter.isFeatured !== undefined) {
       filters.push(eq(articleTranslations.isFeatured, filter.isFeatured));
     }
 
-    // キーワード検索
+    // キーワード検索 (FTS導入までの暫定対応としての LIKE 改善版)
     if (filter.keyword) {
       const pattern = `%${filter.keyword}%`;
       const scope = filter.keywordScope || ArticleKeywordScope.ALL;
       const keywordConditions = [];
 
-      if (scope === ArticleKeywordScope.TITLE || scope === ArticleKeywordScope.ALL) {
+      // スコープ定義に基づいて検索対象を決定
+      const searchTitle = scope === ArticleKeywordScope.TITLE || scope === ArticleKeywordScope.ALL;
+      const searchSummary =
+        scope === ArticleKeywordScope.SUMMARY || scope === ArticleKeywordScope.ALL;
+
+      if (searchTitle) {
         keywordConditions.push(like(articleTranslations.title, pattern));
         keywordConditions.push(like(articleTranslations.displayTitle, pattern));
       }
 
-      if (scope === ArticleKeywordScope.SUMMARY || scope === ArticleKeywordScope.ALL) {
-        // catchcopy, excerpt, and maybe body digest if available?
-        // Using excerpt and catchcopy for now
+      if (searchSummary) {
         keywordConditions.push(like(articleTranslations.excerpt, pattern));
-        if (articleTranslations.catchcopy) {
-          keywordConditions.push(like(articleTranslations.catchcopy, pattern));
-        }
+        // スキーマにカラムが存在する前提で追加 (データがNULLならヒットしないだけなので安全)
+        // 以前の if (articleTranslations.catchcopy) は定義情報の判定だったので削除
+        keywordConditions.push(like(articleTranslations.catchcopy, pattern));
       }
 
       if (keywordConditions.length > 0) {
@@ -126,29 +125,25 @@ export class ArticleMetadataDataSource {
 
     // --- 2. Sort Strategy ---
 
-    let orderByClause;
-    const direction = sort?.direction === SortDirection.ASC ? asc : desc;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sortMapping: Partial<Record<ArticleSortOption, any>> = {
+      [ArticleSortOption.TITLE]: articleTranslations.displayTitle,
+      [ArticleSortOption.PERFORMANCE_DIFFICULTY]: articleTranslations.slPerformanceDifficulty,
+      [ArticleSortOption.PUBLISHED_AT]: articleTranslations.publishedAt,
+    };
 
-    // デフォルトは公開日
     const sortField = sort?.field || ArticleSortOption.PUBLISHED_AT;
+    const targetColumn = sortMapping[sortField] || articleTranslations.publishedAt;
 
-    switch (sortField) {
-      case ArticleSortOption.TITLE:
-        orderByClause = direction(articleTranslations.displayTitle);
-        break;
-      case ArticleSortOption.PERFORMANCE_DIFFICULTY:
-        orderByClause = direction(articleTranslations.slPerformanceDifficulty); // assuming schema mapping
-        break;
-      case ArticleSortOption.PUBLISHED_AT:
-      default:
-        orderByClause = direction(articleTranslations.publishedAt);
-        break;
-    }
+    const direction = sort?.direction === SortDirection.ASC ? asc : desc;
+    const orderByClause = direction(targetColumn);
 
     // --- 3. Execution ---
 
-    // クエリ1: データ取得
-    const rowsQuery = db
+    // Drizzleのクエリビルダは状態を持つことがあるため、
+    // count用とselect用でクエリ定義を分けて明示的に構築
+
+    const rowsPromise = db
       .select()
       .from(articles)
       .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
@@ -157,14 +152,13 @@ export class ArticleMetadataDataSource {
       .limit(pagination.limit)
       .offset(pagination.offset);
 
-    // クエリ2: 総件数取得 (Count)
-    const countQuery = db
+    const countPromise = db
       .select({ count: sql<number>`count(*)` })
       .from(articles)
       .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
       .where(and(...filters));
 
-    const [rows, countResult] = await Promise.all([rowsQuery, countQuery]);
+    const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
     return {
       rows,

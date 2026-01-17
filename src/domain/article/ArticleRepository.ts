@@ -5,14 +5,28 @@ import { ArticleSortOption, SortDirection } from './ArticleConstants';
 import { PagedResponse } from '../shared/Pagination';
 
 /**
- * Article Search Criteria
- * 検索条件オブジェクト
+ * Keyword Search Scope
+ * キーワード検索の対象範囲
  */
-export interface ArticleSearchCriteria {
+export const ArticleKeywordScope = {
+  TITLE: 'title',
+  SUMMARY: 'summary',
+  ALL: 'all',
+} as const;
+
+export type ArticleKeywordScope = (typeof ArticleKeywordScope)[keyof typeof ArticleKeywordScope];
+
+/**
+ * Article Filter Options
+ * 記事の絞り込み条件
+ */
+export interface ArticleFilterOptions {
   lang: string;
   status?: ArticleStatus[];
   category?: ArticleCategory;
   tags?: string[];
+  keyword?: string;
+  keywordScope?: ArticleKeywordScope;
   seriesId?: string;
   isFeatured?: boolean;
 
@@ -22,12 +36,28 @@ export interface ArticleSearchCriteria {
   maxReadingLevel?: number;
   minDifficulty?: number; // Performance Difficulty
   maxDifficulty?: number;
+}
 
-  // Pagination & Sort
-  limit?: number;
-  offset?: number; // Cursor-based pagination might be defined separately if needed
-  sortBy?: ArticleSortOption;
-  sortDirection?: SortDirection;
+/**
+ * Article Sort Criteria
+ * 記事のソート条件
+ */
+export interface ArticleSortCriteria {
+  field: ArticleSortOption;
+  direction: SortDirection;
+}
+
+/**
+ * Article Search Criteria
+ * 統合された検索条件オブジェクト
+ */
+export interface ArticleSearchCriteria {
+  filter: ArticleFilterOptions;
+  sort?: ArticleSortCriteria;
+  pagination: {
+    limit: number;
+    offset: number;
+  };
 }
 
 /**
@@ -40,9 +70,6 @@ export interface ArticleRepository {
    */
   findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null>;
 
-  /**
-   * Find a single article by ID
-   */
   /**
    * Find a single article by ID
    */
