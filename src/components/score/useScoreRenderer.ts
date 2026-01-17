@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Score, NotationFormat } from '@/domain/score/score';
 import { MusicalExample } from '@/domain/score/musical-example';
-import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs-score.renderer';
+import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
 
 /**

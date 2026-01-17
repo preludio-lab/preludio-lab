@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TursoArticleMapper } from './turso-article.mapper';
+import { TursoArticleMapper } from './turso.article.mapper';
 import { AppError } from '@/domain/shared/app-error'; // Add import
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleCategory } from '@/domain/article/article.metadata';

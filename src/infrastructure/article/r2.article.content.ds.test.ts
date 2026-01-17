@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { R2ArticleContentDataSource } from './r2-article-content.ds';
-import { r2Client } from '../storage/r2-client';
+import { R2ArticleContentDataSource } from './r2.article.content.ds';
+import { r2Client } from '../storage/r2.client';
 import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
 import {
   ContentNotFoundError,
   ContentFetchError,
-} from './interfaces/article-content-data-source.interface';
+} from './interfaces/article.content.data.source.interface';
 
 // r2-client モジュールのモック
-vi.mock('../storage/r2-client', () => ({
+vi.mock('../storage/r2.client', () => ({
   r2Client: {
     send: vi.fn(),
   },
@@ -73,7 +73,7 @@ describe('R2ArticleContentDataSource', () => {
   });
 
   it('should throw ContentFetchError and log error on other errors', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => { });
     vi.mocked(r2Client.send).mockRejectedValue(new Error('Access Denied'));
 
     await expect(dataSource.getContent('error.mdx')).rejects.toThrow(ContentFetchError);

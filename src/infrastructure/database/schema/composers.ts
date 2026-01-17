@@ -1,6 +1,6 @@
 import { sqliteTable, text, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
-import { libsqlVector } from './custom-types';
+import { libsqlVector } from './custom.types';
 import type { Place, ComposerImpressionDimensions } from '@/domain/shared/common.metadata';
 
 // --- Composers Table ---

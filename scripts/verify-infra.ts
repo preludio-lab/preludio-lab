@@ -23,7 +23,7 @@ async function main() {
   // 2. Turso Connection
   console.log('\n[2] Verifying Turso Connection...');
   try {
-    const { db } = await import('../src/infrastructure/database/turso-client');
+    const { db } = await import('../src/infrastructure/database/turso.client');
     const result = await db.select({ count: count() }).from(articles);
     console.log(`✅ Turso Connected! Article count: ${result[0].count}`);
   } catch (e) {
@@ -33,7 +33,7 @@ async function main() {
   // 3. R2 Connection
   console.log('\n[3] Verifying R2 Connection...');
   try {
-    const { r2Client } = await import('../src/infrastructure/storage/r2-client');
+    const { r2Client } = await import('../src/infrastructure/storage/r2.client');
     const command = new ListObjectsCommand({
       Bucket: r2Bucket,
       MaxKeys: 1,
@@ -48,9 +48,9 @@ async function main() {
   console.log('\n[4] Verifying Repository Integration (Dry Run)...');
   try {
     const { TursoArticleMetadataDataSource } =
-      await import('../src/infrastructure/article/turso-article-metadata.ds');
+      await import('../src/infrastructure/article/turso.article.metadata.ds');
     const { R2ArticleContentDataSource } =
-      await import('../src/infrastructure/article/r2-article-content.ds');
+      await import('../src/infrastructure/article/r2.article.content.ds');
     const { ArticleRepositoryImpl } =
       await import('../src/infrastructure/article/article.repository');
     const { logger } = await import('../src/infrastructure/logging');

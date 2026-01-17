@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 import { PlayerProvider, PlayerSource, PlayerDisplay } from '@/domain/player/player';
 
 import { useAudioPlayer } from '@/components/player/AudioPlayerContext';
-import { MediaMetadataService } from '@/infrastructure/player/media-metadata.service';
+import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
 import { generateWatchUrl } from '@/components/player/PlayerLinkHelper';
 
 export interface AudioPlayerBinderProps {

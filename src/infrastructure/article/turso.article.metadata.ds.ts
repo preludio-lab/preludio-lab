@@ -1,5 +1,5 @@
 import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
-import { db } from '../database/turso-client';
+import { db } from '../database/turso.client';
 import { articles, articleTranslations } from '../database/schema';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
@@ -11,7 +11,7 @@ import { AppError } from '@/domain/shared/app-error';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article-metadata-data-source.interface';
+} from './interfaces/article.metadata.data.source.interface';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}

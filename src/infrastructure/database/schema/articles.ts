@@ -1,5 +1,5 @@
 import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
-import { libsqlVector } from './custom-types';
+import { libsqlVector } from './custom.types';
 import { sql } from 'drizzle-orm';
 import { works } from './works';
 

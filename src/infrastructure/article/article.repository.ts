@@ -5,11 +5,11 @@ import { PagedResponse } from '@/domain/shared/pagination';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article-metadata-data-source.interface';
-import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
+} from './interfaces/article.metadata.data.source.interface';
+import { IArticleContentDataSource } from './interfaces/article.content.data.source.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { TursoArticleMapper } from './turso-article.mapper';
+import { TursoArticleMapper } from './turso.article.mapper';
 
 export class ArticleRepositoryImpl implements ArticleRepository {
   constructor(

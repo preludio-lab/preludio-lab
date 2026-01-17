@@ -1,10 +1,10 @@
 import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
-import { r2Client } from '../storage/r2-client';
+import { r2Client } from '../storage/r2.client';
 import {
   IArticleContentDataSource,
   ContentNotFoundError,
   ContentFetchError,
-} from './interfaces/article-content-data-source.interface';
+} from './interfaces/article.content.data.source.interface';
 
 export class R2ArticleContentDataSource implements IArticleContentDataSource {
   private readonly bucketName: string;

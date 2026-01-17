@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { FsArticleContentDataSource } from './fs-article-content.ds';
-import { ContentNotFoundError } from './interfaces/article-content-data-source.interface';
+import { FsArticleContentDataSource } from './fs.article.content.ds';
+import { ContentNotFoundError } from './interfaces/article.content.data.source.interface';
 import fs from 'fs';
 import path from 'path';
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
+import { FsArticleMetadataDataSource } from './fs.article.metadata.ds';
 import fs from 'fs';
 import path from 'path';
 import { ArticleCategory } from '@/domain/article/article.metadata';
