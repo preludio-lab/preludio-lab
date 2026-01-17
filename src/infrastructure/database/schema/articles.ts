@@ -51,11 +51,16 @@ export const articleTranslations = sqliteTable(
     excerpt: text('excerpt'),
     publishedAt: text('published_at'), // ISO8601 または NULL
     isFeatured: integer('is_featured', { mode: 'boolean' }).default(false).notNull(),
-    mdxPath: text('mdx_path'),
+    // 生成カラムの定義
+    mdxPath: text('mdx_path').generatedAlwaysAs(
+      // 例: "en/symphony/beethoven-5.mdx"
+      sql`lang || '/' || sl_category || '/' || sl_slug || '.mdx'`,
+      { mode: 'stored' }
+    ),
 
     // --- 非正規化カラム (Snapshots) ---
-    slSlug: text('sl_slug'), // [Snapshot/Localized]
-    slCategory: text('sl_category'), // [Snapshot]
+    slSlug: text('sl_slug').notNull(), // [Snapshot/Localized]
+    slCategory: text('sl_category').notNull(), // [Snapshot]
     slComposerName: text('sl_composer_name'),
     slWorkCatalogueId: text('sl_work_catalogue_id'),
     slWorkNicknames: text('sl_work_nicknames', { mode: 'json' }).$type<string[]>(),
@@ -93,6 +98,7 @@ export const articleTranslations = sqliteTable(
       .notNull(),
   },
   (table) => ({
+    mdxPathIdx: uniqueIndex('idx_art_trans_mdx_path').on(table.mdxPath),
     lookupIdx: uniqueIndex('idx_art_trans_article_lookup').on(table.articleId, table.lang),
     statusPubIdx: index('idx_art_trans_status_pub').on(table.lang, table.status, table.publishedAt),
     featuredIdx: index('idx_art_trans_featured').on(
