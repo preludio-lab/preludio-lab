@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/locale';
-import { UrlSchema } from '../shared/common-metadata';
+import { UrlSchema } from '../shared/common.metadata';
 
 /**
  * Monetization Type

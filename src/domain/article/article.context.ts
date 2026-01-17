@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { zInt } from '@/shared/validation/zod';
 import { ArticleCategory } from './article.metadata';
 
-import { UrlSchema, SlugSchema } from '../shared/common-metadata';
+import { UrlSchema, SlugSchema } from '../shared/common.metadata';
 
 /**
  * 記事生成や楽曲解説に使用した参考文献や一次情報の根拠

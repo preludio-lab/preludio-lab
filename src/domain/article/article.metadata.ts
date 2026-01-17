@@ -7,7 +7,7 @@ import {
   UrlSchema,
   YearSchema,
   SlugSchema,
-} from '../shared/common-metadata';
+} from '../shared/common.metadata';
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
 

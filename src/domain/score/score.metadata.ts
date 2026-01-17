@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/locale';
 import { MonetizationElementSchema } from '../monetization/monetization';
-import { UrlSchema } from '../shared/common-metadata';
+import { UrlSchema } from '../shared/common.metadata';
 
 /**
  * 楽譜の出版・提供形態（媒体）の定義

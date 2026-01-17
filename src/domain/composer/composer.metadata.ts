@@ -6,7 +6,7 @@ import {
   TagsSchema,
   PlaceSchema,
   DimensionSchema,
-} from '../shared/common-metadata';
+} from '../shared/common.metadata';
 import { NationalitySchema } from '../shared/nationality';
 import { MusicalInstrumentSchema } from '../shared/musical-instrument';
 import { MusicalGenreSchema } from '../shared/musical-genre';

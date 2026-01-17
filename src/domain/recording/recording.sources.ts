@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MAX_URL_LENGTH } from '../shared/common-metadata';
+import { MAX_URL_LENGTH } from '../shared/common.metadata';
 
 /**
  * Recording Provider

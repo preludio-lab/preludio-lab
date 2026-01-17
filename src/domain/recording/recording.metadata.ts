@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { createMultilingualStringSchema } from '../i18n/locale';
-import { YearSchema } from '../shared/common-metadata';
+import { YearSchema } from '../shared/common.metadata';
 
 /**
  * Recording Metadata

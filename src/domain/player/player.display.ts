@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ResourcePathSchema, UrlSchema } from '@/domain/shared/common-metadata';
+import { ResourcePathSchema, UrlSchema } from '@/domain/shared/common.metadata';
 import { PlayerProviderSchema } from './player.shared';
 
 /**

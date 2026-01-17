@@ -10,7 +10,7 @@ import {
   NicknamesSchema,
   ImpressionDimensionsSchema,
 } from './work.shared';
-import { TagsSchema, YearSchema } from '../shared/common-metadata';
+import { TagsSchema, YearSchema } from '../shared/common.metadata';
 
 // Re-export common types and schemas for convenience
 export * from './work.shared';

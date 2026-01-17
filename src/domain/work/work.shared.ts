@@ -3,7 +3,7 @@ import { createMultilingualStringSchema } from '../i18n/locale';
 import { MusicalCataloguePrefixSchema } from './musical-catalogue-prefix';
 import { MusicalGenreSchema } from '../shared/musical-genre';
 import { MusicalKeySchema } from './musical-key';
-import { DimensionSchema } from '../shared/common-metadata';
+import { DimensionSchema } from '../shared/common.metadata';
 
 /**
  * 共有の音楽メタデータスキーマ定義 (WorkShared)

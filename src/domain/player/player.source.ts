@@ -1,6 +1,6 @@
 import { z } from '@/shared/validation/zod';
 import { PlayerProviderSchema } from './player.shared';
-import { MAX_URL_LENGTH } from '@/domain/shared/common-metadata';
+import { MAX_URL_LENGTH } from '@/domain/shared/common.metadata';
 import { SecondsSchema } from './player.shared';
 /**
  * SecondsSchema 用の時間範囲バリデーションロジック
