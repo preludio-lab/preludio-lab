@@ -5,7 +5,7 @@ import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
 import {
   ContentNotFoundError,
   ContentFetchError,
-} from './interfaces/article.content.data.source.interface';
+} from './interfaces/article.content.ds.interface';
 
 // r2-client モジュールのモック
 vi.mock('../storage/r2.client', () => ({

@@ -5,8 +5,8 @@ import { PagedResponse } from '@/domain/shared/pagination';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article.metadata.data.source.interface';
-import { IArticleContentDataSource } from './interfaces/article.content.data.source.interface';
+} from './interfaces/article.metadata.ds.interface';
+import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { TursoArticleMapper } from './turso.article.mapper';

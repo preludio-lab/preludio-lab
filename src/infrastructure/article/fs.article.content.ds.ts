@@ -5,7 +5,7 @@ import {
   IArticleContentDataSource,
   ContentNotFoundError,
   ContentFetchError,
-} from './interfaces/article.content.data.source.interface';
+} from './interfaces/article.content.ds.interface';
 
 export class FsArticleContentDataSource implements IArticleContentDataSource {
   private readonly contentDirectory: string;

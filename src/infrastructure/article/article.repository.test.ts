@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArticleRepositoryImpl } from './article.repository';
-import { IArticleMetadataDataSource } from './interfaces/article.metadata.data.source.interface';
-import { IArticleContentDataSource } from './interfaces/article.content.data.source.interface';
+import { IArticleMetadataDataSource } from './interfaces/article.metadata.ds.interface';
+import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { Logger } from '@/shared/logging/logger';
 import { articles, articleTranslations } from '../database/schema/articles';

@@ -11,7 +11,7 @@ import { AppError } from '@/domain/shared/app-error';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article.metadata.data.source.interface';
+} from './interfaces/article.metadata.ds.interface';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}

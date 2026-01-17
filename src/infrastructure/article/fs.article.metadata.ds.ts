@@ -12,7 +12,7 @@ import { logger } from '@/infrastructure/logging';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
-} from './interfaces/article.metadata.data.source.interface';
+} from './interfaces/article.metadata.ds.interface';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 export interface FsArticleContext {
