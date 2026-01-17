@@ -4,14 +4,16 @@ import { ArticleContent } from './article.content';
 import { ArticleStatus } from './article.control';
 import { ArticleCategory } from './article.metadata';
 import { INITIAL_ENGAGEMENT_METRICS } from './article.engagement';
+import { AppLocale } from '@/domain/i18n/locale';
 
 describe('Article Entity', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const createBaseArticle = (overrides: any = {}) => {
     const now = new Date();
     return new Article({
       control: {
         id: 'test-id',
-        lang: 'ja' as any,
+        lang: 'ja' as AppLocale,
         status: ArticleStatus.PUBLISHED,
         createdAt: now,
         updatedAt: now,

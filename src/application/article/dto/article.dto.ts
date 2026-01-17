@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { ArticleControlSchema } from '@/domain/article/article.control';
-import {
-  ArticleMetadataSchema,
-  PlaybackSchema,
-  ArticleCategory,
-} from '@/domain/article/article.metadata';
+import { ArticleMetadataSchema } from '@/domain/article/article.metadata';
 import { ArticleContentSchema } from '@/domain/article/article.content';
 import { ArticleContextSchema } from '@/domain/article/article.context';
 import { EngagementMetricsSchema } from '@/domain/article/article.engagement';

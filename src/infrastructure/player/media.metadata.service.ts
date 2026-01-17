@@ -1,4 +1,20 @@
-import { PlayerProvider } from '@/domain/player/player';
+/**
+ * MediaMetadataService
+ * テキストコンテンツ（ABC記譜法など）からメディアメタデータを抽出するインフラストラクチャサービス。
+ */
+export interface ParsedMediaMetadata {
+  sourceId?: string;
+  startSeconds?: number;
+  endSeconds?: number;
+  title?: string;
+  composerName?: string;
+  performer?: string;
+  image?: string;
+  sourceUrl?: string;
+  provider?: string;
+  platform?: string; // Metadata field
+  platformUrl?: string; // Metadata field
+}
 
 /**
  * MediaMetadataService
@@ -10,7 +26,7 @@ export class MediaMetadataService {
    * @param content 解析対象のテキスト
    * @param format フォーマット識別子 ('abc' など)
    */
-  public parse(content: string, format: string): Record<string, any> {
+  public parse(content: string, format: string): ParsedMediaMetadata {
     if (typeof content !== 'string') {
       return {};
     }
@@ -27,9 +43,9 @@ export class MediaMetadataService {
    * ABC記法からメタデータを抽出します。
    * %%audio_src, %%audio_title などのカスタムディレクティブを解析します。
    */
-  private parseAbc(abcContent: string): Record<string, any> {
+  private parseAbc(abcContent: string): ParsedMediaMetadata {
     let sourceId: string | undefined;
-    const metadata: Record<string, any> = {};
+    const metadata: Record<string, string | undefined> = {};
     let startSeconds: number | undefined;
     let endSeconds: number | undefined;
 
@@ -96,7 +112,7 @@ export class MediaMetadataService {
     });
 
     // 意味のあるデータが含まれる場合のみ返す
-    const result: Record<string, any> = {};
+    const result: ParsedMediaMetadata = {};
     if (sourceId) result.sourceId = sourceId;
     if (startSeconds !== undefined) result.startSeconds = startSeconds;
     if (endSeconds !== undefined) result.endSeconds = endSeconds;

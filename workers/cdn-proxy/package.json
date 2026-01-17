@@ -12,9 +12,9 @@
     "hono": "^4.0.0"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.12.4",
     "@cloudflare/workers-types": "^4.20240101.0",
-    "vitest": "^1.2.0",
-    "vitest-environment-miniflare": "^2.14.4",
+    "vitest": "~3.2.0",
     "wrangler": "^4.59.1"
   }
 }

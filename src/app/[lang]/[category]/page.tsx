@@ -31,8 +31,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { lang, category } = await params;
   const { sort, difficulty, keyword } = await searchParams;
 
-  const validCategories = Object.values(ArticleCategory);
-  if (!validCategories.includes(category as any)) {
+  const validCategories = Object.values(ArticleCategory) as string[];
+  if (!validCategories.includes(category)) {
     notFound();
   }
 

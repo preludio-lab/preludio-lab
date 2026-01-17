@@ -1,4 +1,4 @@
-import { z, zInt } from '@/shared/validation/zod';
+import { z } from '@/shared/validation/zod';
 import { MusicalEraSchema } from '../shared/musical-era';
 import {
   TitleSchema,

@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { Player, PlayerProps } from './player';
+import { Player } from './player';
+import { PlayerDisplay } from './player.display';
+import { PlayerSource } from './player.source';
 import { PlayerMode } from './player.status';
 
 describe('Player Entity', () => {
@@ -17,12 +19,12 @@ describe('Player Entity', () => {
         provider: 'generic',
         displayType: 'audio',
         ...overrides.display,
-      } as any,
+      } as unknown as PlayerDisplay,
       source: {
         sourceId: 'http://example.com/audio.mp3',
         provider: 'generic',
         ...overrides.source,
-      } as any,
+      } as unknown as PlayerSource,
       status: {
         isPlaying: false,
         currentTime: 0,

@@ -2,17 +2,25 @@ import { MdxLink } from '@/components/mdx/MdxLink';
 import ScoreRenderer from '@/components/score';
 import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
+import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
+import { ComponentProps, isValidElement, ReactElement } from 'react';
 
 /**
  * createArticleMdxComponents
  * 記事詳細で使用するMDXコンポーネント定義を生成します。
  * 記事ごとの音源情報をフォールバックとして利用するため、関数形式にしています。
  */
-export const createArticleMdxComponents = (audioMetadata?: any) => ({
+export const createArticleMdxComponents = (
+  audioMetadata?: Partial<PlayerFlatProperties> & Record<string, unknown>,
+) => ({
   a: MdxLink,
-  pre: (props: any) => {
-    const codeProps = props.children?.props;
-    const className = codeProps?.className || '';
+  pre: (props: ComponentProps<'pre'>) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let codeProps: { className?: string; children?: any } = {};
+    if (isValidElement(props.children)) {
+      codeProps = ((props.children as ReactElement).props as Record<string, unknown>) || {};
+    }
+    const className = ((codeProps as Record<string, unknown>)?.className as string) || '';
 
     if (className.includes('language-abc')) {
       let abcContent = codeProps.children;
@@ -24,15 +32,35 @@ export const createArticleMdxComponents = (audioMetadata?: any) => ({
       const extracted = abcMetadata;
 
       const mergedRequest = {
-        sourceId: extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId,
-        provider: extracted?.provider || audioMetadata?.provider,
-        startSeconds: extracted?.startSeconds ?? audioMetadata?.startSeconds,
-        endSeconds: extracted?.endSeconds ?? audioMetadata?.endSeconds,
-        title: extracted?.title || audioMetadata?.title,
-        composerName: extracted?.composerName || audioMetadata?.composerName,
-        performer: extracted?.performer || audioMetadata?.performer,
-        image: extracted?.image || audioMetadata?.thumbnail || audioMetadata?.image,
-        sourceUrl: extracted?.sourceUrl || audioMetadata?.platformUrl,
+        sourceId: (extracted?.sourceId || audioMetadata?.src || audioMetadata?.sourceId) as
+          | string
+          | undefined,
+        provider: (extracted?.provider || audioMetadata?.provider || audioMetadata?.platform) as
+          | 'youtube'
+          | 'spotify'
+          | 'soundcloud'
+          | 'apple-music'
+          | 'audio-file'
+          | 'generic'
+          | undefined,
+        startSeconds: (extracted?.startSeconds ?? audioMetadata?.startSeconds) as
+          | number
+          | undefined,
+        endSeconds: (extracted?.endSeconds ?? audioMetadata?.endSeconds) as number | undefined,
+        title: (extracted?.title || audioMetadata?.title || undefined) as string | undefined,
+        composerName: (extracted?.composerName || audioMetadata?.composerName || undefined) as
+          | string
+          | undefined,
+        performer: (extracted?.performer || audioMetadata?.performer || undefined) as
+          | string
+          | undefined,
+        image: (extracted?.image ||
+          audioMetadata?.thumbnail ||
+          audioMetadata?.image ||
+          undefined) as string | undefined,
+        sourceUrl: (extracted?.sourceUrl || audioMetadata?.platformUrl || undefined) as
+          | string
+          | undefined,
       };
 
       if (!mergedRequest.sourceId) {

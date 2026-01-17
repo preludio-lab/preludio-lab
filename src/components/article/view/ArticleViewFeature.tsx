@@ -5,10 +5,12 @@ import { getTranslations } from 'next-intl/server';
 import { ArticleTableOfContents } from './ArticleTableOfContents';
 import { ArticleSeriesNavigation } from './ArticleSeriesNavigation';
 import { createArticleMdxComponents } from './ArticleMdxComponents';
+import { MDXRemoteProps } from 'next-mdx-remote/rsc';
 import rehypeSlug from 'rehype-slug';
 import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
 import { ArticleListeningGuide } from './ArticleListeningGuide';
 import { Playback } from '@/domain/article/article.metadata';
+import { PlayerProvider } from '@/domain/player/player.shared';
 
 interface ArticleViewFeatureProps {
   article: ArticleDto;
@@ -34,7 +36,7 @@ export async function ArticleViewFeature({
   const hasAudio = !!metadata.playback?.audioSrc;
 
   const audioMetadata = hasAudio
-    ? {
+    ? ({
         src: metadata.playback!.audioSrc,
         title: metadata.displayTitle,
         composerName: metadata.composerName,
@@ -42,11 +44,12 @@ export async function ArticleViewFeature({
         thumbnail: metadata.thumbnail,
         startSeconds: metadata.playback!.startSeconds,
         endSeconds: metadata.playback!.endSeconds,
-        platform: 'youtube',
-      }
+        platform: PlayerProvider.YOUTUBE,
+      } as Record<string, unknown>)
     : undefined;
 
-  const mdxComponents = createArticleMdxComponents(audioMetadata);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mdxComponents = createArticleMdxComponents(audioMetadata as any);
 
   return (
     <div className="container mx-auto px-4 py-32 max-w-7xl">
@@ -114,7 +117,7 @@ export async function ArticleViewFeature({
 
           <MDXRemote
             source={content.body || ''}
-            components={mdxComponents as any}
+            components={mdxComponents as MDXRemoteProps['components']}
             options={{
               mdxOptions: {
                 rehypePlugins: [rehypeSlug],

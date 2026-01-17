@@ -1,4 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
+import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleDto } from '@/application/article/dto/article.dto';
 import { Article } from '@/domain/article/article';
 
@@ -29,7 +30,7 @@ export class GetArticleBySlugUseCase {
     return {
       control: {
         id: article.control.id,
-        lang: article.control.lang as any,
+        lang: article.control.lang as AppLocale,
         status: article.control.status,
         createdAt: article.control.createdAt,
         updatedAt: article.control.updatedAt,

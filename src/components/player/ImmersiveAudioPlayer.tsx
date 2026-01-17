@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
 import { useTranslations } from 'next-intl';
 import { PlayerProvider, PlayerMode } from '@/domain/player/player';

@@ -29,7 +29,7 @@ export default function AudioPlayerController() {
     startSeconds,
     endSeconds,
     playbackId,
-    seekTo, // Context上は関数だが、Dumb Componentへは値として渡す必要がある
+    // Context上は関数だが、Dumb Componentへは値として渡す必要がある
     // メモ: 現在のContext実装は `playerRef.current.seekTo` を直接操作する命令的な設計になっている。
     // Dumb Component が完全にProps駆動であることを目指す場合、この設計はミスマッチ。
     // コンテキストの互換性を維持するため、AudioPlayer 側への操作をプロキシするオブジェクトを作成し、
@@ -44,11 +44,11 @@ export default function AudioPlayerController() {
   // AudioPlayerAdapter は `seekTo` prop の変更を検知してシークする
   const proxyInstance = React.useMemo(
     () => ({
-      seekTo: (time: number, allowSeekAhead: boolean) => {
+      seekTo: (time: number) => {
         console.debug('[AudioPlayerController] Contextからのシーク要求:', time);
         setSeekTrigger(time);
       },
-      setVolume: (vol: number) => {
+      setVolume: () => {
         // Contextの `setVolume` は状態更新とRef操作の両方を行う
         // ここではProps経由で音量が渡されるため、Ref操作はログ出力のみで実質無視しても問題ない場合が多いが、
         // 念のためログを残す
@@ -73,7 +73,7 @@ export default function AudioPlayerController() {
   );
 
   const handleError = useCallback(
-    (error: any) => {
+    (error: unknown) => {
       handleClientError(error, '音楽再生エラー');
       // 無限ループやUI不整合を防ぐため、Contextの再生状態を停止する
       _onStateChange(false);

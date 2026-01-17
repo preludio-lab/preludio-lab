@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Score, NotationFormat } from '@/domain/score/score';
+import { NotationFormat } from '@/domain/score/score';
 import { MusicalExample } from '@/domain/score/musical-example';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
@@ -28,11 +28,11 @@ export function useScoreRenderer(score: MusicalExample | { data: string; format:
       const data =
         'metadata' in score && 'notationPath' in score.metadata
           ? score.metadata.notationPath
-          : (score as any).data;
+          : (score as { data: string }).data;
       const format =
         'metadata' in score && 'format' in score.metadata
           ? score.metadata.format
-          : (score as any).format;
+          : (score as { format: NotationFormat }).format;
 
       try {
         if (process.env.NODE_ENV === 'development') {

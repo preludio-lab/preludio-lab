@@ -19,12 +19,7 @@ interface ArticleFilterPanelProps {
  * ArticleFilterPanel
  * 最新のArticleSortOptionに対応した、プレミアムで直感的なフィルタリングパネル。
  */
-export function ArticleFilterPanel({
-  state,
-  onFilterChange,
-  lang,
-  totalCount,
-}: ArticleFilterPanelProps) {
+export function ArticleFilterPanel({ state, onFilterChange, totalCount }: ArticleFilterPanelProps) {
   const t = useTranslations('CategoryIndex');
 
   const difficulties = [
@@ -46,6 +41,7 @@ export function ArticleFilterPanel({
 
   // ローカル状態の同期
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchTerm(state.keyword || '');
   }, [state.keyword]);
 
