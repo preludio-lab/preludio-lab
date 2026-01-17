@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Article } from './Article';
+import { ArticleContent } from './ArticleContent';
 import { ArticleStatus } from './ArticleControl';
 import { ArticleCategory } from './ArticleMetadata';
 import { INITIAL_ENGAGEMENT_METRICS } from './ArticleEngagement';
@@ -26,11 +27,11 @@ describe('Article Entity', () => {
         tags: [],
         ...overrides.metadata,
       },
-      content: {
+      content: new ArticleContent({
         body: 'Test Body',
         structure: [],
         ...overrides.content,
-      },
+      }),
       engagement: {
         metrics: INITIAL_ENGAGEMENT_METRICS,
         ...overrides.engagement,

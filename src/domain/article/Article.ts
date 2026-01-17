@@ -6,7 +6,8 @@ import { ArticleEngagement, INITIAL_ENGAGEMENT_METRICS } from './ArticleEngageme
 import { ArticleContext, SeriesAssignment, RelatedArticle } from './ArticleContext';
 
 export type { ContentSection, ContentStructure, SeriesAssignment, RelatedArticle };
-export type { ArticleControl, ArticleContent, ArticleEngagement, ArticleContext };
+export type { ArticleControl, ArticleEngagement, ArticleContext };
+export { ArticleContent };
 
 /**
  * Article Entity

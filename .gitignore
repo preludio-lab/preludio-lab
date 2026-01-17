@@ -49,3 +49,5 @@ next-env.d.ts
 # static build artifacts
 /public/pagefind
 
+# local database
+*.db

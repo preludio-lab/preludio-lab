@@ -96,6 +96,7 @@ erDiagram
 | **`id`**               | `text`    | -       | YES      | -                                      | **PK**. UUID v7                                             |
 | **`work_id`**          | `text`    | -       | NO       | -                                      | **FK to `works.id`**                                        |
 | `slug`                 | `text`    | -       | YES      | -                                      | **Universal Slug**                                          |
+| `category`             | `text`    | -       | YES      | -                                      | **[Master]** Article Category                               |
 | `is_featured`          | `integer` | `0`     | YES      | `IN (0, 1)`                            | おすすめフラグ                                              |
 | `created_at`           | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                                |
 | `updated_at`           | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                                |
@@ -124,6 +125,8 @@ erDiagram
 | `display_title`             | `text`    | -       | YES      | -                                                                | **[Denormalized]** 一覧表示用タイトル (SEO/UX最適化済み)               |
 | `catchcopy`                 | `text`    | -       | NO       | -                                                                | **[Micro-copy]** サムネイル重畳用の短文 (未入力時は非表示)             |
 | `excerpt`                   | `text`    | -       | NO       | -                                                                | **[SEO/OGP]** 記事の抜粋・概要 (120文字程度)                           |
+| `sl_slug`                   | `text`    | -       | NO       | -                                                                | **[Snapshot]** ローカライズされたスラグ (URL用)                        |
+| `sl_category`               | `text`    | -       | NO       | -                                                                | **[Snapshot]** ローカライズ/固定されたカテゴリスラグ                   |
 | `sl_composer_name`          | `text`    | -       | NO       | -                                                                | 作曲家名 (Source: `composer_translations.display_name`)                |
 | `sl_work_catalogue_id`      | `text`    | -       | NO       | -                                                                | 作品番号 (Source: `works.catalogue_prefix/number`, e.g. "BWV 846")     |
 | `sl_work_nicknames`         | `text`    | -       | NO       | -                                                                | 通称リスト (JSON, Source: `work_translations.nicknames`)               |

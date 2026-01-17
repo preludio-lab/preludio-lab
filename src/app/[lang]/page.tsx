@@ -5,7 +5,7 @@ import { articleRepository } from '@/infrastructure/article';
 import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 
 // ホーム画面のDiscoverセクションに表示するカテゴリ
@@ -37,10 +37,18 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   try {
     const listUseCase = new ListArticlesUseCase(articleRepository);
     const response = await listUseCase.execute({
-      lang,
-      isFeatured: true,
-      sortBy: ArticleSortOption.PUBLISHED_AT,
-      limit: 5,
+      filter: {
+        lang,
+        isFeatured: true,
+      },
+      sort: {
+        field: ArticleSortOption.PUBLISHED_AT,
+        direction: SortDirection.DESC,
+      },
+      pagination: {
+        limit: 5,
+        offset: 0,
+      },
     });
     featuredArticles = response.items;
   } catch (error) {

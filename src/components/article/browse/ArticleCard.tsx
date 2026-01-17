@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { m } from 'framer-motion';
-import { YoutubeMediaAdapter } from '@/infrastructure/article/YoutubeMediaAdapter';
+import { getStandardThumbnailUrl } from '@/lib/youtube';
 import { useMemo } from 'react';
 
 export interface ArticleCardProps {
@@ -45,7 +45,7 @@ export function ArticleCard({
     let url = content.thumbnail;
     const audioSrc = content.playback?.audioSrc;
     if (!url && audioSrc) {
-      url = YoutubeMediaAdapter.getStandardThumbnailUrl(audioSrc);
+      url = getStandardThumbnailUrl(audioSrc);
     }
     return url;
   }, [content.thumbnail, content.playback?.audioSrc]);

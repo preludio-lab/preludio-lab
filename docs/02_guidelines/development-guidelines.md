@@ -199,10 +199,10 @@ graph TD
 
 #### 2.9.1. Filenames & Directory Names
 
-| ケース         | 適用対象                                                                                                                            | 例                                                                    |
-| :------------- | :---------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| **PascalCase** | **UIコンポーネント、ドメイン実体、型定義ファイル**<br>そのファイルが「一つの明確な名詞（Noun）」をエクスポートしている場合。        | `Header.tsx`, `Content.ts`, `GetContentUseCase.ts`, `FsRepository.ts` |
-| **kebab-case** | **ユーティリティ、技術設定、共有インスタンス提供、ディレクトリ**<br>役割が「道具箱（Tools）」や「抽象的な技術レイヤー」である場合。 | `supabase.ts`, `env.ts`, `constants.ts`, `utils/`, `infrastructure/`  |
+| ケース | 適用対象 | 例 |
+| :--- | :--- | :--- |
+| **PascalCase** | **UIコンポーネント (React)**<br>JSXで使用されるコンポーネントファイル。 | `Header.tsx`, `ArticleList.tsx`, `Button.tsx` |
+| **kebab-case** | **ロジック（Domain, Application, Infrastructure）、設定、ユーティリティ**<br>原則としてケバブケース（ハイフン区切り）を使用する。<br>また、役割（Repository, UseCase等）を表すサフィックスは**ドット(`.`)区切り**とすることを推奨する（Feature-Sliced / NestJSスタイル）。 | `article.repository.ts`<br>`get-article.use-case.ts`<br>`user-profile.ts`<br>`app.constants.ts` |
 
 #### 2.9.2. Code Elements
 

@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
 import { supportedLocales } from '@/domain/i18n/Locale';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
 import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 
 type Props = {
@@ -31,8 +31,8 @@ export async function generateStaticParams() {
   for (const lang of LOCALES) {
     try {
       const response = await useCase.execute({
-        lang,
-        limit: 1000,
+        filter: { lang },
+        pagination: { limit: 1000, offset: 0 },
       });
 
       for (const item of response.items) {
@@ -69,11 +69,19 @@ export default async function ContentDetailPage({ params }: Props) {
 
     if (article) {
       const summaryResponse = await listUseCase.execute({
-        lang,
-        category: article.metadata.category,
-        status: [ArticleStatus.PUBLISHED],
-        limit: 1000,
-        sortBy: ArticleSortOption.TITLE,
+        filter: {
+          lang,
+          category: article.metadata.category,
+          status: [ArticleStatus.PUBLISHED],
+        },
+        pagination: {
+          limit: 1000,
+          offset: 0,
+        },
+        sort: {
+          field: ArticleSortOption.TITLE,
+          direction: SortDirection.ASC,
+        },
       });
 
       const sorted = summaryResponse.items;

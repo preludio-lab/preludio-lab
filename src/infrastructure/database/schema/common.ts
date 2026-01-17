@@ -44,19 +44,16 @@ export const tagTranslations = sqliteTable(
 );
 
 // --- Media Assets Table ---
-export const mediaAssets = sqliteTable(
-  'media_assets',
-  {
-    id: text('id').primaryKey(), // UUID v7
-    mediaType: text('media_type').notNull(), // 'image', 'document', 'audio', 'video', 'json'
-    url: text('url').notNull(), // Public URL
-    altText: text('alt_text', { mode: 'json' }).default('{}').$type<MultilingualString>(),
-    metadata: text('metadata', { mode: 'json' }).default('{}').notNull(), // JSON for size etc.
-    createdAt: text('created_at')
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: text('updated_at')
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-);
+export const mediaAssets = sqliteTable('media_assets', {
+  id: text('id').primaryKey(), // UUID v7
+  mediaType: text('media_type').notNull(), // 'image', 'document', 'audio', 'video', 'json'
+  url: text('url').notNull(), // Public URL
+  altText: text('alt_text', { mode: 'json' }).default('{}').$type<MultilingualString>(),
+  metadata: text('metadata', { mode: 'json' }).default('{}').notNull(), // JSON for size etc.
+  createdAt: text('created_at')
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});

@@ -113,7 +113,7 @@ export async function ArticleViewFeature({
           </div>
 
           <MDXRemote
-            source={content.body}
+            source={content.body || ''}
             components={mdxComponents as any}
             options={{
               mdxOptions: {

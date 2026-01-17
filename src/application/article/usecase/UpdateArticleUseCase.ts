@@ -5,6 +5,7 @@ import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 
 export interface UpdateArticleCommand {
   id: string; // Slug or ID
+  lang: string;
   content?: string;
   status?: ArticleStatus;
   isFeatured?: boolean;
@@ -19,7 +20,7 @@ export class UpdateArticleUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(command: UpdateArticleCommand): Promise<void> {
-    const article = await this.articleRepository.findById(command.id);
+    const article = await this.articleRepository.findById(command.id, command.lang);
     if (!article) {
       throw new Error(`Article not found: ${command.id}`);
     }

@@ -51,19 +51,29 @@ export class GetRelatedArticlesUseCase {
 
     if (baseArticle.metadata.tags.length > 0) {
       const result = await searchUseCase.execute({
-        lang,
-        status: [ArticleStatus.PUBLISHED],
-        tags: [baseArticle.metadata.tags[0]], // Use first tag as primary related key
-        limit: limit + 1, // Fetch extra to exclude self
+        filter: {
+          lang,
+          status: [ArticleStatus.PUBLISHED],
+          tags: [baseArticle.metadata.tags[0]], // Use first tag as primary related key
+        },
+        pagination: {
+          limit: limit + 1, // Fetch extra to exclude self
+          offset: 0,
+        },
       });
       items = result.items;
     } else {
       // Fallback: Same Category
       const result = await searchUseCase.execute({
-        lang,
-        status: [ArticleStatus.PUBLISHED],
-        category: baseArticle.category,
-        limit: limit + 1,
+        filter: {
+          lang,
+          status: [ArticleStatus.PUBLISHED],
+          category: baseArticle.category,
+        },
+        pagination: {
+          limit: limit + 1,
+          offset: 0,
+        },
       });
       items = result.items;
     }

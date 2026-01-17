@@ -2,7 +2,7 @@ import { ArticleRepository } from '@/domain/article/ArticleRepository';
 import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
 import { PagedResponse } from '@/domain/shared/Pagination';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
 import { ListArticlesUseCase } from './ListArticlesUseCase';
 
 /**
@@ -16,12 +16,19 @@ export class GetFeaturedArticlesUseCase {
     const listUseCase = new ListArticlesUseCase(this.articleRepository);
 
     return listUseCase.execute({
-      lang,
-      status: [ArticleStatus.PUBLISHED],
-      isFeatured: true,
-      limit,
-      offset: 0,
-      sortBy: ArticleSortOption.PUBLISHED_AT,
+      filter: {
+        lang,
+        status: [ArticleStatus.PUBLISHED],
+        isFeatured: true,
+      },
+      pagination: {
+        limit,
+        offset: 0,
+      },
+      sort: {
+        field: ArticleSortOption.PUBLISHED_AT,
+        direction: SortDirection.DESC,
+      },
     });
   }
 }
