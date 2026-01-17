@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { ArticleMetadataDataSource } from './turso-article-metadata.ds';
 import { db } from '../database/turso-client';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { Logger } from '@/shared/logging/logger';
+import { AppError } from '@/domain/shared/AppError';
 
 // turso-client モジュールのモック
 vi.mock('../database/turso-client', () => ({
@@ -12,6 +14,7 @@ vi.mock('../database/turso-client', () => ({
 
 describe('ArticleMetadataDataSource', () => {
   let dataSource: ArticleMetadataDataSource;
+  let mockLogger: Logger;
 
   // チェーンメソッドのモック
   const mockLimit = vi.fn();
@@ -25,7 +28,13 @@ describe('ArticleMetadataDataSource', () => {
   const mockFrom = vi.fn(() => ({ innerJoin: mockInnerJoin }));
 
   beforeEach(() => {
-    dataSource = new ArticleMetadataDataSource();
+    mockLogger = {
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    };
+    dataSource = new ArticleMetadataDataSource(mockLogger);
     vi.clearAllMocks();
 
     // モック実装のリセット
@@ -72,6 +81,19 @@ describe('ArticleMetadataDataSource', () => {
 
       expect(result).toBeUndefined();
     });
+
+    it('should log error and throw AppError on database failure', async () => {
+      const dbError = new Error('Database connection failed');
+      mockLimit.mockRejectedValue(dbError);
+
+      await expect(dataSource.findById('123', 'ja')).rejects.toThrow(AppError);
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'ArticleMetadataDataSource.findById error',
+        dbError,
+        { id: '123', lang: 'ja' },
+      );
+    });
   });
 
   describe('findBySlug', () => {
@@ -87,8 +109,6 @@ describe('ArticleMetadataDataSource', () => {
 
       expect(result).toEqual(mockData);
       expect(mockWhere).toHaveBeenCalled();
-      // カテゴリが含まれているかの厳密なチェックはDrizzleのeqオブジェクト比較が必要だが、
-      // ここでは呼び出しフローを確認する
     });
 
     it('should return undefined if no result found', async () => {
@@ -98,66 +118,34 @@ describe('ArticleMetadataDataSource', () => {
 
       expect(result).toBeUndefined();
     });
+
+    it('should log error and throw AppError on database failure', async () => {
+      const dbError = new Error('Database query failed');
+      mockLimit.mockRejectedValue(dbError);
+
+      await expect(dataSource.findBySlug('slug', 'en')).rejects.toThrow(AppError);
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'ArticleMetadataDataSource.findBySlug error',
+        dbError,
+        { slug: 'slug', lang: 'en', category: undefined },
+      );
+    });
   });
 
   describe('findMany', () => {
     it('should return rows and totalCount', async () => {
       const mockRows = [{ id: '1' }, { id: '2' }];
 
-      // findMany executes two queries in parallel via Promise.all
-      // We need to handle two calls to db.select()
-
-      // Setup specific return values for the promise chains
-      // 1. Data Query: select() -> ... -> limit().offset() -> resolved value
-      mockOffset.mockResolvedValueOnce(mockRows);
-
-      // 2. Count Query: select({count}) -> ... -> where() -> resolved value
-      // Count query stops at where() and resolves.
-      // However, db.select() is called twice. We need to distinguish or just let them behave similarly.
-      // The implementation awaits Promise.all([rowsPromise, countPromise])
-      // rowsQuery ends with .offset()
-      // countQuery ends with .where()
-
-      // Re-setup mockWhere for count query specifically?
-      // Actually, since countQuery ends at where(), calling `await countQuery` means awaiting the object returned by where().
-      // Drizzle objects are "thenable" (QueryPromise).
-      // We'll simulate this by making mockWhere return a Promise-like object OR just checking the call order.
-      // But in our mock setup, `where` returns an object with `orderBy`.
-
-      // To simulate `await countQuery`, strict mocking of Drizzle is hard.
-      // Ideally we mock `where` to return a user-defined promise or object.
-      // But `rowsQuery` continues AFTER where to orderBy.
-
-      // Simplified approach: Mock `Promise.all`? No, that tests the runtime.
-      // Better approach: Make the chain return Promises that resolve to expected data.
-
-      // Let's refine the mock structure for findMany.
-      // Query 1 (Rows): select -> ... -> where -> orderBy -> limit -> offset -> RET
-      // Query 2 (Count): select -> ... -> where -> RET (if we treat it as awaited directly, but Drizzle uses .then or await)
-
-      // For this test, verifying that it constructs correct chains is enough.
-      // We can force the "await" to return data by mocking the final method in the chain.
-
-      // For Query 1 (Rows), it awaits `.offset(...)`.
       mockOffset.mockResolvedValue(mockRows);
 
-      // For Query 2 (Count), it awaits `.where(...)`.
-      // But wait, `where` returns the query builder which has `orderBy` etc.
-      // If we await the builder, it executes.
-      // In Drizzle, `where(...)` returns a QueryBuilder which is thenable.
-      // We need to attach a `.then` or just make it a Promise.
-
-      // Let's try to mock the return of `where` to be a Promise-like object that ALSO has `orderBy`.
       const thenableWhereResult = {
         limit: mockLimit,
         orderBy: mockOrderBy,
-        then: (resolve: (value: { count: number }[]) => void) => resolve([{ count: 2 }]), // Mock count result (default)
+        then: (resolve: (value: { count: number }[]) => void) => resolve([{ count: 2 }]),
       };
 
       mockWhere.mockReturnValue(thenableWhereResult as unknown as ReturnType<typeof mockWhere>);
-
-      // But `rowsQuery` doesn't await `where`. It calls `orderBy`.
-      // `orderBy` is on the object.
 
       const result = await dataSource.findMany({
         filter: {
@@ -171,13 +159,43 @@ describe('ArticleMetadataDataSource', () => {
       });
 
       expect(result.rows).toEqual(mockRows);
-      // Our mock count returns 2
       expect(result.totalCount).toBe(2);
 
       expect(mockLimit).toHaveBeenCalledWith(10);
       expect(mockOffset).toHaveBeenCalledWith(0);
-      expect(mockOrderBy).toHaveBeenCalled(); // Ensure sorting is applied
-      expect(db.select).toHaveBeenCalledTimes(2); // Rows + Count
+      expect(mockOrderBy).toHaveBeenCalled();
+      expect(db.select).toHaveBeenCalledTimes(2);
+    });
+
+    it('should log error and throw AppError on database failure', async () => {
+      const dbError = new Error('Database query failed');
+      // findMany does Promise.all, so if one fails, it rejects.
+      mockOffset.mockRejectedValue(dbError);
+
+      // Need to mock the second query (count) to not fail immediately/sync before the first one (or ensure Promise.all catches it)
+      // Since Promise.all handles rejections, we just need one of them to reject.
+      // But we need to ensure the mocks are set up so execution proceeds to the Promise.all.
+      const thenableWhereResult = {
+        limit: mockLimit,
+        orderBy: mockOrderBy,
+        then: (resolve: (value: { count: number }[]) => void) => resolve([{ count: 0 }]),
+      };
+      mockWhere.mockReturnValue(thenableWhereResult as unknown as ReturnType<typeof mockWhere>);
+
+      await expect(
+        dataSource.findMany({
+          filter: { lang: 'en' },
+          pagination: { limit: 10, offset: 0 },
+        }),
+      ).rejects.toThrow(AppError);
+
+      expect(mockLogger.error).toHaveBeenCalled();
+      // Verify logger call arguments if needed
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'ArticleMetadataDataSource.findMany error',
+        dbError,
+        expect.anything(),
+      );
     });
   });
 });

@@ -55,7 +55,7 @@ async function main() {
       await import('../src/infrastructure/article/turso-article.repository');
     const { logger } = await import('../src/infrastructure/logging');
 
-    const metaDS = new ArticleMetadataDataSource();
+    const metaDS = new ArticleMetadataDataSource(logger);
     const contentDS = new ArticleContentDataSource();
     const repo = new TursoArticleRepository(metaDS, contentDS, logger);
 
