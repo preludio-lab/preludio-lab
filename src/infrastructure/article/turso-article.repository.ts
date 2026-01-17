@@ -16,7 +16,7 @@ export class TursoArticleRepository implements ArticleRepository {
     private metadataDS: IArticleMetadataDataSource,
     private contentDS: IArticleContentDataSource,
     private logger: Logger,
-  ) { }
+  ) {}
 
   /**
    * IDによる記事取得

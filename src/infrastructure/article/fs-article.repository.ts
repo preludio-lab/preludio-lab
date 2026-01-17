@@ -1,225 +1,141 @@
-import {
-  ArticleRepository,
-  ArticleSearchCriteria,
-  ArticleKeywordScope,
-} from '@/domain/article/ArticleRepository';
-import { Article, ContentStructure, ContentSection } from '@/domain/article/Article';
-import { ArticleContent } from '@/domain/article/ArticleContent';
+import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { Article, ContentStructure, ContentSection } from '@/domain/article/Article';
 import { PagedResponse } from '@/domain/shared/Pagination';
-import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
-import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/ArticleEngagement';
-import { FsArticleMetadataDataSource, FsArticleContext } from './fs-article-metadata.ds';
-import { FsArticleContentDataSource } from './fs-article-content.ds';
+import {
+  IArticleMetadataDataSource,
+  MetadataRow,
+} from './interfaces/article-metadata-data-source.interface';
+import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/AppError';
-import { AppLocale } from '@/domain/i18n/Locale';
+import { TursoArticleMapper } from './turso-article.mapper';
 
 export class FsArticleRepository implements ArticleRepository {
   constructor(
-    private metadataDS: FsArticleMetadataDataSource,
-    private contentDS: FsArticleContentDataSource,
+    private metadataDS: IArticleMetadataDataSource,
+    private contentDS: IArticleContentDataSource,
     private logger: Logger,
   ) {}
 
+  async findById(id: string, lang: string): Promise<Article | null> {
+    try {
+      const row = await this.metadataDS.findById(id, lang);
+      if (!row) {
+        this.logger.warn(`Article not found by ID: ${id} (${lang})`, { id, lang });
+        return null;
+      }
+      return await this._assembleArticle(row, id);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      this.logger.error(`FindById failed: ${id}`, err as Error, { id, lang });
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
-      const context = await this.metadataDS.findBySlug(lang, category, slug);
-      if (!context) {
-        throw new AppError(`Article not found (slug: ${slug})`, 'NOT_FOUND', 404);
+      const row = await this.metadataDS.findBySlug(slug, lang, category);
+      if (!row) {
+        this.logger.warn(`Article not found by slug: ${slug} (${lang})`, {
+          category,
+          slug,
+          lang,
+        });
+        return null;
       }
-
-      const contentBody = await this.contentDS.getContent(context.filePath);
-      return this.mapToDomain(context, contentBody);
+      return await this._assembleArticle(row, slug);
     } catch (err) {
-      if (err instanceof AppError && err.code === 'NOT_FOUND') {
-        this.logger.warn(`Article not found: ${slug}`, { lang, category, slug });
-        throw err;
-      }
-      this.logger.error(`Failed to find article by slug: ${slug}`, err as Error, {
+      if (err instanceof AppError) throw err;
+      this.logger.error(`FindBySlug failed: ${slug}`, err as Error, {
         slug,
         lang,
         category,
       });
-      throw new AppError('Failed to find article', 'INFRASTRUCTURE_ERROR', 500, err);
-    }
-  }
-
-  async findById(id: string, lang: string): Promise<Article | null> {
-    try {
-      const all = await this.metadataDS.findAll();
-      const match = all.find((c) => c.id === id && c.lang === lang);
-      if (!match) {
-        throw new AppError(`Article not found (id: ${id}, lang: ${lang})`, 'NOT_FOUND', 404);
-      }
-
-      const contentBody = await this.contentDS.getContent(match.filePath);
-      return this.mapToDomain(match, contentBody);
-    } catch (err) {
-      if (err instanceof AppError && err.code === 'NOT_FOUND') {
-        this.logger.warn(`Article not found by ID: ${id}`, { id, lang });
-        throw err;
-      }
-      this.logger.error(`Failed to find article by id: ${id}`, err as Error, { id, lang });
-      throw new AppError('Failed to find article by id', 'INFRASTRUCTURE_ERROR', 500, err);
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
-      const allContexts = await this.metadataDS.findAll();
-      const { filter, sort, pagination } = criteria;
-      let candidates = allContexts;
+      // 1. Get metadata rows
+      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
 
-      // 1. 言語
-      if (filter.lang) {
-        candidates = candidates.filter((c) => c.lang === filter.lang);
-      }
+      // 2. Map to domain
+      // For list view, we usually don't need full content, but legacy FS repo loaded content.
+      // However, Turso repo optimistically skips content loading for lists.
+      // We should align with Turso behavior for performance?
+      // But if we skip content, we lose TOC structure which might be needed for display?
+      // Usually list views don't show TOC.
+      // So passing null content is fine.
 
-      // 2. ステータス
-      if (filter.status && filter.status.length > 0) {
-        candidates = candidates.filter((c) => filter.status!.includes(c.status));
-      }
-
-      // 3. カテゴリ
-      if (filter.category) {
-        candidates = candidates.filter((c) => c.category === filter.category);
-      }
-
-      // 4. タグ
-      if (filter.tags && filter.tags.length > 0) {
-        candidates = candidates.filter((c) =>
-          filter.tags!.every((tag) => c.metadata.tags.includes(tag)),
-        );
-      }
-
-      // 5. Featured
-      if (filter.isFeatured !== undefined) {
-        candidates = candidates.filter((c) => c.metadata.isFeatured === filter.isFeatured);
-      }
-
-      // 6. Keyword (簡易実装: タイトルなどのみ)
-      if (filter.keyword) {
-        const kw = filter.keyword.toLowerCase();
-        const scope = filter.keywordScope || ArticleKeywordScope.ALL;
-        candidates = candidates.filter((c) => {
-          let hit = false;
-          // メタデータからタイトルなどは推測困難（metadataDSはContextを返す）
-          // Contextには metadata: ArticleMetadata がある。 titleはない？
-          // FsArticleContextは `title?: string` などを持っていれば良いが。
-          // 実際は mapToDomain でコンテンツを読まないとタイトルが確定しない場合も?
-          // いや、Context生成時にFrontmatterから読んでいるはず。
-          // FsArticleMetadataDataSource を確認する必要があるが、一旦 metadata 内の情報で判断。
-          // metadata に title はない。Frontmatterにあるはず。
-          // FsArticleContextの定義を見ないとわからないが、一旦スキップするか、metadata内のtagsのみ検索するか。
-          // keyword検索はFSでは限定的にならざるを得ない。
-          return true; // Implement proper search later
-        });
-      }
-
-      // メタデータフィルタ
-      if (filter.minReadingLevel) {
-        candidates = candidates.filter(
-          (c) => (c.metadata.readingLevel || 0) >= filter.minReadingLevel!,
-        );
-      }
-      if (filter.maxReadingLevel) {
-        candidates = candidates.filter(
-          (c) => (c.metadata.readingLevel || 0) <= filter.maxReadingLevel!,
-        );
-      }
-
-      // ソート
-      const sortField = sort?.field || ArticleSortOption.PUBLISHED_AT;
-      const direction = sort?.direction || SortDirection.DESC;
-      const modifier = direction === SortDirection.ASC ? 1 : -1;
-
-      candidates.sort((a, b) => {
-        let valA = 0;
-        let valB = 0;
-        switch (sortField) {
-          case ArticleSortOption.PUBLISHED_AT:
-            valA = a.metadata.publishedAt ? a.metadata.publishedAt.getTime() : 0;
-            valB = b.metadata.publishedAt ? b.metadata.publishedAt.getTime() : 0;
-            break;
-          default:
-            valA = a.createdAt.getTime();
-            valB = b.createdAt.getTime();
-        }
-        if (valA < valB) return -1 * modifier;
-        if (valA > valB) return 1 * modifier;
-        return 0;
-      });
-
-      // ページネーション
-      const totalCount = candidates.length;
-      const offset = pagination.limit ? pagination.offset : 0;
-      const limit = pagination.limit || 20;
-      const pagedCandidates = candidates.slice(offset, offset + limit);
-
-      // ドメインへのマッピング（重い処理：コンテンツの読み込み）
-      // 注: findMany は通常、コンテンツ（本文）を含む Article を返します。
-      // 実際のシステムの多くでは、リストビューは「軽量な Article」（本文なし）を返す場合があります。
-      // ドメイン定義では 'content' が必要です。
-      const items: Article[] = [];
-      for (const c of pagedCandidates) {
-        const body = await this.contentDS.getContent(c.filePath);
-        items.push(this.mapToDomain(c, body));
-      }
+      const items = rows
+        .map((row) => {
+          try {
+            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+          } catch (e) {
+            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
+            return null;
+          }
+        })
+        .filter((item): item is Article => item !== null);
 
       return {
         items,
         totalCount,
-        hasNextPage: offset + limit < totalCount,
+        hasNextPage:
+          (criteria.pagination.offset || 0) + (criteria.pagination.limit || 20) < totalCount,
       };
     } catch (err) {
-      this.logger.error('Failed to find articles', err as Error, { criteria });
-      throw new AppError('Failed to find articles', 'INFRASTRUCTURE_ERROR', 500, err);
+      this.logger.error('FindMany failed', err as Error);
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
   async save(article: Article): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const a = article;
-    throw new Error(
-      'Save not implemented in Composed Repository (Use legacy or finish implementation)',
-    );
+    const _ = article;
+    throw new Error('Method not implemented.');
   }
 
   async delete(id: string): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const i = id;
-    throw new Error('Delete not implemented');
+    const _ = id;
+    throw new Error('Method not implemented.');
   }
 
-  // Mapper
-  private mapToDomain(context: FsArticleContext, body: string): Article {
-    const structure = this.extractToc(body);
-    return new Article({
-      control: {
-        id: context.id,
-        lang: context.lang as AppLocale,
-        status: context.status,
-        createdAt: context.createdAt,
-        updatedAt: context.updatedAt,
-      },
-      metadata: context.metadata,
-      content: new ArticleContent({
-        body: body,
-        structure: structure,
-      }),
-      engagement: { metrics: INITIAL_ENGAGEMENT_METRICS },
-      context: {
-        seriesAssignments: [],
-        relatedArticles: [],
-        sourceAttributions: [],
-        monetizationElements: [],
-      },
-    });
+  // --- Private Helpers ---
+
+  private async _assembleArticle(row: MetadataRow, contextId: string): Promise<Article> {
+    let content = '';
+
+    // FS Data Source constructs mdxPath as "lang/category/slug"
+    // FsContentDS expects path relative to article root if not absolute.
+    // row.article_translations.mdxPath is "lang/category/slug" (no extension).
+    // We need adding extension.
+    if (row.article_translations.mdxPath) {
+      const fullPath = `${row.article_translations.mdxPath}.mdx`;
+      try {
+        content = await this.contentDS.getContent(fullPath);
+      } catch (err) {
+        this.logger.error(`Content fetch failed: ${fullPath}`, err as Error, { contextId });
+        throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
+      }
+    }
+
+    // Dynamic TOC generation for FS
+    const structure = this.extractToc(content);
+    row.article_translations.contentStructure = structure;
+
+    try {
+      return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
+    } catch (err) {
+      this.logger.error(`Mapping failed: ${contextId}`, err as Error, { contextId });
+      throw new AppError('Data mapping error', 'INTERNAL_SERVER_ERROR', 500, err);
+    }
   }
 
   private extractToc(content: string): ContentStructure {
-    // 正規表現ロジックのコピー
     const lines = content.split('\n');
     const sections: ContentStructure = [];
     let currentH2: ContentSection | null = null;
@@ -229,14 +145,23 @@ export class FsArticleRepository implements ArticleRepository {
     for (const line of lines) {
       const h2Match = line.match(h2Regex);
       if (h2Match) {
-        currentH2 = { id: this.slugify(h2Match[1]), heading: h2Match[1], level: 2, children: [] };
+        currentH2 = {
+          id: this.slugify(h2Match[1]),
+          heading: h2Match[1],
+          level: 2,
+          children: [],
+        };
         sections.push(currentH2);
         continue;
       }
       const h3Match = line.match(h3Regex);
       if (h3Match && currentH2) {
         currentH2.children = currentH2.children || [];
-        currentH2.children.push({ id: this.slugify(h3Match[1]), heading: h3Match[1], level: 3 });
+        currentH2.children.push({
+          id: this.slugify(h3Match[1]),
+          heading: h3Match[1],
+          level: 3,
+        });
       }
     }
     return sections;

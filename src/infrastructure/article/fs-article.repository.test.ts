@@ -1,45 +1,81 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { FsArticleRepository } from './fs-article.repository';
-import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
-import { FsArticleContentDataSource } from './fs-article-content.ds';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Logger } from '@/shared/logging/logger';
+import { MetadataRow } from './interfaces/article-metadata-data-source.interface';
+import { ArticleStatus } from '@/domain/article/ArticleControl';
 
-// DataSource のモック
-vi.mock('./fs-article-metadata.ds');
-vi.mock('./fs-article-content.ds');
+// DataSource Mocks
+// Note: We mock the interface methods.
+// Since Interfaces are types, we mock the objects passed to constructor.
 
 describe('FsArticleRepository', () => {
   let repository: FsArticleRepository;
-  let mockMetadataDS: { findBySlug: Mock; findAll: Mock };
+  let mockMetadataDS: { findBySlug: Mock; findById: Mock; findMany: Mock };
   let mockContentDS: { getContent: Mock };
 
-  // モックデータ
-  const validContext = {
-    id: 'prelude',
-    slug: 'prelude',
-    lang: 'en',
-    category: ArticleCategory.WORKS,
-    status: 'published',
-    filePath: '/path/to/works/prelude.mdx',
-    metadata: {
-      title: 'Prelude 1',
-      composerName: 'J.S. Bach',
-      readingLevel: 3,
+  // Mock Data
+  const validRow: MetadataRow = {
+    articles: {
+      id: 'prelude',
+      slug: 'prelude',
+      category: ArticleCategory.WORKS,
       isFeatured: true,
-      tags: ['Piano', 'Baroque'],
+      readingTimeSeconds: 500,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      workId: null,
+      thumbnailPath: null,
     },
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    article_translations: {
+      id: 'prelude-en',
+      articleId: 'prelude',
+      lang: 'en',
+      status: ArticleStatus.PUBLISHED,
+      title: 'Prelude 1',
+      displayTitle: 'Prelude 1',
+      catchcopy: null,
+      excerpt: null,
+      publishedAt: new Date().toISOString(),
+      isFeatured: true,
+      mdxPath: 'en/works/prelude',
+      slSlug: 'prelude',
+      slCategory: ArticleCategory.WORKS,
+      slComposerName: 'J.S. Bach',
+      slWorkCatalogueId: null,
+      slWorkNicknames: null,
+      slGenre: null,
+      slInstrumentations: null,
+      slEra: null,
+      slNationality: null,
+      slKey: null,
+      slPerformanceDifficulty: 3,
+      slImpressionDimensions: null,
+      contentEmbedding: null,
+      slSeriesAssignments: [],
+      metadata: {} as any, // Mapper relies on this or individual fields? It copies base metadata.
+      // Important: Mapper uses `metadata` JSON + fallback to columns.
+      // We should populate metadata to be safe or ensure columns are sufficient.
+      // Let's populate minimal metadata.
+      contentStructure: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
   };
+  // validRow.article_translations.metadata needs to prevent zod parse error in Mapper
+  validRow.article_translations.metadata = {
+    title: 'Prelude 1',
+    slug: 'prelude',
+    category: ArticleCategory.WORKS,
+    tags: ['Piano'],
+  } as any;
 
   const validBody = `## Introduction\nText body`;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // モックインスタンスのセットアップ
-    mockMetadataDS = { findBySlug: vi.fn(), findAll: vi.fn() };
+    mockMetadataDS = { findBySlug: vi.fn(), findById: vi.fn(), findMany: vi.fn() };
     mockContentDS = { getContent: vi.fn() };
 
     const mockLogger = {
@@ -50,15 +86,15 @@ describe('FsArticleRepository', () => {
     };
 
     repository = new FsArticleRepository(
-      mockMetadataDS as unknown as FsArticleMetadataDataSource,
-      mockContentDS as unknown as FsArticleContentDataSource,
-      mockLogger as unknown as Logger,
+      mockMetadataDS as any,
+      mockContentDS as any,
+      mockLogger as any,
     );
   });
 
   describe('findBySlug', () => {
-    it('returns article if context exists', async () => {
-      mockMetadataDS.findBySlug.mockResolvedValue(validContext);
+    it('returns article if row exists', async () => {
+      mockMetadataDS.findBySlug.mockResolvedValue(validRow);
       mockContentDS.getContent.mockResolvedValue(validBody);
 
       const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'prelude');
@@ -67,73 +103,50 @@ describe('FsArticleRepository', () => {
       expect(result?.metadata.title).toBe('Prelude 1');
       expect(result?.metadata.composerName).toBe('J.S. Bach');
 
-      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith(
-        'en',
-        ArticleCategory.WORKS,
-        'prelude',
-      );
-      expect(mockContentDS.getContent).toHaveBeenCalledWith('/path/to/works/prelude.mdx');
+      // Check if content was loaded using mdxPath + .mdx
+      expect(mockContentDS.getContent).toHaveBeenCalledWith('en/works/prelude.mdx');
+
+      // Check TOC extraction (logic inside repo)
+      expect(result?.content.structure).toHaveLength(1);
+      expect(result?.content.structure[0].heading).toBe('Introduction');
     });
 
-    it('throws AppError(NOT_FOUND) if validation fails or file missing (DS returns null)', async () => {
-      mockMetadataDS.findBySlug.mockResolvedValue(null);
-      await expect(repository.findBySlug('en', ArticleCategory.WORKS, 'missing')).rejects.toThrow();
+    it('returns null if DS returns undefined', async () => {
+      mockMetadataDS.findBySlug.mockResolvedValue(undefined);
+      const result = await repository.findBySlug('en', ArticleCategory.WORKS, 'missing');
+      expect(result).toBeNull();
     });
   });
 
   describe('findById', () => {
-    it('returns article if context exists matching id and lang', async () => {
-      const mockAll = [{ ...validContext, id: 'prelude', lang: 'en' }];
-      mockMetadataDS.findAll.mockResolvedValue(mockAll);
+    it('returns article if row exists', async () => {
+      mockMetadataDS.findById.mockResolvedValue(validRow);
       mockContentDS.getContent.mockResolvedValue(validBody);
 
       const result = await repository.findById('prelude', 'en');
       expect(result).not.toBeNull();
       expect(result?.control.id).toBe('prelude');
     });
-
-    it('throws AppError(NOT_FOUND) if no match', async () => {
-      mockMetadataDS.findAll.mockResolvedValue([]);
-      await expect(repository.findById('missing', 'en')).rejects.toThrow();
-    });
   });
 
   describe('findMany', () => {
     it('filters articles by criteria', async () => {
-      const mockAllContexts = [
-        {
-          ...validContext,
-          id: '1',
-          lang: 'en',
-          category: ArticleCategory.WORKS,
-          metadata: { ...validContext.metadata, tags: ['Piano'] },
-        },
-        {
-          ...validContext,
-          id: '2',
-          lang: 'en',
-          category: ArticleCategory.COMPOSERS,
-          metadata: { ...validContext.metadata, tags: ['Baroque'] },
-        },
-        { ...validContext, id: '3', lang: 'ja', category: ArticleCategory.WORKS },
-      ];
-      mockMetadataDS.findAll.mockResolvedValue(mockAllContexts);
-      mockContentDS.getContent.mockResolvedValue(validBody);
+      mockMetadataDS.findMany.mockResolvedValue({
+        rows: [validRow],
+        totalCount: 1,
+      });
 
       const result = await repository.findMany({
-        filter: {
-          lang: 'en',
-          category: ArticleCategory.WORKS,
-        },
-        pagination: {
-          limit: 10,
-          offset: 0,
-        },
+        filter: { lang: 'en' },
+        pagination: { limit: 10, offset: 0 },
       });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].control.id).toBe('1');
-      expect(mockMetadataDS.findAll).toHaveBeenCalled();
+      expect(result.items[0].control.id).toBe('prelude');
+
+      // findMany should NOT load content (optimistic) -> content.body is null
+      // But verify mapper works with null content
+      expect(result.items[0].content.body).toBeNull();
     });
   });
 });

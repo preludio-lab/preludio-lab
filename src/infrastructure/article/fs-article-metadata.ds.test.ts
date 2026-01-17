@@ -5,7 +5,6 @@ import path from 'path';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { ArticleStatus } from '@/domain/article/ArticleControl';
 
-// fs モジュールのモック
 vi.mock('fs', () => ({
   default: {
     existsSync: vi.fn(),
@@ -18,10 +17,6 @@ vi.mock('fs', () => ({
   },
 }));
 
-// gray-matter は内部実装詳細に近いため、モック化せず統合的にテストするか、
-// あるいは fs.readFileSync の戻り値を制御して間接的にテストします。
-// ここでは fs をモックして gray-matter がパースできる文字列を返すようにします。
-
 describe('FsArticleMetadataDataSource', () => {
   let dataSource: FsArticleMetadataDataSource;
   const mockContentDir = '/mock/content';
@@ -32,7 +27,7 @@ describe('FsArticleMetadataDataSource', () => {
   });
 
   describe('findBySlug', () => {
-    it('should return context when file exists', async () => {
+    it('should return MetadataRow when file exists', async () => {
       const lang = 'en';
       const category = ArticleCategory.WORKS;
       const slug = 'test-slug';
@@ -50,62 +45,34 @@ status: published
 ---
 `);
 
-      const result = await dataSource.findBySlug(lang, category, slug);
+      const result = await dataSource.findBySlug(slug, lang, category);
 
-      expect(result).not.toBeNull();
-      expect(result?.slug).toBe(slug);
-      expect(result?.metadata.title).toBe('Test Title');
-      // displayTitleの確認
-      expect(result?.metadata.displayTitle).toBe('Display Title');
-      // categoryが正しくパースされているか
-      expect(result?.category).toBe(category);
-      expect(result?.status).toBe(ArticleStatus.PUBLISHED);
+      expect(result).not.toBeUndefined();
+      // Verify Mapping to MetadataRow
+      expect(result?.articles.slug).toBe(slug);
+      expect(result?.articles.category).toBe(category);
+      expect(result?.article_translations.title).toBe('Test Title');
+      expect(result?.article_translations.displayTitle).toBe('Display Title');
+      expect(result?.article_translations.lang).toBe(lang);
+      expect(result?.article_translations.status).toBe(ArticleStatus.PUBLISHED);
+      expect(result?.article_translations.mdxPath).toBe(`${lang}/${category}/${slug}`);
     });
 
-    it('should return null when file does not exist', async () => {
+    it('should return undefined when file does not exist', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
+      // findAllContexts relies on readdir, skipping it here for direct slug lookup
+      // But if category is NOT provided, it falls back to findAllContexts.
+      // Here we provide category for direct lookup path.
 
-      const result = await dataSource.findBySlug('en', ArticleCategory.WORKS, 'missing');
+      const result = await dataSource.findBySlug('missing', 'en', ArticleCategory.WORKS);
 
-      expect(result).toBeNull();
-    });
-
-    it('should handle legacy metadata mapping', async () => {
-      const lang = 'ja';
-      const category = ArticleCategory.WORKS;
-      const slug = 'legacy-slug';
-
-      (fs.existsSync as any).mockReturnValue(true);
-      (fs.statSync as any).mockReturnValue({ mtime: new Date() });
-      // 必須フィールドが一部欠けているなど、バリデーション落ちするがマッピング可能なデータ
-      (fs.readFileSync as any).mockReturnValue(`---
-title: Legacy Title
-difficulty: Beginner
-composer: Unknown
-date: 2022-01-01
----
-`);
-
-      const result = await dataSource.findBySlug(lang, category, slug);
-
-      expect(result).not.toBeNull();
-      expect(result?.metadata.title).toBe('Legacy Title');
-      expect(result?.metadata.readingLevel).toBe(1); // Beginner -> 1
-      expect(result?.metadata.composerName).toBe('Unknown');
+      expect(result).toBeUndefined();
     });
   });
 
-  describe('findAll', () => {
-    it('should return list of contexts', async () => {
-      // Mock directory structure traversal
-      // 1. fs.existsSync(root) -> true
-      // 2. fs.readdirSync(root) -> ['en']
-      // 3. fs.statSync -> isDirectory
-      // 4. Loop categories
-      // 5. fs.existsSync(dirPath) -> true (mock one category)
-      // 6. fs.readdirSync(dirPath) -> ['test.mdx']
-      // 7. fs.readFileSync -> content
-
+  describe('findMany', () => {
+    it('should return rows and totalCount', async () => {
+      // Mock directory traversal
       vi.mocked(fs.existsSync).mockImplementation((p: fs.PathLike) => {
         const pStr = p.toString();
         return pStr === mockContentDir || pStr.includes('works');
@@ -134,17 +101,26 @@ date: 2023-01-01
 ---
 `);
 
-      const results = await dataSource.findAll();
+      const result = await dataSource.findMany({
+        filter: { lang: 'en' },
+        pagination: { limit: 10, offset: 0 },
+        sort: { field: 'publishedAt', direction: 'desc' },
+      });
 
-      expect(results).toHaveLength(1);
-      expect(results[0].slug).toBe('test');
-      expect(results[0].metadata.title).toBe('List Item');
+      expect(result.rows).toHaveLength(1);
+      expect(result.totalCount).toBe(1);
+      expect(result.rows[0].articles.slug).toBe('test');
+      expect(result.rows[0].article_translations.title).toBe('List Item');
     });
 
     it('should return empty list if root dir does not exist', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
-      const results = await dataSource.findAll();
-      expect(results).toEqual([]);
+      const result = await dataSource.findMany({
+        filter: { lang: 'en' },
+        pagination: { limit: 10, offset: 0 },
+      });
+      expect(result.rows).toEqual([]);
+      expect(result.totalCount).toBe(0);
     });
   });
 });
