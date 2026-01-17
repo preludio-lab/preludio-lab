@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TursoArticleRepository } from './turso-article.repository';
-import { ArticleMetadataDataSource } from './turso-article-metadata.ds';
-import { ArticleContentDataSource } from './r2-article-content.ds';
+import { IArticleMetadataDataSource } from './interfaces/article-metadata-data-source.interface';
+import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Logger } from '@/shared/logging/logger';
-import { AppError } from '@/domain/shared/AppError';
 
 describe('TursoArticleRepository', () => {
   let repo: TursoArticleRepository;
@@ -12,6 +11,7 @@ describe('TursoArticleRepository', () => {
   const mockMetadataDS = {
     findBySlug: vi.fn(),
     findById: vi.fn(),
+    findMany: vi.fn(),
   };
 
   const mockContentDS = {
@@ -27,8 +27,8 @@ describe('TursoArticleRepository', () => {
 
   beforeEach(() => {
     repo = new TursoArticleRepository(
-      mockMetadataDS as unknown as ArticleMetadataDataSource,
-      mockContentDS as unknown as ArticleContentDataSource,
+      mockMetadataDS as unknown as IArticleMetadataDataSource,
+      mockContentDS as unknown as IArticleContentDataSource,
       mockLogger as unknown as Logger,
     );
     vi.clearAllMocks();
@@ -144,10 +144,10 @@ describe('TursoArticleRepository', () => {
 
   it('findMany should return articles with null content', async () => {
     // mock findMany implementation
-    (mockMetadataDS as any).findMany = vi.fn().mockResolvedValue({
+    vi.mocked(mockMetadataDS.findMany).mockResolvedValue({
       rows: [
         {
-          articles: { id: '1', slug: 'slug1', category: 'works' },
+          articles: { id: '1', slug: 'slug1', category: 'works' } as any, // 簡略化のため cast
           article_translations: {
             title: 'Title 1',
             lang: 'en',
@@ -171,6 +171,6 @@ describe('TursoArticleRepository', () => {
     expect(result.items).toHaveLength(1);
     expect(result.items[0].content.body).toBeNull();
     expect(result.totalCount).toBe(1);
-    expect((mockMetadataDS as any).findMany).toHaveBeenCalled();
+    expect(mockMetadataDS.findMany).toHaveBeenCalled();
   });
 });

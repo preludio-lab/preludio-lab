@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { ArticleMetadataDataSource } from './turso-article-metadata.ds';
+import { TursoArticleMetadataDataSource } from './turso-article-metadata.ds';
 import { db } from '../database/turso-client';
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Logger } from '@/shared/logging/logger';
@@ -12,8 +12,8 @@ vi.mock('../database/turso-client', () => ({
   },
 }));
 
-describe('ArticleMetadataDataSource', () => {
-  let dataSource: ArticleMetadataDataSource;
+describe('TursoArticleMetadataDataSource', () => {
+  let dataSource: TursoArticleMetadataDataSource;
   let mockLogger: Logger;
 
   // チェーンメソッドのモック
@@ -34,7 +34,7 @@ describe('ArticleMetadataDataSource', () => {
       warn: vi.fn(),
       error: vi.fn(),
     };
-    dataSource = new ArticleMetadataDataSource(mockLogger);
+    dataSource = new TursoArticleMetadataDataSource(mockLogger);
     vi.clearAllMocks();
 
     // モック実装のリセット

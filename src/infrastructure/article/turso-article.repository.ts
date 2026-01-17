@@ -2,16 +2,19 @@ import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/Artic
 import { ArticleCategory } from '@/domain/article/ArticleMetadata';
 import { Article } from '@/domain/article/Article';
 import { PagedResponse } from '@/domain/shared/Pagination';
-import { ArticleMetadataDataSource, MetadataRow } from './turso-article-metadata.ds';
-import { ArticleContentDataSource } from './r2-article-content.ds';
+import {
+  IArticleMetadataDataSource,
+  MetadataRow,
+} from './interfaces/article-metadata-data-source.interface';
+import { IArticleContentDataSource } from './interfaces/article-content-data-source.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/AppError';
 import { TursoArticleMapper } from './turso-article.mapper';
 
 export class TursoArticleRepository implements ArticleRepository {
   constructor(
-    private metadataDS: ArticleMetadataDataSource,
-    private contentDS: ArticleContentDataSource,
+    private metadataDS: IArticleMetadataDataSource,
+    private contentDS: IArticleContentDataSource,
     private logger: Logger,
   ) {}
 

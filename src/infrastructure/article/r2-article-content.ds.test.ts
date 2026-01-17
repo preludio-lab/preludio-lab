@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ArticleContentDataSource } from './r2-article-content.ds';
+import { R2ArticleContentDataSource } from './r2-article-content.ds';
 import { r2Client } from '../storage/r2-client';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
+import {
+  ContentNotFoundError,
+  ContentFetchError,
+} from './interfaces/article-content-data-source.interface';
 
 // r2-client モジュールのモック
 vi.mock('../storage/r2-client', () => ({
@@ -10,11 +14,11 @@ vi.mock('../storage/r2-client', () => ({
   },
 }));
 
-describe('ArticleContentDataSource', () => {
-  let dataSource: ArticleContentDataSource;
+describe('R2ArticleContentDataSource', () => {
+  let dataSource: R2ArticleContentDataSource;
 
   beforeEach(() => {
-    dataSource = new ArticleContentDataSource();
+    dataSource = new R2ArticleContentDataSource();
     vi.clearAllMocks();
   });
 
@@ -44,28 +48,35 @@ describe('ArticleContentDataSource', () => {
     );
   });
 
-  it('should return empty string if path is empty', async () => {
-    const result = await dataSource.getContent('');
-    expect(result).toBe('');
+  it('should throw ContentNotFoundError if path is empty', async () => {
+    await expect(dataSource.getContent('')).rejects.toThrow(ContentNotFoundError);
     expect(r2Client.send).not.toHaveBeenCalled();
   });
 
-  it('should return empty string if R2 response has no Body', async () => {
+  it('should throw ContentFetchError if R2 response has no Body', async () => {
     vi.mocked(r2Client.send).mockResolvedValue({
       Body: undefined,
     } as never);
 
-    const result = await dataSource.getContent('exist-but-empty.mdx');
-    expect(result).toBe('');
+    await expect(dataSource.getContent('exist-but-empty.mdx')).rejects.toThrow(ContentFetchError);
   });
 
-  it('should return empty string and log warning on error', async () => {
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  it('should throw ContentNotFoundError when R2 throws NoSuchKey error', async () => {
+    // AWS SDK throws NoSuchKey for 404
+    const noSuchKeyError = new NoSuchKey({
+      $metadata: {},
+      message: 'The specified key does not exist.',
+    });
+    vi.mocked(r2Client.send).mockRejectedValue(noSuchKeyError);
+
+    await expect(dataSource.getContent('not-found.mdx')).rejects.toThrow(ContentNotFoundError);
+  });
+
+  it('should throw ContentFetchError and log error on other errors', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(r2Client.send).mockRejectedValue(new Error('Access Denied'));
 
-    const result = await dataSource.getContent('error.mdx');
-
-    expect(result).toBe('');
+    await expect(dataSource.getContent('error.mdx')).rejects.toThrow(ContentFetchError);
     expect(consoleSpy).toHaveBeenCalled();
 
     consoleSpy.mockRestore();
