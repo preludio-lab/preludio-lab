@@ -41,7 +41,7 @@ export function ArticleFilterPanel({ state, onFilterChange, totalCount }: Articl
 
   // ローカル状態の同期
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchTerm(state.keyword || '');
   }, [state.keyword]);
 

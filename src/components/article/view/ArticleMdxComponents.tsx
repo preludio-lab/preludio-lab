@@ -3,7 +3,7 @@ import ScoreRenderer from '@/components/score';
 import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
 import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
-import { ComponentProps, isValidElement, ReactElement, ReactNode } from 'react';
+import { ComponentProps, isValidElement, ReactElement } from 'react';
 
 /**
  * createArticleMdxComponents

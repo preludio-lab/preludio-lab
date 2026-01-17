@@ -36,7 +36,9 @@ jobs:
         run: npm run type-check
 
       - name: Unit Test
-        run: npm run test
+        run: |
+          npm test
+          npm test -w cdn-proxy -- --run
 
       - name: Build
         run: npm run build
