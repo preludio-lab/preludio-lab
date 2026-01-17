@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "workspaces": [
-    "workers/*"
-  ],
+  "workspaces": [],
   "scripts": {
     "dev": "next dev | pino-pretty",
     "build": "next build",
@@ -71,7 +69,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.1",
-    "vitest": "^1.6.1"
+    "vitest": "^4.0.17"
   },
   "browserslist": {
     "production": [

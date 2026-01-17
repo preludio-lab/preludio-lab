@@ -1,10 +1,11 @@
-import { defineConfig } from 'vitest/config';
+import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
 
-export default defineConfig({
+export default defineWorkersConfig({
   test: {
-    name: 'cdn-proxy',
-    globals: true,
-    environment: 'miniflare',
-    // environmentOptions might be needed for R2 bindings, but for unit tests with mocks it's fine
+    poolOptions: {
+      workers: {
+        wrangler: { configPath: './wrangler.toml' },
+      },
+    },
   },
 });
