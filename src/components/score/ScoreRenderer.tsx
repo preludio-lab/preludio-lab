@@ -2,8 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { NotationFormat } from '@/domain/score/Score';
-import { MusicalExample } from '@/domain/score/MusicalExample';
+import { NotationFormat } from '@/domain/score/score';
+import { MusicalExample } from '@/domain/score/musical-example';
 
 const ScoreView = dynamic(() => import('./Score').then((mod) => mod.Score), {
   ssr: false,

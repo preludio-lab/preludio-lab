@@ -4,9 +4,9 @@ import { sql } from 'drizzle-orm';
 import { works } from './works';
 
 // Domain Types (for JSON columns)
-import type { ContentStructure } from '@/domain/article/ArticleContent';
-import type { SeriesAssignment } from '@/domain/article/ArticleContext';
-import type { ArticleMetadata, ImpressionDimensions } from '@/domain/article/ArticleMetadata';
+import type { ContentStructure } from '@/domain/article/article-content';
+import type { SeriesAssignment } from '@/domain/article/article-context';
+import type { ArticleMetadata, ImpressionDimensions } from '@/domain/article/article-metadata';
 
 // --- Articles Table ---
 export const articles = sqliteTable(

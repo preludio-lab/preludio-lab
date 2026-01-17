@@ -1,12 +1,12 @@
 import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
 import { db } from '../database/turso-client';
 import { articles, articleTranslations } from '../database/schema';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleStatus } from '@/domain/article/ArticleControl';
-import { ArticleSearchCriteria, ArticleKeywordScope } from '@/domain/article/ArticleRepository';
-import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
+import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleStatus } from '@/domain/article/article.control';
+import { ArticleSearchCriteria, ArticleKeywordScope } from '@/domain/article/article.repository';
+import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { Logger } from '@/shared/logging/logger';
-import { AppError } from '@/domain/shared/AppError';
+import { AppError } from '@/domain/shared/app-error';
 
 import {
   IArticleMetadataDataSource,

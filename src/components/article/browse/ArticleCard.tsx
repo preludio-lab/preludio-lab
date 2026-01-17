@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { m } from 'framer-motion';
 import { getStandardThumbnailUrl } from '@/lib/youtube';
 import { useMemo } from 'react';

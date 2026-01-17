@@ -1,4 +1,4 @@
-import { PlayerProvider } from '@/domain/player/Player';
+import { PlayerProvider } from '@/domain/player/player';
 
 /**
  * [UI CONSTANTS] User-facing Platform Hosts

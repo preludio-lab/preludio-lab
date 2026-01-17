@@ -1,16 +1,16 @@
-import { AppLocale } from '@/domain/i18n/Locale';
-import { Article } from '@/domain/article/Article';
-import { ArticleStatus } from '@/domain/article/ArticleControl';
+import { AppLocale } from '@/domain/i18n/locale';
+import { Article } from '@/domain/article/article';
+import { ArticleStatus } from '@/domain/article/article.control';
 import {
   ArticleCategory,
   ArticleMetadata,
   ArticleMetadataSchema,
-} from '@/domain/article/ArticleMetadata';
-import { ArticleContent } from '@/domain/article/ArticleContent';
+} from '@/domain/article/article-metadata';
+import { ArticleContent } from '@/domain/article/article-content';
 import { articles, articleTranslations } from '../database/schema';
 import { InferSelectModel } from 'drizzle-orm';
 
-import { AppError } from '@/domain/shared/AppError';
+import { AppError } from '@/domain/shared/app-error';
 
 // Drizzle Result Type
 type ArticleRow = InferSelectModel<typeof articles>;

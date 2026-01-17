@@ -1,15 +1,15 @@
-import { GetArticleBySlugUseCase } from '@/application/article/usecase/GetArticleBySlugUseCase';
-import { ListArticlesUseCase } from '@/application/article/usecase/ListArticlesUseCase';
+import { GetArticleBySlugUseCase } from '@/application/article/usecase/get-article-by-slug.use-case';
+import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.use-case';
 import { articleRepository } from '@/infrastructure/article';
 import { logger } from '@/infrastructure/logging';
 import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
-import { supportedLocales } from '@/domain/i18n/Locale';
-import { ArticleStatus } from '@/domain/article/ArticleControl';
-import { ArticleSortOption, SortDirection } from '@/domain/article/ArticleConstants';
-import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { supportedLocales } from '@/domain/i18n/locale';
+import { ArticleStatus } from '@/domain/article/article.control';
+import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
+import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/article.dto';
 
 type Props = {
   params: Promise<{

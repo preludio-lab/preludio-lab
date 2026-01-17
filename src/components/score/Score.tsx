@@ -1,8 +1,8 @@
 'use client';
 
 import { useId } from 'react';
-import { NotationFormat } from '@/domain/score/Score';
-import { MusicalExample } from '@/domain/score/MusicalExample';
+import { NotationFormat } from '@/domain/score/score';
+import { MusicalExample } from '@/domain/score/musical-example';
 import { useScoreRenderer } from './useScoreRenderer';
 
 interface ScoreProps {

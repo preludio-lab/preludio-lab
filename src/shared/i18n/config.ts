@@ -1,7 +1,7 @@
 import { getRequestConfig } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from './routing';
-import { AppLocale } from '@/domain/i18n/Locale';
+import { AppLocale } from '@/domain/i18n/locale';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // これは通常、URLの `[locale]` セグメントに対応します

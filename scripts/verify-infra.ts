@@ -5,7 +5,7 @@ dotenv.config();
 import { ListObjectsCommand } from '@aws-sdk/client-s3';
 import { articles } from '../src/infrastructure/database/schema';
 import { count } from 'drizzle-orm';
-import { ArticleCategory } from '../src/domain/article/ArticleMetadata';
+import { ArticleCategory } from '../src/domain/article/article-metadata';
 
 async function main() {
   console.log('--- Infrastructure Verification Start ---');
@@ -51,13 +51,13 @@ async function main() {
       await import('../src/infrastructure/article/turso-article-metadata.ds');
     const { R2ArticleContentDataSource } =
       await import('../src/infrastructure/article/r2-article-content.ds');
-    const { TursoArticleRepository } =
-      await import('../src/infrastructure/article/turso-article.repository');
+    const { ArticleRepositoryImpl } =
+      await import('../src/infrastructure/article/article.repository');
     const { logger } = await import('../src/infrastructure/logging');
 
     const metaDS = new TursoArticleMetadataDataSource(logger);
     const contentDS = new R2ArticleContentDataSource();
-    const repo = new TursoArticleRepository(metaDS, contentDS, logger);
+    const repo = new ArticleRepositoryImpl(metaDS, contentDS, logger);
 
     // Try to fetch non-existent article to test query execution
     const article = await repo.findBySlug('en', 'WORK' as ArticleCategory, 'non-existent-slug-123');

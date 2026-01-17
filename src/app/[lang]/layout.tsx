@@ -20,7 +20,7 @@ import { AudioPlayerProvider } from '@/components/player/AudioPlayerContext';
 import { LazyMotionConfig } from '@/components/ui/LazyMotionConfig';
 import { ConsentBanner } from '@/components/layout/ConsentBanner';
 import { Toaster } from 'react-hot-toast';
-import { supportedLocales, AppLocale } from '@/domain/i18n/Locale';
+import { supportedLocales, AppLocale } from '@/domain/i18n/locale';
 
 // フォント設定
 const inter = Inter({

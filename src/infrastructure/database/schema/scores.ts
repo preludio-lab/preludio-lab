@@ -1,9 +1,9 @@
 import { sqliteTable, text, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { works, workParts } from './works';
-import type { MonetizationElement } from '@/domain/monetization/Monetization';
-import type { RecordingSegment } from '@/domain/recording/RecordingSegment';
-import type { MeasureRange } from '@/domain/score/MusicalExampleMetadata';
+import type { MonetizationElement } from '@/domain/monetization/monetization';
+import type { RecordingSegment } from '@/domain/recording/recording-segment';
+import type { MeasureRange } from '@/domain/score/musical-example-metadata';
 
 // --- Scores Table ---
 export const scores = sqliteTable(

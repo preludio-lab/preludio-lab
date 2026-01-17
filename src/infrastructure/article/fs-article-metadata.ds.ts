@@ -5,15 +5,15 @@ import {
   ArticleCategory,
   ArticleMetadata,
   ArticleMetadataSchema,
-} from '@/domain/article/ArticleMetadata';
-import { ContentStructure, ContentSection } from '@/domain/article/Article';
-import { ArticleStatus } from '@/domain/article/ArticleControl';
+} from '@/domain/article/article-metadata';
+import { ContentStructure, ContentSection } from '@/domain/article/article';
+import { ArticleStatus } from '@/domain/article/article.control';
 import { logger } from '@/infrastructure/logging';
 import {
   IArticleMetadataDataSource,
   MetadataRow,
 } from './interfaces/article-metadata-data-source.interface';
-import { ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
+import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 export interface FsArticleContext {
   id: string; // slug for FS
@@ -255,11 +255,11 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       readingTimeSeconds: data.readingTimeSeconds || 0,
       playback: data.audioSrc
         ? {
-          audioSrc: data.audioSrc,
-          performer: data.performer,
-          startSeconds: data.startSeconds,
-          endSeconds: data.endSeconds,
-        }
+            audioSrc: data.audioSrc,
+            performer: data.performer,
+            startSeconds: data.startSeconds,
+            endSeconds: data.endSeconds,
+          }
         : undefined,
       thumbnail: data.thumbnail,
       tags: data.tags || [],

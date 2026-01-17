@@ -1,6 +1,6 @@
 'use client';
 
-import { ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';

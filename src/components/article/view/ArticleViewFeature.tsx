@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/ArticleDto';
+import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/article.dto';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getTranslations } from 'next-intl/server';
 import { ArticleTableOfContents } from './ArticleTableOfContents';
@@ -8,7 +8,7 @@ import { createArticleMdxComponents } from './ArticleMdxComponents';
 import rehypeSlug from 'rehype-slug';
 import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
 import { ArticleListeningGuide } from './ArticleListeningGuide';
-import { Playback } from '@/domain/article/ArticleMetadata';
+import { Playback } from '@/domain/article/article-metadata';
 
 interface ArticleViewFeatureProps {
   article: ArticleDto;

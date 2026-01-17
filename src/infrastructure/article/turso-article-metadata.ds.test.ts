@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { TursoArticleMetadataDataSource } from './turso-article-metadata.ds';
 import { db } from '../database/turso-client';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
+import { ArticleCategory } from '@/domain/article/article-metadata';
 import { Logger } from '@/shared/logging/logger';
-import { AppError } from '@/domain/shared/AppError';
+import { AppError } from '@/domain/shared/app-error';
 
 // turso-client モジュールのモック
 vi.mock('../database/turso-client', () => ({

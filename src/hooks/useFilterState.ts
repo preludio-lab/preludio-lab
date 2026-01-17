@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption } from '@/domain/article/article.constants';
 import { handleClientError } from '@/lib/client-error';
 
 export type FilterState = {

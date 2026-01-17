@@ -1,4 +1,4 @@
-import { ArticleRepository } from '@/domain/article/ArticleRepository';
+import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleRepositoryImpl } from './article.repository';
 import { FsArticleMetadataDataSource } from './fs-article-metadata.ds';
 import { FsArticleContentDataSource } from './fs-article-content.ds';

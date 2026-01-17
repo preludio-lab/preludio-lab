@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { Score, NotationFormat } from '@/domain/score/Score';
-import { MusicalExample } from '@/domain/score/MusicalExample';
-import { AbcjsScoreRenderer } from '@/infrastructure/score/AbcjsScoreRenderer';
+import { useEffect, useRef, useState } from 'react';
+import { Score, NotationFormat } from '@/domain/score/score';
+import { MusicalExample } from '@/domain/score/musical-example';
+import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs-score.renderer';
 import { handleClientError } from '@/lib/client-error';
 
 /**
@@ -14,7 +14,8 @@ export function useScoreRenderer(score: MusicalExample | { data: string; format:
 
   // 依存性の注入 (簡易版)
   // レンダラーをメモ化し、レンダリング間で参照を安定させます
-  const renderer = useRef(new AbcjsScoreRenderer()).current;
+  // useState の lazy initialization を使用して、初回のみインスタンス化します
+  const [renderer] = useState(() => new AbcjsScoreRenderer());
 
   useEffect(() => {
     let isMounted = true;

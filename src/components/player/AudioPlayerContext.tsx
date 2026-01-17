@@ -20,7 +20,7 @@ import {
   PlayerControl,
   PlayerProvider,
   DisplayType,
-} from '@/domain/player/Player';
+} from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
 
 export type PlayerModeType = PlayerMode;

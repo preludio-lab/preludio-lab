@@ -1,5 +1,5 @@
 import { defineRouting } from 'next-intl/routing';
-import { defaultLocale, supportedLocales } from '@/domain/i18n/Locale';
+import { defaultLocale, supportedLocales } from '@/domain/i18n/locale';
 
 export const routing = defineRouting({
   /** サポートする全ロケールのリスト */

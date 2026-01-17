@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 import { AudioPlayerAdapterProps } from '@/components/player/AudioPlayerAdapter';
 
@@ -53,7 +53,7 @@ export function YouTubeAdapter({
   };
 
   // loadVideoById を安全に呼び出すヘルパー関数
-  const safeLoadVideo = (
+  const safeLoadVideo = useCallback((
     target: any,
     options: { videoId: string; startSeconds?: number; endSeconds?: number },
   ) => {
@@ -70,7 +70,7 @@ export function YouTubeAdapter({
       console.error('[YouTubeAdapter] 同期ロードエラー:', e);
       onError(e);
     }
-  };
+  }, [onError]);
 
   /**
    * Effect: 再生状態とソース変更のハンドリング
@@ -108,7 +108,7 @@ export function YouTubeAdapter({
         player.pauseVideo();
       }
     }
-  }, [isPlaying, src, startTime, endTime, playbackId]);
+  }, [isPlaying, src, startTime, endTime, playbackId, safeLoadVideo]);
 
   /**
    * Effect: シーク処理のハンドリング

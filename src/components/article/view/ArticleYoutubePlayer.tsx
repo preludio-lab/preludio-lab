@@ -1,4 +1,4 @@
-import { Playback } from '@/domain/article/ArticleMetadata';
+import { Playback } from '@/domain/article/article-metadata';
 
 export interface ArticleYoutubePlayerProps {
   playback?: Playback;

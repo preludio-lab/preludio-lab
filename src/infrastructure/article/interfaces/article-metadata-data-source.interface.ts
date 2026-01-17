@@ -1,7 +1,7 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { articles, articleTranslations } from '@/infrastructure/database/schema';
-import { ArticleCategory } from '@/domain/article/ArticleMetadata';
-import { ArticleSearchCriteria } from '@/domain/article/ArticleRepository';
+import { ArticleCategory } from '@/domain/article/article-metadata';
+import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 type ArticleRow = InferSelectModel<typeof articles>;
 type TranslationRow = InferSelectModel<typeof articleTranslations>;

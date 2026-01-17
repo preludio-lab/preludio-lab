@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
-import { PlayerProvider } from '@/domain/player/Player';
+import { PlayerProvider } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
 import { AudioPlayerAdapter } from './AudioPlayerAdapter';
 

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { FilterState } from '@/hooks/useFilterState';
-import { ArticleSortOption } from '@/domain/article/ArticleConstants';
+import { ArticleSortOption } from '@/domain/article/article.constants';
 import { Input } from '@/components/ui/Input';
 import { useDebouncedCallback } from 'use-debounce';
 import { useState, useEffect, useRef } from 'react';

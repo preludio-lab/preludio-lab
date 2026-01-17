@@ -1,7 +1,7 @@
 import { MdxLink } from '@/components/mdx/MdxLink';
 import ScoreRenderer from '@/components/score';
 import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
-import { MediaMetadataService } from '@/infrastructure/player/MediaMetadataService';
+import { MediaMetadataService } from '@/infrastructure/player/media-metadata.service';
 
 /**
  * createArticleMdxComponents
