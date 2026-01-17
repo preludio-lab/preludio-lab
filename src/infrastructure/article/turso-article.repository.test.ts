@@ -90,7 +90,7 @@ describe('TursoArticleRepository', () => {
         slSlug: 'slug',
         slComposerName: 'Composer',
         metadata: { category: 'works', tags: [] },
-        mdxPath: 'works/slug',
+        mdxPath: 'en/works/slug',
       },
     };
     mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
