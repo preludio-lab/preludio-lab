@@ -49,7 +49,7 @@ describe('TursoArticleRepository', () => {
           slSlug: 'slug',
           slComposerName: 'Composer',
           metadata: { category: 'works', tags: [] },
-          mdxPath: 'works/slug',
+          mdxPath: 'en/works/slug',
         },
       };
       mockMetadataDS.findById.mockResolvedValue(mockRow);
@@ -105,7 +105,7 @@ describe('TursoArticleRepository', () => {
     expect(result?.content.body).toBe('# Hello');
 
     expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en', ArticleCategory.WORKS);
-    expect(mockContentDS.getContent).toHaveBeenCalledWith('works/slug/en.mdx');
+    expect(mockContentDS.getContent).toHaveBeenCalledWith('en/works/slug.mdx');
   });
 
   it('findBySlug should return null if metadata not found', async () => {
@@ -175,7 +175,7 @@ describe('TursoArticleRepository', () => {
             catchcopy: null,
             excerpt: null,
             isFeatured: false,
-            mdxPath: 'works/slug1',
+            mdxPath: 'en/works/slug1',
             slEra: null,
             slGenre: [],
             slImpressionDimensions: null,

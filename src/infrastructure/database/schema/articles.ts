@@ -53,8 +53,8 @@ export const articleTranslations = sqliteTable(
     isFeatured: integer('is_featured', { mode: 'boolean' }).default(false).notNull(),
     // 生成カラムの定義
     mdxPath: text('mdx_path').generatedAlwaysAs(
-      // 例: "symphony/beethoven-5" (末尾スラッシュなし)
-      sql`sl_category || '/' || sl_slug`,
+      // 例: "ja/symphony/beethoven-5" (末尾スラッシュなし)
+      sql`lang || '/' || sl_category || '/' || sl_slug`,
       { mode: 'stored' },
     ),
 

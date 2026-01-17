@@ -16,7 +16,7 @@ export class TursoArticleRepository implements ArticleRepository {
     private metadataDS: IArticleMetadataDataSource,
     private contentDS: IArticleContentDataSource,
     private logger: Logger,
-  ) {}
+  ) { }
 
   /**
    * IDによる記事取得
@@ -141,7 +141,7 @@ export class TursoArticleRepository implements ArticleRepository {
 
     // R2からのコンテンツ取得 (mdxPathがある場合のみ)
     if (row.article_translations.mdxPath) {
-      const fullPath = `${row.article_translations.mdxPath}/${row.article_translations.lang}.mdx`;
+      const fullPath = `${row.article_translations.mdxPath}.mdx`;
       try {
         content = await this.contentDS.getContent(fullPath);
       } catch (err) {
