@@ -10,7 +10,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
  * スラグ（URL）による単一記事の取得（詳細画面用）
  */
 export class GetArticleBySlugUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) { }
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(lang: string, category: string, slug: string): Promise<ArticleDto | null> {
     const article = await this.articleRepository.findBySlug(

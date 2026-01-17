@@ -11,7 +11,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
  * 関連記事の取得（レコメンデーション）
  */
 export class GetRelatedArticlesUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) { }
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(
     lang: string,

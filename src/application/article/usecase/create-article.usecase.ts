@@ -21,7 +21,7 @@ export interface CreateArticleCommand {
  * 新規記事作成
  */
 export class CreateArticleUseCase {
-  constructor(private readonly articleRepository: ArticleRepository) { }
+  constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(command: CreateArticleCommand): Promise<string> {
     // Check if exists

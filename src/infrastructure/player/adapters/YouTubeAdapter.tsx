@@ -67,7 +67,10 @@ export function YouTubeAdapter({
 
   // loadVideoById を安全に呼び出すヘルパー関数
   const safeLoadVideo = useCallback(
-    (target: YouTubePlayer, options: { videoId: string; startSeconds?: number; endSeconds?: number }) => {
+    (
+      target: YouTubePlayer,
+      options: { videoId: string; startSeconds?: number; endSeconds?: number },
+    ) => {
       try {
         console.debug('[YouTubeAdapter] 動画ロード開始:', options);
         target.loadVideoById(options);
@@ -174,7 +177,10 @@ export function YouTubeAdapter({
 
     // 初期ロード制御（srcがある場合）
     if (src) {
-      const loadOpts: { videoId: string; startSeconds: number; endSeconds?: number } = { videoId: src, startSeconds: startTime || 0 };
+      const loadOpts: { videoId: string; startSeconds: number; endSeconds?: number } = {
+        videoId: src,
+        startSeconds: startTime || 0,
+      };
       if (endTime) loadOpts.endSeconds = endTime;
 
       // 準備完了時点ですぐに操作可能になるよう調整

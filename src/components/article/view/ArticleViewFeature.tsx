@@ -36,16 +36,16 @@ export async function ArticleViewFeature({
   const hasAudio = !!metadata.playback?.audioSrc;
 
   const audioMetadata = hasAudio
-    ? {
-      src: metadata.playback!.audioSrc,
-      title: metadata.displayTitle,
-      composerName: metadata.composerName,
-      performer: metadata.playback!.performer,
-      thumbnail: metadata.thumbnail,
-      startSeconds: metadata.playback!.startSeconds,
-      endSeconds: metadata.playback!.endSeconds,
-      platform: PlayerProvider.YOUTUBE,
-    } as Record<string, unknown>
+    ? ({
+        src: metadata.playback!.audioSrc,
+        title: metadata.displayTitle,
+        composerName: metadata.composerName,
+        performer: metadata.playback!.performer,
+        thumbnail: metadata.thumbnail,
+        startSeconds: metadata.playback!.startSeconds,
+        endSeconds: metadata.playback!.endSeconds,
+        platform: PlayerProvider.YOUTUBE,
+      } as Record<string, unknown>)
     : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
