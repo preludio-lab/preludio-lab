@@ -54,8 +54,8 @@ describe('ArticleDtoSchema', () => {
   });
 
   it('should fail if a required section is missing', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { content: _, ...incompleteData } = validData;
+    const incompleteData = { ...validData } as Partial<typeof validData>;
+    delete incompleteData.content;
     const result = ArticleDtoSchema.safeParse(incompleteData);
     expect(result.success).toBe(false);
   });
