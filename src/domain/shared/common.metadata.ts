@@ -103,7 +103,7 @@ export const SLUG_HIERARCHICAL_REGEX = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
  * @param maxLength 最大文字数 (デフォルト: 64)
  * @param allowHierarchical スラッシュによる階層構造を許可するか (デフォルト: true)
  */
-export const createSlugSchema = (maxLength: number = 64, allowHierarchical: boolean = true) => {
+export const createSlugSchema = (maxLength: number = 128, allowHierarchical: boolean = true) => {
   const regex = allowHierarchical ? SLUG_HIERARCHICAL_REGEX : SLUG_FLAT_REGEX;
   const message = allowHierarchical
     ? 'Slug must be lowercase alphanumeric and hyphens, optionally separated by a single slash'
@@ -113,6 +113,6 @@ export const createSlugSchema = (maxLength: number = 64, allowHierarchical: bool
 };
 
 /**
- * デフォルトのスラグスキーマ（最大64文字、階層構造許可）
+ * デフォルトのスラグスキーマ（最大128文字、階層構造許可）
  */
-export const SlugSchema = createSlugSchema(64, true);
+export const SlugSchema = createSlugSchema(128, true);
