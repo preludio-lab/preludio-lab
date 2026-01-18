@@ -4,6 +4,7 @@ import path from 'path';
 import { glob } from 'glob';
 import dotenv from 'dotenv';
 
+dotenv.config({ path: '.env.local' });
 dotenv.config();
 
 const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID;
