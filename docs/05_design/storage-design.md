@@ -58,28 +58,23 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 ```
 preludio-storage/
 ├── public/                 # CDN経由で公開 (Cloudflare Worker -> R2)
-│   ├── images/             # 記事画像・サムネイル (Article Unit)
-│   │   └── {category}/{slug}/ # e.g. works/bach/prelude-1
-│   │       ├── thumbnail.webp # サムネイル
-│   │       ├── fig1.webp
-│   │       └── ...
-│   ├── musical-examples/   # 譜例SVG (Work Unit)
-│   │   └── {work_slug}/    # e.g. works/bach/prelude-1
-│   │       ├── ex1.svg
-│   │       ├── ex2.svg
-│   │       └── ...
-│   └── audio/              # 音源ファイル (Article Unit)
-│       └── {category}/{slug}/
-│           ├── full.mp3
-│           └── ...
+│   └── {category}/
+│       └── {slug}/         # e.g. works/johann-sebastian-bach/wtc-1/1-prelude
+│           ├── images/     # 記事画像・サムネイル
+│           │   ├── thumbnail.webp
+│           │   └── ...
+│           ├── musical-examples/ # 譜例SVG
+│           │   ├── ex1.svg
+│           │   └── ...
+│           └── audio/      # 音源ファイル
+│               ├── full.mp3
+│               └── ...
 └── private/                # 外部アクセス不可 (Next.js App Only)
-    ├── articles/           # 原稿データ (Article Unit)
+    ├── articles/           # 原稿データ
     │   └── {category}/{slug}/
     │       ├── ja.mdx
     │       ├── en.mdx
     │       └── ...
-    └── backups/            # DBダンプ、ログ等
-        └── ...
 ```
 
 ---
@@ -88,16 +83,17 @@ preludio-storage/
 
 ### URL Schema
 
-Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。URLパスとR2パスを一致させることで、直感的なアクセスを実現します。
+Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。
+アセットタイプごとにディレクトリを切るのではなく、**エンティティ（楽曲・記事）単位** でディレクトリをまとめ、その中に各アセットタイプを配置します。
 
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Asset Type               | Public URL Example                         | R2 Path                                          |
-| :----------------------- | :----------------------------------------- | :----------------------------------------------- |
-| **Thumbnail**            | `/images/{category}/{slug}/thumbnail.webp` | `public/images/{category}/{slug}/thumbnail.webp` |
-| **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg`    | `public/musical-examples/{work_slug}/ex1.svg`    |
-| **Audio**                | `/audio/{category}/{slug}/full.mp3`        | `public/audio/{category}/{slug}/full.mp3`        |
+| Asset Type               | Public URL Example | R2 Path |
+| :--- | :--- | :--- |
+| **Thumbnail** | `/{category}/{slug}/images/thumbnail.webp` | `public/{category}/{slug}/images/thumbnail.webp` |
+| **MusicalExample** | `/{category}/{slug}/musical-examples/ex1.svg` | `public/{category}/{slug}/musical-examples/ex1.svg` |
+| **Audio** | `/{category}/{slug}/audio/full.mp3` | `public/{category}/{slug}/audio/full.mp3` |
 
 ### Access Control (Worker Logic)
 
