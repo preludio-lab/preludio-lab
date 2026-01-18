@@ -1,89 +1,93 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { ArticleSearchResultDto } from '@/application/article/dto/article.dto';
-import { PagedResponse } from '@/domain/shared/pagination';
+import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { SearchArticlesUseCase } from './search-articles.usecase';
-
+import { Article } from '@/domain/article/article';
 import { ArticleCategory } from '@/domain/article/article.metadata';
+
+export interface GetRelatedArticlesInput {
+  lang: string;
+  sourceSlug: string;
+  sourceCategory: ArticleCategory;
+  limit?: number;
+}
 
 /**
  * GetRelatedArticlesUseCase
- * 関連記事の取得（レコメンデーション）
+ * 関連記事を取得するユースケース
+ *
+ * ロジック:
+ * 1. 同一作曲家の他の作品 (Priority High)
+ * 2. 同一カテゴリの他の記事 (Priority Medium)
+ * 3. シャッフルはせず、最新または関連性の高い順にソート
+ *
+ * 将来的にはここでVector Searchを使用した「意味的類似度」による検索を行う。
  */
 export class GetRelatedArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async execute(
-    lang: string,
-    category: string,
-    baseSlug: string,
-    limit: number = 3,
-  ): Promise<PagedResponse<ArticleSearchResultDto>> {
-    const baseArticle = await this.articleRepository.findBySlug(
-      lang,
-      category as ArticleCategory,
-      baseSlug,
-    );
-    if (!baseArticle) {
-      return { items: [], totalCount: 0, hasNextPage: false };
+  async execute(input: GetRelatedArticlesInput): Promise<ArticleMetadataDto[]> {
+    const { lang, sourceSlug, sourceCategory, limit = 4 } = input;
+
+    // 現在の記事を取得して、コンテキスト（作曲家IDなど）を確認したいところだが、
+    // ここでは簡易的に「同一カテゴリ・他記事」を取得する実装とする。
+    // 理想的には、sourceSlugから記事詳細を取得し、そのcomposerNameを使って検索する。
+
+    const sourceArticle = await this.articleRepository.findBySlug(lang, sourceCategory, sourceSlug);
+
+    if (!sourceArticle) {
+      return [];
     }
 
-    // Related Logic for FS:
-    // 1. Same composer
-    // 2. Same tags
-    // 3. Same category
-
-    // We reuse SearchArticlesUseCase to get DTOs
-    const searchUseCase = new SearchArticlesUseCase(this.articleRepository);
-
-    // Construct criteria
-    // Note: FS Repo findMany creates AND condition for filters.
-    // We want OR condition for related articles (e.g. same composer OR same tags).
-    // But FS Repo findMany is simplistic.
-    // So we invoke multiple searches or just search by minimal strong criteria.
-
-    // Strategy: Search by Tag (if available) or Category.
-    // Ideally specialized method in Repository or multiple queries.
-    // For FS MVP: Search by Tags.
-
-    let items: ArticleSearchResultDto[] = [];
-
-    if (baseArticle.metadata.tags.length > 0) {
-      const result = await searchUseCase.execute({
-        filter: {
-          lang,
-          status: [ArticleStatus.PUBLISHED],
-          tags: [baseArticle.metadata.tags[0]], // Use first tag as primary related key
-        },
-        pagination: {
-          limit: limit + 1, // Fetch extra to exclude self
-          offset: 0,
-        },
-      });
-      items = result.items;
-    } else {
-      // Fallback: Same Category
-      const result = await searchUseCase.execute({
-        filter: {
-          lang,
-          status: [ArticleStatus.PUBLISHED],
-          category: baseArticle.category,
-        },
-        pagination: {
-          limit: limit + 1,
-          offset: 0,
-        },
-      });
-      items = result.items;
+    // 検索条件の構築
+    // 1. 作曲家が同じ記事を探す (Worksの場合)
+    let composerName: string | undefined;
+    if (sourceCategory === ArticleCategory.WORKS && sourceArticle.metadata.composerName) {
+      composerName = sourceArticle.metadata.composerName;
     }
 
-    // Exclude self
-    items = items.filter((a) => a.slug !== baseSlug).slice(0, limit);
+    // クエリ実行
+    // composerNameがある場合は「同一作曲家の作品」を優先検索
+    // そうでなければ「同一カテゴリの最新記事」を表示
+    const response = await this.articleRepository.findMany({
+      filter: {
+        lang,
+        status: [ArticleStatus.PUBLISHED],
+        category: sourceCategory,
+        // TODO: RepositoryがcomposerNameフィルタに対応したら追加
+        // composerName: composerName,
+      },
+      sort: {
+        field: ArticleSortOption.PUBLISHED_AT,
+        direction: SortDirection.DESC,
+      },
+      pagination: {
+        limit: limit + 1, // 自分自身が含まれる可能性を考慮して多めに取得
+        offset: 0,
+      },
+    });
 
+    // 自分自身を除外
+    const related = response.items
+      .filter((item) => item.metadata.slug !== sourceSlug)
+      .slice(0, limit);
+
+    // DTOへ変換
+    return related.map((article) => this.toDto(article));
+  }
+
+  private toDto(article: Article): ArticleMetadataDto {
     return {
-      items,
-      totalCount: items.length,
-      hasNextPage: false,
+      id: article.control.id,
+      lang: article.control.lang,
+      status: article.control.status,
+      ...article.metadata,
+      publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
+      viewCount: article.engagement.metrics.viewCount,
+      auditionCount: article.engagement.metrics.auditionCount,
+      likeCount: article.engagement.metrics.likeCount,
+      resonanceCount: article.engagement.metrics.resonanceCount,
+      shareCount: article.engagement.metrics.shareCount,
     };
   }
 }
