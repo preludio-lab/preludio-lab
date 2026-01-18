@@ -93,10 +93,10 @@ Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Asset Type               | Public URL Example                      | R2 Path                                       |
-| :----------------------- | :-------------------------------------- | :-------------------------------------------- |
+| Asset Type               | Public URL Example                         | R2 Path                                          |
+| :----------------------- | :----------------------------------------- | :----------------------------------------------- |
 | **Thumbnail**            | `/images/{category}/{slug}/thumbnail.webp` | `public/images/{category}/{slug}/thumbnail.webp` |
-| **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg` | `public/musical-examples/{work_slug}/ex1.svg` |
+| **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg`    | `public/musical-examples/{work_slug}/ex1.svg`    |
 | **Audio**                | `/audio/{category}/{slug}/full.mp3`        | `public/audio/{category}/{slug}/full.mp3`        |
 
 ### Access Control (Worker Logic)
