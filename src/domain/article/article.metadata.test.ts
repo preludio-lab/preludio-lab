@@ -67,10 +67,10 @@ describe('ArticleMetadataSchema', () => {
     expect(ArticleMetadataSchema.safeParse({ ...validMetadata, slug: 'a//b' }).success).toBe(false);
   });
 
-  it('should fail if slug is longer than 64 characters', () => {
+  it('should fail if slug is longer than 128 characters', () => {
     const result = ArticleMetadataSchema.safeParse({
       ...validMetadata,
-      slug: 'a'.repeat(65),
+      slug: 'a'.repeat(129),
     });
     expect(result.success).toBe(false);
   });

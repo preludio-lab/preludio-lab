@@ -9,6 +9,7 @@
 ユーザーがアクセスするURLは、SEOと可読性のために **Slug** をベースにします。
 `/[language]/works/[composer_slug]/[slug]`
 
+- **命名規則:** [slug-naming-conventions.md](slug-naming-conventions.md) に準拠します（例: `symphony-no-5/1-allegro`）。
 - **Mapping:** アプリケーション層で Slug から UUID を逆引きし、実体データを取得します。
 
 ### ストレージ配置 (System Perspective)

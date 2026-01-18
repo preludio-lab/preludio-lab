@@ -176,19 +176,19 @@ Status: `[/]` 進行中
     - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
     - [x] CDN Proxy Worker (`cdn-proxy`) の実装と配備準備
     - [x] **[検証]** ユーザーによる実機再生確認 (最小構成にて成功)
-  - [/] **[準備]** 初期データ移行スクリプトの作成
-    - [ ] ローカルMDXファイルの解析 (Frontmatter + 本文)
-    - [ ] 本文データの R2 へのアップロード
+  - [x] **[準備]** 初期データ移行スクリプトの作成
+    - [x] ローカルMDXファイルの解析 (Frontmatter + 本文)
+    - [x] 本文データの R2 へのアップロード (完了)
     - [ ] メタデータおよびEmbeddingの Turso への INSERT
 
-- [ ] **5.7 STEP 2: インフラ層の実装 (Infrastructure Layer)**
-  - [ ] **[実装]** Clientセットアップ
-    - [ ] Turso Client & R2 Client の環境変数設定と接続確立
-  - [ ] **[実装]** Repository実装
-    - [ ] `SqliteArticleRepository`: Turso用。SQL結果のDomain Entityへのマッピング (Hydration)
-    - [ ] `R2ContentRepository`: R2からのMDX本文フェッチ処理
-  - [ ] **[実装]** 統合Repository
-    - [ ] メタデータ(DB)と本文(R2)を結合して `Article` エンティティを返す統合リポジトリの実装
+- [x] **5.7 STEP 2: インフラ層の実装 (Infrastructure Layer)**
+  - [x] **[実装]** Clientセットアップ
+    - [x] Turso Client & R2 Client の環境変数設定と接続確立
+  - [x] **[実装]** Repository実装
+    - [x] `SqliteArticleRepository`: Turso用。SQL結果のDomain Entityへのマッピング (Hydration)
+    - [x] `R2ContentRepository`: R2からのMDX本文フェッチ処理
+  - [x] **[実装]** 統合Repository
+    - [x] メタデータ(DB)と本文(R2)を結合して `Article` エンティティを返す統合リポジトリの実装
 
 - [ ] **5.8 STEP 3: アプリケーション層とUIの結合 (Integration)**
   - [ ] **[実装]** Use Casesの実装

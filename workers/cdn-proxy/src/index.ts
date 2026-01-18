@@ -18,15 +18,18 @@ app.use(
   }),
 );
 
-app.get('/:type/:file{.+}', async (c) => {
-  const { type, file } = c.req.param();
+// ヘルスチェックまたールートルート
+app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'));
+
+app.get('/*', async (c) => {
+  const file = c.req.path.slice(1); // Remove leading slash
 
   // パス・トラバーサル対策
   if (file.includes('..')) {
     return c.text('Invalid Path', 400);
   }
 
-  const key = `public/${type}/${file}`;
+  const key = `public/${file}`;
   console.log(`[CDN] Requesting: ${key}`);
 
   try {
@@ -118,8 +121,5 @@ app.get('/:type/:file{.+}', async (c) => {
     return c.text('Internal Server Error', 500);
   }
 });
-
-// オプション: ヘルスチェックまたはルートルート
-app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'));
 
 export default app;

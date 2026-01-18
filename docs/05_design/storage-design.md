@@ -57,29 +57,31 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 
 ```
 preludio-storage/
-├── public/                 # CDN経由で公開 (Cloudflare Worker -> R2)
-│   ├── images/             # 記事画像・サムネイル (Article Unit)
-│   │   └── {article_slug}/ # e.g. works/bach/prelude-1
-│   │       ├── thumbnail.webp # サムネイル
-│   │       ├── fig1.webp
-│   │       └── ...
-│   ├── musical-examples/   # 譜例SVG (Work Unit)
-│   │   └── {work_slug}/    # e.g. works/bach/prelude-1
-│   │       ├── ex1.svg
-│   │       ├── ex2.svg
-│   │       └── ...
-│   └── audio/              # 音源ファイル (Article Unit)
-│       └── {article_slug}/
-│           ├── full.mp3
-│           └── ...
+├── public/                 # CDN経由で公開
+│   ├── works/              # ドメイン: 作品 (共有リソース)
+│   │   └── {composer}/{work}/{part?}/
+│   │       ├── audio/              # 音源
+│   │       │   ├── full.mp3
+│   │       │   └── ...
+│   │       └── musical-examples/   # 譜例SVG
+│   │           ├── ex1.svg
+│   │           └── ...
+│   ├── articles/           # ドメイン: 記事 (編集リソース)
+│   │   └── {category}/{slug}/
+│   │       └── images/             # 記事固有の画像
+│   │           ├── thumbnail.webp
+│   │           └── ...
+│   └── composers/          # ドメイン: 作曲家
+│       └── {slug}/
+│           └── images/             # ポートレート等
+│               └── portrait.webp
 └── private/                # 外部アクセス不可 (Next.js App Only)
-    ├── articles/           # 原稿データ (Article Unit)
-    │   └── {article_slug}/
-    │       ├── ja.mdx
-    │       ├── en.mdx
-    │       └── ...
-    └── backups/            # DBダンプ、ログ等
-        └── ...
+    ├── articles/           # 原稿データ
+    │   └── {category}/{slug}/
+    │       └── mdx/        # MDXコンテンツ
+    │           ├── ja.mdx
+    │           ├── en.mdx
+    │           └── ...
 ```
 
 ---
@@ -88,16 +90,17 @@ preludio-storage/
 
 ### URL Schema
 
-Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。URLパスとR2パスを一致させることで、直感的なアクセスを実現します。
+Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。
+アセットタイプではなく**ドメイン（コンテキスト）**でルートを分離し、データの一貫性と再利用性を高めます。
 
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Asset Type               | Public URL Example                      | R2 Path                                       |
-| :----------------------- | :-------------------------------------- | :-------------------------------------------- |
-| **Thumbnail**            | `/images/{article_slug}/thumbnail.webp` | `public/images/{article_slug}/thumbnail.webp` |
-| **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg` | `public/musical-examples/{work_slug}/ex1.svg` |
-| **Audio**                | `/audio/{article_slug}/full.mp3`        | `public/audio/{article_slug}/full.mp3`        |
+| Context      | Public URL Example                              | R2 Path (under `public/`)                      | Description                  |
+| :----------- | :---------------------------------------------- | :--------------------------------------------- | :--------------------------- |
+| **Work**     | `/works/{composer}/{work}/audio/full.mp3`       | `works/{composer}/{work}/audio/full.mp3`       | 作品に紐づく普遍的なリソース |
+| **Article**  | `/articles/{category}/{slug}/images/thumb.webp` | `articles/{category}/{slug}/images/thumb.webp` | 記事コンテンツ固有のリソース |
+| **Composer** | `/composers/{slug}/images/portrait.webp`        | `composers/{slug}/images/portrait.webp`        | 作曲家固有のリソース         |
 
 ### Access Control (Worker Logic)
 
@@ -136,7 +139,7 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
 
 ### MDX Articles
 
-- **Path:** `private/articles/{article_slug}/{lang}.mdx`
+- **Path:** `private/articles/{category}/{slug}/{lang}.mdx`
 - **Purpose:** Next.jsアプリケーションのビルド（SSG/ISR）および検索インデックス構築の「原稿（Source of Truth）」として使用。
 - **Sync Flow:**
   1.  執筆（Local/CMS）
