@@ -57,18 +57,24 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 
 ```
 preludio-storage/
-├── public/                 # CDN経由で公開 (Cloudflare Worker -> R2)
-│   └── {category}/
-│       └── {slug}/         # e.g. works/johann-sebastian-bach/wtc-1/1-prelude
-│           ├── images/     # 記事画像・サムネイル
-│           │   ├── thumbnail.webp
-│           │   └── ...
-│           ├── musical-examples/ # 譜例SVG
-│           │   ├── ex1.svg
-│           │   └── ...
-│           └── audio/      # 音源ファイル
-│               ├── full.mp3
-│               └── ...
+├── public/                 # CDN経由で公開
+│   ├── works/              # ドメイン: 作品 (共有リソース)
+│   │   └── {composer}/{work}/{part?}/
+│   │       ├── audio/              # 音源
+│   │       │   ├── full.mp3
+│   │       │   └── ...
+│   │       └── musical-examples/   # 譜例SVG
+│   │           ├── ex1.svg
+│   │           └── ...
+│   ├── articles/           # ドメイン: 記事 (編集リソース)
+│   │   └── {category}/{slug}/
+│   │       └── images/             # 記事固有の画像
+│   │           ├── thumbnail.webp
+│   │           └── ...
+│   └── composers/          # ドメイン: 作曲家
+│       └── {slug}/
+│           └── images/             # ポートレート等
+│               └── portrait.webp
 └── private/                # 外部アクセス不可 (Next.js App Only)
     ├── articles/           # 原稿データ
     │   └── {category}/{slug}/
@@ -84,16 +90,16 @@ preludio-storage/
 ### URL Schema
 
 Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直下にマッピングして配信します。
-アセットタイプごとにディレクトリを切るのではなく、**エンティティ（楽曲・記事）単位** でディレクトリをまとめ、その中に各アセットタイプを配置します。
+アセットタイプではなく**ドメイン（コンテキスト）**でルートを分離し、データの一貫性と再利用性を高めます。
 
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Asset Type               | Public URL Example | R2 Path |
-| :--- | :--- | :--- |
-| **Thumbnail** | `/{category}/{slug}/images/thumbnail.webp` | `public/{category}/{slug}/images/thumbnail.webp` |
-| **MusicalExample** | `/{category}/{slug}/musical-examples/ex1.svg` | `public/{category}/{slug}/musical-examples/ex1.svg` |
-| **Audio** | `/{category}/{slug}/audio/full.mp3` | `public/{category}/{slug}/audio/full.mp3` |
+| Context | Public URL Example | R2 Path (under `public/`) | Description |
+| :--- | :--- | :--- | :--- |
+| **Work** | `/works/{composer}/{work}/audio/full.mp3` | `works/{composer}/{work}/audio/full.mp3` | 作品に紐づく普遍的なリソース |
+| **Article** | `/articles/{category}/{slug}/images/thumb.webp` | `articles/{category}/{slug}/images/thumb.webp` | 記事コンテンツ固有のリソース |
+| **Composer** | `/composers/{slug}/images/portrait.webp` | `composers/{slug}/images/portrait.webp` | 作曲家固有のリソース |
 
 ### Access Control (Worker Logic)
 
