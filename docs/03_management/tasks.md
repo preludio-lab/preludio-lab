@@ -176,10 +176,10 @@ Status: `[/]` 進行中
     - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
     - [x] CDN Proxy Worker (`cdn-proxy`) の実装と配備準備
     - [x] **[検証]** ユーザーによる実機再生確認 (最小構成にて成功)
-  - [/] **[準備]** 初期データ移行スクリプトの作成
-    - [ ] ローカルMDXファイルの解析 (Frontmatter + 本文)
-    - [ ] 本文データの R2 へのアップロード
-    - [ ] メタデータおよびEmbeddingの Turso への INSERT
+  - [x] **[準備]** 初期データ移行スクリプトの作成
+    - [x] ローカルMDXファイルの解析 (Frontmatter + 本文)
+    - [x] 本文データの R2 へのアップロード (実装済み)
+    - [ ] メタデータおよびEmbeddingの Turso への INSERT (将来タスク)
 
 - [ ] **5.7 STEP 2: インフラ層の実装 (Infrastructure Layer)**
   - [ ] **[実装]** Clientセットアップ

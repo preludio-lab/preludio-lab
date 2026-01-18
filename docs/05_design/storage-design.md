@@ -59,7 +59,7 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 preludio-storage/
 ├── public/                 # CDN経由で公開 (Cloudflare Worker -> R2)
 │   ├── images/             # 記事画像・サムネイル (Article Unit)
-│   │   └── {article_slug}/ # e.g. works/bach/prelude-1
+│   │   └── {category}/{slug}/ # e.g. works/bach/prelude-1
 │   │       ├── thumbnail.webp # サムネイル
 │   │       ├── fig1.webp
 │   │       └── ...
@@ -69,12 +69,12 @@ preludio-storage/
 │   │       ├── ex2.svg
 │   │       └── ...
 │   └── audio/              # 音源ファイル (Article Unit)
-│       └── {article_slug}/
+│       └── {category}/{slug}/
 │           ├── full.mp3
 │           └── ...
 └── private/                # 外部アクセス不可 (Next.js App Only)
     ├── articles/           # 原稿データ (Article Unit)
-    │   └── {article_slug}/
+    │   └── {category}/{slug}/
     │       ├── ja.mdx
     │       ├── en.mdx
     │       └── ...
@@ -95,9 +95,9 @@ Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直
 
 | Asset Type               | Public URL Example                      | R2 Path                                       |
 | :----------------------- | :-------------------------------------- | :-------------------------------------------- |
-| **Thumbnail**            | `/images/{article_slug}/thumbnail.webp` | `public/images/{article_slug}/thumbnail.webp` |
+| **Thumbnail**            | `/images/{category}/{slug}/thumbnail.webp` | `public/images/{category}/{slug}/thumbnail.webp` |
 | **MusicalExample (SVG)** | `/musical-examples/{work_slug}/ex1.svg` | `public/musical-examples/{work_slug}/ex1.svg` |
-| **Audio**                | `/audio/{article_slug}/full.mp3`        | `public/audio/{article_slug}/full.mp3`        |
+| **Audio**                | `/audio/{category}/{slug}/full.mp3`        | `public/audio/{category}/{slug}/full.mp3`        |
 
 ### Access Control (Worker Logic)
 
@@ -136,7 +136,7 @@ Cloudflareの有料Image Resizingを使用しないため、ビルド時また�
 
 ### MDX Articles
 
-- **Path:** `private/articles/{article_slug}/{lang}.mdx`
+- **Path:** `private/articles/{category}/{slug}/{lang}.mdx`
 - **Purpose:** Next.jsアプリケーションのビルド（SSG/ISR）および検索インデックス構築の「原稿（Source of Truth）」として使用。
 - **Sync Flow:**
   1.  執筆（Local/CMS）
