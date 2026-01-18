@@ -58,7 +58,7 @@ async function migrate() {
     slugParts[slugParts.length - 1] = lastPart.replace(/\.mdx$/, '');
 
     const slug = slugParts.join('/');
-    const targetKey = `${TARGET_PREFIX}/${category}/${slug}/${lang}.mdx`;
+    const targetKey = `${TARGET_PREFIX}/${category}/${slug}/mdx/${lang}.mdx`;
 
     console.log(`Processing: ${file}`);
     console.log(` -> Target: ${targetKey}`);

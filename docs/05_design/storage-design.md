@@ -78,9 +78,10 @@ preludio-storage/
 └── private/                # 外部アクセス不可 (Next.js App Only)
     ├── articles/           # 原稿データ
     │   └── {category}/{slug}/
-    │       ├── ja.mdx
-    │       ├── en.mdx
-    │       └── ...
+    │       └── mdx/        # MDXコンテンツ
+    │           ├── ja.mdx
+    │           ├── en.mdx
+    │           └── ...
 ```
 
 ---
