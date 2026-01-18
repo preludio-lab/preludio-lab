@@ -190,13 +190,13 @@ Status: `[/]` 進行中
   - [x] **[実装]** 統合Repository
     - [x] メタデータ(DB)と本文(R2)を結合して `Article` エンティティを返す統合リポジトリの実装
 
-- [ ] **5.8 STEP 3: アプリケーション層とUIの結合 (Integration)**
-  - [ ] **[実装]** Use Casesの実装
-    - [ ] `GetArticle(slug)`, `GetLatestArticles(limit)` 等の参照系ユースケース実装
-  - [ ] **[実装]** Server Actions / RSC への接続
-    - [ ] 既存ページ (`page.tsx`) のデータ取得ロジックを Use Case 経由に書き換え
-  - [ ] **[検証]** 表示確認
-    - [ ] ローカル環境でのデータ取得・レンダリング確認
+- [x] **5.8 STEP 3: アプリケーション層とUIの結合 (Integration)**
+  - [x] **[実装]** Use Casesの実装
+    - [x] `GetArticle(slug)`, `GetLatestArticles(limit)` 等の参照系ユースケース実装
+  - [x] **[実装]** Server Actions / RSC への接続
+    - [x] 既存ページ (`page.tsx`) のデータ取得ロジックを Use Case 経由に書き換え
+  - [x] **[検証]** 表示確認
+    - [x] ローカル環境でのデータ取得・レンダリング確認
 
 - [ ] **5.9 STEP 4: 検索とプレイヤー (Features)**
   - [ ] **[実装]** Vector Search (Turso) の有効化
