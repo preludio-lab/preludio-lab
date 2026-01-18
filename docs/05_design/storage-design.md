@@ -96,11 +96,11 @@ Cloudflare Workerにより、R2の `public` ディレクトリをドメイン直
 - **Base URL:** `https://cdn.preludiolab.com`
 - **Path Mapping:** `/*` -> `R2: public/*`
 
-| Context | Public URL Example | R2 Path (under `public/`) | Description |
-| :--- | :--- | :--- | :--- |
-| **Work** | `/works/{composer}/{work}/audio/full.mp3` | `works/{composer}/{work}/audio/full.mp3` | 作品に紐づく普遍的なリソース |
-| **Article** | `/articles/{category}/{slug}/images/thumb.webp` | `articles/{category}/{slug}/images/thumb.webp` | 記事コンテンツ固有のリソース |
-| **Composer** | `/composers/{slug}/images/portrait.webp` | `composers/{slug}/images/portrait.webp` | 作曲家固有のリソース |
+| Context      | Public URL Example                              | R2 Path (under `public/`)                      | Description                  |
+| :----------- | :---------------------------------------------- | :--------------------------------------------- | :--------------------------- |
+| **Work**     | `/works/{composer}/{work}/audio/full.mp3`       | `works/{composer}/{work}/audio/full.mp3`       | 作品に紐づく普遍的なリソース |
+| **Article**  | `/articles/{category}/{slug}/images/thumb.webp` | `articles/{category}/{slug}/images/thumb.webp` | 記事コンテンツ固有のリソース |
+| **Composer** | `/composers/{slug}/images/portrait.webp`        | `composers/{slug}/images/portrait.webp`        | 作曲家固有のリソース         |
 
 ### Access Control (Worker Logic)
 
