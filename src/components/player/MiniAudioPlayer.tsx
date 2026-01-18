@@ -2,6 +2,7 @@
 
 import { useAudioPlayer } from './AudioPlayerContext';
 import { PlayerMode } from '@/domain/player/player';
+import Image from 'next/image';
 
 /**
  * [REQ-UI-004-02] Mini Player
@@ -73,10 +74,12 @@ export function MiniAudioPlayer() {
             className={`h-10 w-10 bg-gray-300 rounded-md flex-shrink-0 overflow-hidden relative ${isPlaying ? 'animate-pulse-slow' : ''}`}
           >
             {thumbnail ? (
-              <img
+              <Image
                 src={thumbnail}
                 alt={title || 'Artwork'}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="40px"
               />
             ) : (
               <div className="w-full h-full bg-gray-300" />

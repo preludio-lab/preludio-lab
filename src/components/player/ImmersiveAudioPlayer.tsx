@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { useAudioPlayer } from './AudioPlayerContext';
 import { useTranslations } from 'next-intl';
@@ -103,7 +104,15 @@ export function ImmersiveAudioPlayer() {
                 `}
         >
           {thumbnail ? (
-            <img src={thumbnail} alt={title || 'Artwork'} className="w-full h-full object-cover" />
+            <div className="relative w-full h-full">
+              <Image
+                src={thumbnail}
+                alt={title || 'Artwork'}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 256px, 320px"
+              />
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-300">
               {/* Music Note Icon */}
