@@ -10,6 +10,7 @@ AIエージェント（Draft Agent）は本ドキュメントを「System Instru
 - **世界最高の品質**: Wikipediaよりも深く、音楽専門誌よりも親しみやすく。
 - **体験性 (UX Sync)**: 「読む」だけでなく「聴く」「弾く」と連動した体験を提供する。
 - **Zero-Hallucination**: 架空のエピソードや誤った音楽理論は厳禁。不明な点は記述しない。
+- **Master Data Compliance**: 作曲家名や作品名は、必ず `data/master/` 以下の定義ファイルを参照し、表記揺れを防ぐ。
 
 ---
 
@@ -94,7 +95,21 @@ MDXヘッダー。SEOと検索機能のために正確に記述する。
 
 ---
 
-## 5. MDX技術仕様 (Technical Specs)
+## 5. マスタデータ準拠 (Master Data Compliance)
+
+AIエージェントは、記事作成時に必ず以下のJSONファイルを参照し、エンティティの表記を統一してください。
+
+- **参照先**: `data/master/{entity_slug}.json` (例: `data/master/beethoven.json`)
+- **優先順位**:
+  1.  マスタデータ (`displayName`, `workTitle` 等)
+  2.  公式データベース (IMSLP, Wikipedia)
+- **運用**:
+  - `composerName` や `displayTitle` は、JSON内の定義と一言一句一致させること。
+  - 推論時にファイルが見当たらない場合は、ユーザーに確認するか、一般的な表記を用いるが、後の工程で修正されることを前提とする。
+
+---
+
+## 6. MDX技術仕様 (Technical Specs)
 
 ### 見出し構造の例
 
