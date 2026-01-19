@@ -24,7 +24,11 @@ AIエージェント（Draft Agent）は本ドキュメントを「System Instru
 
 ## 3. 標準目次構成 (Standard Table of Contents)
 
-すべての記事は以下のMarkdown構造に従います。
+Markdownの見出しレベル（Heading Level）は厳格に統一します。
+
+- `#` (H1): 記事タイトル（`displayTitle`と一致させる）
+- `##` (H2): 各大セクション（下記 (1)〜(8)）
+- `###` (H3): セクション内の小分類（例：第1楽章、提示部など）
 
 ### (1) Frontmatter (Metadata)
 
@@ -50,10 +54,12 @@ MDXヘッダー。SEOと検索機能のために正確に記述する。
 ### (4) 楽曲分析・解説 (Analysis & Deep Dive)
 
 - **最重要セクション**。単なる感想ではなく、音楽的な構造（形式、和声、主題）に踏み込む。
-- **譜例の活用**: 文章で「跳ねるようなリズム」と書く場合、必ずその箇所の譜例（ABC Notation）を提示する。
-- **ABC Notationルール**:
-  - `%%audio_src` を必ず含め、YouTube動画と同期させる。
-  - `%%audio_startSeconds` で該当箇所から再生させる。
+- **構造**: 各楽章や部分ごとにH3見出しを使用する。
+  - 例: `### 第1楽章: Allegro con brio`
+- **譜例 (Musical Example)**:
+  - **ABC記譜法の直接生成は不要**。
+  - 代わりに「どのフレーズを提示すべきか」を特定し、`MusicalExample`コンポーネント（現在はプレースホルダー）を配置する意図をコメント等で残す。
+  - 具体的な小節数や、「第1主題の提示」といったメタデータを記述する。
 
 ### (5) 演奏・聴取のポイント (Listening / Performance Guide)
 
@@ -64,6 +70,17 @@ MDXヘッダー。SEOと検索機能のために正確に記述する。
 
 - 歴史的名盤と、現代の優れた録音を紹介。
 - 可能であれば、異なる解釈（テンポが極端に違う、楽器が違うなど）を並べて比較する。
+
+### (7) 参考文献 (References / Bibliography)
+
+- 記事の信頼性を担保するため、参照した主要な情報源を記載する。
+- Wikipedia、IMSLP、New Grove、信頼できる音楽解説サイトなど、最大5つを目安とする。
+- 形式: `- [サイト名](URL): 簡単な説明`
+
+### (8) 関連記事 (Related Articles)
+
+- サイト内回遊率（LTV）を高めるため、関連するPreludioLab内の記事へのリンクを配置する。
+- 同じ作曲家、同じジャンル、同時代の作品など。
 
 ---
 
@@ -79,17 +96,28 @@ MDXヘッダー。SEOと検索機能のために正確に記述する。
 
 ## 5. MDX技術仕様 (Technical Specs)
 
-### 譜例 (ABC Notation) の記述例
+### 見出し構造の例
 
-```abc
-X:1
-%%audio_src {YouTubeID}
-%%audio_startSeconds 120
-M:4/4
-L:1/16
-K:C
-%%score_system_on
-z2 E2 G2 c2 e2 G2 c2 e2 | ...
+```markdown
+# 交響曲第5番 ハ短調『運命』
+
+...リード文...
+
+## 作品背景
+
+...
+
+## 楽曲分析
+
+### 第1楽章
+
+...
+<MusicalExample id="theme-1" description="第1主題" />
+...
+
+### 第2楽章
+
+...
 ```
 
 ### 内部リンク
