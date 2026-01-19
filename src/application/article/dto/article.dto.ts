@@ -82,17 +82,43 @@ export const ArticleMetadataDtoSchema = ArticleControlSchema.pick({
 export type ArticleMetadataDto = z.infer<typeof ArticleMetadataDtoSchema>;
 
 /**
- * Article Search Result DTO
- * 検索結果用。ArticleMetadataDtoに検索関連のスコア情報を追加。
+ * Article Search Meta DTO
+ * 検索結果に付与されるメタ情報（スコア、ハイライト等）
  */
-export const ArticleSearchResultDtoSchema = ArticleMetadataDtoSchema.extend({
-  /** 検索一致度 / ベクトル類似度 (0.0 〜 1.0) 。主にベクトル検索で使用。 */
+export const ArticleSearchMetaDtoSchema = z.object({
+  /** マッチ度 / ベクトル類似度 (0.0 〜 1.0) */
   matchScore: z.number().min(0).max(1).optional(),
   /** ヒットした箇所の抜粋。主に全文検索時のハイライト表示に使用。 */
   highlightedText: z.string().optional(),
 });
 
-export type ArticleSearchResultDto = z.infer<typeof ArticleSearchResultDtoSchema>;
+export type ArticleSearchMetaDto = z.infer<typeof ArticleSearchMetaDtoSchema>;
+
+/**
+ * Article Search Result Item DTO
+ * 検索結果の1アイテム。記事データと検索メタ情報を包含（Composition）する。
+ */
+export const ArticleSearchResultItemDtoSchema = z.object({
+  /** 記事本体のメタデータ */
+  article: ArticleMetadataDtoSchema,
+  /** 検索ヒット情報 */
+  search: ArticleSearchMetaDtoSchema,
+});
+
+export type ArticleSearchResultItemDto = z.infer<typeof ArticleSearchResultItemDtoSchema>;
+
+/**
+ * Article Search Result List DTO
+ * 検索結果のリストレスポンス。
+ */
+export const ArticleSearchResultListDtoSchema = z.object({
+  items: z.array(ArticleSearchResultItemDtoSchema),
+  totalCount: z.number(),
+  hasNextPage: z.boolean(),
+  nextCursor: z.string().nullable(),
+});
+
+export type ArticleSearchResultListDto = z.infer<typeof ArticleSearchResultListDtoSchema>;
 
 /**
  * Article DTO (Detailed)
