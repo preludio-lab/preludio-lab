@@ -9,6 +9,16 @@
     "en": "Fate",
     "ja": "運命"
   },
+  "titleComponents": {
+    "content": {
+      "en": "Symphony No. 5",
+      "ja": "交響曲第5番"
+    },
+    "nickname": {
+      "en": "Fate",
+      "ja": "運命"
+    }
+  },
   "catalogue": {
     "prefix": "op",
     "number": "67"
@@ -37,6 +47,16 @@
         "en": "I. Allegro con brio in C minor",
         "ja": "第1楽章 アレグロ・コン・ブリオ ハ短調"
       },
+      "titleComponents": {
+        "prefix": {
+          "en": "I.",
+          "ja": "第1楽章"
+        },
+        "content": {
+          "en": "Allegro con brio in C minor",
+          "ja": "アレグロ・コン・ブリオ ハ短調"
+        }
+      },
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro con brio",
@@ -60,6 +80,16 @@
       "title": {
         "en": "II. Andante con moto in A-flat major",
         "ja": "第2楽章 アンダンテ・コン・モート 変イ長調"
+      },
+      "titleComponents": {
+        "prefix": {
+          "en": "II.",
+          "ja": "第2楽章"
+        },
+        "content": {
+          "en": "Andante con moto in A-flat major",
+          "ja": "アンダンテ・コン・モート 変イ長調"
+        }
       },
       "type": "movement",
       "key": "a-flat-major",
@@ -85,6 +115,16 @@
         "en": "III. Scherzo: Allegro in C minor",
         "ja": "第3楽章 スケルツォ：アレグロ ハ短調"
       },
+      "titleComponents": {
+        "prefix": {
+          "en": "III.",
+          "ja": "第3楽章"
+        },
+        "content": {
+          "en": "Scherzo: Allegro in C minor",
+          "ja": "スケルツォ：アレグロ ハ短調"
+        }
+      },
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro",
@@ -108,6 +148,16 @@
       "title": {
         "en": "IV. Allegro in C major",
         "ja": "第4楽章 アレグロ ハ長調"
+      },
+      "titleComponents": {
+        "prefix": {
+          "en": "IV.",
+          "ja": "第4楽章"
+        },
+        "content": {
+          "en": "Allegro in C major",
+          "ja": "アレグロ ハ長調"
+        }
       },
       "type": "movement",
       "key": "c-major",

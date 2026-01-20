@@ -6,6 +6,7 @@ import {
   PerformanceDifficultySchema,
   NicknamesSchema,
   ImpressionDimensionsSchema,
+  TitleComponentsSchema,
 } from './work.shared';
 
 /**
@@ -31,6 +32,8 @@ export const WorkPartType = z.enum([
 export const WorkPartMetadataSchema = z.object({
   /** 楽章名・パーツタイトル */
   title: TitleSchema,
+  /** タイトル構成要素 (prefix, content, nickname) */
+  titleComponents: TitleComponentsSchema.optional(),
   /** 補足説明 */
   description: DescriptionSchema.optional(),
 

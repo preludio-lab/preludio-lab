@@ -19,6 +19,7 @@ export const WorkPartDataSchema = WorkPartControlSchema.pick({
   .merge(
     WorkPartMetadataSchema.pick({
       title: true,
+      titleComponents: true,
       type: true,
       isNameStandard: true,
       description: true,

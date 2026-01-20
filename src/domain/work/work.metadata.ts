@@ -9,6 +9,7 @@ import {
   PerformanceDifficultySchema,
   NicknamesSchema,
   ImpressionDimensionsSchema,
+  TitleComponentsSchema,
 } from './work.shared';
 import { TagsSchema, YearSchema } from '../shared/common.metadata';
 
@@ -40,6 +41,8 @@ export const WorkMetadataSchema = z.object({
   title: TitleSchema,
   /** 通称 (e.g. "運命") */
   popularTitle: TitleSchema.optional(),
+  /** タイトル構成要素 (prefix, content, nickname) */
+  titleComponents: TitleComponentsSchema.optional(),
 
   /** カタログ情報 (作品番号等) */
   catalogue: CatalogueSchema.optional(),

@@ -16,6 +16,21 @@ export const DescriptionSchema = createMultilingualStringSchema({ max: 2000 });
 export const TempoTranslationSchema = createMultilingualStringSchema({ max: 100 });
 export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 });
 
+/**
+ * Title Components
+ * 称号、本題、ニックネームを分離して管理するための構造
+ */
+export const TitleComponentsSchema = z.object({
+  /** 接頭辞 (例: "第1楽章", "No. 1") */
+  prefix: TitleSchema.optional(),
+  /** 内容 (例: "Allegro con brio", "木星") */
+  content: TitleSchema.optional(),
+  /** ニックネーム (例: "運命", "Revolutionary") */
+  nickname: TitleSchema.optional(),
+});
+
+export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
+
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);
 

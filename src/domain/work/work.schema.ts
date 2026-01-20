@@ -23,6 +23,7 @@ export const WorkDataSchema = WorkControlSchema.pick({
     WorkMetadataSchema.pick({
       title: true,
       popularTitle: true,
+      titleComponents: true,
       catalogue: true, // Nested
       era: true,
       compositionYear: true,
