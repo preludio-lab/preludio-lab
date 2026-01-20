@@ -1,6 +1,6 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { AppLocale } from '@/domain/i18n/locale';
-import { ArticleDto } from '@/application/article/dto/article.dto';
+import { ArticleDto } from '@/application/article/dto/article-detail.dto';
 import { Article } from '@/domain/article/article';
 
 import { ArticleCategory } from '@/domain/article/article.metadata';

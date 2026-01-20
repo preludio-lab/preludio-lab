@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ArticleDtoSchema, ArticleMetadataDtoSchema } from './article.dto';
+import { ArticleDtoSchema } from './article-detail.dto';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 
 describe('ArticleDtoSchema', () => {
@@ -22,6 +22,10 @@ describe('ArticleDtoSchema', () => {
       readingTimeSeconds: 300,
       publishedAt: '2026-01-01T00:00:00Z',
       tags: ['classic', 'orchestra'],
+      // Missing required fields might cause error, strictly checking Schema
+      thumbnail: 'https://example.com/thumb.jpg',
+      readingLevel: 3,
+      performanceDifficulty: 4,
     },
     content: {
       body: '# 概要\n運命が扉を叩く...',
@@ -58,27 +62,5 @@ describe('ArticleDtoSchema', () => {
     delete incompleteData.content;
     const result = ArticleDtoSchema.safeParse(incompleteData);
     expect(result.success).toBe(false);
-  });
-});
-
-describe('ArticleMetadataDtoSchema', () => {
-  const validMetadata = {
-    id: 'article-123',
-    slug: 'beethoven-symphony-5',
-    lang: 'ja',
-    status: 'published',
-    title: 'ベートーヴェン：交響曲第5番',
-    displayTitle: '交響曲 第5番 ハ短調 作品67「運命」',
-    category: ArticleCategory.WORKS,
-    isFeatured: true,
-    publishedAt: '2026-01-01T00:00:00Z',
-    composerName: 'Ludwig van Beethoven',
-    readingTimeSeconds: 300,
-    viewCount: 100,
-  };
-
-  it('should validate a valid flattened metadata object', () => {
-    const result = ArticleMetadataDtoSchema.safeParse(validMetadata);
-    expect(result.success).toBe(true);
   });
 });

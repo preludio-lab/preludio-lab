@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleDto } from '@/application/article/dto/article-detail.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getTranslations } from 'next-intl/server';
 import { ArticleTableOfContents } from './ArticleTableOfContents';
@@ -14,8 +15,8 @@ import { PlayerProvider } from '@/domain/player/player.shared';
 
 interface ArticleViewFeatureProps {
   article: ArticleDto;
-  prevContent: ArticleMetadataDto | null;
-  nextContent: ArticleMetadataDto | null;
+  prevContent: ArticleCardDto | null;
+  nextContent: ArticleCardDto | null;
 }
 
 /**

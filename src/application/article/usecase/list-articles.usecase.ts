@@ -1,5 +1,5 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleListItemDto } from '@/application/article/dto/article-list.dto';
 import { PagedResponse } from '@/domain/shared/pagination';
 import { Article } from '@/domain/article/article';
 
@@ -10,7 +10,7 @@ import { Article } from '@/domain/article/article';
 export class ListArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleMetadataDto>> {
+  async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleListItemDto>> {
     const response = await this.articleRepository.findMany(criteria);
 
     return {
@@ -20,7 +20,7 @@ export class ListArticlesUseCase {
     };
   }
 
-  private toDto(article: Article): ArticleMetadataDto {
+  private toDto(article: Article): ArticleListItemDto {
     return {
       // Control Info (flattened)
       id: article.control.id,
