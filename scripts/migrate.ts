@@ -1,5 +1,8 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
+import path from 'path';
+
+// Load environment variables before any other imports that might use them
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 dotenv.config();
 
 import { migrate } from 'drizzle-orm/libsql/migrator';

@@ -140,6 +140,20 @@ export const ArrangeTypeSchema = z.enum(
 );
 
 /**
+ * 編曲・派生元情報
+ */
+export const BasedOnSchema = z.object({
+  /** 原曲の Slug (Work/WorkPart) */
+  originalWorkSlug: z.string().max(100),
+  /** 編曲・派生タイプ */
+  arrangeType: ArrangeTypeSchema,
+  /** 編曲者 (Slug) */
+  arranger: z.string().max(100).optional(),
+});
+
+export type BasedOn = z.infer<typeof BasedOnSchema>;
+
+/**
  * 作品番号・カタログ情報
  */
 export const CatalogueSchema = z.object({
@@ -159,6 +173,8 @@ export const CatalogueSchema = z.object({
    */
   isPrimary: z.boolean().default(false),
 });
+
+export type Catalogue = z.infer<typeof CatalogueSchema>;
 
 /**
  * Musical Identity

@@ -9,6 +9,7 @@ export const composers = sqliteTable(
   {
     id: text('id').primaryKey(), // UUID v7
     slug: text('slug').notNull(),
+    era: text('era'), // MusicalEra ID
     birthDate: text('birth_date'), // ISO8601 or NULL
     deathDate: text('death_date'), // ISO8601 or NULL
     nationalityCode: text('nationality_code'), // ISO 3166-1 alpha-2
@@ -26,6 +27,7 @@ export const composers = sqliteTable(
     impressionDimensions: text('impression_dimensions', {
       mode: 'json',
     }).$type<ComposerImpressionDimensions>(),
+    tags: text('tags', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
 
     portraitImagePath: text('portrait_image_path'),
 
