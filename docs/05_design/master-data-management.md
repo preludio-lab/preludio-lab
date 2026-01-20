@@ -10,21 +10,15 @@
 「データ（Facts）」と「コンテンツ（Narratives）」を明確に分離します。
 
 ```text
-root/
-├── data/               # マスタデータ (JSON) - DB同期用
-│   ├── composers/      # 作曲家マスタ
-│   │   └── {slug}.json
-│   └── works/          # 楽曲マスタ
-│       └── {composer_slug}/
-│           └── {work_slug}.json
-├── content/            # 記事コンテンツ (MDX) - ビルド/R2用
-│   └── articles/
-│       └── ...
-└── src/                # アプリケーションコード
+data/               # マスタデータ (JSON) - DB同期用
+├── composers/      # 作曲家マスタ
+│   └── {slug}.json
+└── works/          # 楽曲マスタ
+    └── {composer_slug}/
+        └── {work_slug}.json
 ```
 
 - **`data/`**: アプリケーションから参照される「事実」情報。DBへ同期されます。
-- **`content/`**: 読み物としての記事本文。MDX形式で管理されます。
 
 ## 3. データ設計方針 (Data Design Policy)
 
