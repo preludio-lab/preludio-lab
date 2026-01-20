@@ -236,7 +236,7 @@ Status: `[/]` 進行中
 
 - [ ] **6.4 譜例コンテンツ生成パイプライン (Score Snippet System)**
   - [ ] **[仕様策定]** 最適なレンダー構成の検討
-    - [ ] **Score Snippet Strategy**: MusicXML対応、Verovio等のレンダリング手法、SSGによるSVG化とキャッシュ配置も含めた、ユーザー体験と保守運用性を考慮した最適な構成を検討する。
+    - [x] **Score Snippet Strategy**: MusicXML対応、Verovio等のレンダリング手法、SSGによるSVG化とキャッシュ配置も含めた、ユーザー体験と保守運用性を考慮した最適な構成を検討する。
   - [ ] **[実装]** 生成・検証システムの構築
     - [ ] **Visual Verification**: 生成された譜面を画像化/レンダリングして即座に品質確認できるフローの構築。AIによる音楽的妥当性・キーチェックの自己検閲（Self-Correction）フローの導入。
     - [ ] エラー修正ループ（Self-Correction）のプロンプト実装

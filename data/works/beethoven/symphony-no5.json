@@ -28,5 +28,103 @@
     "drama": 9,
     "popularity": 10
   },
-  "tags": ["famous-opening", "victory"]
+  "tags": ["famous-opening", "victory"],
+  "parts": [
+    {
+      "slug": "1st-mov",
+      "order": 1,
+      "title": {
+        "en": "Allegro con brio",
+        "ja": "第1楽章"
+      },
+      "type": "movement",
+      "key": "c-minor",
+      "tempo": "Allegro con brio",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": -3,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 6,
+        "drama": 9,
+        "popularity": 10
+      }
+    },
+    {
+      "slug": "2nd-mov",
+      "order": 2,
+      "title": {
+        "en": "Andante con moto",
+        "ja": "第2楽章"
+      },
+      "type": "movement",
+      "key": "a-flat-major",
+      "tempo": "Andante con moto",
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 8
+      },
+      "performanceDifficulty": 4,
+      "impressionDimensions": {
+        "brightness": 4,
+        "vibrancy": -2,
+        "scale": 5,
+        "depth": 7,
+        "drama": 3,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "3rd-mov",
+      "order": 3,
+      "title": {
+        "en": "Scherzo: Allegro",
+        "ja": "第3楽章"
+      },
+      "type": "movement",
+      "key": "c-minor",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": -4,
+        "vibrancy": 6,
+        "scale": 6,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "4th-mov",
+      "order": 4,
+      "title": {
+        "en": "Allegro",
+        "ja": "第4楽章"
+      },
+      "type": "movement",
+      "key": "c-major",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": 9,
+        "vibrancy": 10,
+        "scale": 9,
+        "depth": 5,
+        "drama": 9,
+        "popularity": 10
+      }
+    }
+  ]
 }

@@ -28,7 +28,10 @@ MusicXMLデータの取得元としては、以下の優先順位で選定しま
 Geminiのマルチモーダルな理解力を活かし、必要な箇所のみを抽出する「自動トリミング・パイプライン」を構築します。
 
 1.  **ハイライト箇所の特定**
-    Gemini 1.5 Pro等のモデルに楽曲解説（または構造分析テキスト）を読み込ませ、重要な主題（Theme）が開始する**「小節番号（Measure Number）」**（例: 第1楽章 第1主題 1-4小節）を特定させます。
+    AIモデル（Gemini 3等）に楽曲解説（または構造分析テキスト）を読み込ませ、以下の処理を行います。
+    - **スラッグ生成**: 各ハイライト箇所を一意に識別するスラッグ（例: `1st-theme`, `transition`）を生成します。これらは`Work`または`WorkPart`の子要素として管理されます。
+    - **小節番号の特定**: 重要な主題（Theme）が開始・終了する**「小節番号（Measure Number）」**（例: 第1楽章 第1主題 1-4小節）を特定します。
+      - _Note_: 小節番号の精度は極めて重要です（1小節のズレでも音楽的な意味が変わるため）。AIによる推論のみに依存せず、プログラムによる検証やHuman-in-the-loop（人が最終確認する）等の品質担保の仕組みを考慮します。
 
 2.  **MusicXMLスライサー (GitHub Actions)**
     Pythonライブラリの `music21` 等を実行環境で動かし、フルスコアのMusicXMLから指定された小節範囲だけをプログラム的に「抜き出し（Slice）」、新しい譜例用MusicXMLファイルとして書き出します。
@@ -71,10 +74,15 @@ Web表示のパフォーマンス（Core Web Vitals）と品質を両立させ�
 記事コンテンツ（MDX）内では、以下のようなカスタムコンポーネントを用いて譜例を埋め込みます。
 
 ```tsx
-<MusicSnippet
+<MusicalExample
   src="/scores/beethoven/symphony5/mvt1-theme1.xml"
   caption="運命の動機：力強い同音反復から始まる"
-  youtubeTime="0:15"
+  audio={{
+    recordingSourceId: 'rec_symphony5_karajan',
+    startSeconds: 0,
+    endSeconds: 15, // RecordingSegmentの定義に基づく
+    isDefault: true,
+  }}
 />
 ```
 
@@ -83,11 +91,11 @@ Web表示のパフォーマンス（Core Web Vitals）と品質を両立させ�
 ### 保守・多言語対応
 
 - **バージョン管理**: MusicXMLはテキストベースであるため、Gitでの差分管理が容易です。
-- **多言語展開**: MusicXML内の楽器名や演奏指示をGeminiで翻訳し、言語別（`ja`, `en`, etc.）のSVGを生成するワークフローへの拡張も可能です。
+- **多言語展開**: MusicXML内の楽器名や演奏指示をAIモデルで翻訳し、言語別（`ja`, `en`, etc.）のSVGを生成するワークフローへの拡張も可能です。
 
 ```mermaid
 graph TD
-    A[Full Score MusicXML] -->|Gemini Analysis| B(Identify Measure Numbers)
+    A[Full Score MusicXML] -->|AI Analysis| B(Identify Measure Numbers)
     B -->|music21 Slicer| C[Snippet MusicXML]
     C -->|Verovio (CI/Build)| D[Optimized SVG]
     D --> E[Web Application (MDX)]
