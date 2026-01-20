@@ -1,6 +1,6 @@
 'use client';
 
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
@@ -13,7 +13,7 @@ import { handleClientError } from '@/lib/client-error';
 interface ArticleBrowseFeatureProps {
   lang: string;
   category: string;
-  contents: ArticleMetadataDto[];
+  contents: ArticleCardDto[];
 }
 
 /**

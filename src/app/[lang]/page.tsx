@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { articleRepository } from '@/infrastructure/article';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
 import { ArticleCategory } from '@/domain/article/article.metadata';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 
 // ホーム画面のDiscoverセクションに表示するカテゴリ
 const HOME_DISPLAY_CATEGORIES: ArticleCategory[] = [
@@ -31,7 +31,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const lang = (await params).lang;
 
   // UseCaseの実行
-  let featuredArticles: ArticleMetadataDto[] = [];
+  let featuredArticles: ArticleCardDto[] = [];
   try {
     const sorted = await import('@/application/article/usecase/get-latest-articles.usecase').then(
       (mod) => new mod.GetLatestArticlesUseCase(articleRepository),

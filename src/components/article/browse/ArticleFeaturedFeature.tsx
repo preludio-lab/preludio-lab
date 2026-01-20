@@ -1,12 +1,12 @@
 import { getTranslations } from 'next-intl/server';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { ArticleCard } from './ArticleCard';
 import { ArticleHeroCard } from './ArticleHeroCard';
 import { ArticleGrid } from './ArticleGrid';
 import { FadeInHeading } from '@/components/ui/FadeInHeading';
 
 export interface ArticleFeaturedFeatureProps {
-  contents: ArticleMetadataDto[];
+  contents: ArticleCardDto[];
 }
 
 /**

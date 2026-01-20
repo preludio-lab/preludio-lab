@@ -8,7 +8,8 @@ import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
-import { ArticleDto, ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleDto } from '@/application/article/dto/article-detail.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 
 type Props = {
   params: Promise<{
@@ -60,8 +61,8 @@ export default async function ContentDetailPage({ params }: Props) {
   const listUseCase = new ListArticlesUseCase(articleRepository);
 
   let article: ArticleDto | null = null;
-  let prevContent: ArticleMetadataDto | null = null;
-  let nextContent: ArticleMetadataDto | null = null;
+  let prevContent: ArticleCardDto | null = null;
+  let nextContent: ArticleCardDto | null = null;
 
   try {
     article = await getUseCase.execute(lang, category, slugStr);

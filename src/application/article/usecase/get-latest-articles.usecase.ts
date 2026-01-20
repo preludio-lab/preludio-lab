@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { Article } from '@/domain/article/article';
@@ -18,7 +18,7 @@ export interface GetLatestArticlesInput {
 export class GetLatestArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async execute(input: GetLatestArticlesInput): Promise<ArticleMetadataDto[]> {
+  async execute(input: GetLatestArticlesInput): Promise<ArticleCardDto[]> {
     const { lang, limit = 10, offset = 0 } = input;
 
     const response = await this.articleRepository.findMany({
@@ -39,23 +39,26 @@ export class GetLatestArticlesUseCase {
     return response.items.map((article) => this.toDto(article));
   }
 
-  private toDto(article: Article): ArticleMetadataDto {
+  private toDto(article: Article): ArticleCardDto {
     return {
-      // Control Info (flattened)
       id: article.control.id,
       lang: article.control.lang,
-      status: article.control.status,
-
-      // Metadata Info (flattened)
-      ...article.metadata,
+      slug: article.metadata.slug,
+      category: article.metadata.category,
+      title: article.metadata.title,
+      displayTitle: article.metadata.displayTitle,
+      composerName: article.metadata.composerName,
+      workTitle: article.metadata.workTitle,
+      excerpt: article.metadata.excerpt,
+      thumbnail: article.metadata.thumbnail,
+      readingTimeSeconds: article.metadata.readingTimeSeconds,
       publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
-
-      // Engagement Summary
       viewCount: article.engagement.metrics.viewCount,
-      auditionCount: article.engagement.metrics.auditionCount,
       likeCount: article.engagement.metrics.likeCount,
-      resonanceCount: article.engagement.metrics.resonanceCount,
-      shareCount: article.engagement.metrics.shareCount,
+      tags: article.metadata.tags,
+      readingLevel: article.metadata.readingLevel,
+      performanceDifficulty: article.metadata.performanceDifficulty,
+      playback: article.metadata.playback,
     };
   }
 }

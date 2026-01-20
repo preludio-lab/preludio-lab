@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { Article } from '@/domain/article/article';
@@ -26,7 +26,7 @@ export interface GetRelatedArticlesInput {
 export class GetRelatedArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async execute(input: GetRelatedArticlesInput): Promise<ArticleMetadataDto[]> {
+  async execute(input: GetRelatedArticlesInput): Promise<ArticleCardDto[]> {
     const { lang, sourceSlug, sourceCategory, limit = 4 } = input;
 
     // 現在の記事を取得して、コンテキスト（作曲家IDなど）を確認したいところだが、
@@ -76,18 +76,26 @@ export class GetRelatedArticlesUseCase {
     return related.map((article) => this.toDto(article));
   }
 
-  private toDto(article: Article): ArticleMetadataDto {
+  private toDto(article: Article): ArticleCardDto {
     return {
       id: article.control.id,
       lang: article.control.lang,
-      status: article.control.status,
-      ...article.metadata,
+      slug: article.metadata.slug,
+      category: article.metadata.category,
+      title: article.metadata.title,
+      displayTitle: article.metadata.displayTitle,
+      composerName: article.metadata.composerName,
+      workTitle: article.metadata.workTitle,
+      excerpt: article.metadata.excerpt,
+      thumbnail: article.metadata.thumbnail,
+      readingTimeSeconds: article.metadata.readingTimeSeconds,
       publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
       viewCount: article.engagement.metrics.viewCount,
-      auditionCount: article.engagement.metrics.auditionCount,
       likeCount: article.engagement.metrics.likeCount,
-      resonanceCount: article.engagement.metrics.resonanceCount,
-      shareCount: article.engagement.metrics.shareCount,
+      tags: article.metadata.tags,
+      readingLevel: article.metadata.readingLevel,
+      performanceDifficulty: article.metadata.performanceDifficulty,
+      playback: article.metadata.playback,
     };
   }
 }

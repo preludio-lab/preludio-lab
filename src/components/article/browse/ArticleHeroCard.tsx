@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { m } from 'framer-motion';
 
 export interface ArticleHeroCardProps {
-  content: ArticleMetadataDto;
+  content: ArticleCardDto;
   description: string;
   readMoreLabel: string;
   categoryLabel?: string;

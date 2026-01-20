@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { ArticleMetadataDto } from '@/application/article/dto/article.dto';
+import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 
 type Props = {
-  prev: ArticleMetadataDto | null;
-  next: ArticleMetadataDto | null;
+  prev: ArticleCardDto | null;
+  next: ArticleCardDto | null;
   lang: string;
 };
 
