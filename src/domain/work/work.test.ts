@@ -16,8 +16,10 @@ describe('Work Entity', () => {
   };
 
   const validMetadata = {
-    title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
-    popularTitle: { ja: '運命', en: 'Fate' },
+    titleComponents: {
+      title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      nickname: { ja: '運命', en: 'Fate' },
+    },
     catalogue: {
       prefix: MusicalCataloguePrefix.OP,
       number: '67',

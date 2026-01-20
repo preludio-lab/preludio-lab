@@ -30,10 +30,8 @@ export const WorkPartType = z.enum([
  * 楽章や構成楽曲の属性情報
  */
 export const WorkPartMetadataSchema = z.object({
-  /** 楽章名・パーツタイトル */
-  title: TitleSchema,
-  /** タイトル構成要素 (prefix, content, nickname) */
-  titleComponents: TitleComponentsSchema.optional(),
+  /** タイトル構成要素 (title, prefix, content, nickname) */
+  titleComponents: TitleComponentsSchema,
   /** 補足説明 */
   description: DescriptionSchema.optional(),
 

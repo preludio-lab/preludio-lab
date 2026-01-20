@@ -21,7 +21,6 @@ export const WorkDataSchema = WorkControlSchema.pick({
 })
   .merge(
     WorkMetadataSchema.pick({
-      title: true,
       titleComponents: true,
       catalogue: true, // Nested
       era: true,

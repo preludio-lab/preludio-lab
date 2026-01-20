@@ -37,12 +37,8 @@ export const InstrumentationFlagsSchema = z.object({
  * 作品のメタデータ (多言語対応)
  */
 export const WorkMetadataSchema = z.object({
-  /** 正式名称 */
-  title: TitleSchema,
-  /** 通称 (e.g. "運命") */
-  popularTitle: TitleSchema.optional(),
-  /** タイトル構成要素 (prefix, content, nickname) */
-  titleComponents: TitleComponentsSchema.optional(),
+  /** タイトル構成要素 (title, prefix, content, nickname) */
+  titleComponents: TitleComponentsSchema,
 
   /** カタログ情報 (作品番号等) */
   catalogue: CatalogueSchema.optional(),

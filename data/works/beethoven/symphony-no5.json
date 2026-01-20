@@ -1,11 +1,11 @@
 {
   "slug": "symphony-no5",
   "composerSlug": "beethoven",
-  "title": {
-    "en": "Symphony No. 5 in C minor \"Fate\"",
-    "ja": "交響曲第5番 ハ短調 「運命」"
-  },
   "titleComponents": {
+    "title": {
+      "en": "Symphony No. 5 in C minor \"Fate\"",
+      "ja": "交響曲第5番 ハ短調 「運命」"
+    },
     "content": {
       "en": "Symphony No. 5 in C minor",
       "ja": "交響曲第5番 ハ短調"
@@ -39,11 +39,11 @@
     {
       "slug": "1st-mov",
       "order": 1,
-      "title": {
-        "en": "I. Allegro con brio in C minor",
-        "ja": "第1楽章 アレグロ・コン・ブリオ ハ短調"
-      },
       "titleComponents": {
+        "title": {
+          "en": "I. Allegro con brio in C minor",
+          "ja": "第1楽章 アレグロ・コン・ブリオ ハ短調"
+        },
         "prefix": {
           "en": "I.",
           "ja": "第1楽章"
@@ -73,11 +73,11 @@
     {
       "slug": "2nd-mov",
       "order": 2,
-      "title": {
-        "en": "II. Andante con moto in A-flat major",
-        "ja": "第2楽章 アンダンテ・コン・モート 変イ長調"
-      },
       "titleComponents": {
+        "title": {
+          "en": "II. Andante con moto in A-flat major",
+          "ja": "第2楽章 アンダンテ・コン・モート 変イ長調"
+        },
         "prefix": {
           "en": "II.",
           "ja": "第2楽章"
@@ -107,11 +107,11 @@
     {
       "slug": "3rd-mov",
       "order": 3,
-      "title": {
-        "en": "III. Scherzo: Allegro in C minor",
-        "ja": "第3楽章 スケルツォ：アレグロ ハ短調"
-      },
       "titleComponents": {
+        "title": {
+          "en": "III. Scherzo: Allegro in C minor",
+          "ja": "第3楽章 スケルツォ：アレグロ ハ短調"
+        },
         "prefix": {
           "en": "III.",
           "ja": "第3楽章"
@@ -141,11 +141,11 @@
     {
       "slug": "4th-mov",
       "order": 4,
-      "title": {
-        "en": "IV. Allegro in C major",
-        "ja": "第4楽章 アレグロ ハ長調"
-      },
       "titleComponents": {
+        "title": {
+          "en": "IV. Allegro in C major",
+          "ja": "第4楽章 アレグロ ハ長調"
+        },
         "prefix": {
           "en": "IV.",
           "ja": "第4楽章"

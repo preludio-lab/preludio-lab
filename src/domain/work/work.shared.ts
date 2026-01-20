@@ -21,15 +21,29 @@ export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 
  * 称号、本題、ニックネームを分離して管理するための構造
  */
 export const TitleComponentsSchema = z.object({
-  /** 接頭辞 (例: "第1楽章", "No. 1") */
+  /**
+   * 統合済みタイトル (Consolidated Title)
+   * 規則: {prefix} {content} {nickname}
+   */
+  title: TitleSchema,
+  /**
+   * 接頭辞 (Systematic Identifier)
+   * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
+   * 例: "第1楽章", "交響曲第5番", "No. 1"
+   */
   prefix: TitleSchema.optional(),
   /**
-   * 内容 (例: "Allegro con brio", "木星")
-   * - 固有のタイトルがない楽曲（ソナタ、交響曲等）の場合、「形式/番号 + 調性」をセットで記述すること。
-   * - 固有のタイトルがある楽曲の場合、原則として調性は含めない。
+   * 内容 (Substantive Title)
+   * 楽曲の固有性を決定づける情報。
+   * - 固有曲: 作曲家が付与した「固有タイトル」 (例: "くるみ割り人形", "La Mer")
+   * - 汎用曲 (固有タイトルなし): 識別子を補完する「テンポ」や「調性」 (例: "ハ短調", "in C minor")
    */
   content: TitleSchema.optional(),
-  /** ニックネーム (例: "運命", "Revolutionary") */
+  /**
+   * 通称 (Colloquial Name)
+   * 一般大衆や後世によって付けられた呼び名。
+   * 例: "運命", "Moonlight"
+   */
   nickname: TitleSchema.optional(),
 });
 

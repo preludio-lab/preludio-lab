@@ -36,7 +36,10 @@ export class Work {
     return this.metadata.musicalIdentity?.genres ?? [];
   }
   get title() {
-    return this.metadata.title;
+    return this.metadata.titleComponents.title;
+  }
+  get popularTitle() {
+    return this.metadata.titleComponents.nickname;
   }
   get catalogue() {
     const prefix = this.metadata.catalogue?.prefix ?? '';
