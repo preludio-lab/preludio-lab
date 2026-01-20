@@ -1,0 +1,32 @@
+{
+  "slug": "symphony-no5",
+  "composerSlug": "beethoven",
+  "title": {
+    "en": "Symphony No. 5",
+    "ja": "交響曲第5番"
+  },
+  "popularTitle": {
+    "en": "Fate",
+    "ja": "運命"
+  },
+  "catalogue": {
+    "prefix": "op",
+    "number": "67"
+  },
+  "key": "c-minor",
+  "genres": ["symphony"],
+  "compositionYear": 1808,
+  "compositionPeriod": {
+    "en": "1804-1808",
+    "ja": "1804-1808年"
+  },
+  "impressionDimensions": {
+    "brightness": -5,
+    "vibrancy": 9,
+    "scale": 8,
+    "depth": 7,
+    "drama": 9,
+    "popularity": 10
+  },
+  "tags": ["famous-opening", "victory"]
+}

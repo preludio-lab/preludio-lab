@@ -26,8 +26,8 @@ export class Work {
   get slug() {
     return this.control.slug;
   }
-  get composer() {
-    return this.control.composer;
+  get composerSlug() {
+    return this.control.composerSlug;
   }
   get era() {
     return this.metadata.era;

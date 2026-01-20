@@ -9,7 +9,7 @@ import { MusicalKey } from './musical-key';
 describe('Work Entity', () => {
   const validControl = {
     id: '550e8400-e29b-41d4-a716-446655440000',
-    composer: 'beethoven',
+    composerSlug: 'beethoven',
     slug: 'symphony-no5',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -56,7 +56,7 @@ describe('Work Entity', () => {
 
     expect(work.id).toBe(validControl.id);
     expect(work.slug).toBe(validControl.slug);
-    expect(work.composer).toBe(validControl.composer);
+    expect(work.composerSlug).toBe(validControl.composerSlug);
     expect(work.title.ja).toBe('交響曲第5番');
     expect(work.catalogue).toBe('op 67');
     expect(work.era).toBe(MusicalEra.CLASSICAL);
@@ -106,11 +106,11 @@ describe('Work Entity', () => {
     });
 
     const cloned = work.cloneWith({
-      control: { composer: 'brahms' },
+      control: { composerSlug: 'brahms' },
       metadata: { performanceDifficulty: 4 },
     });
 
-    expect(cloned.composer).toBe('brahms');
+    expect(cloned.composerSlug).toBe('brahms');
     expect(cloned.metadata.performanceDifficulty).toBe(4);
     expect(cloned.id).toBe(work.id);
   });
