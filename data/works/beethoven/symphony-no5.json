@@ -2,8 +2,8 @@
   "slug": "symphony-no5",
   "composerSlug": "beethoven",
   "title": {
-    "en": "Symphony No. 5",
-    "ja": "交響曲第5番"
+    "en": "Symphony No. 5 in C minor",
+    "ja": "交響曲第5番 ハ短調"
   },
   "popularTitle": {
     "en": "Fate",
@@ -11,8 +11,8 @@
   },
   "titleComponents": {
     "content": {
-      "en": "Symphony No. 5",
-      "ja": "交響曲第5番"
+      "en": "Symphony No. 5 in C minor",
+      "ja": "交響曲第5番 ハ短調"
     },
     "nickname": {
       "en": "Fate",

@@ -23,7 +23,11 @@ export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 
 export const TitleComponentsSchema = z.object({
   /** 接頭辞 (例: "第1楽章", "No. 1") */
   prefix: TitleSchema.optional(),
-  /** 内容 (例: "Allegro con brio", "木星") */
+  /**
+   * 内容 (例: "Allegro con brio", "木星")
+   * - 固有のタイトルがない楽曲（ソナタ、交響曲等）の場合、「形式/番号 + 調性」をセットで記述すること。
+   * - 固有のタイトルがある楽曲の場合、原則として調性は含めない。
+   */
   content: TitleSchema.optional(),
   /** ニックネーム (例: "運命", "Revolutionary") */
   nickname: TitleSchema.optional(),
