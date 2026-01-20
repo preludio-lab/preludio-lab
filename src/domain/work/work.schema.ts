@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { WorkControlSchema } from './work.control';
 import { WorkMetadataSchema } from './work.metadata';
 import { MusicalIdentitySchema } from './work.shared';
+import { WorkPartDataSchema } from './work-part.schema';
 
 /**
  * Work Data Schema (Master JSON)
@@ -46,6 +47,13 @@ export const WorkDataSchema = WorkControlSchema.pick({
       bpm: true,
       metronomeUnit: true,
     }),
-  );
+  )
+  .extend({
+    /**
+     * 構成楽曲（楽章）リスト
+     * Aggregateとして一緒に管理します。
+     */
+    parts: z.array(WorkPartDataSchema).default([]),
+  });
 
 export type WorkData = z.infer<typeof WorkDataSchema>;
