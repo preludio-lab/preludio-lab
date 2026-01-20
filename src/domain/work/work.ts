@@ -42,8 +42,10 @@ export class Work {
     return this.metadata.titleComponents.nickname;
   }
   get catalogue() {
-    const prefix = this.metadata.catalogue?.prefix ?? '';
-    const number = this.metadata.catalogue?.number ?? '';
+    const primary =
+      this.metadata.catalogues.find((c) => c.isPrimary) ?? this.metadata.catalogues[0];
+    const prefix = primary?.prefix ?? '';
+    const number = primary?.number ?? '';
     return `${prefix} ${number}`.trim();
   }
 

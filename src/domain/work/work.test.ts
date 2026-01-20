@@ -20,11 +20,14 @@ describe('Work Entity', () => {
       title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
       nickname: { ja: '運命', en: 'Fate' },
     },
-    catalogue: {
-      prefix: MusicalCataloguePrefix.OP,
-      number: '67',
-      sortOrder: 67,
-    },
+    catalogues: [
+      {
+        prefix: MusicalCataloguePrefix.OP,
+        number: '67',
+        sortOrder: 67,
+        isPrimary: true,
+      },
+    ],
     performanceDifficulty: 5,
     era: MusicalEra.CLASSICAL,
     instrumentation: 'Symphony Orchestra',
@@ -73,19 +76,22 @@ describe('Work Entity', () => {
   it('should correctly format catalogue when properties are missing', () => {
     const work1 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: { number: '67' } },
+      metadata: { ...validMetadata, catalogues: [{ number: '67', isPrimary: true }] },
     });
     expect(work1.catalogue).toBe('67');
 
     const work2 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: { prefix: MusicalCataloguePrefix.OP } },
+      metadata: {
+        ...validMetadata,
+        catalogues: [{ prefix: MusicalCataloguePrefix.OP, isPrimary: true }],
+      },
     });
     expect(work2.catalogue).toBe('op');
 
     const work3 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: undefined },
+      metadata: { ...validMetadata, catalogues: [] },
     });
     expect(work3.catalogue).toBe('');
   });
@@ -95,7 +101,7 @@ describe('Work Entity', () => {
       control: validControl,
       metadata: {
         ...validMetadata,
-        catalogue: { prefix: MusicalCataloguePrefix.K, number: '331a' },
+        catalogues: [{ prefix: MusicalCataloguePrefix.K, number: '331a', isPrimary: true }],
       },
     });
     expect(work.catalogue).toBe('k 331a');

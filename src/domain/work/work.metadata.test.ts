@@ -11,11 +11,13 @@ describe('WorkMetadataSchema', () => {
     titleComponents: {
       title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
     },
-    catalogue: {
-      prefix: MusicalCataloguePrefix.OP,
-      number: '67',
-      sortOrder: 67,
-    },
+    catalogues: [
+      {
+        prefix: MusicalCataloguePrefix.OP,
+        number: '67',
+        sortOrder: 67,
+      },
+    ],
     era: MusicalEra.CLASSICAL,
     musicalIdentity: {
       genres: [MusicalGenre.ORCHESTRAL.SYMPHONY],
@@ -29,7 +31,7 @@ describe('WorkMetadataSchema', () => {
 
   it('should fail if titleComponents is missing', () => {
     const result = WorkMetadataSchema.safeParse({
-      catalogue: { number: '67' },
+      catalogues: [{ number: '67' }],
     });
     expect(result.success).toBe(false);
   });
@@ -134,7 +136,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate catalogue with complex numbers and sortOrder', () => {
     const result = WorkMetadataSchema.safeParse({
       ...validMetadata,
-      catalogue: { prefix: MusicalCataloguePrefix.K, number: '331a', sortOrder: 331 },
+      catalogues: [{ prefix: MusicalCataloguePrefix.K, number: '331a', sortOrder: 331 }],
     });
     expect(result.success).toBe(true);
 
@@ -142,7 +144,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, prefix: 'InvalidPrefix' },
+        catalogues: [{ ...validMetadata.catalogues[0], prefix: 'InvalidPrefix' }],
       }).success,
     ).toBe(false);
 
@@ -150,7 +152,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, sortOrder: -1 },
+        catalogues: [{ ...validMetadata.catalogues[0], sortOrder: -1 }],
       }).success,
     ).toBe(false);
 
@@ -158,7 +160,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, sortOrder: 1_000_001 },
+        catalogues: [{ ...validMetadata.catalogues[0], sortOrder: 1_000_001 }],
       }).success,
     ).toBe(false);
   });

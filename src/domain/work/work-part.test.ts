@@ -25,6 +25,7 @@ describe('WorkPart Entity', () => {
       tempo: 'Allegro con brio',
     },
     nicknames: [],
+    catalogues: [],
   };
 
   it('should initialize with control and metadata', () => {

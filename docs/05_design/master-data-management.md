@@ -38,7 +38,7 @@ JSONファイルの肥大化を防ぎ、管理効率を高めるため、情報�
 ### 3.2 ID管理: Slug vs UUID
 
 - **Git管理 (Human/AI-Readable)**: **Slug**
-  - 人間やAIが識別しやすい `slug` (例: `beethoven`, `symphony-no5`) を主キーとして扱います。
+  - 人間やAIが識別しやすい `slug` (例: `beethoven`, `symphony-no-5`) を主キーとして扱います。
   - ファイル名もSlugと一致させます。
 
 - **DB管理 (System-Robustness)**: **UUID**

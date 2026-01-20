@@ -46,6 +46,13 @@ async function validateWorks() {
       const result = WorkDataSchema.safeParse(content);
       if (result.success) {
         // Additional check: Does slug match filename? (Optional but good)
+        const expectedSlug = path.parse(file).name;
+        if (content.slug !== expectedSlug) {
+          console.error(
+            `❌ ${composer}/${file}: Slug mismatch (file: ${expectedSlug}, content: ${content.slug})`,
+          );
+          process.exit(1);
+        }
         console.log(`✅ ${composer}/${file}: OK`);
       } else {
         console.error(`❌ ${composer}/${file}: FAILED`, result.error.format());

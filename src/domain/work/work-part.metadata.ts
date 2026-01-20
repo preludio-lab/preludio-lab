@@ -1,4 +1,5 @@
 import { z } from '@/shared/validation/zod';
+import { SlugSchema } from '../shared/common.metadata';
 import {
   DescriptionSchema,
   MusicalIdentitySchema,
@@ -6,6 +7,8 @@ import {
   NicknamesSchema,
   ImpressionDimensionsSchema,
   TitleComponentsSchema,
+  CatalogueSchema,
+  ArrangeTypeSchema,
 } from './work.shared';
 
 /**
@@ -25,12 +28,13 @@ export const WorkPartType = z.enum([
 ]);
 
 /**
- * Work Part Metadata
- * 楽章や構成楽曲の属性情報
+ * Work Part Metadata Base
  */
-export const WorkPartMetadataSchema = z.object({
+export const WorkPartMetadataBaseSchema = z.object({
   /** タイトル構成要素 (title, prefix, content, nickname) */
   titleComponents: TitleComponentsSchema,
+  /** カタログ情報リスト (楽章個別の番号がある場合) */
+  catalogues: z.array(CatalogueSchema).default([]),
   /** 補足説明 */
   description: DescriptionSchema.optional(),
 
@@ -63,6 +67,32 @@ export const WorkPartMetadataSchema = z.object({
 
   /** 検索用別名リスト */
   nicknames: NicknamesSchema.default([]),
+  /** 編曲・派生元情報 (楽章単位で異なる場合) */
+  basedOn: z
+    .object({
+      /** 原曲の Slug (Work/WorkPart) */
+      originalWorkSlug: SlugSchema,
+      /** 編曲・派生タイプ */
+      arrangeType: ArrangeTypeSchema,
+      /** 編曲者 (Slug) */
+      arranger: SlugSchema.optional(),
+    })
+    .optional(),
+});
+
+/**
+ * Work Part Metadata (Refined)
+ */
+export const WorkPartMetadataSchema = WorkPartMetadataBaseSchema.superRefine((data, ctx) => {
+  // isPrimary: true が複数存在しないことを確認
+  const primaryCount = data.catalogues.filter((c) => c.isPrimary).length;
+  if (primaryCount > 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Primary catalogue must be at most one.',
+      path: ['catalogues'],
+    });
+  }
 });
 
 export type WorkPartMetadata = z.infer<typeof WorkPartMetadataSchema>;

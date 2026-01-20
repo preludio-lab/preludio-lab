@@ -121,6 +121,25 @@ export const MetronomeUnitSchema = z.enum(
 );
 
 /**
+ * 編成・派生タイプ
+ * 曲が何に基づいているか、どのように派生したかを示す。
+ */
+export const ArrangeType = {
+  TRANSCRIPTION: 'transcription', // 編曲
+  VARIATION: 'variation', // 変奏
+  PARAPHRASE: 'paraphrase', // パラフレーズ
+  ORCHESTRATION: 'orchestration', // 管弦楽化
+  REDUCTION: 'reduction', // ピアノリダクション
+  RECONSTRUCTION: 'reconstruction', // 復元/補筆
+} as const;
+
+export type ArrangeType = (typeof ArrangeType)[keyof typeof ArrangeType];
+
+export const ArrangeTypeSchema = z.enum(
+  Object.values(ArrangeType) as [ArrangeType, ...ArrangeType[]],
+);
+
+/**
  * 作品番号・カタログ情報
  */
 export const CatalogueSchema = z.object({
@@ -135,6 +154,10 @@ export const CatalogueSchema = z.object({
    * ソート用の数値 (カタログ順に並べるために使用、1-1,000,000)
    */
   sortOrder: z.number().min(0).max(1_000_000).optional(),
+  /**
+   * 主たるカタログ番号か (e.g. Op.番号が複数の場合や、独自番号との併記時に使用)
+   */
+  isPrimary: z.boolean().default(false),
 });
 
 /**

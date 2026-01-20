@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { WorkPartControlSchema } from './work-part.control';
-import { WorkPartMetadataSchema } from './work-part.metadata';
+import { WorkPartMetadataBaseSchema } from './work-part.metadata';
 import { MusicalIdentitySchema } from './work.shared';
 
 /**
@@ -17,14 +17,16 @@ export const WorkPartDataSchema = WorkPartControlSchema.pick({
   order: true,
 })
   .merge(
-    WorkPartMetadataSchema.pick({
+    WorkPartMetadataBaseSchema.pick({
       titleComponents: true,
+      catalogues: true,
       type: true,
       isNameStandard: true,
       description: true,
       performanceDifficulty: true,
       impressionDimensions: true,
       nicknames: true,
+      basedOn: true,
     }),
   )
   .merge(
@@ -37,6 +39,17 @@ export const WorkPartDataSchema = WorkPartControlSchema.pick({
       bpm: true,
       metronomeUnit: true,
     }),
-  );
+  )
+  .superRefine((data, ctx) => {
+    // isPrimary: true が複数存在しないことを確認
+    const primaryCount = data.catalogues.filter((c) => c.isPrimary).length;
+    if (primaryCount > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Primary catalogue must be at most one.',
+        path: ['catalogues'],
+      });
+    }
+  });
 
 export type WorkPartData = z.infer<typeof WorkPartDataSchema>;
