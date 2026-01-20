@@ -179,7 +179,11 @@ Status: `[/]` 進行中
   - [x] **[準備]** 初期データ移行スクリプトの作成
     - [x] ローカルMDXファイルの解析 (Frontmatter + 本文)
     - [x] 本文データの R2 へのアップロード (完了)
-    - [ ] メタデータおよびEmbeddingの Turso への INSERT
+    - [ ] マスタデータ（Composer, Works）の生成ワークフロー実装（Json at GitHub）
+    - [ ] マスタデータのTursoへのINSERTワークフロー実装
+    - [ ] ArticleメタデータのTursoへのINSERTワークフロー実装
+    - [ ] 検索のためのEmbeddingの生成ワークフロー実装
+    - [ ] EmbeddingのTursoへのINSERTワークフロー実装
 
 - [x] **5.7 STEP 2: インフラ層の実装 (Infrastructure Layer)**
   - [x] **[実装]** Clientセットアップ
