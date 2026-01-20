@@ -1,6 +1,5 @@
 import { z } from '@/shared/validation/zod';
 import {
-  TitleSchema,
   DescriptionSchema,
   MusicalIdentitySchema,
   PerformanceDifficultySchema,

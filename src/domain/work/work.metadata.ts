@@ -1,7 +1,6 @@
 import { z } from '@/shared/validation/zod';
 import { MusicalEraSchema } from '../shared/musical-era';
 import {
-  TitleSchema,
   DescriptionSchema,
   CompositionPeriodSchema,
   MusicalIdentitySchema,
