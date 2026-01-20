@@ -41,10 +41,10 @@ export class GetRelatedArticlesUseCase {
 
     // 検索条件の構築
     // 1. 作曲家が同じ記事を探す (Worksの場合)
-    let composerName: string | undefined;
-    if (sourceCategory === ArticleCategory.WORKS && sourceArticle.metadata.composerName) {
-      composerName = sourceArticle.metadata.composerName;
-    }
+    // let composerName: string | undefined;
+    // if (sourceCategory === ArticleCategory.WORKS && sourceArticle.metadata.composerName) {
+    //   composerName = sourceArticle.metadata.composerName;
+    // }
 
     // クエリ実行
     // composerNameがある場合は「同一作曲家の作品」を優先検索

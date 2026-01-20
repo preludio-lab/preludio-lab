@@ -3,7 +3,7 @@ import {
   ArticleSearchResultListDto,
   ArticleSearchResultItemDto,
 } from '@/application/article/dto/article-search.dto';
-import { PagedResponse } from '@/domain/shared/pagination';
+
 import { Article } from '@/domain/article/article';
 
 /**

@@ -6,8 +6,7 @@ import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
-import { ArticleStatus } from '@/domain/article/article.control';
-import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
+
 import { ArticleDto } from '@/application/article/dto/article-detail.dto';
 import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 
@@ -58,7 +57,6 @@ export default async function ContentDetailPage({ params }: Props) {
   const slugStr = Array.isArray(slug) ? slug.join('/') : slug;
 
   const getUseCase = new GetArticleBySlugUseCase(articleRepository);
-  const listUseCase = new ListArticlesUseCase(articleRepository);
 
   let article: ArticleDto | null = null;
   let prevContent: ArticleCardDto | null = null;
