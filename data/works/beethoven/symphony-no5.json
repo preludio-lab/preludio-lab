@@ -35,7 +35,7 @@
       "order": 1,
       "title": {
         "en": "Allegro con brio",
-        "ja": "第1楽章"
+        "ja": "Allegro con brio"
       },
       "type": "movement",
       "key": "c-minor",
@@ -59,7 +59,7 @@
       "order": 2,
       "title": {
         "en": "Andante con moto",
-        "ja": "第2楽章"
+        "ja": "Andante con moto"
       },
       "type": "movement",
       "key": "a-flat-major",
@@ -83,7 +83,7 @@
       "order": 3,
       "title": {
         "en": "Scherzo: Allegro",
-        "ja": "第3楽章"
+        "ja": "Scherzo: Allegro"
       },
       "type": "movement",
       "key": "c-minor",
@@ -107,7 +107,7 @@
       "order": 4,
       "title": {
         "en": "Allegro",
-        "ja": "第4楽章"
+        "ja": "Allegro"
       },
       "type": "movement",
       "key": "c-major",
