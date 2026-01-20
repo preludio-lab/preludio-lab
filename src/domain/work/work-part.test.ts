@@ -15,7 +15,9 @@ describe('WorkPart Entity', () => {
   };
 
   const metadata: WorkPartMetadata = {
-    title: { ja: '第1楽章', en: '1st Movement' },
+    titleComponents: {
+      title: { ja: '第1楽章', en: '1st Movement' },
+    },
     type: 'movement',
     isNameStandard: true,
     musicalIdentity: {
@@ -23,6 +25,7 @@ describe('WorkPart Entity', () => {
       tempo: 'Allegro con brio',
     },
     nicknames: [],
+    catalogues: [],
   };
 
   it('should initialize with control and metadata', () => {
@@ -31,7 +34,7 @@ describe('WorkPart Entity', () => {
     expect(part.workId).toBe(control.workId);
     expect(part.slug).toBe(control.slug);
     expect(part.order).toBe(control.order);
-    expect(part.title.ja).toBe(metadata.title.ja);
+    expect(part.title.ja).toBe(metadata.titleComponents.title.ja);
     expect(part.type).toBe(metadata.type);
     expect(part.isNameStandard).toBe(metadata.isNameStandard);
     expect(part.musicalIdentity?.tempo).toBe(metadata.musicalIdentity?.tempo);
@@ -47,7 +50,7 @@ describe('WorkPart Entity', () => {
     expect(cloned.order).toBe(2);
     expect(cloned.description?.ja).toBe('説明');
     expect(cloned.id).toBe(control.id); // Identity preserved
-    expect(cloned.title.ja).toBe(metadata.title.ja); // Other metadata preserved
+    expect(cloned.title.ja).toBe(metadata.titleComponents.title.ja); // Other metadata preserved
   });
 
   it('should fail validation if order exceeds 100', () => {

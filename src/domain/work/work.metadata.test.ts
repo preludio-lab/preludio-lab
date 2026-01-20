@@ -8,12 +8,16 @@ import { MusicalKey, MusicalKeySchema } from './musical-key';
 
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
-    title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
-    catalogue: {
-      prefix: MusicalCataloguePrefix.OP,
-      number: '67',
-      sortOrder: 67,
+    titleComponents: {
+      title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
     },
+    catalogues: [
+      {
+        prefix: MusicalCataloguePrefix.OP,
+        number: '67',
+        sortOrder: 67,
+      },
+    ],
     era: MusicalEra.CLASSICAL,
     musicalIdentity: {
       genres: [MusicalGenre.ORCHESTRAL.SYMPHONY],
@@ -25,19 +29,25 @@ describe('WorkMetadataSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should fail if title is missing', () => {
+  it('should fail if titleComponents is missing', () => {
     const result = WorkMetadataSchema.safeParse({
-      catalogue: { number: '67' },
+      catalogues: [{ number: '67' }],
     });
     expect(result.success).toBe(false);
   });
 
   it('should validate title max length (150)', () => {
     expect(
-      WorkMetadataSchema.safeParse({ ...validMetadata, title: { ja: 'A'.repeat(150) } }).success,
+      WorkMetadataSchema.safeParse({
+        ...validMetadata,
+        titleComponents: { title: { ja: 'A'.repeat(150) } },
+      }).success,
     ).toBe(true);
     expect(
-      WorkMetadataSchema.safeParse({ ...validMetadata, title: { ja: 'A'.repeat(151) } }).success,
+      WorkMetadataSchema.safeParse({
+        ...validMetadata,
+        titleComponents: { title: { ja: 'A'.repeat(151) } },
+      }).success,
     ).toBe(false);
   });
 
@@ -102,7 +112,9 @@ describe('WorkMetadataSchema', () => {
 
   it('should validate movement-specific genres directly via WorkPartMetadataSchema', () => {
     const partWithForm = {
-      title: { ja: '1st' },
+      titleComponents: {
+        title: { ja: '1st' },
+      },
       type: 'movement',
       musicalIdentity: { genres: [MusicalGenre.FORM.SONATA_FORM] },
     };
@@ -114,14 +126,17 @@ describe('WorkMetadataSchema', () => {
   });
 
   it('should validate WorkPartMetadataSchema max limits indirectly', () => {
-    const partValid = { title: { ja: '1st' }, type: 'movement' };
+    const partValid = {
+      titleComponents: { title: { ja: '1st' } },
+      type: 'movement',
+    };
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
   });
 
   it('should validate catalogue with complex numbers and sortOrder', () => {
     const result = WorkMetadataSchema.safeParse({
       ...validMetadata,
-      catalogue: { prefix: MusicalCataloguePrefix.K, number: '331a', sortOrder: 331 },
+      catalogues: [{ prefix: MusicalCataloguePrefix.K, number: '331a', sortOrder: 331 }],
     });
     expect(result.success).toBe(true);
 
@@ -129,7 +144,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, prefix: 'InvalidPrefix' },
+        catalogues: [{ ...validMetadata.catalogues[0], prefix: 'InvalidPrefix' }],
       }).success,
     ).toBe(false);
 
@@ -137,7 +152,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, sortOrder: -1 },
+        catalogues: [{ ...validMetadata.catalogues[0], sortOrder: -1 }],
       }).success,
     ).toBe(false);
 
@@ -145,7 +160,7 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        catalogue: { ...validMetadata.catalogue, sortOrder: 1_000_001 },
+        catalogues: [{ ...validMetadata.catalogues[0], sortOrder: 1_000_001 }],
       }).success,
     ).toBe(false);
   });
@@ -160,8 +175,14 @@ describe('WorkMetadataSchema', () => {
   });
 
   it('should validate WorkPartMetadata via schema directly', () => {
-    const partValid = { title: { ja: '1st' }, type: 'movement' };
-    const partInvalid = { title: { ja: 'A'.repeat(151) }, type: 'movement' };
+    const partValid = {
+      titleComponents: { title: { ja: '1st' } },
+      type: 'movement',
+    };
+    const partInvalid = {
+      titleComponents: { title: { ja: 'A'.repeat(151) } },
+      type: 'movement',
+    };
 
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
     expect(WorkPartMetadataSchema.safeParse(partInvalid).success).toBe(false);

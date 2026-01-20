@@ -16,6 +16,39 @@ export const DescriptionSchema = createMultilingualStringSchema({ max: 2000 });
 export const TempoTranslationSchema = createMultilingualStringSchema({ max: 100 });
 export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 });
 
+/**
+ * Title Components
+ * 称号、本題、ニックネームを分離して管理するための構造
+ */
+export const TitleComponentsSchema = z.object({
+  /**
+   * 統合済みタイトル (Consolidated Title)
+   * 規則: {prefix} {content} {nickname}
+   */
+  title: TitleSchema,
+  /**
+   * 接頭辞 (Systematic Identifier)
+   * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
+   * 例: "第1楽章", "交響曲第5番", "No. 1"
+   */
+  prefix: TitleSchema.optional(),
+  /**
+   * 内容 (Substantive Title)
+   * 楽曲の固有性を決定づける情報。
+   * - 固有曲: 作曲家が付与した「固有タイトル」 (例: "くるみ割り人形", "La Mer")
+   * - 汎用曲 (固有タイトルなし): 識別子を補完する「テンポ」や「調性」 (例: "ハ短調", "in C minor")
+   */
+  content: TitleSchema.optional(),
+  /**
+   * 通称 (Colloquial Name)
+   * 一般大衆や後世によって付けられた呼び名。
+   * 例: "運命", "Moonlight"
+   */
+  nickname: TitleSchema.optional(),
+});
+
+export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
+
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);
 
@@ -88,6 +121,25 @@ export const MetronomeUnitSchema = z.enum(
 );
 
 /**
+ * 編成・派生タイプ
+ * 曲が何に基づいているか、どのように派生したかを示す。
+ */
+export const ArrangeType = {
+  TRANSCRIPTION: 'transcription', // 編曲
+  VARIATION: 'variation', // 変奏
+  PARAPHRASE: 'paraphrase', // パラフレーズ
+  ORCHESTRATION: 'orchestration', // 管弦楽化
+  REDUCTION: 'reduction', // ピアノリダクション
+  RECONSTRUCTION: 'reconstruction', // 復元/補筆
+} as const;
+
+export type ArrangeType = (typeof ArrangeType)[keyof typeof ArrangeType];
+
+export const ArrangeTypeSchema = z.enum(
+  Object.values(ArrangeType) as [ArrangeType, ...ArrangeType[]],
+);
+
+/**
  * 作品番号・カタログ情報
  */
 export const CatalogueSchema = z.object({
@@ -102,6 +154,10 @@ export const CatalogueSchema = z.object({
    * ソート用の数値 (カタログ順に並べるために使用、1-1,000,000)
    */
   sortOrder: z.number().min(0).max(1_000_000).optional(),
+  /**
+   * 主たるカタログ番号か (e.g. Op.番号が複数の場合や、独自番号との併記時に使用)
+   */
+  isPrimary: z.boolean().default(false),
 });
 
 /**

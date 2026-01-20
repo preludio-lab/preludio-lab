@@ -9,20 +9,25 @@ import { MusicalKey } from './musical-key';
 describe('Work Entity', () => {
   const validControl = {
     id: '550e8400-e29b-41d4-a716-446655440000',
-    composer: 'beethoven',
+    composerSlug: 'beethoven',
     slug: 'symphony-no5',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
 
   const validMetadata = {
-    title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
-    popularTitle: { ja: '運命', en: 'Fate' },
-    catalogue: {
-      prefix: MusicalCataloguePrefix.OP,
-      number: '67',
-      sortOrder: 67,
+    titleComponents: {
+      title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      nickname: { ja: '運命', en: 'Fate' },
     },
+    catalogues: [
+      {
+        prefix: MusicalCataloguePrefix.OP,
+        number: '67',
+        sortOrder: 67,
+        isPrimary: true,
+      },
+    ],
     performanceDifficulty: 5,
     era: MusicalEra.CLASSICAL,
     instrumentation: 'Symphony Orchestra',
@@ -56,7 +61,7 @@ describe('Work Entity', () => {
 
     expect(work.id).toBe(validControl.id);
     expect(work.slug).toBe(validControl.slug);
-    expect(work.composer).toBe(validControl.composer);
+    expect(work.composerSlug).toBe(validControl.composerSlug);
     expect(work.title.ja).toBe('交響曲第5番');
     expect(work.catalogue).toBe('op 67');
     expect(work.era).toBe(MusicalEra.CLASSICAL);
@@ -71,19 +76,22 @@ describe('Work Entity', () => {
   it('should correctly format catalogue when properties are missing', () => {
     const work1 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: { number: '67' } },
+      metadata: { ...validMetadata, catalogues: [{ number: '67', isPrimary: true }] },
     });
     expect(work1.catalogue).toBe('67');
 
     const work2 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: { prefix: MusicalCataloguePrefix.OP } },
+      metadata: {
+        ...validMetadata,
+        catalogues: [{ prefix: MusicalCataloguePrefix.OP, isPrimary: true }],
+      },
     });
     expect(work2.catalogue).toBe('op');
 
     const work3 = new Work({
       control: validControl,
-      metadata: { ...validMetadata, catalogue: undefined },
+      metadata: { ...validMetadata, catalogues: [] },
     });
     expect(work3.catalogue).toBe('');
   });
@@ -93,7 +101,7 @@ describe('Work Entity', () => {
       control: validControl,
       metadata: {
         ...validMetadata,
-        catalogue: { prefix: MusicalCataloguePrefix.K, number: '331a' },
+        catalogues: [{ prefix: MusicalCataloguePrefix.K, number: '331a', isPrimary: true }],
       },
     });
     expect(work.catalogue).toBe('k 331a');
@@ -106,11 +114,11 @@ describe('Work Entity', () => {
     });
 
     const cloned = work.cloneWith({
-      control: { composer: 'brahms' },
+      control: { composerSlug: 'brahms' },
       metadata: { performanceDifficulty: 4 },
     });
 
-    expect(cloned.composer).toBe('brahms');
+    expect(cloned.composerSlug).toBe('brahms');
     expect(cloned.metadata.performanceDifficulty).toBe(4);
     expect(cloned.id).toBe(work.id);
   });

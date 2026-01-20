@@ -1,0 +1,45 @@
+{
+  "slug": "beethoven",
+  "fullName": {
+    "en": "Ludwig van Beethoven",
+    "ja": "ルートヴィヒ・ヴァン・ベートーヴェン"
+  },
+  "displayName": {
+    "en": "L. v. Beethoven",
+    "ja": "ベートーヴェン"
+  },
+  "shortName": {
+    "en": "Beethoven",
+    "ja": "ベートーヴェン"
+  },
+  "birthDate": "1770-12-17",
+  "deathDate": "1827-03-26",
+  "nationalityCode": "DE",
+  "places": [
+    {
+      "slug": "bonn",
+      "type": "birth",
+      "countryCode": "DE"
+    },
+    {
+      "slug": "vienna",
+      "type": "activity",
+      "countryCode": "AT"
+    }
+  ],
+  "representativeInstruments": ["piano"],
+  "representativeGenres": ["symphony", "sonata", "chamber-strings", "piano-concerto"],
+  "impressionDimensions": {
+    "innovation": 9,
+    "emotionality": 8,
+    "nationalism": 2,
+    "scale": 9,
+    "complexity": 7,
+    "theatricality": 5
+  },
+  "tags": ["deafness", "titan"],
+  "biography": {
+    "en": "A German composer and pianist who was a crucial figure in the transition between the Classical and Romantic eras in classical music.",
+    "ja": "古典派からロマン派への移行期における西洋音楽史上の極めて重要なドイツの作曲家。"
+  }
+}

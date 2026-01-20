@@ -31,14 +31,14 @@ export class FsWorkRepository implements WorkRepository {
 
   async findBySlug(composerId: string, slug: string): Promise<Work | null> {
     const works = await this.getAllWorks();
-    return works.find((w) => w.composer === composerId && w.slug === slug) || null;
+    return works.find((w) => w.composerSlug === composerId && w.slug === slug) || null;
   }
 
   async findMany(criteria: WorkSearchCriteria): Promise<Work[]> {
     let works = await this.getAllWorks();
 
     if (criteria.composerId) {
-      works = works.filter((w) => w.composer === criteria.composerId);
+      works = works.filter((w) => w.composerSlug === criteria.composerId);
     }
     if (criteria.genre) {
       works = works.filter((w) =>

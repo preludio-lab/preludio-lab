@@ -1,7 +1,6 @@
 import { z } from '@/shared/validation/zod';
 import { MusicalEraSchema } from '../shared/musical-era';
 import {
-  TitleSchema,
   DescriptionSchema,
   CompositionPeriodSchema,
   MusicalIdentitySchema,
@@ -9,8 +8,10 @@ import {
   PerformanceDifficultySchema,
   NicknamesSchema,
   ImpressionDimensionsSchema,
+  TitleComponentsSchema,
+  ArrangeTypeSchema,
 } from './work.shared';
-import { TagsSchema, YearSchema } from '../shared/common.metadata';
+import { TagsSchema, YearSchema, SlugSchema } from '../shared/common.metadata';
 
 // Re-export common types and schemas for convenience
 export * from './work.shared';
@@ -32,20 +33,17 @@ export const InstrumentationFlagsSchema = z.object({
 });
 
 /**
- * Work Metadata
- * 作品のメタデータ (多言語対応)
+ * Work Metadata Base
  */
-export const WorkMetadataSchema = z.object({
-  /** 正式名称 */
-  title: TitleSchema,
-  /** 通称 (e.g. "運命") */
-  popularTitle: TitleSchema.optional(),
+export const WorkMetadataBaseSchema = z.object({
+  /** タイトル構成要素 (title, prefix, content, nickname) */
+  titleComponents: TitleComponentsSchema,
 
-  /** カタログ情報 (作品番号等) */
-  catalogue: CatalogueSchema.optional(),
+  /** カタログ情報リスト (作品番号等) */
+  catalogues: z.array(CatalogueSchema).default([]),
 
-  /** 作曲家 ID/Slug */
-  composer: z.string().max(64).optional(),
+  /** 作曲家 ID/Slug (基本的には WorkControl.composerSlug と一致させる) */
+  composer: SlugSchema.optional(),
   /** 時代区分 (Taxonomy準拠) */
   era: MusicalEraSchema.optional(),
 
@@ -81,7 +79,33 @@ export const WorkMetadataSchema = z.object({
   description: DescriptionSchema.optional(),
   /** 自由タグ */
   tags: TagsSchema,
+  /** 編曲・派生元情報 */
+  basedOn: z
+    .object({
+      /** 原曲の Slug (Work/WorkPart) */
+      originalWorkSlug: SlugSchema,
+      /** 編曲・派生タイプ */
+      arrangeType: ArrangeTypeSchema,
+      /** 編曲者 (Slug) */
+      arranger: SlugSchema.optional(),
+    })
+    .optional(),
   // parts: z.array(WorkPartSchema).max(100).default([]), // Phase 7: Promoted to standalone aggregate
+});
+
+/**
+ * Work Metadata (Refined)
+ */
+export const WorkMetadataSchema = WorkMetadataBaseSchema.superRefine((data, ctx) => {
+  // isPrimary: true が複数存在しないことを確認
+  const primaryCount = data.catalogues.filter((c) => c.isPrimary).length;
+  if (primaryCount > 1) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Primary catalogue must be at most one.',
+      path: ['catalogues'],
+    });
+  }
 });
 
 export type WorkMetadata = z.infer<typeof WorkMetadataSchema>;

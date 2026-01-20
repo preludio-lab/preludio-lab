@@ -1,0 +1,185 @@
+{
+  "slug": "symphony-no-5",
+  "composerSlug": "beethoven",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-01-21T02:00:00Z",
+    "promptVersion": "v1.0.0"
+  },
+  "titleComponents": {
+    "title": {
+      "en": "Symphony No. 5 in C minor \"Fate\"",
+      "ja": "交響曲第5番 ハ短調 「運命」"
+    },
+    "content": {
+      "en": "Symphony No. 5 in C minor",
+      "ja": "交響曲第5番 ハ短調"
+    },
+    "nickname": {
+      "en": "Fate",
+      "ja": "運命"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "67",
+      "isPrimary": true
+    }
+  ],
+  "key": "c-minor",
+  "genres": ["symphony"],
+  "compositionYear": 1808,
+  "compositionPeriod": {
+    "en": "1804-1808",
+    "ja": "1804-1808年"
+  },
+  "impressionDimensions": {
+    "brightness": -5,
+    "vibrancy": 9,
+    "scale": 8,
+    "depth": 7,
+    "drama": 9,
+    "popularity": 10
+  },
+  "tags": ["famous-opening", "victory"],
+  "parts": [
+    {
+      "slug": "1st-mov",
+      "order": 1,
+      "titleComponents": {
+        "title": {
+          "en": "I. Allegro con brio in C minor",
+          "ja": "第1楽章 アレグロ・コン・ブリオ ハ短調"
+        },
+        "prefix": {
+          "en": "I.",
+          "ja": "第1楽章"
+        },
+        "content": {
+          "en": "Allegro con brio in C minor",
+          "ja": "アレグロ・コン・ブリオ ハ短調"
+        }
+      },
+      "type": "movement",
+      "key": "c-minor",
+      "tempo": "Allegro con brio",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": -3,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 6,
+        "drama": 9,
+        "popularity": 10
+      }
+    },
+    {
+      "slug": "2nd-mov",
+      "order": 2,
+      "titleComponents": {
+        "title": {
+          "en": "II. Andante con moto in A-flat major",
+          "ja": "第2楽章 アンダンテ・コン・モート 変イ長調"
+        },
+        "prefix": {
+          "en": "II.",
+          "ja": "第2楽章"
+        },
+        "content": {
+          "en": "Andante con moto in A-flat major",
+          "ja": "アンダンテ・コン・モート 変イ長調"
+        }
+      },
+      "type": "movement",
+      "key": "a-flat-major",
+      "tempo": "Andante con moto",
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 8
+      },
+      "performanceDifficulty": 4,
+      "impressionDimensions": {
+        "brightness": 4,
+        "vibrancy": -2,
+        "scale": 5,
+        "depth": 7,
+        "drama": 3,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "3rd-mov",
+      "order": 3,
+      "titleComponents": {
+        "title": {
+          "en": "III. Scherzo: Allegro in C minor",
+          "ja": "第3楽章 スケルツォ：アレグロ ハ短調"
+        },
+        "prefix": {
+          "en": "III.",
+          "ja": "第3楽章"
+        },
+        "content": {
+          "en": "Scherzo: Allegro in C minor",
+          "ja": "スケルツォ：アレグロ ハ短調"
+        }
+      },
+      "type": "movement",
+      "key": "c-minor",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": -4,
+        "vibrancy": 6,
+        "scale": 6,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "4th-mov",
+      "order": 4,
+      "titleComponents": {
+        "title": {
+          "en": "IV. Allegro in C major",
+          "ja": "第4楽章 アレグロ ハ長調"
+        },
+        "prefix": {
+          "en": "IV.",
+          "ja": "第4楽章"
+        },
+        "content": {
+          "en": "Allegro in C major",
+          "ja": "アレグロ ハ長調"
+        }
+      },
+      "type": "movement",
+      "key": "c-major",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": 9,
+        "vibrancy": 10,
+        "scale": 9,
+        "depth": 5,
+        "drama": 9,
+        "popularity": 10
+      }
+    }
+  ]
+}
