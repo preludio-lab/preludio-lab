@@ -6,11 +6,17 @@ description: スレッド開始時に新規ブランチとWorktreeを作成す�
 
 このワークフローでは、独立した作業環境（Git Worktree）を作成し、次回以降の作業をその環境で行えるようにします。
 
+## 0.言語
+
+- チャット、実装計画、ウォークスルーは日本語
+- ソースコード中のコメントは日本語
+- システムが出力するメッセージ（ログ等）は英語
+
 ## 1. ブランチ名の決定
 
-- **命名規則**: `feat/{issue-id}-{slug}` または `fix/{issue-id}-{slug}`
-  - 例: `feat/score-engine`, `fix/123-login-bug`
-  - Issue IDがない場合は `feat/ui-refresh` のようにslugのみでも可。
+- 必ず作業ブランチを切ること。masterブランチを直接修正してはいけない
+- 修正のたびにコミット、プッシュすること
+- 命名規則やコミットルールは @/docs/02_guidelines/deloymeny-guidelines.md に準拠する
 
 ## 2. Worktreeのセットアップ
 
