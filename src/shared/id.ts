@@ -7,21 +7,6 @@ import { uuidv7 } from 'uuidv7';
 export type Id<T extends string> = string & { readonly __brand: T };
 
 /**
- * Composer Entity ID
- */
-export type ComposerId = Id<'Composer'>;
-
-/**
- * Work Entity ID
- */
-export type WorkId = Id<'Work'>;
-
-/**
- * WorkPart Entity ID
- */
-export type WorkPartId = Id<'WorkPart'>;
-
-/**
  * Generates a new UUID v7.
  * UUID v7 are time-sortable and suitable for database primary keys.
  *

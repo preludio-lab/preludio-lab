@@ -1,7 +1,7 @@
-import { ComposerControl } from './composer.control';
+import { ComposerControl, ComposerId } from './composer.control';
 import { ComposerMetadata } from './composer.metadata';
 
-export type { ComposerControl, ComposerMetadata };
+export type { ComposerControl, ComposerMetadata, ComposerId };
 
 /**
  * Composer Entity

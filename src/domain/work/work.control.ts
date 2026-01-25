@@ -1,6 +1,11 @@
 import { z } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/common.metadata';
-import { WorkId } from '@/shared/id';
+import { Id } from '@/shared/id';
+
+/**
+ * Work Entity ID
+ */
+export type WorkId = Id<'Work'>;
 
 /**
  * Work Control

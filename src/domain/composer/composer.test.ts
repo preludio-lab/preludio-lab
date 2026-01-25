@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Composer } from './composer';
-import { ComposerId } from '@/shared/id';
+import { Composer, ComposerId } from './composer';
 import { ComposerMetadataSchema } from './composer.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { Nationality } from '../shared/nationality';

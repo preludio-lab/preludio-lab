@@ -1,6 +1,12 @@
 import { z } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/common.metadata';
-import { WorkId, WorkPartId } from '@/shared/id';
+import { Id } from '@/shared/id';
+import { WorkId } from './work.control';
+
+/**
+ * WorkPart Entity ID
+ */
+export type WorkPartId = Id<'WorkPart'>;
 
 /**
  * Work Part Control

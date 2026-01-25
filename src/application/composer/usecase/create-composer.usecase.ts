@@ -1,9 +1,14 @@
-import { Composer, ComposerControl, ComposerMetadata } from '@/domain/composer/composer';
+import {
+  Composer,
+  ComposerControl,
+  ComposerMetadata,
+  ComposerId,
+} from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { ComposerData } from '@/domain/composer/composer.schema';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { generateId, ComposerId } from '@/shared/id';
+import { generateId } from '@/shared/id';
 
 export type CreateComposerCommand = ComposerData;
 

@@ -1,6 +1,11 @@
 import { z } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/common.metadata';
-import { ComposerId } from '@/shared/id';
+import { Id } from '@/shared/id';
+
+/**
+ * Composer Entity ID
+ */
+export type ComposerId = Id<'Composer'>;
 
 /**
  * Composer Control

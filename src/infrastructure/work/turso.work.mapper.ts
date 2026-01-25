@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Work } from '@/domain/work/work';
-import { WorkId, generateId } from '@/shared/id';
+import { Work, WorkId } from '@/domain/work/work';
+import { generateId } from '@/shared/id';
 import { WorkRow, WorkTranslationRow, WorkRows } from './interfaces/work.ds.interface';
 
 function aggregateTranslations(

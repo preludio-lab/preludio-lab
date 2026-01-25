@@ -1,7 +1,7 @@
-import { WorkPartControl } from './work-part.control';
+import { WorkPartControl, WorkPartId } from './work-part.control';
 import { WorkPartMetadata } from './work-part.metadata';
 
-export type { WorkPartControl, WorkPartMetadata };
+export type { WorkPartControl, WorkPartMetadata, WorkPartId };
 
 /**
  * WorkPart Entity

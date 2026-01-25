@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { WorkPart } from './work-part';
+import { WorkPart, WorkPartId } from './work-part';
 import { WorkPartControl, WorkPartControlSchema } from './work-part.control';
-import { WorkId, WorkPartId } from '@/shared/id';
+import { WorkId } from './work';
 import { WorkPartMetadata } from './work-part.metadata';
 import { MusicalGenre } from '../shared/musical-genre';
 

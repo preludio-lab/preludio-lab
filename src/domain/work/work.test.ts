@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Work } from './work';
-import { WorkId } from '@/shared/id';
+import { Work, WorkId } from './work';
 import { MetronomeUnit } from './work.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { MusicalGenre } from '../shared/musical-genre';

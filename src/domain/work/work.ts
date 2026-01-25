@@ -1,7 +1,7 @@
-import { WorkControl } from './work.control';
+import { WorkControl, WorkId } from './work.control';
 import { WorkMetadata } from './work.metadata';
 
-export type { WorkControl, WorkMetadata };
+export type { WorkControl, WorkMetadata, WorkId };
 
 /**
  * Work Entity
