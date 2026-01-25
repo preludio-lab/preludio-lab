@@ -10,7 +10,8 @@ import { TursoWorkDataSource } from '@/infrastructure/work/turso.work.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
 import { WorkRepositoryImpl } from '@/infrastructure/work/work.repository';
 import { WorkPartRepositoryImpl } from '@/infrastructure/work/work-part.repository';
-import { UpsertWorkUseCase } from '@/application/work/usecase/UpsertWork';
+import { CreateWorkUseCase } from '@/application/work/usecase/create-work.usecase';
+import { UpdateWorkUseCase } from '@/application/work/usecase/update-work.usecase';
 import { WorkData } from '@/domain/work/work.schema';
 
 async function main() {
@@ -27,7 +28,8 @@ async function main() {
   const workPartRepo = new WorkPartRepositoryImpl(workDS);
 
   // Use Case
-  const useCase = new UpsertWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
+  const createUseCase = new CreateWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
+  const updateUseCase = new UpdateWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
 
   // Path to data
   const dataDir = path.join(process.cwd(), 'data', 'works');
@@ -40,7 +42,21 @@ async function main() {
     for (const file of files) {
       logger.info(`Processing: ${path.basename(file)}`);
       const data = await readJsonFile<WorkData>(file);
-      await useCase.execute(data);
+
+      // Resolve composer ID first to check existence
+      const composer = await composerRepo.findBySlug(data.composerSlug);
+      if (!composer) {
+        logger.error(`Composer not found for work: ${data.slug} (composer: ${data.composerSlug})`);
+        continue; // Skip this work
+      }
+
+      const existingWork = await workRepo.findBySlug(composer.id, data.slug);
+
+      if (existingWork) {
+        await updateUseCase.execute(data);
+      } else {
+        await createUseCase.execute(data);
+      }
     }
 
     logger.info('Work seeding completed successfully.');

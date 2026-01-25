@@ -2,6 +2,7 @@ export type ErrorCode =
   | 'NOT_FOUND'
   | 'UNAUTHORIZED'
   | 'VALIDATION_ERROR'
+  | 'CONFLICT'
   | 'INFRASTRUCTURE_ERROR'
   | 'INTERNAL_SERVER_ERROR';
 

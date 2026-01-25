@@ -7,7 +7,8 @@ import {
 } from '@/infrastructure/shared/cli/seeder-utils';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
-import { UpsertComposerUseCase } from '@/application/composer/usecase/UpsertComposer';
+import { CreateComposerUseCase } from '@/application/composer/usecase/create-composer.usecase';
+import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
 import { ComposerData } from '@/domain/composer/composer.schema';
 
 async function main() {
@@ -16,7 +17,8 @@ async function main() {
 
   const ds = new TursoComposerDataSource(db);
   const repo = new ComposerRepositoryImpl(ds);
-  const useCase = new UpsertComposerUseCase(repo, logger);
+  const createUseCase = new CreateComposerUseCase(repo, logger);
+  const updateUseCase = new UpdateComposerUseCase(repo, logger);
 
   // Path to data
   const dataDir = path.join(process.cwd(), 'data', 'composers');
@@ -29,7 +31,14 @@ async function main() {
     for (const file of files) {
       logger.info(`Processing: ${path.basename(file)}`);
       const data = await readJsonFile<ComposerData>(file);
-      await useCase.execute(data);
+
+      const existing = await repo.findBySlug(data.slug);
+
+      if (existing) {
+        await updateUseCase.execute(data);
+      } else {
+        await createUseCase.execute(data);
+      }
     }
 
     logger.info('Composer seeding completed successfully.');
