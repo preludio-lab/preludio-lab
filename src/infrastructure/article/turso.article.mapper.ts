@@ -1,6 +1,6 @@
 import { AppLocale } from '@/domain/i18n/locale';
-import { Article } from '@/domain/article/article';
-import { ArticleStatus } from '@/domain/article/article.control';
+import { Article, ArticleId } from '@/domain/article/article';
+import { ArticleStatus, ArticleControl } from '@/domain/article/article.control';
 import {
   ArticleCategory,
   ArticleMetadata,
@@ -55,13 +55,12 @@ export class TursoArticleMapper {
       throw new AppError(`Invalid status detected: ${rawStatus}`, 'INTERNAL_SERVER_ERROR', 500);
     }
 
-    const control = {
-      id: articleRow.id,
+    const control: ArticleControl = {
+      id: articleRow.id as ArticleId,
       lang: lang,
       status: status,
       createdAt: new Date(articleRow.createdAt),
       updatedAt: new Date(translationRow.updatedAt),
-      version: 1,
     };
 
     // 4. Resolve Category & Slug

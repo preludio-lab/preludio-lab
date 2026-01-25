@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { Article } from '@/domain/article/article';
+import { Article, ArticleId } from '@/domain/article/article';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
@@ -49,7 +49,7 @@ export class CreateArticleUseCase {
 
     const article = new Article({
       control: {
-        id: command.slug, // ID generation strategy (use slug for FS)
+        id: command.slug as ArticleId, // ID generation strategy (use slug for FS)
         lang: command.lang as AppLocale,
         status: ArticleStatus.DRAFT,
         createdAt: new Date(),

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { ScoreSchema } from './score';
+import { ScoreSchema, ScoreId } from './score';
 import { ScoreControlSchema } from './score.control';
 import { ScoreMetadataSchema } from './score.metadata';
 
 describe('Score', () => {
   it('control と metadata から Score を構成できること', () => {
     const control = ScoreControlSchema.parse({
-      id: 'score-id',
+      id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3' as ScoreId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

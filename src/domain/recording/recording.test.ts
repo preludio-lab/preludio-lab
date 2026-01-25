@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { Recording } from './recording';
+import { Recording, RecordingId } from './recording';
+import { WorkId } from '../work/work';
 import { RecordingProvider } from './recording.sources';
 
 describe('Recording Entity', () => {
   // 制御情報のモック (ID, 楽曲紐付け, タイムスタンプ)
   const mockControl = {
-    id: 'rec-1',
-    workId: 'work-1',
+    id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3' as RecordingId,
+    workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4' as WorkId,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -22,7 +23,7 @@ describe('Recording Entity', () => {
   const mockSources = {
     items: [
       {
-        id: 'src-1',
+        id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a5',
         provider: RecordingProvider.YOUTUBE,
         sourceId: 'dQw4w9WgXcQ',
       },
@@ -37,8 +38,8 @@ describe('Recording Entity', () => {
     });
 
     // 基本プロパティの確認
-    expect(recording.id).toBe('rec-1');
-    expect(recording.workId).toBe('work-1');
+    expect(recording.id).toBe('018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3');
+    expect(recording.workId).toBe('018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4');
     expect(recording.performerName.en).toBe('Glenn Gould');
     expect(recording.performerName.ja).toBe('グレン・グールド');
     expect(recording.recordingYear).toBe(1981);
@@ -65,6 +66,6 @@ describe('Recording Entity', () => {
     expect(updated.recordingYear).toBe(1955);
     // 他のフィールド (演奏者名など) が引き継がれていること
     expect(updated.performerName.en).toBe('Glenn Gould');
-    expect(updated.id).toBe('rec-1');
+    expect(updated.id).toBe('018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3');
   });
 });

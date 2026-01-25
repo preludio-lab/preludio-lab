@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Article } from './article';
+import { Article, ArticleId } from './article';
 import { ArticleContent } from './article.content';
 import { ArticleStatus } from './article.control';
 import { ArticleCategory } from './article.metadata';
@@ -12,7 +12,7 @@ describe('Article Entity', () => {
     const now = new Date();
     return new Article({
       control: {
-        id: 'test-id',
+        id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3' as ArticleId,
         lang: 'ja' as AppLocale,
         status: ArticleStatus.PUBLISHED,
         createdAt: now,

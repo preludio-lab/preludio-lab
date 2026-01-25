@@ -42,7 +42,7 @@ export type RecordingAudioQuality =
  */
 export const RecordingSourceSchema = z.object({
   /** ソースのユニークID (システム内部用 UUID v7) */
-  id: z.string().min(1).max(50),
+  id: z.string().uuid(),
   /** プロバイダ (Enum) */
   provider: z.nativeEnum(RecordingProvider),
   /** プロバイダ内での識別子 (動画ID、URI、パスなど) */

@@ -5,7 +5,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 describe('ArticleDtoSchema', () => {
   const validData = {
     control: {
-      id: 'article-123',
+      id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3',
       lang: 'ja',
       status: 'published',
       createdAt: '2026-01-01T00:00:00Z',
