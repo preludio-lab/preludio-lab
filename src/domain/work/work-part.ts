@@ -1,6 +1,8 @@
 import { WorkPartControl } from './work-part.control';
 import { WorkPartMetadata } from './work-part.metadata';
 
+export type { WorkPartControl, WorkPartMetadata };
+
 /**
  * WorkPart Entity
  * 楽曲の構成要素（楽章、曲目等）を表すエンティティ。

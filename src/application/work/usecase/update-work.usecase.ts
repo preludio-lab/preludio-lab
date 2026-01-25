@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Work } from '@/domain/work/work';
+import { Work, WorkControl, WorkMetadata } from '@/domain/work/work';
 import { WorkRepository } from '@/domain/work/work.repository';
 import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { WorkData } from '@/domain/work/work.schema';
-import { WorkPart } from '@/domain/work/work-part';
+import { WorkPart, WorkPartControl, WorkPartMetadata } from '@/domain/work/work-part';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 
@@ -51,7 +50,7 @@ export class UpdateWorkUseCase {
       // 3. Update Work Core
       const workId = existingWork.id;
 
-      const workControl = {
+      const workControl: WorkControl = {
         id: workId,
         slug: slug,
         composerSlug: composerSlug,
@@ -59,27 +58,40 @@ export class UpdateWorkUseCase {
         updatedAt: new Date(),
       };
 
-      const d = data as any;
-      const workMetadata = {
-        titleComponents: d.titleComponents,
-        catalogues: d.catalogues,
-        era: d.era,
-        instrumentation: d.instrumentation,
-        instrumentationFlags: d.instrumentationFlags,
-        performanceDifficulty: d.performanceDifficulty,
-        musicalIdentity: d.musicalIdentity,
-        impressionDimensions: d.impressionDimensions,
-        compositionYear: d.compositionYear,
-        compositionPeriod: d.compositionPeriod,
-        nicknames: d.nicknames,
-        description: d.description,
-        tags: d.tags,
-        basedOn: d.basedOn,
+      const workMetadata: WorkMetadata = {
+        titleComponents: data.titleComponents,
+        catalogues: data.catalogues ?? [],
+        era: data.era,
+        instrumentation: data.instrumentation,
+        instrumentationFlags: data.instrumentationFlags ?? {
+          isSolo: false,
+          isChamber: false,
+          isOrchestral: false,
+          hasChorus: false,
+          hasVocal: false,
+        },
+        performanceDifficulty: data.performanceDifficulty,
+        musicalIdentity: {
+          genres: data.genres ?? [],
+          key: data.key,
+          tempo: data.tempo,
+          tempoTranslation: data.tempoTranslation,
+          timeSignature: data.timeSignature,
+          bpm: data.bpm,
+          metronomeUnit: data.metronomeUnit,
+        },
+        impressionDimensions: data.impressionDimensions,
+        compositionYear: data.compositionYear,
+        compositionPeriod: data.compositionPeriod,
+        nicknames: data.nicknames ?? [],
+        description: data.description,
+        tags: data.tags,
+        basedOn: data.basedOn,
       };
 
       const workEntity = new Work({
-        control: workControl as any,
-        metadata: workMetadata as any,
+        control: workControl,
+        metadata: workMetadata,
       });
 
       await this.workRepo.save(workEntity);
@@ -91,31 +103,39 @@ export class UpdateWorkUseCase {
       const partsData = data.parts || [];
       if (partsData.length > 0) {
         for (const p of partsData) {
-          const pData = p as any;
           const partId = crypto.randomUUID();
 
-          const partEntity = new WorkPart(
-            {
-              id: partId,
-              workId: workId,
-              slug: pData.slug,
-              order: pData.order,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            } as any,
-            {
-              titleComponents: pData.titleComponents,
-              catalogues: pData.catalogues,
-              type: pData.type,
-              isNameStandard: pData.isNameStandard,
-              description: pData.description,
-              musicalIdentity: pData.musicalIdentity,
-              impressionDimensions: pData.impressionDimensions,
-              nicknames: pData.nicknames,
-              basedOn: pData.basedOn,
-              performanceDifficulty: pData.performanceDifficulty,
-            } as any,
-          );
+          const partControl: WorkPartControl = {
+            id: partId,
+            workId: workId,
+            slug: p.slug,
+            order: p.order,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          const partMetadata: WorkPartMetadata = {
+            titleComponents: p.titleComponents,
+            catalogues: p.catalogues ?? [],
+            type: p.type,
+            isNameStandard: p.isNameStandard ?? true,
+            description: p.description,
+            musicalIdentity: {
+              genres: p.genres ?? [],
+              key: p.key,
+              tempo: p.tempo,
+              tempoTranslation: p.tempoTranslation,
+              timeSignature: p.timeSignature,
+              bpm: p.bpm,
+              metronomeUnit: p.metronomeUnit,
+            },
+            impressionDimensions: p.impressionDimensions,
+            nicknames: p.nicknames ?? [],
+            basedOn: p.basedOn,
+            performanceDifficulty: p.performanceDifficulty,
+          };
+
+          const partEntity = new WorkPart(partControl, partMetadata);
 
           await this.workPartRepo.save(partEntity);
         }

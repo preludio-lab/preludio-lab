@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ComposerControl, ComposerMetadata } from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { ComposerData } from '@/domain/composer/composer.schema';
 import { Logger } from '@/shared/logging/logger';
@@ -32,14 +32,14 @@ export class UpdateComposerUseCase {
       throw new AppError(`Composer not found: ${slug}`, 'NOT_FOUND');
     }
 
-    const control = {
+    const control: Partial<ComposerControl> = {
       slug: command.slug,
       createdAt: existing.control.createdAt,
       updatedAt: new Date(),
       id: existing.id,
     };
 
-    const metadata = {
+    const metadata: Partial<ComposerMetadata> = {
       fullName: command.fullName,
       displayName: command.displayName,
       shortName: command.shortName,
@@ -51,9 +51,9 @@ export class UpdateComposerUseCase {
       deathDate: command.deathDate ? new Date(command.deathDate) : undefined,
       nationalityCode: command.nationalityCode,
 
-      representativeInstruments: command.representativeInstruments,
-      representativeGenres: command.representativeGenres,
-      places: command.places,
+      representativeInstruments: command.representativeInstruments ?? [],
+      representativeGenres: command.representativeGenres ?? [],
+      places: command.places ?? [],
 
       portrait: command.portrait,
 
@@ -62,8 +62,8 @@ export class UpdateComposerUseCase {
     };
 
     const entity = existing.cloneWith({
-      control: { ...existing.control, ...control },
-      metadata: { ...existing.metadata, ...metadata } as any,
+      control,
+      metadata,
     });
 
     await this.repository.save(entity);

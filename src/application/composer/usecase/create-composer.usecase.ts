@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Composer } from '@/domain/composer/composer';
+import { Composer, ComposerControl, ComposerMetadata } from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { ComposerData } from '@/domain/composer/composer.schema';
 import { Logger } from '@/shared/logging/logger';
@@ -33,14 +32,14 @@ export class CreateComposerUseCase {
       throw new AppError(`Composer already exists: ${slug}`, 'CONFLICT');
     }
 
-    const control = {
+    const control: ComposerControl = {
       slug: command.slug,
       createdAt: new Date(),
       updatedAt: new Date(),
       id: crypto.randomUUID(),
     };
 
-    const metadata = {
+    const metadata: ComposerMetadata = {
       fullName: command.fullName,
       displayName: command.displayName,
       shortName: command.shortName,
@@ -52,9 +51,9 @@ export class CreateComposerUseCase {
       deathDate: command.deathDate ? new Date(command.deathDate) : undefined,
       nationalityCode: command.nationalityCode,
 
-      representativeInstruments: command.representativeInstruments,
-      representativeGenres: command.representativeGenres,
-      places: command.places,
+      representativeInstruments: command.representativeInstruments ?? [],
+      representativeGenres: command.representativeGenres ?? [],
+      places: command.places ?? [],
 
       portrait: command.portrait,
 
@@ -63,8 +62,8 @@ export class CreateComposerUseCase {
     };
 
     const entity = new Composer({
-      control: control as any,
-      metadata: metadata as any,
+      control,
+      metadata,
     });
 
     await this.repository.save(entity);
