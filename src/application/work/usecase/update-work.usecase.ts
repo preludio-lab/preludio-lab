@@ -6,6 +6,7 @@ import { WorkData } from '@/domain/work/work.schema';
 import { WorkPart, WorkPartControl, WorkPartMetadata } from '@/domain/work/work-part';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
+import { generateId, WorkPartId } from '@/shared/id';
 
 export type UpdateWorkCommand = WorkData;
 
@@ -103,7 +104,7 @@ export class UpdateWorkUseCase {
       const partsData = data.parts || [];
       if (partsData.length > 0) {
         for (const p of partsData) {
-          const partId = crypto.randomUUID();
+          const partId = generateId<'WorkPart'>();
 
           const partControl: WorkPartControl = {
             id: partId,

@@ -1,5 +1,6 @@
 import { z } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/common.metadata';
+import { WorkId } from '@/shared/id';
 
 /**
  * Work Control
@@ -16,4 +17,6 @@ export const WorkControlSchema = z.object({
   createdAt: z.coerce.date(),
 });
 
-export type WorkControl = z.infer<typeof WorkControlSchema>;
+export type WorkControl = Omit<z.infer<typeof WorkControlSchema>, 'id'> & {
+  id: WorkId;
+};

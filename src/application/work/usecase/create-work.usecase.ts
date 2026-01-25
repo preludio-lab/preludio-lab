@@ -6,6 +6,7 @@ import { WorkData } from '@/domain/work/work.schema';
 import { WorkPart, WorkPartControl, WorkPartMetadata } from '@/domain/work/work-part';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
+import { generateId, WorkId, WorkPartId } from '@/shared/id';
 
 export type CreateWorkCommand = WorkData;
 
@@ -48,7 +49,7 @@ export class CreateWorkUseCase {
 
     try {
       // 3. Create Work Core
-      const workId = crypto.randomUUID();
+      const workId = generateId<'Work'>();
 
       const workControl: WorkControl = {
         id: workId,
@@ -101,7 +102,7 @@ export class CreateWorkUseCase {
       const partsData = data.parts || [];
       if (partsData.length > 0) {
         for (const p of partsData) {
-          const partId = crypto.randomUUID();
+          const partId = generateId<'WorkPart'>();
           const partControl: WorkPartControl = {
             id: partId,
             workId: workId,

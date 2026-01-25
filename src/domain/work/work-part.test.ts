@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { WorkPart } from './work-part';
 import { WorkPartControl, WorkPartControlSchema } from './work-part.control';
+import { WorkId, WorkPartId } from '@/shared/id';
 import { WorkPartMetadata } from './work-part.metadata';
 import { MusicalGenre } from '../shared/musical-genre';
 
 describe('WorkPart Entity', () => {
   const control: WorkPartControl = {
-    id: '550e8400-e29b-41d4-a716-446655440001',
-    workId: '550e8400-e29b-41d4-a716-446655440000',
+    id: '550e8400-e29b-41d4-a716-446655440001' as WorkPartId,
+    workId: '550e8400-e29b-41d4-a716-446655440000' as WorkId,
     slug: '1st-mov',
     order: 1,
     createdAt: new Date(),

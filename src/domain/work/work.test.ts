@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Work } from './work';
+import { WorkId } from '@/shared/id';
 import { MetronomeUnit } from './work.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { MusicalGenre } from '../shared/musical-genre';
@@ -8,7 +9,7 @@ import { MusicalKey } from './musical-key';
 
 describe('Work Entity', () => {
   const validControl = {
-    id: '550e8400-e29b-41d4-a716-446655440000',
+    id: '550e8400-e29b-41d4-a716-446655440000' as WorkId,
     composerSlug: 'beethoven',
     slug: 'symphony-no5',
     createdAt: new Date(),

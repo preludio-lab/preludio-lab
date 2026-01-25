@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Composer } from './composer';
+import { ComposerId } from '@/shared/id';
 import { ComposerMetadataSchema } from './composer.metadata';
 import { MusicalEra } from '../shared/musical-era';
 import { Nationality } from '../shared/nationality';
@@ -9,7 +10,7 @@ import { MusicalPlace } from '../shared/musical-place';
 
 describe('Composer Entity', () => {
   const validControl = {
-    id: '550e8400-e29b-41d4-a716-446655440000',
+    id: '550e8400-e29b-41d4-a716-446655440000' as ComposerId,
     slug: 'beethoven',
     createdAt: new Date(),
     updatedAt: new Date(),

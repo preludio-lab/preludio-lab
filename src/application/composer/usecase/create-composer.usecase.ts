@@ -3,6 +3,7 @@ import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { ComposerData } from '@/domain/composer/composer.schema';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
+import { generateId, ComposerId } from '@/shared/id';
 
 export type CreateComposerCommand = ComposerData;
 
@@ -36,7 +37,7 @@ export class CreateComposerUseCase {
       slug: command.slug,
       createdAt: new Date(),
       updatedAt: new Date(),
-      id: crypto.randomUUID(),
+      id: generateId<'Composer'>(),
     };
 
     const metadata: ComposerMetadata = {

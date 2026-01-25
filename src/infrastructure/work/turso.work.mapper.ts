@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Work } from '@/domain/work/work';
+import { WorkId, generateId } from '@/shared/id';
 import { WorkRow, WorkTranslationRow, WorkRows } from './interfaces/work.ds.interface';
 
-function aggregateTranslations<T extends Record<string, any>>(
+function aggregateTranslations(
   translations: { lang: string; [key: string]: any }[],
   targetField: string,
 ): Record<string, string> {
@@ -29,7 +30,7 @@ export class TursoWorkMapper {
 
     return new Work({
       control: {
-        id: work.id,
+        id: work.id as WorkId,
         slug: work.slug,
         composerSlug: rows.composer?.slug || '',
         createdAt: new Date(work.createdAt),
@@ -144,7 +145,7 @@ export class TursoWorkMapper {
       if (!title) continue;
 
       translations.push({
-        id: crypto.randomUUID(),
+        id: generateId(),
         workId: ctrl.id,
         lang,
         title,

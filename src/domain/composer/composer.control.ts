@@ -1,5 +1,6 @@
 import { z } from '@/shared/validation/zod';
 import { SlugSchema } from '../shared/common.metadata';
+import { ComposerId } from '@/shared/id';
 
 /**
  * Composer Control
@@ -19,4 +20,6 @@ export const ComposerControlSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
-export type ComposerControl = z.infer<typeof ComposerControlSchema>;
+export type ComposerControl = Omit<z.infer<typeof ComposerControlSchema>, 'id'> & {
+  id: ComposerId;
+};
