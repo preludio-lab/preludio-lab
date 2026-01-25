@@ -2,13 +2,13 @@ import { Work, WorkControl, WorkMetadata, WorkId } from '@/domain/work/work';
 import { WorkRepository } from '@/domain/work/work.repository';
 import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { WorkData } from '@/domain/work/work.schema';
+import { CreateWorkCommand } from '../command/create-work.command';
 import { WorkPart, WorkPartControl, WorkPartMetadata, WorkPartId } from '@/domain/work/work-part';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
 
-export type CreateWorkCommand = WorkData;
+// CreateWorkCommand is now imported from command file
 
 /**
  * CreateWorkUseCase

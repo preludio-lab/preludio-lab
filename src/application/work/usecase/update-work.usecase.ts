@@ -2,13 +2,13 @@ import { Work, WorkControl, WorkMetadata } from '@/domain/work/work';
 import { WorkRepository } from '@/domain/work/work.repository';
 import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { WorkData } from '@/domain/work/work.schema';
 import { WorkPart, WorkPartControl, WorkPartMetadata, WorkPartId } from '@/domain/work/work-part';
+import { UpdateWorkCommand } from '../command/update-work.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
 
-export type UpdateWorkCommand = WorkData;
+// UpdateWorkCommand is now imported from command file
 
 /**
  * UpdateWorkUseCase
@@ -60,34 +60,32 @@ export class UpdateWorkUseCase {
       };
 
       const workMetadata: WorkMetadata = {
-        titleComponents: data.titleComponents,
-        catalogues: data.catalogues ?? [],
-        era: data.era,
-        instrumentation: data.instrumentation,
-        instrumentationFlags: data.instrumentationFlags ?? {
-          isSolo: false,
-          isChamber: false,
-          isOrchestral: false,
-          hasChorus: false,
-          hasVocal: false,
-        },
-        performanceDifficulty: data.performanceDifficulty,
+        titleComponents: data.titleComponents ?? existingWork.metadata.titleComponents,
+        catalogues: data.catalogues ?? existingWork.metadata.catalogues,
+        era: data.era ?? existingWork.metadata.era,
+        instrumentation: data.instrumentation ?? existingWork.metadata.instrumentation,
+        instrumentationFlags:
+          data.instrumentationFlags ?? existingWork.metadata.instrumentationFlags,
+        performanceDifficulty:
+          data.performanceDifficulty ?? existingWork.metadata.performanceDifficulty,
         musicalIdentity: {
-          genres: data.genres ?? [],
-          key: data.key,
-          tempo: data.tempo,
-          tempoTranslation: data.tempoTranslation,
-          timeSignature: data.timeSignature,
-          bpm: data.bpm,
-          metronomeUnit: data.metronomeUnit,
+          genres: data.genres ?? existingWork.metadata.musicalIdentity?.genres ?? [],
+          key: data.key ?? existingWork.metadata.musicalIdentity?.key,
+          tempo: data.tempo ?? existingWork.metadata.musicalIdentity?.tempo,
+          tempoTranslation:
+            data.tempoTranslation ?? existingWork.metadata.musicalIdentity?.tempoTranslation,
+          timeSignature: data.timeSignature ?? existingWork.metadata.musicalIdentity?.timeSignature,
+          bpm: data.bpm ?? existingWork.metadata.musicalIdentity?.bpm,
+          metronomeUnit: data.metronomeUnit ?? existingWork.metadata.musicalIdentity?.metronomeUnit,
         },
-        impressionDimensions: data.impressionDimensions,
-        compositionYear: data.compositionYear,
-        compositionPeriod: data.compositionPeriod,
-        nicknames: data.nicknames ?? [],
-        description: data.description,
-        tags: data.tags,
-        basedOn: data.basedOn,
+        impressionDimensions:
+          data.impressionDimensions ?? existingWork.metadata.impressionDimensions,
+        compositionYear: data.compositionYear ?? existingWork.metadata.compositionYear,
+        compositionPeriod: data.compositionPeriod ?? existingWork.metadata.compositionPeriod,
+        nicknames: data.nicknames ?? existingWork.metadata.nicknames,
+        description: data.description ?? existingWork.metadata.description,
+        tags: data.tags ?? existingWork.metadata.tags,
+        basedOn: data.basedOn ?? existingWork.metadata.basedOn,
       };
 
       const workEntity = new Work({
@@ -98,49 +96,52 @@ export class UpdateWorkUseCase {
       await this.workRepo.save(workEntity);
       this.logger.info(`Updated Work Core: ${slug} (${workId})`);
 
-      // 4. Update Parts (Delete All & Re-Insert)
-      await this.workPartRepo.deleteByWorkId(workId);
+      // 4. Update Parts (Delete All & Re-Insert) only if parts are provided
+      if (data.parts !== undefined) {
+        await this.workPartRepo.deleteByWorkId(workId);
+        const partsData = data.parts;
+        if (partsData.length > 0) {
+          for (const p of partsData) {
+            const partId = generateId<'WorkPart'>();
 
-      const partsData = data.parts || [];
-      if (partsData.length > 0) {
-        for (const p of partsData) {
-          const partId = generateId<'WorkPart'>();
+            const partControl: WorkPartControl = {
+              id: partId,
+              workId: workId,
+              slug: p.slug,
+              order: p.order,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
 
-          const partControl: WorkPartControl = {
-            id: partId,
-            workId: workId,
-            slug: p.slug,
-            order: p.order,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
+            const partMetadata: WorkPartMetadata = {
+              titleComponents: p.titleComponents,
+              catalogues: p.catalogues ?? [],
+              type: p.type,
+              isNameStandard: p.isNameStandard ?? true,
+              description: p.description,
+              musicalIdentity: {
+                genres: p.genres ?? [],
+                key: p.key,
+                tempo: p.tempo,
+                tempoTranslation: p.tempoTranslation,
+                timeSignature: p.timeSignature,
+                bpm: p.bpm,
+                metronomeUnit: p.metronomeUnit,
+              },
+              impressionDimensions: p.impressionDimensions,
+              nicknames: p.nicknames ?? [],
+              basedOn: p.basedOn,
+              performanceDifficulty: p.performanceDifficulty,
+            };
 
-          const partMetadata: WorkPartMetadata = {
-            titleComponents: p.titleComponents,
-            catalogues: p.catalogues ?? [],
-            type: p.type,
-            isNameStandard: p.isNameStandard ?? true,
-            description: p.description,
-            musicalIdentity: {
-              genres: p.genres ?? [],
-              key: p.key,
-              tempo: p.tempo,
-              tempoTranslation: p.tempoTranslation,
-              timeSignature: p.timeSignature,
-              bpm: p.bpm,
-              metronomeUnit: p.metronomeUnit,
-            },
-            impressionDimensions: p.impressionDimensions,
-            nicknames: p.nicknames ?? [],
-            basedOn: p.basedOn,
-            performanceDifficulty: p.performanceDifficulty,
-          };
+            const partEntity = new WorkPart(partControl, partMetadata);
 
-          const partEntity = new WorkPart(partControl, partMetadata);
-
-          await this.workPartRepo.save(partEntity);
+            await this.workPartRepo.save(partEntity);
+          }
+          this.logger.info(`Updated (Replaced) ${partsData.length} parts for work: ${slug}`);
+        } else {
+          this.logger.info(`Removed all parts for work: ${slug}`);
         }
-        this.logger.info(`Updated (Replaced) ${partsData.length} parts for work: ${slug}`);
       }
     } catch (err) {
       this.logger.error(`Failed to update work: ${composerSlug}/${slug}`, err as Error);

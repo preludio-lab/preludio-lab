@@ -5,12 +5,12 @@ import {
   ComposerId,
 } from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { ComposerData } from '@/domain/composer/composer.schema';
+import { CreateComposerCommand } from '../command/create-composer.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
 
-export type CreateComposerCommand = ComposerData;
+// CreateComposerCommand is now imported from command file
 
 /**
  * CreateComposerUseCase

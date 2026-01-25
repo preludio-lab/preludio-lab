@@ -4,17 +4,11 @@ import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleCategory } from '@/domain/article/article.metadata';
+import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
 import { ArticleContent } from '@/domain/article/article.content';
 
-export interface CreateArticleCommand {
-  slug: string;
-  lang: string;
-  category: ArticleCategory;
-  title: string;
-  composerName: string;
-  content: string;
-}
+// CreateArticleCommand is now imported from command file
 
 /**
  * CreateArticleUseCase

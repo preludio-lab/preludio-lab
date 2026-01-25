@@ -1,10 +1,10 @@
 import { ComposerControl, ComposerMetadata } from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { ComposerData } from '@/domain/composer/composer.schema';
+import { UpdateComposerCommand } from '../command/update-composer.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 
-export type UpdateComposerCommand = ComposerData;
+// UpdateComposerCommand is now imported from command file
 
 /**
  * UpdateComposerUseCase
