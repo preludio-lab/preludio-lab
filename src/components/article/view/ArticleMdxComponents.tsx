@@ -82,4 +82,29 @@ export const createArticleMdxComponents = (
     return <pre {...props} />;
   },
   ScoreRenderer: ScoreRenderer,
+  MusicalExample: ({ src, description, id }: { src?: string; description?: string; id?: string }) => {
+    // Determine path: prefer src, fallback to id-based convention
+    const imagePath = src 
+      ? `/images/article/${src}` 
+      : (id ? `/images/article/beethoven/${id}.svg` : '');
+
+    if (!imagePath) return null;
+
+    return (
+      <figure className="my-10 not-prose">
+        <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden p-4">
+          <img 
+            src={imagePath} 
+            alt={description || id || 'Musical Example'} 
+            className="w-full h-auto"
+          />
+        </div>
+        {description && (
+          <figcaption className="mt-4 text-center text-sm font-medium text-tertiary">
+            {description}
+          </figcaption>
+        )}
+      </figure>
+    );
+  },
 });
