@@ -5,6 +5,10 @@ import { WorkPartDataSchema } from '@/domain/work/work-part.schema';
 
 /**
  * Work Base Command Schema
+ *
+ * 作品(Work)の作成・更新に共通する基本フィールド定義です。
+ * ドメイン層の `WorkMetadataBaseSchema` と `MusicalIdentitySchema` から
+ * 必要なフィールドをピックアップして構成しています。
  */
 export const WorkBaseCommandSchema = WorkMetadataBaseSchema.pick({
   titleComponents: true,
