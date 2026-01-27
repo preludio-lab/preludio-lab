@@ -56,4 +56,14 @@ export interface IWorkDataSource {
    * Delete all parts for a work
    */
   deletePartsByWorkId(workId: string): Promise<void>;
+
+  /**
+   * Find a single Work Part by ID
+   */
+  findPartById(partId: string): Promise<WorkPartRows | null>;
+
+  /**
+   * Delete a single Work Part by ID
+   */
+  deletePart(partId: string): Promise<void>;
 }
