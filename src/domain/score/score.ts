@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { ScoreControlSchema } from './score.control';
+import { ScoreControlSchema, ScoreId, ScoreControl } from './score.control';
 import { ScoreMetadataSchema, ScoreFormat } from './score.metadata';
 import { NotationFormat } from './musical-example.metadata';
+
+export type { ScoreId, ScoreControl };
 
 /**
  * Score (Asset/Edition)
@@ -12,7 +14,9 @@ export const ScoreSchema = z.object({
   metadata: ScoreMetadataSchema,
 });
 
-export type Score = z.infer<typeof ScoreSchema>;
+export type Score = Omit<z.infer<typeof ScoreSchema>, 'control'> & {
+  control: ScoreControl;
+};
 
 // 再エクスポート
 export { ScoreFormat, NotationFormat };

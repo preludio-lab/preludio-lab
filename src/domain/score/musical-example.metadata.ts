@@ -35,9 +35,9 @@ export type MeasureRange = z.infer<typeof MeasureRangeSchema>;
  */
 export const MusicalExampleMetadataSchema = z.object({
   /** 対象楽曲ID */
-  workId: z.string().min(1).max(50),
+  workId: z.string().uuid(),
   /** 出典エディションID (任意) */
-  scoreId: z.string().max(50).optional(),
+  scoreId: z.string().uuid().optional(),
   /** URLスラグ / での階層化を許容 */
   slug: createSlugSchema(50),
   /** データ形式 (ABC/MusicXML) */

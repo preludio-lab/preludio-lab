@@ -4,7 +4,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 
 describe('ArticleSearchResultItemDtoSchema', () => {
   const validMetadata = {
-    id: 'article-123',
+    id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3',
     slug: 'beethoven-symphony-5',
     lang: 'ja',
     status: 'published',

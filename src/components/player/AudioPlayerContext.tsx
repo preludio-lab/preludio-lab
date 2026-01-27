@@ -10,6 +10,7 @@ import React, {
   useEffect,
 } from 'react';
 import { useTranslations } from 'next-intl';
+import { generateId } from '@/shared/id';
 import {
   PlayerMode,
   PlayerSource,
@@ -130,7 +131,7 @@ const STORAGE_KEY = 'preludio_player_state';
 export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
   const t = useTranslations('Player');
   const [state, setState] = useState<PlayerState>({
-    control: { id: crypto.randomUUID(), createdAt: new Date(), updatedAt: new Date() },
+    control: { id: generateId<'Player'>(), createdAt: new Date(), updatedAt: new Date() },
     display: {
       title: '',
       composerName: '',

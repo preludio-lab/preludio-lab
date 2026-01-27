@@ -1,4 +1,10 @@
-import { z } from 'zod';
+import { z } from '@/shared/validation/zod';
+import { Id } from '@/shared/id';
+
+/**
+ * Score Entity ID
+ */
+export type ScoreId = Id<'Score'>;
 
 /**
  * ScoreControl
@@ -8,11 +14,13 @@ import { z } from 'zod';
  */
 export const ScoreControlSchema = z.object({
   /** 楽譜のユニークID (UUID v7) */
-  id: z.string().min(1).max(50),
+  id: z.string().uuid(),
   /** 作成日時 */
   createdAt: z.coerce.date(),
   /** 最終更新日時 */
   updatedAt: z.coerce.date(),
 });
 
-export type ScoreControl = z.infer<typeof ScoreControlSchema>;
+export type ScoreControl = Omit<z.infer<typeof ScoreControlSchema>, 'id'> & {
+  id: ScoreId;
+};

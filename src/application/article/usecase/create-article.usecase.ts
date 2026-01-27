@@ -1,20 +1,12 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { Article } from '@/domain/article/article';
+import { Article, ArticleId } from '@/domain/article/article';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { ArticleCategory } from '@/domain/article/article.metadata';
+
+import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
 import { ArticleContent } from '@/domain/article/article.content';
-
-export interface CreateArticleCommand {
-  slug: string;
-  lang: string;
-  category: ArticleCategory;
-  title: string;
-  composerName: string;
-  content: string;
-}
 
 /**
  * CreateArticleUseCase
@@ -49,7 +41,7 @@ export class CreateArticleUseCase {
 
     const article = new Article({
       control: {
-        id: command.slug, // ID generation strategy (use slug for FS)
+        id: command.slug as ArticleId, // ID generation strategy (use slug for FS)
         lang: command.lang as AppLocale,
         status: ArticleStatus.DRAFT,
         createdAt: new Date(),

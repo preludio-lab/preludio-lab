@@ -86,6 +86,9 @@ importers:
       use-debounce:
         specifier: ^10.0.6
         version: 10.1.0(react@19.2.1)
+      uuidv7:
+        specifier: ^1.1.0
+        version: 1.1.0
       zod:
         specifier: ^4.2.1
         version: 4.3.5
@@ -5283,6 +5286,10 @@ packages:
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+
+  uuidv7@1.1.0:
+    resolution: {integrity: sha512-2VNnOC0+XQlwogChUDzy6pe8GQEys9QFZBGOh54l6qVfwoCUwwRvk7rDTgaIsRgsF5GFa5oiNg8LqXE3jofBBg==}
     hasBin: true
 
   vfile-matter@5.0.1:
@@ -11466,6 +11473,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   uuid@9.0.1: {}
+
+  uuidv7@1.1.0: {}
 
   vfile-matter@5.0.1:
     dependencies:

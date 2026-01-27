@@ -8,7 +8,7 @@ import {
 describe('RecordingSources', () => {
   // 正常なソースのサンプルデータ
   const validSource = {
-    id: 'source-1',
+    id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a5',
     provider: RecordingProvider.YOUTUBE,
     sourceId: 'dQw4w9WgXcQ',
     quality: RecordingAudioQuality.HIGH,
@@ -37,7 +37,7 @@ describe('RecordingSources', () => {
 
   it('ローカルファイルプロバイダを含む異なるプロバイダを検証できること', () => {
     const localSource = {
-      id: 'source-local',
+      id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a6',
       provider: RecordingProvider.LOCAL_FILE,
       sourceId: 'path/to/audio.wav',
       quality: RecordingAudioQuality.PREMIUM,

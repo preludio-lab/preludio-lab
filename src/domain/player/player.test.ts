@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Player } from './player';
+import { Player, PlayerId } from './player';
 import { PlayerDisplay } from './player.display';
 import { PlayerSource } from './player.source';
 import { PlayerMode } from './player.status';
@@ -9,7 +9,7 @@ describe('Player Entity', () => {
   const createBasePlayer = (overrides: any = {}) => {
     return new Player({
       control: {
-        id: '123e4567-e89b-12d3-a456-426614174000',
+        id: '123e4567-e89b-12d3-a456-426614174000' as PlayerId,
         createdAt: new Date(),
         updatedAt: new Date(),
         ...overrides.control,

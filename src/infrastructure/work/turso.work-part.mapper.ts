@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { WorkPart } from '@/domain/work/work-part';
+import { WorkPart, WorkPartId } from '@/domain/work/work-part';
+import { WorkId } from '@/domain/work/work';
+import { generateId } from '@/shared/id';
 import { WorkPartRows, WorkPartRow, WorkPartTranslationRow } from './interfaces/work.ds.interface';
 
-function aggregateTranslations<T extends Record<string, any>>(
+function aggregateTranslations(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   translations: { lang: string; [key: string]: any }[],
   targetField: string,
 ): Record<string, string> {
@@ -28,16 +30,13 @@ export class TursoWorkPartMapper {
 
     return new WorkPart(
       {
-        id: part.id,
+        id: part.id as WorkPartId,
         slug: part.slug,
-        // We don't have workId in part row? Schema for WorkParts table usually has workId.
-        // TursoWorkPartRow definition uses InferSelectModel.
-        // If query was result of findMany on workParts, it has workId.
-        workId: part.workId,
+        workId: part.workId as WorkId,
         order: part.sortOrder,
         createdAt: new Date(part.createdAt),
         updatedAt: new Date(part.updatedAt),
-      } as any,
+      } as any as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       {
         titleComponents: {
           title,
@@ -66,7 +65,7 @@ export class TursoWorkPartMapper {
         nicknames: part.nicknames || [],
         basedOn: part.basedOn || undefined,
         performanceDifficulty: part.performanceDifficulty || undefined,
-      } as any,
+      } as any as any, // eslint-disable-line @typescript-eslint/no-explicit-any
     );
   }
 
@@ -107,7 +106,7 @@ export class TursoWorkPartMapper {
 
       createdAt: ctrl.createdAt.toISOString(),
       updatedAt: new Date().toISOString(),
-    } as any;
+    } as any as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const tc = meta.titleComponents;
     const langs = new Set<string>([
@@ -120,11 +119,12 @@ export class TursoWorkPartMapper {
 
     const translations: WorkPartTranslationRow[] = [];
     for (const lang of langs) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const getVal = (obj: any): string | null => (obj && obj[lang]) || null;
       if (!getVal(tc.title)) continue;
 
       translations.push({
-        id: crypto.randomUUID(),
+        id: generateId(), // Generic ID for translation record
         workPartId: ctrl.id,
         lang,
         title: getVal(tc.title)!,

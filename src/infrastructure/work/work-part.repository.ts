@@ -7,18 +7,18 @@ import { AppError } from '@/domain/shared/app-error';
 export class WorkPartRepositoryImpl implements WorkPartRepository {
   constructor(private workDS: IWorkDataSource) {}
 
+  /**
+   * 指定されたIDのWorkPart（楽章）を取得します。
+   */
   async findById(id: string): Promise<WorkPart | null> {
-    // Current DS doesn't expose findPartById directly.
-    // If needed, we must add it to DS.
-    // Or we scan? No.
-    // Implementing findById for Part is secondary for SEEDING.
-    // Seeding uses deleteByWorkId + save.
-    // But interface requires it.
-    // I will throw unimplemented or implement efficiently if easy.
-    // DS structure is Work-Centric.
-    // I will throw "Method not implemented" for findById if not critical.
-    // Or add `findPartById` to DS.
-    throw new Error('Method not implemented.');
+    try {
+      const rows = await this.workDS.findPartById(id);
+      if (!rows) return null;
+      return TursoWorkPartMapper.toDomain(rows);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
   }
 
   async findByWorkId(workId: string): Promise<WorkPart[]> {
@@ -26,9 +26,8 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
       const workRows = await this.workDS.findById(workId);
       if (!workRows) return [];
 
-      // workRows.parts is WorkPartRows[]
-      // workRows.parts is optional (as per recent change).
-      // Check undefined.
+      // workRows.parts は WorkPartRows[] 型
+      // undefined チェックを行います。
       if (!workRows.parts) return [];
 
       return workRows.parts.map(TursoWorkPartMapper.toDomain);
@@ -48,8 +47,16 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
+  /**
+   * 指定されたIDのWorkPart（楽章）を削除します。
+   */
   async delete(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    try {
+      await this.workDS.deletePart(id);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
   }
 
   async deleteByWorkId(workId: string): Promise<void> {

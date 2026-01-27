@@ -1,4 +1,10 @@
-import { z } from 'zod';
+import { z } from '@/shared/validation/zod';
+import { Id } from '@/shared/id';
+
+/**
+ * Player Entity ID
+ */
+export type PlayerId = Id<'Player'>;
 
 /**
  * PlayerControl
@@ -14,4 +20,6 @@ export const PlayerControlSchema = z.object({
   updatedAt: z.coerce.date().default(() => new Date()),
 });
 
-export type PlayerControl = z.infer<typeof PlayerControlSchema>;
+export type PlayerControl = Omit<z.infer<typeof PlayerControlSchema>, 'id'> & {
+  id: PlayerId;
+};

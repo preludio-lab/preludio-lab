@@ -1,6 +1,8 @@
-import { RecordingControl } from './recording.control';
+import { RecordingControl, RecordingId } from './recording.control';
 import { RecordingMetadata } from './recording.metadata';
 import { RecordingSources } from './recording.sources';
+
+export type { RecordingId, RecordingControl, RecordingMetadata };
 
 /**
  * Recording Entity

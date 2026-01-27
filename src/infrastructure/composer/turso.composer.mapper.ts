@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Composer } from '@/domain/composer/composer';
+import { Composer, ComposerId } from '@/domain/composer/composer';
+import { generateId } from '@/shared/id';
 import {
   ComposerRow,
   ComposerTranslationRow,
@@ -39,7 +40,7 @@ export class TursoComposerMapper {
     // Reconstruct Entity
     return new Composer({
       control: {
-        id: composer.id,
+        id: composer.id as ComposerId,
         slug: composer.slug,
         createdAt: new Date(composer.createdAt),
         updatedAt: new Date(composer.updatedAt),
@@ -127,7 +128,7 @@ export class TursoComposerMapper {
       }
 
       translations.push({
-        id: crypto.randomUUID(), // New ID for every save/row?
+        id: generateId(), // New ID for every save/row?
         // Or we use a deterministic ID based on ComposerID + Lang?
         // Schema definition: id text primary key.
         // If we Delete & Insert, new ID is fine.

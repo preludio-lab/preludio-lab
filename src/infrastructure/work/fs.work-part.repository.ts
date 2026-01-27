@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { WorkPartRepository } from '@/domain/work/work-part.repository';
-import { WorkPart } from '@/domain/work/work-part';
+import { WorkPart, WorkPartControl } from '@/domain/work/work-part';
 import { WorkPartMetadataSchema } from '@/domain/work/work-part.metadata';
 import { WorkPartControlSchema } from '@/domain/work/work-part.control';
 import { logger } from '@/infrastructure/logging';
@@ -71,7 +71,7 @@ export class FsWorkPartRepository implements WorkPartRepository {
         ...data.control,
         createdAt: new Date(data.control.createdAt),
         updatedAt: new Date(data.control.updatedAt),
-      });
+      }) as unknown as WorkPartControl;
       const metadata = WorkPartMetadataSchema.parse(data.metadata);
 
       return new WorkPart(control, metadata);
