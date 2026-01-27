@@ -2,9 +2,9 @@ import verovio from 'verovio';
 import fs from 'fs/promises';
 
 // Singleton promise for the toolkit
-let toolkitPromise: Promise<verovio.toolkit> | null = null;
+let toolkitPromise: Promise<any> | null = null;
 
-async function getVerovioToolkit(): Promise<verovio.toolkit> {
+async function getVerovioToolkit(): Promise<any> {
   // verovio npm package usually handles its own initialization or is synchronous in Node
   return new verovio.toolkit();
 }

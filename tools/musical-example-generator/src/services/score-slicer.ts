@@ -20,32 +20,32 @@ export function sliceMusicXML(xmlContent: string, options: SlicerOptions): strin
   const score = jsonObj.find((node) => node['score-partwise']);
   if (!score) throw new Error('Invalid MusicXML: score-partwise not found');
 
-  const partwise = score['score-partwise'] as Record<string, unknown>[];
+  const partwise = (score as any)['score-partwise'] as Record<string, unknown>[];
 
   // --- Part List Filtering ---
   if (options.partId) {
-    const partList = partwise.find((node) => node['part-list']) as Record<string, unknown>[];
-    if (partList && partList['part-list']) {
-      const partListChildren = partList['part-list'] as Record<string, unknown>[];
+    const partListNode = partwise.find((node) => node['part-list']);
+    if (partListNode && (partListNode as any)['part-list']) {
+      const partListChildren = (partListNode as any)['part-list'] as Record<string, unknown>[];
       
       const filteredList = partListChildren.filter((child) => {
         if (child['score-part']) {
-           const attrs = child[':@'] as Record<string, string>;
+           const attrs = (child as any)[':@'] as Record<string, string>;
            return attrs?.['@_id'] === options.partId;
         }
-        return true; // Keep other existing tags like part-group (maybe unsafe if empty group remains, but ok for now)
+        return true; 
       });
       
       // Update part-list
       const listIndex = partwise.findIndex((node) => node['part-list']);
-      partwise[listIndex]['part-list'] = filteredList;
+      (partwise[listIndex] as any)['part-list'] = filteredList;
     }
   }
 
   // --- Part Data Filtering ---
   const filteredPartwiseContent = partwise.filter((node) => {
     if (node['part']) {
-      const partAttrs = node[':@'] as Record<string, string>;
+      const partAttrs = (node as any)[':@'] as Record<string, string>;
       const pId = partAttrs?.['@_id'];
       
       // Filter by Part ID
@@ -58,7 +58,7 @@ export function sliceMusicXML(xmlContent: string, options: SlicerOptions): strin
       
       const filteredMeasures = partContent.filter((child) => {
         if (child['measure']) {
-          const measureAttr = child[':@'] as Record<string, string> | undefined;
+          const measureAttr = (child as any)[':@'] as Record<string, string> | undefined;
           const measureNum = parseInt(measureAttr?.['@_number'] || '0', 10);
           
           // Measure Range Filter
@@ -69,15 +69,12 @@ export function sliceMusicXML(xmlContent: string, options: SlicerOptions): strin
           if (options.staffNumber) {
             const measureContent = child['measure'] as Record<string, unknown>[];
             const filteredMeasureContent = measureContent.filter((measureChild) => {
-              // 1. Remove <staff> tags not matching (often attached to notes/directions)
-              // Actually, notes have <staff> child. Attributes have <clef> with @number.
-              
-              // Handle <note>, <forward>, <backup>, <direction>
               if (measureChild['note'] || measureChild['direction'] || measureChild['forward'] || measureChild['backup']) {
-                 const content = (measureChild['note'] || measureChild['direction'] || measureChild['forward'] || measureChild['backup']) as Record<string, unknown>[];
+                 const key = Object.keys(measureChild).find(k => ['note', 'direction', 'forward', 'backup'].includes(k)) as string;
+                 const content = (measureChild as any)[key] as Record<string, unknown>[];
                  const staffNode = content.find(n => n['staff']);
                  if (staffNode) {
-                    const staffVal = staffNode['staff']?.[0]?.['#text'];
+                    const staffVal = (staffNode as any)['staff']?.[0]?.['#text'];
                     if (parseInt(staffVal) !== options.staffNumber) return false;
                  }
               }
@@ -85,24 +82,19 @@ export function sliceMusicXML(xmlContent: string, options: SlicerOptions): strin
               // Handle <attributes> (clef, key, time which might have 'number' attribute)
               if (measureChild['attributes']) {
                  const attrsContent = measureChild['attributes'] as Record<string, unknown>[];
-                 // Filter clefs inside attributes
                  const filteredAttrs = attrsContent.filter(attrNode => {
                     if (attrNode['clef']) {
-                       const clefAttrs = attrNode[':@'] as Record<string, string>;
+                       const clefAttrs = (attrNode as any)[':@'] as Record<string, string>;
                        if (clefAttrs?.['@_number']) {
                           return parseInt(clefAttrs['@_number']) === options.staffNumber;
                        }
-                       // If no number, assumes staff 1. Keep if requesting 1, remove if requesting >1?
-                       // Safer to keep default if generic.
                        return options.staffNumber === 1; 
                     }
                     if (attrNode['staves']) {
-                        // Force staves count to 1
-                        attrNode['staves'][0]['#text'] = 1;
+                        (attrNode as any)['staves'][0]['#text'] = 1;
                     }
                     return true;
                  });
-                 // Update attributes content
                  measureChild['attributes'] = filteredAttrs;
               }
               
@@ -119,13 +111,10 @@ export function sliceMusicXML(xmlContent: string, options: SlicerOptions): strin
       node['part'] = filteredMeasures;
       return true;
     }
-    return true; // Keep metadata like work, identification, defaults
+    return true; 
   });
   
-  // Re-assign filtered content to the main structure
-  // Because we mutated arrays in place for 'part-list' children and 'part' content logic, 
-  // but 'partwise' array itself needs filtering for removed parts.
-  score['score-partwise'] = filteredPartwiseContent;
+  (score as any)['score-partwise'] = filteredPartwiseContent;
 
   const builder = new XMLBuilder({
     ignoreAttributes: false,
