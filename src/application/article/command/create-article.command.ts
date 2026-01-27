@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ArticleCategory, ArticleMetadataSchema } from '@/domain/article/article.metadata';
+import { ArticleMetadataSchema } from '@/domain/article/article.metadata';
 import { ArticleControlSchema } from '@/domain/article/article.control';
 import { ArticleContentSchema } from '@/domain/article/article.content';
 

@@ -1,9 +1,4 @@
-import {
-  Composer,
-  ComposerControl,
-  ComposerMetadata,
-  ComposerId,
-} from '@/domain/composer/composer';
+import { Composer, ComposerControl, ComposerMetadata } from '@/domain/composer/composer';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { CreateComposerCommand } from '../command/create-composer.command';
 import { Logger } from '@/shared/logging/logger';

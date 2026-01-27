@@ -7,7 +7,7 @@ import { AppError } from '@/domain/shared/app-error';
 export class WorkPartRepositoryImpl implements WorkPartRepository {
   constructor(private workDS: IWorkDataSource) {}
 
-  async findById(id: string): Promise<WorkPart | null> {
+  async findById(_id: string): Promise<WorkPart | null> {
     // Current DS doesn't expose findPartById directly.
     // If needed, we must add it to DS.
     // Or we scan? No.
@@ -48,7 +48,7 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(_id: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 

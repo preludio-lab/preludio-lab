@@ -1,7 +1,5 @@
-import { z } from 'zod';
 import { WorkMetadataBaseSchema } from '@/domain/work/work.metadata';
 import { MusicalIdentitySchema } from '@/domain/work/work.shared';
-import { WorkPartDataSchema } from '@/domain/work/work-part.schema';
 
 /**
  * Work Base Command Schema

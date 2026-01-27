@@ -2,7 +2,7 @@ import { Work, WorkControl, WorkMetadata } from '@/domain/work/work';
 import { WorkRepository } from '@/domain/work/work.repository';
 import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { WorkPart, WorkPartControl, WorkPartMetadata, WorkPartId } from '@/domain/work/work-part';
+import { WorkPart, WorkPartControl, WorkPartMetadata } from '@/domain/work/work-part';
 import { UpdateWorkCommand } from '../command/update-work.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';

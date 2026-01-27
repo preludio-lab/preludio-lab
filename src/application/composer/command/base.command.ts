@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { ComposerMetadataSchema } from '@/domain/composer/composer.metadata';
 
 /**
