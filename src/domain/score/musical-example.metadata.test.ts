@@ -3,7 +3,7 @@ import { MusicalExampleMetadataSchema, NotationFormat } from './musical-example.
 
 describe('MusicalExampleMetadata', () => {
   const validParams = {
-    workId: 'work-1',
+    workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4',
     slug: '1st-theme',
     format: NotationFormat.ABC,
     notationPath: 'scores/beethoven/sym5-theme1.abc',

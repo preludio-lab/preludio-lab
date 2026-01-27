@@ -3,7 +3,7 @@ import { ScoreControlSchema } from './score.control';
 
 describe('ScoreControl', () => {
   it('指定された値で ScoreControl を作成できること', () => {
-    const id = 'score-id-123';
+    const id = '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3';
     const now = new Date();
     const data = { id, createdAt: now, updatedAt: now };
     const control = ScoreControlSchema.parse(data);

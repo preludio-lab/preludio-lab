@@ -27,7 +27,7 @@ import { MonetizationElementSchema } from '../monetization/monetization';
  */
 export const SeriesAssignmentSchema = z.object({
   /** シリーズID (UUID等) */
-  seriesId: z.string().uuid().or(z.string().min(1).max(50)),
+  seriesId: z.string().uuid(),
   /** シリーズのスラグ (URL用) */
   seriesSlug: SlugSchema,
   /** シリーズのタイトル (スナップショット) */
@@ -45,7 +45,7 @@ export type SeriesAssignment = z.infer<typeof SeriesAssignmentSchema>;
  */
 export const RelatedArticleSchema = z.object({
   /** ターゲット記事のID */
-  articleId: z.string().min(1).max(50),
+  articleId: z.string().uuid(),
   /** 表示用のタイトル (スナップショット) */
   title: z.string().min(1).max(50),
   /** 記事カテゴリ */

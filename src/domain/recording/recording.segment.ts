@@ -7,7 +7,7 @@ import { z } from 'zod';
  */
 export const RecordingSegmentSchema = z.object({
   /** 録音ソースID (Reference to RecordingSource.id) */
-  recordingSourceId: z.string().min(1).max(50),
+  recordingSourceId: z.string().uuid(),
 
   /** 再生開始秒数 (0〜86400: 24h) */
   startSeconds: z.number().nonnegative().max(86400),

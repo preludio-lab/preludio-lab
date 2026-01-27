@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { WorkRepository, WorkSearchCriteria } from '@/domain/work/work.repository';
-import { Work } from '@/domain/work/work';
+import { Work, WorkControl } from '@/domain/work/work';
 import { WorkMetadataSchema } from '@/domain/work/work.metadata';
 import { WorkControlSchema } from '@/domain/work/work.control';
 import { MusicalGenre } from '@/domain/shared/musical-genre';
@@ -93,7 +93,7 @@ export class FsWorkRepository implements WorkRepository {
         ...data.control,
         createdAt: new Date(data.control.createdAt),
         updatedAt: new Date(data.control.updatedAt),
-      });
+      }) as unknown as WorkControl;
       const metadata = WorkMetadataSchema.parse(data.metadata);
 
       return new Work({ control, metadata });

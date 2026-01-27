@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PlayerControlSchema, PlayerControl } from './player.control';
+import { PlayerControlSchema, PlayerControl, PlayerId } from './player.control';
 import {
   PlayerDisplaySchema,
   PlayerDisplay,
@@ -23,7 +23,9 @@ export const PlayerSchema = z.object({
 });
 
 /** プレイヤーのプロパティ定義 */
-export type PlayerProps = z.infer<typeof PlayerSchema>;
+export type PlayerProps = Omit<z.infer<typeof PlayerSchema>, 'control'> & {
+  control: PlayerControl;
+};
 
 /**
  * Player
@@ -61,7 +63,7 @@ export class Player implements PlayerProps {
 
 // --- Re-exports for convenience ---
 export { PlayerControlSchema };
-export type { PlayerControl };
+export type { PlayerControl, PlayerId };
 export { PlayerDisplaySchema };
 export type { PlayerDisplay };
 export { PlayerSourceSchema };

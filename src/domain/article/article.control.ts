@@ -1,5 +1,11 @@
-import { z } from 'zod';
+import { z } from '@/shared/validation/zod';
 import { AppLocale } from '../i18n/locale';
+import { Id } from '@/shared/id';
+
+/**
+ * Article Entity ID
+ */
+export type ArticleId = Id<'Article'>;
 
 /**
  * Article Status
@@ -24,8 +30,8 @@ export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus];
  * glossary: ArticleControl に対応
  */
 export const ArticleControlSchema = z.object({
-  /** 記事のユニークID (システム内部用) */
-  id: z.string().min(1).max(50),
+  /** 記事のユニークID (システム内部用) (UUID v7推奨) */
+  id: z.string().uuid(),
   /** 言語コード */
   lang: z.string().min(1).max(10) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
   /** 公開・管理状態 */
@@ -36,4 +42,6 @@ export const ArticleControlSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
-export type ArticleControl = z.infer<typeof ArticleControlSchema>;
+export type ArticleControl = Omit<z.infer<typeof ArticleControlSchema>, 'id'> & {
+  id: ArticleId;
+};

@@ -4,7 +4,6 @@ import { IWorkDataSource } from './interfaces/work.ds.interface';
 import { IComposerDataSource } from '@/infrastructure/composer/interfaces/composer.ds.interface';
 import { TursoWorkMapper } from './turso.work.mapper';
 import { AppError } from '@/domain/shared/app-error';
-import { PagedResponse } from '@/domain/shared/pagination';
 
 export class WorkRepositoryImpl implements WorkRepository {
   constructor(

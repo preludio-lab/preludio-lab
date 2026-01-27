@@ -4,8 +4,8 @@ import { RecordingControlSchema } from './recording.control';
 describe('RecordingControl', () => {
   it('有効な制御オブジェクトをバリデーションできること', () => {
     const validData = {
-      id: '018b0a1a-2b3c-7d4e-5f6g-7h8i9j0k1l2m',
-      workId: '018b0a1a-2b3c-7d4e-5f6g-7h8i9j0k1l2n',
+      id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3',
+      workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -13,10 +13,10 @@ describe('RecordingControl', () => {
     expect(result.success).toBe(true);
   });
 
-  it('IDが50文字を超える場合にバリデーションエラーになること', () => {
+  it('IDがUUID形式でない場合にバリデーションエラーになること', () => {
     const invalidData = {
-      id: 'a'.repeat(51),
-      workId: 'some-work-id',
+      id: 'not-a-uuid',
+      workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -24,10 +24,10 @@ describe('RecordingControl', () => {
     expect(result.success).toBe(false);
   });
 
-  it('workIdが50文字を超える場合にバリデーションエラーになること', () => {
+  it('workIdがUUID形式でない場合にバリデーションエラーになること', () => {
     const invalidData = {
-      id: 'some-id',
-      workId: 'a'.repeat(51),
+      id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3',
+      workId: 'not-a-uuid',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
