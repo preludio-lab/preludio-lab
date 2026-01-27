@@ -7,6 +7,7 @@ import { AppError } from '@/domain/shared/app-error';
 export class WorkPartRepositoryImpl implements WorkPartRepository {
   constructor(private workDS: IWorkDataSource) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async findById(_id: string): Promise<WorkPart | null> {
     // Current DS doesn't expose findPartById directly.
     // If needed, we must add it to DS.
@@ -48,6 +49,7 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async delete(_id: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
