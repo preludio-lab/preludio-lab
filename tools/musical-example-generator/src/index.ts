@@ -1,7 +1,8 @@
 import { Command } from 'commander';
-import { downloadMusicXML } from './lib/fetcher.js';
-import { sliceMusicXML } from './lib/processor.js';
-import { renderToSVG, saveSVG } from './lib/renderer.js';
+import { downloadMusicXML } from './services/source-fetcher.js';
+import { sliceMusicXML } from './services/score-slicer.js';
+import { renderToSVG, saveSVG } from './services/svg-renderer.js';
+import { MusicXMLOptimizer } from './core/musicxml-optimizer.js';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -10,95 +11,83 @@ const program = new Command();
 program
   .name('musical-example-generator')
   .description('Generate sliced musical examples from MusicXML')
-  .option('--work <slug>', 'Work slug (e.g., moonlight-sonata)', 'moonlight-sonata')
+  .option('-f, --file <path>', 'Path to local MusicXML file')
+  .option('-u, --url <url>', 'URL to fetch MusicXML from')
+  .option('-o, --output <path>', 'Path to save output SVG')
+  .option('-s, --start <measure>', 'Start measure number', parseInt)
+  .option('-e, --end <measure>', 'End measure number', parseInt)
+  .option('-p, --part <id>', 'Part ID to extract (e.g., P1)')
+  .option('-S, --staff <number>', 'Staff number to extract (e.g., 1)', parseInt)
   .action(async (options) => {
-    const workSlug = options.work;
-    console.log(`Starting workflow for: ${workSlug}`);
-
-    // Configuration for Moonlight Sonata
-    const config = {
-      url: 'https://raw.githubusercontent.com/moseleymark/MusicXML/master/Beethoven_Moonlight_Sonata.xml',
-      composer: 'beethoven',
-      work: 'moonlight-sonata',
-      highlights: [
-        {
-          slug: 'theme-1',
-          startMeasure: 1,
-          endMeasure: 2,
-          description: 'Moonlight Sonata - Opening theme',
-        },
-      ],
-    };
-
-    const projectRoot = process.cwd();
-    const dataDir = path.join(projectRoot, 'data', 'verification', workSlug);
-    const fullScorePath = path.join(dataDir, 'full_score.musicxml');
-
     try {
-      // 1. Acquisition
+      // Input Validation
+      if (!options.file && !options.url) {
+        console.error('Error: Either --file or --url must be provided.');
+        process.exit(1);
+      }
+      if (!options.output) {
+        console.error('Error: --output <path> is required.');
+        process.exit(1);
+      }
+
       let xmlContent: string;
-      try {
-        await downloadMusicXML(config.url, fullScorePath);
-        const xmlBuffer = await fs.readFile(fullScorePath);
+
+      // 1. Acquisition
+      if (options.file) {
+        console.log(`Loading local file: ${options.file}`);
+        const xmlBuffer = await fs.readFile(options.file);
         xmlContent = xmlBuffer.toString();
-      } catch {
-        console.warn(
-          'Failed to download from URL, using fallback minimal MusicXML for verification.',
-        );
-        xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
-<score-partwise version="3.1">
-  <part-list>
-    <score-part id="P1">
-      <part-name>Piano</part-name>
-    </score-part>
-  </part-list>
-  <part id="P1">
-    <measure number="1">
-      <attributes>
-        <divisions>1</divisions>
-        <key><fifths>0</fifths></key>
-        <time><beats>4</beats><beat-type>4</beat-type></time>
-        <clef><sign>G</sign><line>2</line></clef>
-      </attributes>
-      <note><pitch><step>C</step><octave>4</octave></pitch><duration>4</duration><type>whole</type></note>
-    </measure>
-    <measure number="2">
-      <note><pitch><step>D</step><octave>4</octave></pitch><duration>4</duration><type>whole</type></note>
-    </measure>
-    <measure number="3">
-      <note><pitch><step>E</step><octave>4</octave></pitch><duration>4</duration><type>whole</type></note>
-    </measure>
-  </part>
-</score-partwise>`;
-        await fs.mkdir(path.dirname(fullScorePath), { recursive: true });
-        await fs.writeFile(fullScorePath, xmlContent);
+      } else {
+        console.log(`Downloading from URL: ${options.url}`);
+        // For URL, we might need a temp file or just keep in memory if downloadMusicXML supports returning string.
+        // Current downloadMusicXML writes to file. Let's use a temp path.
+        const tempPath = path.join(process.cwd(), 'temp_source', 'downloaded.musicxml');
+        await fs.mkdir(path.dirname(tempPath), { recursive: true });
+        await downloadMusicXML(options.url, tempPath);
+        const xmlBuffer = await fs.readFile(tempPath);
+        xmlContent = xmlBuffer.toString();
       }
 
-      // 2. Selection & 3. Extraction/Processing
-      for (const highlight of config.highlights) {
-        console.log(`Processing highlight: ${highlight.slug}`);
-
-        // Trimming
-        const slicedXml = sliceMusicXML(xmlContent, {
-          startMeasure: highlight.startMeasure,
-          endMeasure: highlight.endMeasure,
+      // 2. Slicing (Optional)
+      if (options.start || options.end || options.part || options.staff) {
+        console.log(`Slicing config: Measures ${options.start}-${options.end}, Part: ${options.part}, Staff: ${options.staff}`);
+        xmlContent = sliceMusicXML(xmlContent, {
+          startMeasure: options.start,
+          endMeasure: options.end,
+          partId: options.part,
+          staffNumber: options.staff,
         });
-
-        const highlightDir = path.join(dataDir, 'highlights');
-        await fs.mkdir(highlightDir, { recursive: true });
-
-        const highlightXmlPath = path.join(highlightDir, `${highlight.slug}.musicxml`);
-        await fs.writeFile(highlightXmlPath, slicedXml);
-        console.log(`Sliced XML saved to: ${highlightXmlPath}`);
-
-        // Rendering
-        const svg = await renderToSVG(slicedXml);
-        const highlightSvgPath = path.join(highlightDir, `${highlight.slug}.svg`);
-        await saveSVG(svg, highlightSvgPath);
       }
 
-      console.log('Workflow completed successfully!');
+      // 3. Optimization
+      console.log('Optimizing MusicXML...');
+      const optimizer = new MusicXMLOptimizer();
+      
+      // フィルタリング（単一スコア化）が行われている場合、視覚的最適化を有効にする
+      const isExtractionMode = !!(options.part || options.staff);
+      
+      const optimizedXml = optimizer.optimize(xmlContent, {
+        removePartGroups: isExtractionMode, // 単一譜表ならブレース削除
+        resetPositioning: true,             // 常に配置リセット（Verovioの自動配置を信頼）
+        alignDynamics: true,                // 常に強弱記号を最適化
+      });
+
+      // Validating/Debugging: Save optimized XML
+      const debugXmlPath = options.output.replace('.svg', '.debug.xml');
+      console.log(`Saving optimized XML to: ${debugXmlPath}`);
+      await fs.writeFile(debugXmlPath, optimizedXml);
+
+      // 4. Rendering
+      console.log('Rendering to SVG...');
+      const svg = await renderToSVG(optimizedXml);
+      
+      const outputPath = options.output;
+      await fs.mkdir(path.dirname(outputPath), { recursive: true });
+      await saveSVG(svg, outputPath);
+
+      console.log(`Success! SVG saved to: ${outputPath}`);
+      process.exit(0);
+
     } catch (error) {
       console.error('Workflow failed:', error);
       process.exit(1);
