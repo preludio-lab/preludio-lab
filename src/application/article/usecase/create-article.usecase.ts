@@ -8,8 +8,6 @@ import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
 import { ArticleContent } from '@/domain/article/article.content';
 
-// CreateArticleCommand is now imported from command file
-
 /**
  * CreateArticleUseCase
  * 新規記事作成
