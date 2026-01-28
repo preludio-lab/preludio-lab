@@ -35,7 +35,7 @@
     "next": "16.0.8",
     "next-intl": "^4.6.1",
     "next-mdx-remote": "^5.0.0",
-    "pino": "^10.1.0",
+    "pino": "^10.3.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-hot-toast": "^2.6.0",
