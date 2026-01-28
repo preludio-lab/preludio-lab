@@ -2,8 +2,8 @@ import verovio from 'verovio';
 import fs from 'fs/promises';
 
 // Singleton promise for the toolkit
-let toolkitPromise: Promise<any> | null = null;
-
+// async function getVerovioToolkit(): Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getVerovioToolkit(): Promise<any> {
   // verovio npm package usually handles its own initialization or is synchronous in Node
   return new verovio.toolkit();
@@ -22,7 +22,7 @@ export async function renderToSVG(
     pageMarginBottom: 0,
     pageMarginLeft: 0,
     pageMarginRight: 0,
-    pageWidth: 1200,        // Content-friendly width
+    pageWidth: 1200, // Content-friendly width
     header: 'none',
     footer: 'none',
     mdivAll: true,

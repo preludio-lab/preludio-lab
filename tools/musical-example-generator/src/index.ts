@@ -50,7 +50,9 @@ program
 
       // 2. Slicing (Optional)
       if (options.start || options.end || options.part || options.staff) {
-        console.log(`Slicing config: Measures ${options.start}-${options.end}, Part: ${options.part}, Staff: ${options.staff}`);
+        console.log(
+          `Slicing config: Measures ${options.start}-${options.end}, Part: ${options.part}, Staff: ${options.staff}`,
+        );
         xmlContent = sliceMusicXML(xmlContent, {
           startMeasure: options.start,
           endMeasure: options.end,
@@ -62,14 +64,14 @@ program
       // 3. Optimization
       console.log('Optimizing MusicXML...');
       const optimizer = new MusicXMLOptimizer();
-      
+
       // フィルタリング（単一スコア化）が行われている場合、視覚的最適化を有効にする
       const isExtractionMode = !!(options.part || options.staff);
-      
+
       const optimizedXml = optimizer.optimize(xmlContent, {
         removePartGroups: isExtractionMode, // 単一譜表ならブレース削除
-        resetPositioning: true,             // 常に配置リセット（Verovioの自動配置を信頼）
-        alignDynamics: true,                // 常に強弱記号を最適化
+        resetPositioning: true, // 常に配置リセット（Verovioの自動配置を信頼）
+        alignDynamics: true, // 常に強弱記号を最適化
       });
 
       // Validating/Debugging: Save optimized XML
@@ -80,14 +82,13 @@ program
       // 4. Rendering
       console.log('Rendering to SVG...');
       const svg = await renderToSVG(optimizedXml);
-      
+
       const outputPath = options.output;
       await fs.mkdir(path.dirname(outputPath), { recursive: true });
       await saveSVG(svg, outputPath);
 
       console.log(`Success! SVG saved to: ${outputPath}`);
       process.exit(0);
-
     } catch (error) {
       console.error('Workflow failed:', error);
       process.exit(1);
