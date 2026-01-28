@@ -24,7 +24,7 @@
     "@aws-sdk/client-s3": "^3.969.0",
     "@libsql/client": "^0.17.0",
     "@sentry/nextjs": "^10.31.0",
-    "@supabase/supabase-js": "^2.89.0",
+    "@supabase/supabase-js": "^2.93.2",
     "@swc/helpers": "^0.5.18",
     "@t3-oss/env-nextjs": "^0.13.10",
     "abcjs": "^6.5.2",
