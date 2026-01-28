@@ -8,7 +8,7 @@
     "verify": "tsx src/index.ts --work moonlight-sonata"
   },
   "dependencies": {
-    "axios": "^1.7.9",
+    "axios": "^1.13.4",
     "commander": "^13.1.0",
     "fast-xml-parser": "^4.5.1",
     "verovio": "^4.5.1",
