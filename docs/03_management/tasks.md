@@ -224,7 +224,7 @@ Status: `[/]` 進行中
   - [ ] **[実装]** **PWA (Progressive Web App)** 対応。モバイルホーム画面への追加とオフラインキャッシュ（楽譜・音源）の検討。
   - [ ] **[最適化]** **Edge Config & SWR** パターンの適用による、グローバル規模での低遅延アクセス（瞬時の没入体験）の実現。
 
-- [ ] **6.4 E2Eテストの導入と実装 (Playwright)**
+- [x] **6.4 E2Eテストの導入と実装 (Playwright)**
   - [ ] **[準備]** Playwrightの導入と初期設定（Mobile/PCブラウザ等）
   - [ ] **[インフラ]** Vercel Preview環境を自動検知してテストを実行するGitHub Actionsの構築
     - [ ] PR/Push時にデプロイ完了を待機し、動的なPreview URLに対してテストを実行するロジックの実装
