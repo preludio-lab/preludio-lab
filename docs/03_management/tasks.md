@@ -206,7 +206,7 @@ Status: `[/]` 進行中
 
 - [ ] **6.1 セキュリティテストと脆弱性診断の自動化 (Security Analysis)**
   - [x] **[SAST]** **GitHub CodeQL** のワークフロー統合（コードスキャン）
-  - [ ] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
+  - [x] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
   - [ ] **[DAST]** **OWASP ZAP (GitHub Action)** による動的診断環境の構築
     - [ ] Vercel Preview URLに対して自動実行するスキャンシナリオの実装
   - [ ] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
