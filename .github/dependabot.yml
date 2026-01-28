@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Maintain dependencies for npm
+  # Maintain dependencies for npm (Root)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -9,7 +9,20 @@ updates:
       time: "00:00"
       timezone: "Asia/Tokyo"
     open-pull-requests-limit: 10
-    # Conventional Commits に準拠
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+
+  # Maintain dependencies for npm (Tools: Musical Example Generator)
+  - package-ecosystem: "npm"
+    directory: "/tools/musical-example-generator"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "00:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 10
     commit-message:
       prefix: "chore"
       prefix-development: "chore"
