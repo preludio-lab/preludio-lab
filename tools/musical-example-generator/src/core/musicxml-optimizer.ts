@@ -114,8 +114,6 @@ export class MusicXMLOptimizer {
     partIndex: number,
     options: { resetPositioning?: boolean; alignDynamics?: boolean },
   ): void {
-    const globalTupletCounter = 0;
-
     measures.forEach((measureNode) => {
       if (!measureNode['measure']) return;
       const measureContent = measureNode['measure'] as XMLElement[];

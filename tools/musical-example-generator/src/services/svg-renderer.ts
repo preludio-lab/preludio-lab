@@ -1,10 +1,10 @@
-import verovio from 'verovio';
+import verovio, { toolkit } from 'verovio';
 import fs from 'fs/promises';
 
 // Singleton promise for the toolkit
-// async function getVerovioToolkit(): Promise<any> {
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getVerovioToolkit(): Promise<any> {
+// const toolkitPromise: Promise<toolkit> | null = null;
+
+async function getVerovioToolkit(): Promise<toolkit> {
   // verovio npm package usually handles its own initialization or is synchronous in Node
   return new verovio.toolkit();
 }

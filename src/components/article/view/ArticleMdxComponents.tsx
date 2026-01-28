@@ -4,6 +4,7 @@ import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
 import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
 import { ComponentProps, isValidElement, ReactElement } from 'react';
+import Image from 'next/image';
 
 /**
  * createArticleMdxComponents
@@ -103,10 +104,12 @@ export const createArticleMdxComponents = (
     return (
       <figure className="my-10 not-prose">
         <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden p-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={imagePath}
             alt={description || id || 'Musical Example'}
+            width={0}
+            height={0}
+            sizes="100vw"
             className="w-full h-auto"
           />
         </div>
