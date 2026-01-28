@@ -212,8 +212,8 @@ Status: `[/]` 進行中
   - [ ] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
 
 - [ ] **6.2 パフォーマンス耐久テストと最適化の極致 (Performance & Asset Optimization)**
-  - [ ] **[基盤]** **Cloudflare Images / R2** の導入。画像アセットの管理・配信を統合。
-  - [ ] **[実装]** `next/image` と Cloudflare を連携させた、デバイス・通信環境別の画像最適化・キャッシュ戦略の実装
+  - [x] **[基盤]** **Cloudflare Images / R2** の導入。画像アセットの管理・配信を統合。
+  - [x] **[実装]** `next/image` と Cloudflare を連携させた、デバイス・通信環境別の画像最適化・キャッシュ戦略の実装
   - [ ] **[計測]** Vercel Speed Insights / Lighthouse による Core Web Vitals (LCP, CLS, TBT) の定量的モニタリング
   - [ ] **[負荷テスト]** **k6** 等を用いた、同時アクセス時のAPI応答性能およびDB負荷の検証
   - [ ] **[最適化]** 1万記事規模を見据えた ISR (Incremental Static Regeneration) と エッジキャッシュ戦略の最終調整
