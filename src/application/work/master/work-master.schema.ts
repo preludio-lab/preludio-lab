@@ -3,6 +3,9 @@ import { CreateWorkCommandSchema } from '../command/create-work.command';
 import { MasterSystemMetadataSchema } from '../../shared/master-data.schema';
 import { WorkPartMasterSchema } from './work-part-master.schema';
 
+/** 楽曲マスタースキーマの現在バージョン */
+export const WORK_MASTER_VERSION = '1.1.0';
+
 /**
  * Work Master Data Schema (JSON)
  * 楽曲マスタデータ(JSONファイル)の構造定義。
@@ -12,6 +15,8 @@ import { WorkPartMasterSchema } from './work-part-master.schema';
  */
 export const WorkMasterSchema = CreateWorkCommandSchema.merge(MasterSystemMetadataSchema)
   .extend({
+    /** スキーマバージョン (個別管理) */
+    _schemaVersion: z.string().default(WORK_MASTER_VERSION),
     // partsをWorkPartMasterSchemaの配列として再定義 (バリデーション強化のため)
     parts: z.array(WorkPartMasterSchema).default([]),
   })

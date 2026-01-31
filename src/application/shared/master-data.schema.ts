@@ -5,15 +5,9 @@ import { z } from 'zod';
  * 全てのマスタデータJSONに共通する管理用メタデータ定義。
  */
 
-/** スキーマのバージョン (共通) */
-export const MASTER_DATA_SCHEMA_VERSION = '1.1.0';
-
-/**
- * システム管理用メタデータスキーマ
- */
 export const MasterSystemMetadataSchema = z.object({
-  /** スキーマバージョン */
-  _schemaVersion: z.literal(MASTER_DATA_SCHEMA_VERSION).default(MASTER_DATA_SCHEMA_VERSION),
+  /** スキーマバージョン (形式: SemVer) */
+  _schemaVersion: z.string().optional(),
 
   /** 生成時のトレーサビリティ情報 */
   _generatorMeta: z
