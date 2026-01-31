@@ -28,7 +28,3 @@ export const WorkMasterSchema = CreateWorkCommandSchema.merge(MasterSystemMetada
   });
 
 export type WorkMaster = z.infer<typeof WorkMasterSchema>;
-
-/** Legacy support */
-export type WorkData = WorkMaster;
-export const WorkDataSchema = WorkMasterSchema;

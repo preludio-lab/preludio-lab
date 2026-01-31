@@ -48,7 +48,3 @@ export const WorkPartMasterSchema = WorkPartControlSchema.pick({
   });
 
 export type WorkPartMaster = z.infer<typeof WorkPartMasterSchema>;
-
-/** Legacy support */
-export type WorkPartData = WorkPartMaster;
-export const WorkPartDataSchema = WorkPartMasterSchema;

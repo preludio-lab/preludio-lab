@@ -12,9 +12,3 @@ import { MasterSystemMetadataSchema } from '../../shared/master-data.schema';
 export const ComposerMasterSchema = CreateComposerCommandSchema.merge(MasterSystemMetadataSchema);
 
 export type ComposerMaster = z.infer<typeof ComposerMasterSchema>;
-
-/**
- * Legacy support for migration
- * TODO: Replace all references to ComposerData with ComposerMaster
- */
-export type ComposerData = ComposerMaster;
