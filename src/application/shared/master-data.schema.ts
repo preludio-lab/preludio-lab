@@ -18,7 +18,7 @@ export const MasterSystemMetadataSchema = z.object({
   /** 生成時のトレーサビリティ情報 */
   _generatorMeta: z
     .object({
-      /** 使用したAIモデル (e.g. "gemini-1.5-pro") */
+      /** 使用したAIモデル (e.g. "gemini-3-flash-preview") */
       model: z.string().max(50),
       /** 生成日時 (ISO 8601) */
       generatedAt: z.string().datetime(),
