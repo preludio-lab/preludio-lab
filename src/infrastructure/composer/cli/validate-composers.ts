@@ -2,11 +2,17 @@ import path from 'node:path';
 import { listJsonFiles, readJsonFile, getLogger } from '@/infrastructure/shared/cli/seeder-utils';
 import { ComposerMasterSchema } from '@/application/composer/master/composer-master.schema';
 
+/**
+ * 作曲家マスタデータのバリデーション実行スクリプト。
+ *
+ * 指定されたファイル、またはディレクトリ内のすべてのJSONファイルが
+ * ComposerMasterSchemaを満たしているかチェックします。
+ */
 async function main() {
   const logger = getLogger();
   const dataDir = path.join(process.cwd(), 'data', 'composers');
 
-  // Check for specific file argument
+  // 引数で特定のファイルが指定されているか確認
   const argFile = process.argv[2];
   let files: string[];
 
@@ -27,14 +33,14 @@ async function main() {
       const result = ComposerMasterSchema.safeParse(data);
 
       if (result.success) {
-        logger.info(`✅ OK: ${path.basename(file)}`);
+        logger.info(`OK: ${path.basename(file)}`);
       } else {
-        logger.error(`❌ FAILED: ${path.basename(file)}`);
+        logger.error(`FAILED: ${path.basename(file)}`);
         console.error(JSON.stringify(result.error.format(), null, 2));
         hasError = true;
       }
     } catch (err) {
-      logger.error(`💥 CRITICAL ERROR reading ${file}:`, err as Error);
+      logger.error(`CRITICAL ERROR reading ${file}:`, err as Error);
       hasError = true;
     }
   }
@@ -44,7 +50,7 @@ async function main() {
     process.exit(1);
   }
 
-  logger.info('✨ All composers are valid.');
+  logger.info('All composers are valid.');
 }
 
 main();
