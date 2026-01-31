@@ -1,20 +1,21 @@
-import { PutObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
-import sharp from 'sharp';
-import { r2Client } from '@/infrastructure/storage/r2.client';
-import { getLogger } from '@/infrastructure/shared/cli/seeder-utils';
+import dotenv from 'dotenv';
+
+// --- 環境変数の先行ロード ---
+// ESモジュールのインポート巻き上げを回避するため、
+// 他の自前モジュールを読み込む前に必ず実行する
+dotenv.config({ path: '.env.local' });
+dotenv.config();
 
 /**
  * 作曲家の肖像画をダウンロード・最適化し、R2にアップロードするスクリプト。
- *
- * @description
- * 1. 指定されたURLから画像をダウンロードします。
- * 2. sharpを使用して、標準サイズ(1600px)とSmallサイズ(300px)の2種類のWebP画像を生成します。
- * 3. 生成した画像をCloudflare R2の所定のパスにアップロードします。
- *
- * @example
- * pnpm tsx scripts/composer/process-portrait.ts <slug> <image_url> [--force]
  */
 async function main() {
+  // 1. 動的インポートにより、環境変数がロードされた後にモジュールを初期化する
+  const { PutObjectCommand, HeadObjectCommand } = await import('@aws-sdk/client-s3');
+  const { default: sharp } = await import('sharp');
+  const { r2Client } = await import('@/infrastructure/storage/r2.client');
+  const { getLogger } = await import('@/infrastructure/shared/cli/seeder-utils');
+
   const logger = getLogger();
   const slug = process.argv[2];
   const imageUrl = process.argv[3];
@@ -35,8 +36,13 @@ async function main() {
     process.exit(1);
   }
 
-  const bucketName = process.env.R2_BUCKET_NAME || 'preludiolab-storage';
+  const bucketName = process.env.R2_BUCKET_NAME;
   const cdnBase = process.env.CDN_BASE_URL || 'https://cdn.preludiolab.com';
+
+  if (!bucketName) {
+    logger.error('R2_BUCKET_NAME が環境変数に設定されていません。.env.local を確認してください。');
+    process.exit(1);
+  }
 
   const r2PathFull = `public/composers/${slug}/images/portrait.webp`;
   const r2PathSmall = `public/composers/${slug}/images/portrait-sm.webp`;
@@ -44,10 +50,6 @@ async function main() {
 
   try {
     // --- 存在チェックフェーズ ---
-    /**
-     * すでにR2上に画像が存在するか確認し、存在する場合は処理をスキップします。
-     * --force フラグがある場合は強制的に再生成・アップロードを行います。
-     */
     if (!force) {
       try {
         await r2Client.send(new HeadObjectCommand({ Bucket: bucketName, Key: r2PathFull }));
@@ -58,7 +60,6 @@ async function main() {
         console.log(`\nRESULT_PATH: ${cdnUrlFull}`);
         return;
       } catch (e: unknown) {
-        // NotFound (404) は正常系（未アップロード）として続行
         if (
           e &&
           typeof e === 'object' &&
@@ -73,9 +74,6 @@ async function main() {
     }
 
     // --- ダウンロードフェーズ ---
-    /**
-     * 指定されたURLから画像バイナリを取得します。
-     */
     logger.info(`画像をダウンロード中: ${imageUrl}`);
     const response = await fetch(imageUrl);
     if (!response.ok) {
@@ -90,31 +88,21 @@ async function main() {
     }
 
     // --- 最適化フェーズ ---
-    /**
-     * sharpを使用して画像の物理サイズ調整、フォーマット変換(WebP)、品質最適化を行います。
-     */
     logger.info('sharpによる画像最適化処理を開始...');
 
-    // 1. 標準/大サイズ (1600px) - ヒーローイメージや高解像度ディスプレイ向け
     const optimizedFull = await sharp(buffer)
       .resize(1600, 1600, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 80 })
       .toBuffer();
 
-    // 2. 小サイズ (300px) - モバイル端末のリスト表示やサムネイル向け
     const optimizedSmall = await sharp(buffer)
       .resize(300, 300, { fit: 'inside', withoutEnlargement: true })
       .webp({ quality: 85 })
       .toBuffer();
 
     // --- アップロードフェーズ ---
-    /**
-     * 生成された2つの画像をCloudflare R2にアップロードします。
-     * キャッシュ有効期限を長めに設定(1年)し、CDNでのキャッシュ効率を高めます。
-     */
-    logger.info(`R2へのアップロードを開始...`);
+    logger.info(`R2（バケット: ${bucketName}）へのアップロードを開始...`);
 
-    // 標準サイズのアップロード
     await r2Client.send(
       new PutObjectCommand({
         Bucket: bucketName,
@@ -126,7 +114,6 @@ async function main() {
     );
     logger.info(`アップロード完了: ${r2PathFull}`);
 
-    // 小サイズのアップロード
     await r2Client.send(
       new PutObjectCommand({
         Bucket: bucketName,
@@ -143,9 +130,6 @@ async function main() {
     console.log(`\nRESULT_PATH: ${cdnUrlFull}`);
   } catch (err: unknown) {
     logger.error('肖像画の処理中にエラーが発生しました', err as Error);
-    if (err && typeof err === 'object' && 'name' in err && err.name === 'NoSuchBucket') {
-      logger.error(`バケット "${bucketName}" が見つかりません。R2の設定を確認してください。`);
-    }
     process.exit(1);
   }
 }
