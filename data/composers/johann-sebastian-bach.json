@@ -1,0 +1,85 @@
+{
+  "slug": "johann-sebastian-bach",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-02-01T00:00:00Z",
+    "promptVersion": "1.1.0",
+    "confidenceScore": 0.99,
+    "sourceRefs": [
+      "https://en.wikipedia.org/wiki/Johann_Sebastian_Bach",
+      "https://de.wikipedia.org/wiki/Johann_Sebastian_Bach",
+      "https://imslp.org/wiki/Category:Bach,_Johann_Sebastian"
+    ]
+  },
+  "fullName": {
+    "en": "Johann Sebastian Bach",
+    "ja": "ヨハン・セバスティアン・バッハ",
+    "de": "Johann Sebastian Bach",
+    "fr": "Jean-Sébastien Bach",
+    "it": "Johann Sebastian Bach",
+    "es": "Johann Sebastian Bach",
+    "zh": "约翰·塞巴斯蒂安·巴赫"
+  },
+  "displayName": {
+    "en": "J. S. Bach",
+    "ja": "J.S. バッハ",
+    "de": "J. S. Bach",
+    "fr": "J. S. Bach",
+    "it": "J. S. Bach",
+    "es": "J. S. Bach",
+    "zh": "J.S. 巴赫"
+  },
+  "shortName": {
+    "en": "Bach",
+    "ja": "バッハ",
+    "de": "Bach",
+    "fr": "Bach",
+    "it": "Bach",
+    "es": "Bach",
+    "zh": "巴赫"
+  },
+  "era": "baroque",
+  "birthDate": "1685-03-31",
+  "deathDate": "1750-07-28",
+  "nationalityCode": "DE",
+  "places": [
+    {
+      "slug": "eisenach",
+      "type": "birth",
+      "countryCode": "DE"
+    },
+    {
+      "slug": "leipzig",
+      "type": "activity",
+      "countryCode": "DE"
+    }
+  ],
+  "representativeInstruments": ["organ", "harpsichord", "clavichord", "violin", "viola"],
+  "representativeGenres": [
+    "cantata",
+    "concerto",
+    "keyboard-ensemble",
+    "chamber-mixed",
+    "suite-orch"
+  ],
+  "impressionDimensions": {
+    "innovation": 5,
+    "emotionality": 6,
+    "nationalism": 2,
+    "scale": 7,
+    "complexity": 10,
+    "theatricality": 4
+  },
+  "portrait": "https://cdn.preludiolab.com/composers/johann-sebastian-bach/images/portrait.webp",
+  "tags": ["counterpoint", "cantor", "leipzig", "father-of-modern-music"],
+  "biography": {
+    "en": "A German composer and musician of the Baroque period. He is known for instrumental compositions such as the Brandenburg Concertos and the Goldberg Variations, and for vocal music such as the St Matthew Passion and the Mass in B minor. Since the 19th-century Bach revival, he has been generally regarded as one of the greatest composers in the history of Western music.",
+    "ja": "バロック音楽を代表するドイツの作曲家・オルガン奏者。対位法やフーガの技法を極め、西洋音楽の基礎を築いた「音楽の父」と称される。ライプツィヒの聖トーマス教会のカントールとして活動し、マタイ受難曲やブランデンブルク協奏曲など、宗教音楽から器楽、鍵盤音楽まで、あらゆるジャンルで最高の知性と精神性を備えた傑作を残した。",
+    "de": "Ein deutscher Komponist und Musiker des Barock. Er ist bekannt für Instrumentalwerke wie die Brandenburgischen Konzerte und die Goldberg-Variationen sowie für Vokalmusik wie die Matthäus-Passion und die h-Moll-Messe. Seit der Bach-Renaissance im 19. Jahrhundert gilt er allgemein als einer der größten Komponisten in der Geschichte der westlichen Musik.",
+    "fr": "Compositeur et musicien allemand de la période baroque. Il est connu pour ses compositions instrumentales telles que les Concertos brandebourgeois et les Variations Goldberg, et pour sa musique vocale telle que la Passion selon saint Matthieu et la Messe en si mineur. Depuis la renaissance de Bach au XIXe siècle, il est généralement considéré comme l'un des plus grands compositeurs de l'histoire de la musique occidentale.",
+    "it": "Compositore e musicista tedesco del periodo barocco. È noto per composizioni strumentali come i Concerti brandeburghesi e le Variazioni Goldberg, e per la musica vocale come la Passione secondo Matteo e la Messa in si minore. Dalla rinascita di Bach del XIX secolo, è stato generalmente considerato uno dei più grandi compositori nella storia della musica occidentale.",
+    "es": "Compositor y músico alemán del periodo barroco. Es conocido por sus composiciones instrumentales como los Conciertos de Brandeburgo y las Variaciones Goldberg, y por su música vocal como la Pasión según San Mateo y la Misa en si menor. Desde el renacimiento de Bach en el siglo XIX, se le ha considerado generalmente como uno de los más grandes compositores de la historia de la música occidental.",
+    "zh": "巴洛克时期的德国作曲家和音乐家。他以布兰登堡协奏曲和哥德堡变奏曲等乐器作品，以及马太受难曲和B小调弥撒等声乐作品而闻名。自19世纪巴赫复兴以来，他被广泛认为是西方音乐史上最伟大的作曲家之一。"
+  }
+}
