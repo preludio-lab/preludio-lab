@@ -3,7 +3,7 @@
   "composerSlug": "mozart",
   "_schemaVersion": "1.1.0",
   "_generatorMeta": {
-    "model": "antigravity-manual",
+    "model": "gemini-3-flash-preview",
     "generatedAt": "2026-01-31T05:45:00Z",
     "promptVersion": "v1.0.0"
   },
