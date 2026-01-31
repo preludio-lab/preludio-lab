@@ -205,8 +205,8 @@ Status: `[/]` 進行中
 ## Phase 6: セキュリティテストとパフォーマンスチューニング
 
 - [ ] **6.1 セキュリティテストと脆弱性診断の自動化 (Security Analysis)**
-  - [ ] **[SAST]** **GitHub CodeQL** のワークフロー統合（コードスキャン）
-  - [ ] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
+  - [x] **[SAST]** **GitHub CodeQL** のワークフロー統合（コードスキャン）
+  - [x] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
   - [ ] **[DAST]** **OWASP ZAP (GitHub Action)** による動的診断環境の構築
     - [ ] Vercel Preview URLに対して自動実行するスキャンシナリオの実装
   - [ ] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
@@ -224,47 +224,23 @@ Status: `[/]` 進行中
   - [ ] **[実装]** **PWA (Progressive Web App)** 対応。モバイルホーム画面への追加とオフラインキャッシュ（楽譜・音源）の検討。
   - [ ] **[最適化]** **Edge Config & SWR** パターンの適用による、グローバル規模での低遅延アクセス（瞬時の没入体験）の実現。
 
-- [ ] **6.4 E2Eテストの導入と実装 (Playwright)**
-  - [ ] **[準備]** Playwrightの導入と初期設定（Mobile/PCブラウザ等）
-  - [ ] **[インフラ]** Vercel Preview環境を自動検知してテストを実行するGitHub Actionsの構築
-    - [ ] PR/Push時にデプロイ完了を待機し、動的なPreview URLに対してテストを実行するロジックの実装
-  - [ ] **[実装]** 主要ユーザーフロー（閲覧、言語切り替え、音源再生確認）のテストシナリオ実装
-  - [ ] **[運用]** テスト失敗時のレポート自動生成とGitHub上での可視化
+- [/] **6.4 E2Eテストの導入と実装 (Playwright)**
+  - [x] **[準備]** Playwrightの導入と初期設定（Mobile/PCブラウザ等）
+  - [x] **[インフラ]** Vercel Preview環境を自動検知してテストを実行するGitHub Actionsの構築
+    - [x] PR/Push時にデプロイ完了を待機し、動的なPreview URLに対してテストを実行するロジックの実装
+  - [/] **[実装]** 主要ユーザーフロー（閲覧、言語切り替え、音源再生確認）のテストシナリオ実装
+  - [/] **[運用]** テスト失敗時のレポート自動生成とGitHub上での可視化
 
 ## Phase 7: AIエージェント開発 ("Brain") & コンテンツ量産
 
-- [ ] **7.1 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
-  - [ ] **[設計]** AIエージェントワークフロー設計 (複数エージェントによる共同制作)
-  - [ ] **[仕様策定]** 分析・生成プロンプトの要件定義
-    - [ ] 楽曲構造分析およびテキスト解説生成のプロンプト設計要件
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `StructureAnalyzer`, `ArticleFormatter` etc.)
-  - [ ] **[実装]** オーケストレーター実装: `agents/src/index.ts` (Gemini API呼び出し制御)
-    - [ ] **API Cost Circuit Breaker** の実装
-  - [ ] **[サブタスク] 品質保証ワークフローの統合 (Quality Assurance Integration)**
-    - [ ] **事実確認**: 作品番号、成立年、調性が公式DBと一致するか
-    - [ ] **音楽的一貫性**: 解説文の内容と提示された譜面・譜例との整合性チェック
-  - [ ] **[実装]** 管理UI実装 (Optional)
-  - [ ] **[テスト・動作検証]** 生成品質の検証
-    - [ ] テスト: モーツァルト「ピアノ協奏曲第20番ニ短調」を題材とした解説テキスト生成品質検証
-
-- [ ] **7.2 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
+- [ ] **7.1 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
   - [ ] **[設計]** AIエージェントワークフロー設計
   - [ ] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
   - [ ] **[実装]** 作曲家データ作成ワークフロー (Json -> Turso)
   - [ ] **[実装]** 作品データ作成ワークフロー (Json -> Turso)
   - [ ] **[実装]** 管理UI実装 (Optional)
 
-- [ ] **7.3 翻訳エージェントワークフロー (Translator Agent Workflow)**
-  - [ ] **[設計]** AIエージェントワークフロー設計
-  - [ ] **[仕様策定]** 翻訳ルールとトーン＆マナーの定義
-    - [ ] 多言語翻訳プロンプトの要件 (Tone & Style Guide) および用語集の整備
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `GlossaryLookup`, `TranslationValidator` etc.)
-  - [ ] **[実装]** 翻訳Orchestratorの実装 (Parallel Execution)
-  - [ ] **[実装]** 管理UI実装 (Optional)
-  - [ ] **[テスト・動作検証]** 各言語の翻訳品質検証
-    - [ ] 主要言語 (EN, ES, DE, FR, IT, ZH) の出力検証
-
-- [ ] **7.4 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
+- [ ] **7.2 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
   - [ ] **[設計]** AIエージェントワークフロー設計
   - [ ] **[仕様策定]** 最適なレンダー構成の検討
     - [x] **Score Snippet Strategy**: MusicXML対応、Verovio等のレンダリング手法、SSGによるSVG化とキャッシュ配置も含めた、ユーザー体験と保守運用性を考慮した最適な構成を検討する。
@@ -278,7 +254,38 @@ Status: `[/]` 進行中
   - [ ] **[実装]** 管理UI実装 (Optional)
   - [ ] **[検証]** 複雑な楽曲での生成テスト
 
-- [ ] **7.5 記事コンテンツ量産体制の構築と実行 (Article Operations)**
+- [ ] **7.3 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
+  - [ ] **[設計]** AIエージェントワークフロー設計 (複数エージェントによる共同制作)
+  - [ ] **[仕様策定]** 分析・生成プロンプトの要件定義
+    - [ ] 楽曲構造分析およびテキスト解説生成のプロンプト設計要件
+  - [ ] **[Tools]** Core Toolsの実装 (e.g. `StructureAnalyzer`, `ArticleFormatter` etc.)
+  - [ ] **[実装]** オーケストレーター実装: `agents/src/index.ts` (Gemini API呼び出し制御)
+    - [ ] **API Cost Circuit Breaker** の実装
+  - [ ] **[サブタスク] 品質保証ワークフローの統合 (Quality Assurance Integration)**
+    - [ ] **事実確認**: 作品番号、成立年、調性が公式DBと一致するか
+    - [ ] **音楽的一貫性**: 解説文の内容と提示された譜面・譜例との整合性チェック
+  - [ ] **[実装]** 管理UI実装 (Optional)
+  - [ ] **[テスト・動作検証]** 生成品質の検証
+    - [ ] テスト: モーツァルト「ピアノ協奏曲第20番ニ短調」を題材とした解説テキスト生成品質検証
+
+- [ ] **7.4 品質保証エージェントワークフロー (QA Automation)**
+  - [ ] **[Tools]** Core Toolsの実装 (e.g. `BrokenLinkChecker`, `ContentConsistencyChecker` etc.)
+  - [ ] **[実装]** 自動巡回チェック・フェイルオーバー
+    - [ ] **リンク生存**: YouTube動画の削除や著作権失効の自動チェック
+    - [ ] **自動フェイルオーバー**: リンク切れ検知時に `is_default` 音源を代替ソースへ自動切り替えするロジックの実装
+  - [ ] **[実装]** 異常検知時の通知・レポート機能
+
+- [ ] **7.5 翻訳エージェントワークフロー (Translator Agent Workflow)**
+  - [ ] **[設計]** AIエージェントワークフロー設計
+  - [ ] **[仕様策定]** 翻訳ルールとトーン＆マナーの定義
+    - [ ] 多言語翻訳プロンプトの要件 (Tone & Style Guide) および用語集の整備
+  - [ ] **[Tools]** Core Toolsの実装 (e.g. `GlossaryLookup`, `TranslationValidator` etc.)
+  - [ ] **[実装]** 翻訳Orchestratorの実装 (Parallel Execution)
+  - [ ] **[実装]** 管理UI実装 (Optional)
+  - [ ] **[テスト・動作検証]** 各言語の翻訳品質検証
+    - [ ] 主要言語 (EN, ES, DE, FR, IT, ZH) の出力検証
+
+- [ ] **7.6 記事コンテンツ量産体制の構築と実行 (Article Operations)**
   - [ ] **[仕様策定]** コンテンツ戦略とパイプライン定義
     - [ ] 初回リリース用コンテンツ選定 (Target: 10-20 articles for Launch)
     - [ ] コンテントマップ作成: Pillar Content (没入感), Guide Content (入門), Niche Content (専門性), Utility Content (実用) のバランス設計
@@ -291,13 +298,6 @@ Status: `[/]` 進行中
     - [ ] 人手による品質レビュー (Music Theory, Notation, Translation, Audio Checks)
     - [ ] リンク切れ・レイアウト崩れの最終チェック
   - [ ] **[リファクタリング]** プロセス改善とプロンプトチューニング
-
-- [ ] **7.6 品質保証エージェントワークフロー (QA Automation)**
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `BrokenLinkChecker`, `ContentConsistencyChecker` etc.)
-  - [ ] **[実装]** 自動巡回チェック・フェイルオーバー
-    - [ ] **リンク生存**: YouTube動画の削除や著作権失効の自動チェック
-    - [ ] **自動フェイルオーバー**: リンク切れ検知時に `is_default` 音源を代替ソースへ自動切り替えするロジックの実装
-  - [ ] **[実装]** 異常検知時の通知・レポート機能
 
 ## Phase 8: ローンチに向けた機能拡充とリファクタリング
 

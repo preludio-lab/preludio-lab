@@ -5,17 +5,17 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/index.ts",
-    "verify": "tsx src/index.ts --work moonlight-sonata"
+    "verify": "tsx src/index.ts --url https://raw.githubusercontent.com/w3c/musicxml/master/samples/hello_world.musicxml --output data/verify.svg"
   },
   "dependencies": {
-    "axios": "^1.7.9",
-    "commander": "^13.1.0",
-    "fast-xml-parser": "^4.5.1",
-    "verovio": "^4.5.1",
-    "zod": "^3.24.1"
+    "axios": "^1.13.4",
+    "commander": "^14.0.2",
+    "fast-xml-parser": "^5.3.3",
+    "verovio": "^6.0.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^20.17.16",
+    "@types/node": "^25.0.10",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   }
