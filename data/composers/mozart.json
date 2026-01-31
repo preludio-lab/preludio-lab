@@ -3,7 +3,14 @@
   "_schemaVersion": "1.1.0",
   "_generatorMeta": {
     "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-01-31T13:08:00Z"
+    "generatedAt": "2026-01-31T13:08:00Z",
+    "promptVersion": "1.1.0",
+    "confidenceScore": 0.98,
+    "sourceRefs": [
+      "https://ja.wikipedia.org/wiki/ヴォルフガング・アマデウス・モーツァルト",
+      "https://en.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart",
+      "https://imslp.org/wiki/Category:Mozart,_Wolfgang_Amadeus"
+    ]
   },
   "fullName": {
     "en": "Wolfgang Amadeus Mozart",
@@ -33,8 +40,23 @@
       "countryCode": "AT"
     }
   ],
-  "representativeInstruments": ["piano", "violin"],
-  "representativeGenres": ["opera", "symphony", "piano-concerto", "chamber-strings"],
+  "representativeInstruments": [
+    "piano",
+    "violin",
+    "viola",
+    "harpsichord",
+    "organ",
+    "fortepiano",
+    "basset-horn"
+  ],
+  "representativeGenres": [
+    "opera",
+    "symphony",
+    "piano-concerto",
+    "chamber-strings",
+    "mass-requiem",
+    "serenade-divertimento"
+  ],
   "impressionDimensions": {
     "innovation": 7,
     "emotionality": 6,
@@ -43,9 +65,10 @@
     "complexity": 6,
     "theatricality": 8
   },
-  "tags": ["prodigy", "vienna-classicism"],
+  "portrait": "https://cdn.preludiolab.com/composers/mozart/images/portrait.webp",
+  "tags": ["prodigy", "vienna-classicism", "enlightenment", "universal-genius"],
   "biography": {
-    "en": "A prolific and influential composer of the Classical period. Born in Salzburg, in the Holy Roman Empire, Mozart showed prodigious ability from his earliest childhood.",
-    "ja": "古典派音楽の極めて重要かつ影響力のあるオーストリアの作曲家。ザルツブルクに生まれ、幼少期から神童として圧倒的な才能を示した。"
+    "en": "A prolific and influential composer of the Classical period. Born in Salzburg, in the Holy Roman Empire, Mozart showed prodigious ability from his earliest childhood. He excelled in every musical genre of his time and is considered one of the greatest composers in the history of Western music.",
+    "ja": "古典派音楽を代表するオーストリアの作曲家。神童として幼少期からヨーロッパ中を旅し、35年という短い生涯の中で、オペラ、交響曲、協奏曲、室内楽など、当時のあらゆるジャンルで最高の傑作を残した。比類なき旋律美と形式的な完成度を誇る作品群は、西洋音楽史における至高の到達点の一つとされる。"
   }
 }
