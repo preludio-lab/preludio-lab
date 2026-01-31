@@ -13,7 +13,7 @@ async function main() {
   const logger = getLogger();
   const dataDir = path.join(process.cwd(), 'data', 'works');
 
-  // 引数で特定のファイルが指定されているか確認
+  // 引数で特定のファイルを検証するか、ディレクトリ全体をスキャンするかを決定
   const argFile = process.argv[2];
   let files: string[];
 
@@ -21,6 +21,7 @@ async function main() {
     const fullPath = path.isAbsolute(argFile) ? argFile : path.join(process.cwd(), argFile);
     files = [fullPath];
   } else {
+    // 引数がない場合はデフォルトの楽曲ディレクトリを再帰的にスキャン
     logger.info(`Scanning for work data in: ${dataDir}`);
     files = await listJsonFiles(dataDir);
   }
@@ -28,15 +29,21 @@ async function main() {
   let hasError = false;
   logger.info(`Validating ${files.length} work files...`);
 
+  // 各ファイルを個別にバリデーション
   for (const file of files) {
     try {
+      // JSONファイルを読み込み
       const data = await readJsonFile<unknown>(file);
+
+      // アプリケーション層のマスタースキーマを使用して検証
       const result = WorkMasterSchema.safeParse(data);
 
       if (result.success) {
-        // バリデーション済みのデータを使用してスラグとファイル名の整合性を確認
+        // スキーマ検証成功後、ファイルシステム上の整合性をチェック
         const validatedData = result.data;
         const expectedSlug = path.parse(file).name;
+
+        // ファイル名（スラグ）と中身のスラグが一致していることを保証する
         if (validatedData.slug !== expectedSlug) {
           logger.error(
             `FAILED: ${path.basename(file)} - Slug mismatch (content: ${validatedData.slug}, file: ${expectedSlug})`,
@@ -47,16 +54,19 @@ async function main() {
 
         logger.info(`OK: ${path.basename(file)}`);
       } else {
+        // バリデーションエラー時は詳細なパスと内容を出力
         logger.error(`FAILED: ${path.basename(file)}`);
         console.error(JSON.stringify(result.error.format(), null, 2));
         hasError = true;
       }
     } catch (err) {
+      // ファイルの読み込み自体ができない場合のエラー
       logger.error(`CRITICAL ERROR reading ${file}:`, err as Error);
       hasError = true;
     }
   }
 
+  // エラーが1件でもあれば異常終了させる
   if (hasError) {
     logger.error('Validation failed.');
     process.exit(1);
