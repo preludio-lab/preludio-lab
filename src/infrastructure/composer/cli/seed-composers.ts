@@ -9,7 +9,7 @@ import { TursoComposerDataSource } from '@/infrastructure/composer/turso.compose
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
 import { CreateComposerUseCase } from '@/application/composer/usecase/create-composer.usecase';
 import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
-import { ComposerData } from '@/domain/composer/composer.schema';
+import { ComposerMaster } from '@/application/composer/master/composer-master.schema';
 
 async function main() {
   const logger = getLogger();
@@ -22,15 +22,26 @@ async function main() {
 
   // Path to data
   const dataDir = path.join(process.cwd(), 'data', 'composers');
-  logger.info(`Scanning for composer data in: ${dataDir}`);
+
+  // Check for specific file argument
+  const argFile = process.argv[2];
+  let files: string[];
+
+  if (argFile) {
+    const fullPath = path.isAbsolute(argFile) ? argFile : path.join(process.cwd(), argFile);
+    logger.info(`Processing single file: ${fullPath}`);
+    files = [fullPath];
+  } else {
+    logger.info(`Scanning for composer data in: ${dataDir}`);
+    files = await listJsonFiles(dataDir);
+  }
 
   try {
-    const files = await listJsonFiles(dataDir);
     logger.info(`Found ${files.length} composer files.`);
 
     for (const file of files) {
       logger.info(`Processing: ${path.basename(file)}`);
-      const data = await readJsonFile<ComposerData>(file);
+      const data = await readJsonFile<ComposerMaster>(file);
 
       const existing = await repo.findBySlug(data.slug);
 

@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { articles, articleTranslations, series, seriesArticles } from './articles';
 import { composers, composerTranslations } from './composers';
-import { works, workTranslations, workParts } from './works';
+import { works, workTranslations, workParts, workPartTranslations } from './works';
 import { scores, scoreTranslations, scoreWorks, musicalExamples } from './scores';
 import { recordings, recordingSources } from './recordings';
 import { tags, tagTranslations } from './common';
@@ -105,10 +105,19 @@ export const workPartsRelations = relations(workParts, ({ one, many }) => ({
     fields: [workParts.workId],
     references: [works.id],
   }),
+  // 作品の翻訳データ (1:N)
+  translations: many(workPartTranslations),
   // 特定の楽章に紐づく譜例 (1:N)
   musicalExamples: many(musicalExamples),
   // 特定の楽章に紐づく録音 (1:N)
   recordings: many(recordings),
+}));
+
+export const workPartTranslationsRelations = relations(workPartTranslations, ({ one }) => ({
+  workPart: one(workParts, {
+    fields: [workPartTranslations.workPartId],
+    references: [workParts.id],
+  }),
 }));
 
 // --- Scores Relations (楽譜/アセットドメイン) ---

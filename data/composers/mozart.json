@@ -1,0 +1,46 @@
+{
+  "slug": "mozart",
+  "fullName": {
+    "en": "Wolfgang Amadeus Mozart",
+    "ja": "ヴォルフガング・アマデウス・モーツァルト"
+  },
+  "displayName": {
+    "en": "W. A. Mozart",
+    "ja": "モーツァルト"
+  },
+  "shortName": {
+    "en": "Mozart",
+    "ja": "モーツァルト"
+  },
+  "era": "classical",
+  "birthDate": "1756-01-27",
+  "deathDate": "1791-12-05",
+  "nationalityCode": "AT",
+  "places": [
+    {
+      "slug": "salzburg",
+      "type": "birth",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "activity",
+      "countryCode": "AT"
+    }
+  ],
+  "representativeInstruments": ["piano", "violin"],
+  "representativeGenres": ["opera", "symphony", "piano-concerto", "chamber-strings"],
+  "impressionDimensions": {
+    "innovation": 7,
+    "emotionality": 6,
+    "nationalism": 1,
+    "scale": 6,
+    "complexity": 6,
+    "theatricality": 8
+  },
+  "tags": ["prodigy", "vienna-classicism"],
+  "biography": {
+    "en": "A prolific and influential composer of the Classical period. Born in Salzburg, in the Holy Roman Empire, Mozart showed prodigious ability from his earliest childhood.",
+    "ja": "古典派音楽の極めて重要かつ影響力のあるオーストリアの作曲家。ザルツブルクに生まれ、幼少期から神童として圧倒的な才能を示した。"
+  }
+}

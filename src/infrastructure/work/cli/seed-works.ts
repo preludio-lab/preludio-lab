@@ -12,7 +12,7 @@ import { WorkRepositoryImpl } from '@/infrastructure/work/work.repository';
 import { WorkPartRepositoryImpl } from '@/infrastructure/work/work-part.repository';
 import { CreateWorkUseCase } from '@/application/work/usecase/create-work.usecase';
 import { UpdateWorkUseCase } from '@/application/work/usecase/update-work.usecase';
-import { WorkData } from '@/domain/work/work.schema';
+import { WorkMaster } from '@/application/work/master/work-master.schema';
 
 async function main() {
   const logger = getLogger();
@@ -33,15 +33,26 @@ async function main() {
 
   // Path to data
   const dataDir = path.join(process.cwd(), 'data', 'works');
-  logger.info(`Scanning for work data in: ${dataDir}`);
+
+  // Check for specific file argument
+  const argFile = process.argv[2];
+  let files: string[];
+
+  if (argFile) {
+    const fullPath = path.isAbsolute(argFile) ? argFile : path.join(process.cwd(), argFile);
+    logger.info(`Processing single file: ${fullPath}`);
+    files = [fullPath];
+  } else {
+    logger.info(`Scanning for work data in: ${dataDir}`);
+    files = await listJsonFiles(dataDir);
+  }
 
   try {
-    const files = await listJsonFiles(dataDir);
     logger.info(`Found ${files.length} work files.`);
 
     for (const file of files) {
       logger.info(`Processing: ${path.basename(file)}`);
-      const data = await readJsonFile<WorkData>(file);
+      const data = await readJsonFile<WorkMaster>(file);
 
       // Resolve composer ID first to check existence
       const composer = await composerRepo.findBySlug(data.composerSlug);

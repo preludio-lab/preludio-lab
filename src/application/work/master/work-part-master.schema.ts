@@ -1,18 +1,13 @@
 import { z } from 'zod';
-import { WorkPartControlSchema } from './work-part.control';
-import { WorkPartMetadataBaseSchema } from './work-part.metadata';
-import { MusicalIdentitySchema } from './work.shared';
+import { WorkPartControlSchema } from '@/domain/work/work-part.control';
+import { WorkPartMetadataBaseSchema } from '@/domain/work/work-part.metadata';
+import { MusicalIdentitySchema } from '@/domain/work/work.shared';
 
 /**
- * Work Part Data Schema (Nested JSON Item)
+ * Work Part Master Data Schema (Nested JSON Item)
  * 楽曲マスタデータ(JSON)内で、parts配列の各要素として使用されるスキーマ。
- *
- * - Control: Slug, ID (Optional for input, but internally managed)
- * - Metadata: Title, Type, Attributes
- *
- * 親(Work)と同様に、ControlとMetadataから必要なフィールドをPickして構成します。
  */
-export const WorkPartDataSchema = WorkPartControlSchema.pick({
+export const WorkPartMasterSchema = WorkPartControlSchema.pick({
   slug: true,
   order: true,
 })
@@ -52,4 +47,8 @@ export const WorkPartDataSchema = WorkPartControlSchema.pick({
     }
   });
 
-export type WorkPartData = z.infer<typeof WorkPartDataSchema>;
+export type WorkPartMaster = z.infer<typeof WorkPartMasterSchema>;
+
+/** Legacy support */
+export type WorkPartData = WorkPartMaster;
+export const WorkPartDataSchema = WorkPartMasterSchema;
