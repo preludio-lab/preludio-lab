@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { ComposerDataSchema } from '../src/domain/composer/composer.schema';
-import { WorkDataSchema } from '../src/domain/work/work.schema';
+import { ComposerMasterSchema } from '../src/application/composer/master/composer-master.schema';
+import { WorkMasterSchema } from '../src/application/work/master/work-master.schema';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 
@@ -16,7 +16,7 @@ async function validateComposers() {
     const filePath = path.join(dir, file);
     const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-    const result = ComposerDataSchema.safeParse(content);
+    const result = ComposerMasterSchema.safeParse(content);
     if (result.success) {
       console.log(`✅ ${file}: OK`);
     } else {
@@ -43,7 +43,7 @@ async function validateWorks() {
       const filePath = path.join(composerDir, file);
       const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
-      const result = WorkDataSchema.safeParse(content);
+      const result = WorkMasterSchema.safeParse(content);
       if (result.success) {
         // Additional check: Does slug match filename? (Optional but good)
         const expectedSlug = path.parse(file).name;
