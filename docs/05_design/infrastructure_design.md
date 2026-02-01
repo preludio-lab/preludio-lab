@@ -9,16 +9,15 @@
 
 アプリケーション、データベース、AIエージェントの各コンポーネントにおける環境分離戦略を定義します。
 
-| 環境 (Environment) | アプリケーション (App)                     | データベース (DB)                                        | Cloudflare (Worker/R2/DNS)           | 用途・特徴             |
-| :----------------- | :----------------------------------------- | :------------------------------------------------------- | :----------------------------------- | :--------------------- |
-| **Development**    | **Local PC**<br>`localhost:3000`           | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Account (2)**<br>_Project Account_ | 機能開発、単体テスト。 |
-| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Account (2)**<br>_Project Account_ | ステージング相当。     |
-| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>_本番データ_                | **Account (2)**<br>_Project Account_ | 本番稼働環境。         |
+| 環境 (Environment) | アプリケーション (App)                     | DB (General)                                          | DB (User)                                                | Storage   | CDN            | AI Agent                             | 用途・特徴             |
+| :----------------- | :----------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------- | :-------- | :------------- | :----------------------------------- | :--------------------- |
+| **Development**    | **Local PC**<br>`localhost:3000`           | **Turso (Dev)**<br>_Local or Remote_                  | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Local** | **Local**      | **Local PC**<br>_手動実行_           | 機能開発、単体テスト。 |
+| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Turso (Staging)**<br>_Cloud Staging or Shared Prod_ | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **R2**    | **Cloudflare** | **GitHub Actions**<br>_PR_           | ステージング相当。     |
+| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Turso (Production)**<br>_本番データ_                | **Supabase (Production)**<br>_本番データ_                | **R2**    | **Cloudflare** | **GitHub Actions**<br>_Schedule/API_ | 本番稼働環境。         |
 
 > [!IMPORTANT]
 > **Administrative Boundary & Domain Transfer**:
-> 管理の純粋性を保つため、ドメイン (`preludiolab.com`) を **Account (2) (プロジェクト用アカウント)** へ移管します。
-> これにより、Worker のカスタムドメイン紐付け (`cdn.preludiolab.com`) が Account (2) 内で完結し、将来的な共同開発やプロジェクト譲渡が容易になります。
+> 管理の純粋性を保つため、ドメイン (`preludiolab.com`) を **Account (2) (プロジェクト用アカウント)** へ移管し、Worker/R2 も同アカウントで管理します。
 
 ---
 
