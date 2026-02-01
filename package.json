@@ -39,7 +39,7 @@
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "import-in-the-middle": "^2.0.6",
-    "next": "16.0.8",
+    "next": "16.1.6",
     "next-intl": "^4.6.1",
     "next-mdx-remote": "^5.0.0",
     "pino": "^10.3.0",
