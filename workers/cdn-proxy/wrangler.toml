@@ -16,3 +16,7 @@ preview_bucket_name = "preludiolab-storage" # ローカル開発(--remote)で同
 
 [observability]
 enabled = true
+
+[[routes]]
+pattern = "cdn.preludiolab.com"
+custom_domain = true

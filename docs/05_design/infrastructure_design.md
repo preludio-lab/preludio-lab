@@ -9,11 +9,16 @@
 
 アプリケーション、データベース、AIエージェントの各コンポーネントにおける環境分離戦略を定義します。
 
-| 環境 (Environment) | アプリケーション (App)                     | データベース (DB)                                        | AIエージェント (Agent Runner)                  | 用途・特徴                                                 |
-| :----------------- | :----------------------------------------- | :------------------------------------------------------- | :--------------------------------------------- | :--------------------------------------------------------- |
-| **Development**    | **Local PC**<br>`localhost:3000`           | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Local PC**<br>_手動実行_                     | 機能開発、単体テスト。Cloud DBを参照し、環境差異を減らす。 |
-| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **GitHub Actions**<br>_Pull Request Trigger_   | ステージング相当。本番またはStaging DBを参照。             |
-| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>_本番データ_                | **GitHub Actions**<br>_Schedule / API Trigger_ | 本番稼働環境。エンドユーザー向け公開。                     |
+| 環境 (Environment) | アプリケーション (App)                     | データベース (DB)                                        | Cloudflare (Worker/R2/DNS)           | 用途・特徴             |
+| :----------------- | :----------------------------------------- | :------------------------------------------------------- | :----------------------------------- | :--------------------- |
+| **Development**    | **Local PC**<br>`localhost:3000`           | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Account (2)**<br>_Project Account_ | 機能開発、単体テスト。 |
+| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Account (2)**<br>_Project Account_ | ステージング相当。     |
+| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>_本番データ_                | **Account (2)**<br>_Project Account_ | 本番稼働環境。         |
+
+> [!IMPORTANT]
+> **Administrative Boundary & Domain Transfer**:
+> 管理の純粋性を保つため、ドメイン (`preludiolab.com`) を **Account (2) (プロジェクト用アカウント)** へ移管します。
+> これにより、Worker のカスタムドメイン紐付け (`cdn.preludiolab.com`) が Account (2) 内で完結し、将来的な共同開発やプロジェクト譲渡が容易になります。
 
 ---
 
