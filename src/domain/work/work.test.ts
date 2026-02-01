@@ -31,6 +31,7 @@ describe('Work Entity', () => {
     performanceDifficulty: 5,
     era: MusicalEra.CLASSICAL,
     instrumentation: 'Symphony Orchestra',
+    instruments: [],
     instrumentationFlags: {
       isSolo: false,
       isChamber: false,

@@ -29,6 +29,21 @@
     "ja": "1830年"
   },
   "instrumentation": "Solo: Piano, Orch: 2.2.2.2 - 4.2.1.0 - tmp - str",
+  "instruments": [
+    "piano",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "trombone",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
   "instrumentationFlags": {
     "isOrchestral": true
   },

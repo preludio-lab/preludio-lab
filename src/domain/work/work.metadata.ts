@@ -1,4 +1,5 @@
 import { z } from '@/shared/validation/zod';
+import { MusicalInstrumentSchema } from '../shared/musical-instrument';
 import { MusicalEraSchema } from '../shared/musical-era';
 import {
   DescriptionSchema,
@@ -61,6 +62,14 @@ export const WorkMetadataBaseSchema = z.object({
    * 編成は原則として作品全体で固定されるため、トップレベルで管理します。
    */
   instrumentation: z.string().max(200).optional(),
+  /**
+   * 使用楽器リスト (構造化データ)
+   * 検索・フィルタリング用に、楽曲で使用される楽器のIDリストを保持します。
+   * - 独奏・室内楽: 全ての楽器を列挙します。
+   * - 管弦楽曲・協奏曲: ソロ楽器や特徴的な楽器（イングリッシュホルン、ピッコロ等）を優先して登録します。
+   *   標準的な弦楽器なども可能な限り網羅することを推奨します。
+   */
+  instruments: z.array(MusicalInstrumentSchema).default([]),
   /** 楽器編成フラグ (フィルタリング用) */
   instrumentationFlags: InstrumentationFlagsSchema.default({
     isSolo: false,

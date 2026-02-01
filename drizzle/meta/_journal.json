@@ -15,6 +15,13 @@
       "when": 1768928345351,
       "tag": "0001_magenta_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1769924108030,
+      "tag": "0002_worried_zuras",
+      "breakpoints": true
     }
   ]
 }

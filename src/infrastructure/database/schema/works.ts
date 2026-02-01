@@ -45,6 +45,7 @@ export const works = sqliteTable(
     }).$type<ImpressionDimensions>(),
     genres: text('genres', { mode: 'json' }).default('[]').notNull().$type<MusicalGenre[]>(),
     tags: text('tags', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
+    instruments: text('instruments', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
     compositionYear: integer('composition_year'),
     compositionPeriod: text('composition_period'), // (Legacy)
     basedOn: text('based_on', { mode: 'json' }).$type<BasedOn>(),

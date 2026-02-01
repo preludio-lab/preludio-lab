@@ -38,6 +38,20 @@
     "ja": "1809-1811年"
   },
   "instrumentation": "Solo: Piano, Orch: 2.2.2.2 - 2.2.0.0 - tmp - str",
+  "instruments": [
+    "piano",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
   "instrumentationFlags": {
     "isOrchestral": true
   },

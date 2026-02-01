@@ -34,6 +34,19 @@
     "zh": "1785"
   },
   "instrumentation": "Solo: Piano, Orch: 1.2.0.2 - 2.0.0.0 - str",
+  "instruments": [
+    "piano",
+    "flute",
+    "oboe",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
   "instrumentationFlags": {
     "isOrchestral": true,
     "isSolo": false,

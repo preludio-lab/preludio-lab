@@ -75,6 +75,7 @@ export class TursoWorkMapper {
         nicknames: work.tags || [],
         description: description,
         tags: work.tags || [],
+        instruments: work.instruments || [],
         basedOn: work.basedOn || undefined,
       } as any,
     });
@@ -113,6 +114,7 @@ export class TursoWorkMapper {
       impressionDimensions: meta.impressionDimensions || null,
       genres: (mid?.genres as any) || [],
       tags: meta.tags as any,
+      instruments: meta.instruments as any,
       compositionYear: meta.compositionYear || null,
       compositionPeriod: null,
       basedOn: meta.basedOn || null,

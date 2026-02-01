@@ -64,6 +64,7 @@ export class CreateWorkUseCase {
         catalogues: data.catalogues ?? [],
         era: data.era,
         instrumentation: data.instrumentation,
+        instruments: data.instruments ?? [],
         instrumentationFlags: data.instrumentationFlags ?? {
           isSolo: false,
           isChamber: false,

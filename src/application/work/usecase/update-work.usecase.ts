@@ -64,6 +64,7 @@ export class UpdateWorkUseCase {
         catalogues: data.catalogues ?? existingWork.metadata.catalogues,
         era: data.era ?? existingWork.metadata.era,
         instrumentation: data.instrumentation ?? existingWork.metadata.instrumentation,
+        instruments: data.instruments ?? existingWork.metadata.instruments,
         instrumentationFlags:
           data.instrumentationFlags ?? existingWork.metadata.instrumentationFlags,
         performanceDifficulty:

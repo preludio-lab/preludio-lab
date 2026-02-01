@@ -38,6 +38,22 @@
     "ja": "1804-1808年"
   },
   "instrumentation": "2.2.2.3 - 2.2.3.0 - tmp - str",
+  "instruments": [
+    "piccolo",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "contrabassoon",
+    "horn",
+    "trumpet",
+    "trombone",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
   "instrumentationFlags": {
     "isOrchestral": true
   },
