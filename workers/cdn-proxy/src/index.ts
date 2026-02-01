@@ -22,10 +22,11 @@ app.use(
 app.get('/', (c) => c.text('PreludioLab CDN Proxy is active.'));
 
 app.get('/*', async (c) => {
-  const file = c.req.path.slice(1); // Remove leading slash
+  const file = c.req.path.slice(1);
+  const rawPath = c.req.raw.url;
 
-  // パス・トラバーサル対策
-  if (file.includes('..')) {
+  // パス・トラバーサル対策 (デコードされたパスと生URLの両方を確認)
+  if (file.includes('..') || rawPath.includes('..') || file.includes('%2e%2e')) {
     return c.text('Invalid Path', 400);
   }
 
@@ -54,12 +55,37 @@ app.get('/*', async (c) => {
 
     const object = await c.env.R2_BUCKET.get(key, r2Options);
 
-    if (!object) {
-      console.warn(`[CDN] Not Found: ${key}`);
-      return c.text('Not Found', 404);
+    const headers = new Headers();
+
+    // セキュリティ & キャッシュ (常に付与)
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    headers.set('Accept-Ranges', 'bytes');
+
+    const requestOrigin = c.req.header('Origin');
+    const allowedOrigins = ['https://preludiolab.com', 'https://www.preludiolab.com'];
+    const isLocalhost = requestOrigin?.startsWith('http://localhost:');
+    const isVercelPreview =
+      requestOrigin && /^https:\/\/.*preludiolab.*\.vercel\.app$/.test(requestOrigin);
+
+    if (
+      requestOrigin &&
+      (allowedOrigins.includes(requestOrigin) || isLocalhost || isVercelPreview)
+    ) {
+      headers.set('Access-Control-Allow-Origin', requestOrigin);
+      headers.set('Vary', 'Origin');
+      // 許可されたオリジンからのリクエストには cross-origin (リソース共有許可) を返す
+      headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    } else {
+      // それ以外は same-site (他サイトからの読み込みブロック)
+      headers.set('Cross-Origin-Resource-Policy', 'same-site');
     }
 
-    const headers = new Headers();
+    if (!object) {
+      console.warn(`[CDN] Not Found: ${key}`);
+      return c.text('Not Found', 404, Object.fromEntries(headers.entries()));
+    }
+
     object.writeHttpMetadata(headers);
     headers.set('etag', object.httpEtag);
 
@@ -67,21 +93,8 @@ app.get('/*', async (c) => {
     if (!headers.has('content-type')) {
       if (key.endsWith('.svg')) headers.set('Content-Type', 'image/svg+xml');
       else if (key.endsWith('.mp3')) headers.set('Content-Type', 'audio/mpeg');
+      else if (key.endsWith('.webp')) headers.set('Content-Type', 'image/webp');
     }
-
-    // セキュリティ & キャッシュ
-    headers.set('X-Content-Type-Options', 'nosniff');
-
-    // CORP設定: localhost:3000 からのアクセスのみ緩和し、それ以外は厳格な same-site とする
-    const origin = c.req.header('Origin');
-    if (origin === 'http://localhost:3000') {
-      headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
-    } else {
-      headers.set('Cross-Origin-Resource-Policy', 'same-site');
-    }
-
-    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-    headers.set('Accept-Ranges', 'bytes');
 
     // レスポンスの構築
     if (object.range) {

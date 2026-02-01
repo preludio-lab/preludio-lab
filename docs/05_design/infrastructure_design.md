@@ -9,11 +9,15 @@
 
 アプリケーション、データベース、AIエージェントの各コンポーネントにおける環境分離戦略を定義します。
 
-| 環境 (Environment) | アプリケーション (App)                     | データベース (DB)                                        | AIエージェント (Agent Runner)                  | 用途・特徴                                                 |
-| :----------------- | :----------------------------------------- | :------------------------------------------------------- | :--------------------------------------------- | :--------------------------------------------------------- |
-| **Development**    | **Local PC**<br>`localhost:3000`           | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Local PC**<br>_手動実行_                     | 機能開発、単体テスト。Cloud DBを参照し、環境差異を減らす。 |
-| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **GitHub Actions**<br>_Pull Request Trigger_   | ステージング相当。本番またはStaging DBを参照。             |
-| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Supabase (Production)**<br>_本番データ_                | **GitHub Actions**<br>_Schedule / API Trigger_ | 本番稼働環境。エンドユーザー向け公開。                     |
+| 環境 (Environment) | アプリケーション (App)                     | DB (General)                                          | DB (User)                                                | Storage   | CDN            | AI Agent                             | 用途・特徴             |
+| :----------------- | :----------------------------------------- | :---------------------------------------------------- | :------------------------------------------------------- | :-------- | :------------- | :----------------------------------- | :--------------------- |
+| **Development**    | **Local PC**<br>`localhost:3000`           | **Turso (Dev)**<br>_Local or Remote_                  | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Local** | **Local**      | **Local PC**<br>_手動実行_           | 機能開発、単体テスト。 |
+| **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Turso (Staging)**<br>_Cloud Staging or Shared Prod_ | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **R2**    | **Cloudflare** | **GitHub Actions**<br>_PR_           | ステージング相当。     |
+| **Production**     | **Vercel Production**<br>`preludiolab.com` | **Turso (Production)**<br>_本番データ_                | **Supabase (Production)**<br>_本番データ_                | **R2**    | **Cloudflare** | **GitHub Actions**<br>_Schedule/API_ | 本番稼働環境。         |
+
+> [!IMPORTANT]
+> **Administrative Boundary & Domain Transfer**:
+> 管理の純粋性を保つため、ドメイン (`preludiolab.com`) を **Account (2) (プロジェクト用アカウント)** へ移管し、Worker/R2 も同アカウントで管理します。
 
 ---
 
@@ -70,22 +74,81 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
 
 ---
 
-## 4. CDN (Hybrid Strategy)
+## 4. Hybrid CDN Strategy (Asset & HTML Delivery)
 
-**Cloudflare + Vercel Edge Network** の2層構造とする。
+**Cloudflare CDN (Assets)** と **Vercel Edge Network (HTML)** の強みを組み合わせた2層構造（Hybrid Strategy）を採用し、コストゼロで最高のパフォーマンスを実現します。
 
-### 設定
+### 4.1 Cloudflare CDN (Public Assets: Image & Audio)
 
-- **Cache Policy:** 静的アセットおよびISRページのキャッシュ。
+静的アセット（画像、音源、譜例）の配信を担当します。
 
-### セキュリティ対策 (Security Measures)
+#### Architecture
 
-- **End-to-End Encryption:** クライアント⇔エッジ⇔オリジン間の全経路暗号化。
-- **Security Headers:** Next.jsの設定により `X-Content-Type-Options`, `X-Frame-Options` 等を付与し、ブラウザベースの攻撃（XSS/Clickjacking）を軽減。
+- **Origin:** Cloudflare R2 (`preludiolab-storage`)
+- **Proxy:** Cloudflare Worker (`cdn-proxy`)
+- **Domain:** `cdn.preludiolab.com`
+
+#### [REQ-INFRA-AUDIO-OPT] Audio Streaming (Range Requests)
+
+- **課題:** 長時間の音源（MP3）をスムーズにシーク再生する。
+- **解決策:** Workerが `Range` ヘッダーを解釈し、R2から必要なバイト範囲のみを `206 Partial Content` として返却します。ブラウザはこれを認識し、シークバー操作時に必要な断片のみをダウンロードします。
+
+#### [REQ-INFRA-IMG-OPT] Image Optimization (Pre-generation Strategy)
+
+- **課題:** モバイル端末でのLCP改善と、Cloudflare有料リサイズ機能の回避。
+- **解決策:** 以下の「ゼロコスト・プレ生成戦略」を採用します。
+  - **閾値 (Breakpoint):** `640px`
+  - **配信パスの切り替え:**
+    - `width <= 640`: サフィックス `-sm` を付与（例: `portrait-sm.webp`）
+    - `width > 640`: オリジナル画像を配信（例: `portrait.webp`）
+    - **SVG:** ベクターデータのため常にオリジナルを配信。
+  - **運用:** アセット配置時に自動的に縮小版を生成します。
+
+#### Security & Cache Headers
+
+- **Access Control:** `Access-Control-Allow-Origin` を以下に限定。
+  - Production: `preludiolab.com`, `www.preludiolab.com`
+  - Preview: `*.preludiolab*.vercel.app` (Regex: `.*preludiolab.*`) - プロジェクト名を含むVercelプレビューURLを許可
+  - Local: `localhost`
+- **Cache Strategy:** `Cache-Control: public, max-age=31536000, immutable` (1年間キャッシュ)
 
 ---
 
-## 5. データベース (Supabase)
+### 4.2 Vercel Edge Network (HTML & RSC Payload)
+
+動的コンテンツ（HTML, RSC Payload）の配信を担当します。
+
+#### Architecture
+
+- **Origin:** Next.js App (Serverless Functions)
+- **Domain:** `preludiolab.com`
+
+#### Strategy
+
+- **ISR (Incremental Static Regeneration):**
+  - 記事HTMLはVercel Edgeでキャッシュされ (`stale-while-revalidate`)、バックグラウンドで再生成されます。
+- **Cache Bypass (Cloudflare Side):**
+  - Cloudflare側ではHTMLをキャッシュせずバイパスし (`Cache Level: Standard`)、Vercel側のISR制御を妨害しない構成とします。
+
+---
+
+## 5. オブジェクトストレージ (Cloudflare R2)
+
+アセット本体の格納には **Cloudflare R2** を使用し、Vercelの帯域制限（Hobby: 100GB）を完全に回避します。
+
+### バケット構成
+
+- **Bucket Name:** `preludiolab-storage`
+- **Region:** `auto` (Global)
+- **Path structure:**
+  - `public/works/{composer}/{work}/audio/` (音源)
+  - `public/works/{composer}/{work}/musical-examples/` (譜例)
+  - `public/articles/{slug}/images/` (記事内画像)
+  - `private/` (Next.js アプリケーションからのみSDK経由でアクセスするMDX本文など)
+
+---
+
+## 6. データベース (Supabase)
 
 ### 設定
 
