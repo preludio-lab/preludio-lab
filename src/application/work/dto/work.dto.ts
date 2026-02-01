@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { WorkDataSchema } from '@/domain/work/work.schema';
+import { WorkMasterSchema } from '../master/work-master.schema';
 
 /**
  * Work DTO
  */
-export const WorkDtoSchema = WorkDataSchema;
+export const WorkDtoSchema = WorkMasterSchema;
 
 export type WorkDto = z.infer<typeof WorkDtoSchema>;

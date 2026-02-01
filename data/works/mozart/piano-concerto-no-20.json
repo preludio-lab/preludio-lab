@@ -1,0 +1,156 @@
+{
+  "slug": "piano-concerto-no-20",
+  "composerSlug": "mozart",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-01-31T05:45:00Z",
+    "promptVersion": "v1.0.0"
+  },
+  "titleComponents": {
+    "title": {
+      "en": "Piano Concerto No. 20 in D minor, K. 466",
+      "ja": "ピアノ協奏曲第20番 ニ短調 K. 466"
+    },
+    "content": {
+      "en": "Piano Concerto No. 20 in D minor",
+      "ja": "ピアノ協奏曲第20番 ニ短調"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "k",
+      "number": "466",
+      "isPrimary": true
+    }
+  ],
+  "key": "d-minor",
+  "genres": ["piano-concerto"],
+  "compositionYear": 1785,
+  "compositionPeriod": {
+    "en": "1785",
+    "ja": "1785年"
+  },
+  "instrumentation": "Piano soloist, flute, 2 oboes, 2 bassoons, 2 horns, 2 trumpets, timpani, and strings.",
+  "instrumentationFlags": {
+    "isSolo": false,
+    "isChamber": false,
+    "isOrchestral": true,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "performanceDifficulty": 5,
+  "impressionDimensions": {
+    "brightness": -4,
+    "vibrancy": 7,
+    "scale": 7,
+    "depth": 8,
+    "drama": 9,
+    "popularity": 9
+  },
+  "tags": ["dramatic", "storm-and-stress"],
+  "parts": [
+    {
+      "slug": "1st-mov",
+      "order": 1,
+      "titleComponents": {
+        "title": {
+          "en": "I. Allegro",
+          "ja": "第1楽章 アレグロ"
+        },
+        "prefix": {
+          "en": "I.",
+          "ja": "第1楽章"
+        },
+        "content": {
+          "en": "Allegro",
+          "ja": "アレグロ"
+        }
+      },
+      "type": "movement",
+      "key": "d-minor",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": -5,
+        "vibrancy": 8,
+        "scale": 7,
+        "depth": 8,
+        "drama": 9,
+        "popularity": 9
+      }
+    },
+    {
+      "slug": "2nd-mov",
+      "order": 2,
+      "titleComponents": {
+        "title": {
+          "en": "II. Romanze",
+          "ja": "第2楽章 ロマンツェ"
+        },
+        "prefix": {
+          "en": "II.",
+          "ja": "第2楽章"
+        },
+        "content": {
+          "en": "Romanze",
+          "ja": "ロマンツェ"
+        }
+      },
+      "type": "movement",
+      "key": "b-flat-major",
+      "tempo": "Andante",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 2
+      },
+      "performanceDifficulty": 4,
+      "impressionDimensions": {
+        "brightness": 7,
+        "vibrancy": -2,
+        "scale": 5,
+        "depth": 6,
+        "drama": 4,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "3rd-mov",
+      "order": 3,
+      "titleComponents": {
+        "title": {
+          "en": "III. Rondo: Allegro assai",
+          "ja": "第3楽章 ロンド：アレグロ・アッサイ"
+        },
+        "prefix": {
+          "en": "III.",
+          "ja": "第3楽章"
+        },
+        "content": {
+          "en": "Rondo: Allegro assai",
+          "ja": "ロンド：アレグロ・アッサイ"
+        }
+      },
+      "type": "movement",
+      "key": "d-minor",
+      "tempo": "Allegro assai",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 2
+      },
+      "performanceDifficulty": 5,
+      "impressionDimensions": {
+        "brightness": 2,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 5,
+        "drama": 8,
+        "popularity": 8
+      }
+    }
+  ]
+}
