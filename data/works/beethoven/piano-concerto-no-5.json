@@ -37,7 +37,7 @@
     "en": "1809-1811",
     "ja": "1809-1811年"
   },
-  "instrumentation": "Piano solo + 2.2.2.2 - 2.2.0.0 - tmp - str",
+  "instrumentation": "Solo: Piano, Orch: 2.2.2.2 - 2.2.0.0 - tmp - str",
   "instrumentationFlags": {
     "isOrchestral": true
   },

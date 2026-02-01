@@ -33,7 +33,7 @@
     "es": "1785",
     "zh": "1785"
   },
-  "instrumentation": "Piano solo + 1.2.2.2 - 2.2.0.0 - tmp - str",
+  "instrumentation": "Solo: Piano, Orch: 1.2.0.2 - 2.0.0.0 - str",
   "instrumentationFlags": {
     "isOrchestral": true,
     "isSolo": false,
