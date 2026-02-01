@@ -48,6 +48,7 @@
     "react-hot-toast": "^2.6.0",
     "react-youtube": "^10.1.0",
     "rehype-slug": "^6.0.0",
+    "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
