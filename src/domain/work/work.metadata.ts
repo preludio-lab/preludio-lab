@@ -48,14 +48,14 @@ export const WorkMetadataBaseSchema = z.object({
   era: MusicalEraSchema.optional(),
 
   /**
-   * 楽器編成 (Instrumentation)
-   * 演奏に必要な楽器編成をテキストで記述します。
+   * 楽器編成 (Instrumentation - Display Text)
+   * 演奏に必要な楽器編成を「人間が読むためのテキスト」で記述します。
+   * ※ MusicalInstrumentのIDリストではありません。慣習的な略記法や自然言語記述を用います。
    *
    * [記述例]
    * - 独奏曲: "Piano"
    * - 室内楽: "Violin, Piano", "String Quartet"
    * - 管弦楽曲 (略記): "2.2.2.2 - 4.2.3.0 - tmp - str"
-   *   (木管: Fl.Ob.Cl.Fg - 金管: Hr.Tp.Tb.Tub - 打楽器 - 弦楽)
    * - 協奏曲: "Solo: Piano, Orch: 1.2.0.2 - 2.0.0.0 - str"
    *
    * 編成は原則として作品全体で固定されるため、トップレベルで管理します。
