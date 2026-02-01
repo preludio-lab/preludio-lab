@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { WorkBaseCommandSchema } from './base.command';
-import { WorkPartDataSchema } from '@/domain/work/work-part.schema';
+import { WorkPartMasterSchema } from '../master/work-part-master.schema';
 import { WorkControlSchema } from '@/domain/work/work.control';
 
 /**
@@ -16,7 +16,7 @@ export const CreateWorkCommandSchema = WorkBaseCommandSchema.extend({
   /** 紐付ける作曲家のスラグ */
   composerSlug: WorkControlSchema.shape.composerSlug,
   /** 構成楽曲（楽章）のリスト */
-  parts: z.array(WorkPartDataSchema).default([]),
+  parts: z.array(WorkPartMasterSchema).default([]),
 });
 
 export type CreateWorkCommand = z.infer<typeof CreateWorkCommandSchema>;
