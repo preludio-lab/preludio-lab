@@ -27,6 +27,7 @@ describe('WorkPart Entity', () => {
     },
     nicknames: [],
     catalogues: [],
+    tags: [],
   };
 
   it('should initialize with control and metadata', () => {

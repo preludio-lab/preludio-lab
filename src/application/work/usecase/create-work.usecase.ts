@@ -131,6 +131,7 @@ export class CreateWorkUseCase {
             nicknames: p.nicknames ?? [],
             basedOn: p.basedOn,
             performanceDifficulty: p.performanceDifficulty,
+            tags: p.tags || [],
           };
 
           const partEntity = new WorkPart(partControl, partMetadata);

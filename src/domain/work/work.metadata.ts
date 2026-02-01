@@ -11,7 +11,7 @@ import {
   TitleComponentsSchema,
   ArrangeTypeSchema,
 } from './work.shared';
-import { TagsSchema, YearSchema, SlugSchema } from '../shared/common.metadata';
+import { MusicalTagsSchema, YearSchema, SlugSchema } from '../shared/common.metadata';
 
 // Re-export common types and schemas for convenience
 export * from './work.shared';
@@ -78,7 +78,7 @@ export const WorkMetadataBaseSchema = z.object({
   /** 作品解説 */
   description: DescriptionSchema.optional(),
   /** 自由タグ */
-  tags: TagsSchema,
+  tags: MusicalTagsSchema,
   /** 編曲・派生元情報 */
   basedOn: z
     .object({

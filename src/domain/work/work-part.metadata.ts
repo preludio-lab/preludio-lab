@@ -1,5 +1,5 @@
 import { z } from '@/shared/validation/zod';
-import { SlugSchema } from '../shared/common.metadata';
+import { SlugSchema, MusicalTagsSchema } from '../shared/common.metadata';
 import {
   DescriptionSchema,
   MusicalIdentitySchema,
@@ -67,6 +67,8 @@ export const WorkPartMetadataBaseSchema = z.object({
 
   /** 検索用別名リスト */
   nicknames: NicknamesSchema.default([]),
+  /** 自由タグ */
+  tags: MusicalTagsSchema,
   /** 編曲・派生元情報 (楽章単位で異なる場合) */
   basedOn: z
     .object({

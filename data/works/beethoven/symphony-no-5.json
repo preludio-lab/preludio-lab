@@ -1,24 +1,25 @@
 {
+  "_schemaVersion": "1.1.0",
   "slug": "symphony-no-5",
   "composerSlug": "beethoven",
-  "_schemaVersion": "1.1.0",
-  "_generatorMeta": {
-    "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-01-21T02:00:00Z",
-    "promptVersion": "v1.0.0"
-  },
   "titleComponents": {
     "title": {
-      "en": "Symphony No. 5 in C minor \"Fate\"",
-      "ja": "交響曲第5番 ハ短調 「運命」"
-    },
-    "content": {
-      "en": "Symphony No. 5 in C minor",
-      "ja": "交響曲第5番 ハ短調"
+      "en": "Symphony No. 5",
+      "ja": "交響曲第5番",
+      "de": "Sinfonie Nr. 5",
+      "fr": "Symphonie n° 5",
+      "it": "Sinfonia n. 5",
+      "es": "Sinfonía n.º 5",
+      "zh": "第5号交响曲"
     },
     "nickname": {
       "en": "Fate",
-      "ja": "運命"
+      "ja": "運命",
+      "de": "Schicksal",
+      "fr": "Destin",
+      "it": "Destino",
+      "es": "Destino",
+      "zh": "命运"
     }
   },
   "catalogues": [
@@ -28,13 +29,19 @@
       "isPrimary": true
     }
   ],
-  "key": "c-minor",
+  "era": "early-romantic",
   "genres": ["symphony"],
+  "key": "c-minor",
   "compositionYear": 1808,
   "compositionPeriod": {
     "en": "1804-1808",
     "ja": "1804-1808年"
   },
+  "instrumentation": "2.2.2.3 - 2.2.3.0 - tmp - str",
+  "instrumentationFlags": {
+    "isOrchestral": true
+  },
+  "performanceDifficulty": 5,
   "impressionDimensions": {
     "brightness": -5,
     "vibrancy": 9,
@@ -43,143 +50,90 @@
     "drama": 9,
     "popularity": 10
   },
-  "tags": ["famous-opening", "victory"],
+  "tags": ["dramatic", "standard-repertoire", "nicknamed-work"],
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-02-01T13:55:00Z",
+    "promptVersion": "1.2.0",
+    "confidenceScore": 1.0,
+    "sourceRefs": ["https://en.wikipedia.org/wiki/Symphony_No._5_(Beethoven)"]
+  },
   "parts": [
     {
-      "slug": "1st-mov",
+      "slug": "1st-movement",
       "order": 1,
       "titleComponents": {
         "title": {
-          "en": "I. Allegro con brio in C minor",
-          "ja": "第1楽章 アレグロ・コン・ブリオ ハ短調"
-        },
-        "prefix": {
-          "en": "I.",
-          "ja": "第1楽章"
-        },
-        "content": {
-          "en": "Allegro con brio in C minor",
-          "ja": "アレグロ・コン・ブリオ ハ短調"
+          "en": "Allegro con brio",
+          "ja": "アレグロ・コン・ブリオ",
+          "de": "Allegro con brio",
+          "fr": "Allegro con brio",
+          "it": "Allegro con brio",
+          "es": "Allegro con brio",
+          "zh": "灿烂的快板"
         }
       },
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro con brio",
-      "timeSignature": {
-        "numerator": 2,
-        "denominator": 4
-      },
-      "performanceDifficulty": 5,
-      "impressionDimensions": {
-        "brightness": -3,
-        "vibrancy": 9,
-        "scale": 7,
-        "depth": 6,
-        "drama": 9,
-        "popularity": 10
-      }
+      "tags": ["dramatic", "tense"]
     },
     {
-      "slug": "2nd-mov",
+      "slug": "2nd-movement",
       "order": 2,
       "titleComponents": {
         "title": {
-          "en": "II. Andante con moto in A-flat major",
-          "ja": "第2楽章 アンダンテ・コン・モート 変イ長調"
-        },
-        "prefix": {
-          "en": "II.",
-          "ja": "第2楽章"
-        },
-        "content": {
-          "en": "Andante con moto in A-flat major",
-          "ja": "アンダンテ・コン・モート 変イ長調"
+          "en": "Andante con moto",
+          "ja": "アンダンテ・コン・モート",
+          "de": "Andante con moto",
+          "fr": "Andante con moto",
+          "it": "Andante con moto",
+          "es": "Andante con moto",
+          "zh": "稍快的小行板"
         }
       },
       "type": "movement",
       "key": "a-flat-major",
       "tempo": "Andante con moto",
-      "timeSignature": {
-        "numerator": 3,
-        "denominator": 8
-      },
-      "performanceDifficulty": 4,
-      "impressionDimensions": {
-        "brightness": 4,
-        "vibrancy": -2,
-        "scale": 5,
-        "depth": 7,
-        "drama": 3,
-        "popularity": 8
-      }
+      "tags": ["serene", "majestic"]
     },
     {
-      "slug": "3rd-mov",
+      "slug": "3rd-movement",
       "order": 3,
       "titleComponents": {
         "title": {
-          "en": "III. Scherzo: Allegro in C minor",
-          "ja": "第3楽章 スケルツォ：アレグロ ハ短調"
-        },
-        "prefix": {
-          "en": "III.",
-          "ja": "第3楽章"
-        },
-        "content": {
-          "en": "Scherzo: Allegro in C minor",
-          "ja": "スケルツォ：アレグロ ハ短調"
+          "en": "Scherzo. Allegro",
+          "ja": "スケルツォ。アレグロ",
+          "de": "Scherzo. Allegro",
+          "fr": "Scherzo. Allegro",
+          "it": "Scherzo. Allegro",
+          "es": "Scherzo. Allegro",
+          "zh": "谐谑曲。快板"
         }
       },
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro",
-      "timeSignature": {
-        "numerator": 3,
-        "denominator": 4
-      },
-      "performanceDifficulty": 5,
-      "impressionDimensions": {
-        "brightness": -4,
-        "vibrancy": 6,
-        "scale": 6,
-        "depth": 6,
-        "drama": 7,
-        "popularity": 8
-      }
+      "tags": ["gloomy", "tense"]
     },
     {
-      "slug": "4th-mov",
+      "slug": "4th-movement",
       "order": 4,
       "titleComponents": {
         "title": {
-          "en": "IV. Allegro in C major",
-          "ja": "第4楽章 アレグロ ハ長調"
-        },
-        "prefix": {
-          "en": "IV.",
-          "ja": "第4楽章"
-        },
-        "content": {
-          "en": "Allegro in C major",
-          "ja": "アレグロ ハ長調"
+          "en": "Allegro",
+          "ja": "アレグロ",
+          "de": "Allegro",
+          "fr": "Allegro",
+          "it": "Allegro",
+          "es": "Allegro",
+          "zh": "快板"
         }
       },
       "type": "movement",
       "key": "c-major",
       "tempo": "Allegro",
-      "timeSignature": {
-        "numerator": 4,
-        "denominator": 4
-      },
-      "performanceDifficulty": 5,
-      "impressionDimensions": {
-        "brightness": 9,
-        "vibrancy": 10,
-        "scale": 9,
-        "depth": 5,
-        "drama": 9,
-        "popularity": 10
-      }
+      "tags": ["joyful", "majestic"]
     }
   ]
 }

@@ -1,20 +1,16 @@
 {
+  "_schemaVersion": "1.1.0",
   "slug": "piano-concerto-no-20",
   "composerSlug": "mozart",
-  "_schemaVersion": "1.1.0",
-  "_generatorMeta": {
-    "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-01-31T05:45:00Z",
-    "promptVersion": "v1.0.0"
-  },
   "titleComponents": {
     "title": {
-      "en": "Piano Concerto No. 20 in D minor, K. 466",
-      "ja": "ピアノ協奏曲第20番 ニ短調 K. 466"
-    },
-    "content": {
-      "en": "Piano Concerto No. 20 in D minor",
-      "ja": "ピアノ協奏曲第20番 ニ短調"
+      "en": "Piano Concerto No. 20",
+      "ja": "ピアノ協奏曲第20番",
+      "de": "Klavierkonzert Nr. 20",
+      "fr": "Concerto pour piano n° 20",
+      "it": "Concerto per pianoforte n. 20",
+      "es": "Concierto para piano n.º 20",
+      "zh": "第20号钢琴协奏曲"
     }
   },
   "catalogues": [
@@ -24,133 +20,108 @@
       "isPrimary": true
     }
   ],
-  "key": "d-minor",
+  "era": "classical",
   "genres": ["piano-concerto"],
+  "key": "d-minor",
   "compositionYear": 1785,
   "compositionPeriod": {
     "en": "1785",
-    "ja": "1785年"
+    "ja": "1785年",
+    "de": "1785",
+    "fr": "1785",
+    "it": "1785",
+    "es": "1785",
+    "zh": "1785"
   },
-  "instrumentation": "Piano soloist, flute, 2 oboes, 2 bassoons, 2 horns, 2 trumpets, timpani, and strings.",
+  "instrumentation": "Piano solo + 1.2.2.2 - 2.2.0.0 - tmp - str",
   "instrumentationFlags": {
+    "isOrchestral": true,
     "isSolo": false,
     "isChamber": false,
-    "isOrchestral": true,
     "hasChorus": false,
     "hasVocal": false
   },
-  "performanceDifficulty": 5,
-  "impressionDimensions": {
-    "brightness": -4,
-    "vibrancy": 7,
-    "scale": 7,
-    "depth": 8,
-    "drama": 9,
-    "popularity": 9
+  "performanceDifficulty": 4,
+  "tags": ["dramatic", "passionate", "standard-repertoire"],
+  "description": {
+    "en": "One of Mozart's few concertos in a minor key, renowned for its dramatic and dark character.",
+    "ja": "モーツァルトの数少ない短調の協奏曲の一つで、その劇的で暗い性格で知られています。",
+    "de": "Eines von Mozarts wenigen Konzerten in einer Moll-Tonart, bekannt für seinen dramatischen und dunklen Charakter.",
+    "fr": "L'un des rares concertos de Mozart dans une tonalité mineure, renommé pour son caractère dramatique et sombre.",
+    "it": "Uno dei pochi concerti di Mozart in tonalità minore, rinomato per il suo carattere drammatico e cupo.",
+    "es": "Uno de los pocos conciertos de Mozart en una tonalidad menor, famoso por su carácter dramático y oscuro.",
+    "zh": "莫扎特少数几部小调协奏曲之一，以其戏剧性和阴郁的性格而闻名。"
   },
-  "tags": ["dramatic", "storm-and-stress"],
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-02-01T13:45:00Z",
+    "promptVersion": "1.2.0",
+    "confidenceScore": 1.0,
+    "sourceRefs": ["https://en.wikipedia.org/wiki/Piano_Concerto_No._20_(Mozart)"]
+  },
   "parts": [
     {
-      "slug": "1st-mov",
+      "slug": "1st-movement",
       "order": 1,
       "titleComponents": {
         "title": {
-          "en": "I. Allegro",
-          "ja": "第1楽章 アレグロ"
-        },
-        "prefix": {
-          "en": "I.",
-          "ja": "第1楽章"
-        },
-        "content": {
           "en": "Allegro",
-          "ja": "アレグロ"
+          "ja": "アレグロ",
+          "de": "Allegro",
+          "fr": "Allegro",
+          "it": "Allegro",
+          "es": "Allegro",
+          "zh": "快板"
         }
       },
       "type": "movement",
+      "isNameStandard": true,
       "key": "d-minor",
       "tempo": "Allegro",
-      "timeSignature": {
-        "numerator": 4,
-        "denominator": 4
-      },
-      "performanceDifficulty": 5,
-      "impressionDimensions": {
-        "brightness": -5,
-        "vibrancy": 8,
-        "scale": 7,
-        "depth": 8,
-        "drama": 9,
-        "popularity": 9
-      }
+      "genres": ["sonata-form"],
+      "tags": ["dramatic", "tense"]
     },
     {
-      "slug": "2nd-mov",
+      "slug": "2nd-movement",
       "order": 2,
       "titleComponents": {
         "title": {
-          "en": "II. Romanze",
-          "ja": "第2楽章 ロマンツェ"
-        },
-        "prefix": {
-          "en": "II.",
-          "ja": "第2楽章"
-        },
-        "content": {
-          "en": "Romanze",
-          "ja": "ロマンツェ"
+          "en": "Romance",
+          "ja": "ロマンス",
+          "de": "Romanze",
+          "fr": "Romance",
+          "it": "Romanza",
+          "es": "Romanza",
+          "zh": "浪漫曲"
         }
       },
       "type": "movement",
+      "isNameStandard": false,
       "key": "b-flat-major",
       "tempo": "Andante",
-      "timeSignature": {
-        "numerator": 2,
-        "denominator": 2
-      },
-      "performanceDifficulty": 4,
-      "impressionDimensions": {
-        "brightness": 7,
-        "vibrancy": -2,
-        "scale": 5,
-        "depth": 6,
-        "drama": 4,
-        "popularity": 8
-      }
+      "genres": ["rondo"],
+      "tags": ["serene", "elegant"]
     },
     {
-      "slug": "3rd-mov",
+      "slug": "3rd-movement",
       "order": 3,
       "titleComponents": {
         "title": {
-          "en": "III. Rondo: Allegro assai",
-          "ja": "第3楽章 ロンド：アレグロ・アッサイ"
-        },
-        "prefix": {
-          "en": "III.",
-          "ja": "第3楽章"
-        },
-        "content": {
-          "en": "Rondo: Allegro assai",
-          "ja": "ロンド：アレグロ・アッサイ"
+          "en": "Rondo. Allegro assai",
+          "ja": "ロンド。アレグロ・アッサイ",
+          "de": "Rondo. Allegro assai",
+          "fr": "Rondo. Allegro assai",
+          "it": "Rondò. Allegro assai",
+          "es": "Rondò. Allegro assai",
+          "zh": "回旋曲。极快的快板"
         }
       },
       "type": "movement",
+      "isNameStandard": true,
       "key": "d-minor",
       "tempo": "Allegro assai",
-      "timeSignature": {
-        "numerator": 2,
-        "denominator": 2
-      },
-      "performanceDifficulty": 5,
-      "impressionDimensions": {
-        "brightness": 2,
-        "vibrancy": 9,
-        "scale": 7,
-        "depth": 5,
-        "drama": 8,
-        "popularity": 8
-      }
+      "genres": ["rondo"],
+      "tags": ["joyful", "brilliant"]
     }
   ]
 }

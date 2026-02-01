@@ -21,6 +21,7 @@ export const WorkPartMasterSchema = WorkPartControlSchema.pick({
       performanceDifficulty: true,
       impressionDimensions: true,
       nicknames: true,
+      tags: true,
       basedOn: true,
     }),
   )
