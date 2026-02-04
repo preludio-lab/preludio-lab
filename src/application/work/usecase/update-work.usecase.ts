@@ -8,6 +8,8 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
 
+import { TransactionManager } from '@/domain/shared/transaction-manager.interface';
+
 // UpdateWorkCommand is now imported from command file
 
 /**
@@ -17,11 +19,13 @@ import { generateId } from '@/shared/id';
  * 作曲家の存在チェック、作品の存在チェックを行い、作品情報と作品パートを更新します。
  * パート情報は全削除後に再挿入(Re-Insert)されます。
  */
+
 export class UpdateWorkUseCase {
   constructor(
     private workRepo: WorkRepository,
     private workPartRepo: WorkPartRepository,
     private composerRepo: ComposerRepository,
+    private txManager: TransactionManager,
     private logger: Logger,
   ) {}
 
@@ -48,104 +52,119 @@ export class UpdateWorkUseCase {
     }
 
     try {
-      // 3. Update Work Core
-      const workId = existingWork.id;
+      // Transaction Scope
+      await this.txManager.transaction(async () => {
+        // 3. Update Work Core
+        const workId = existingWork.id;
 
-      const workControl: WorkControl = {
-        id: workId,
-        slug: slug,
-        composerSlug: composerSlug,
-        createdAt: existingWork.control.createdAt,
-        updatedAt: new Date(),
-      };
+        const workControl: WorkControl = {
+          id: workId,
+          slug: slug,
+          composerSlug: composerSlug,
+          createdAt: existingWork.control.createdAt,
+          updatedAt: new Date(),
+        };
 
-      const workMetadata: WorkMetadata = {
-        titleComponents: data.titleComponents ?? existingWork.metadata.titleComponents,
-        catalogues: data.catalogues ?? existingWork.metadata.catalogues,
-        era: data.era ?? existingWork.metadata.era,
-        instrumentation: data.instrumentation ?? existingWork.metadata.instrumentation,
-        instruments: data.instruments ?? existingWork.metadata.instruments,
-        instrumentationFlags:
-          data.instrumentationFlags ?? existingWork.metadata.instrumentationFlags,
-        performanceDifficulty:
-          data.performanceDifficulty ?? existingWork.metadata.performanceDifficulty,
-        musicalIdentity: {
-          genres: data.genres ?? existingWork.metadata.musicalIdentity?.genres ?? [],
-          key: data.key ?? existingWork.metadata.musicalIdentity?.key,
-          tempo: data.tempo ?? existingWork.metadata.musicalIdentity?.tempo,
-          tempoTranslation:
-            data.tempoTranslation ?? existingWork.metadata.musicalIdentity?.tempoTranslation,
-          timeSignature: data.timeSignature ?? existingWork.metadata.musicalIdentity?.timeSignature,
-          bpm: data.bpm ?? existingWork.metadata.musicalIdentity?.bpm,
-          metronomeUnit: data.metronomeUnit ?? existingWork.metadata.musicalIdentity?.metronomeUnit,
-        },
-        impressionDimensions:
-          data.impressionDimensions ?? existingWork.metadata.impressionDimensions,
-        compositionYear: data.compositionYear ?? existingWork.metadata.compositionYear,
-        compositionPeriod: data.compositionPeriod ?? existingWork.metadata.compositionPeriod,
-        nicknames: data.nicknames ?? existingWork.metadata.nicknames,
-        description: data.description ?? existingWork.metadata.description,
-        tags: data.tags ?? existingWork.metadata.tags,
-        basedOn: data.basedOn ?? existingWork.metadata.basedOn,
-      };
+        const existingMeta = existingWork.metadata;
 
-      const workEntity = new Work({
-        control: workControl,
-        metadata: workMetadata,
-      });
+        // Use spread for potentially new data, falling back to existing data if undefined
+        // Note: For partial updates, we need to be careful. The command might have partial data?
+        // Typically UpdateCommand in this system seems to carry full data replacement or partial.
+        // Based on previous code: `data.X ?? existing.X` logic.
 
-      await this.workRepo.save(workEntity);
-      this.logger.info(`Updated Work Core: ${slug} (${workId})`);
+        // Let's keep the explicit merge logic for safety but clean it up or keep as is if too complex to spread.
+        // Actually, since we want to be safe, let's keep the explicit merge but inside the transaction.
+        // Or we can construct it more cleanly.
 
-      // 4. Update Parts (Delete All & Re-Insert) only if parts are provided
-      if (data.parts !== undefined) {
-        await this.workPartRepo.deleteByWorkId(workId);
-        const partsData = data.parts;
-        if (partsData.length > 0) {
-          for (const p of partsData) {
-            const partId = generateId<'WorkPart'>();
+        const workMetadata: WorkMetadata = {
+          ...data, // Spread data first
+          // Then manually handle fields that need "existing fallback" if data is undefined
+          // But wait, if `data.titleComponents` is undefined, `{...data}` won't have it (or have it as undefined).
+          // We need `data.prop ?? existing.prop`.
+          // Spread doesn't do `??`.
 
-            const partControl: WorkPartControl = {
-              id: partId,
-              workId: workId,
-              slug: p.slug,
-              order: p.order,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
+          titleComponents: data.titleComponents ?? existingMeta.titleComponents,
+          catalogues: data.catalogues ?? existingMeta.catalogues,
+          era: data.era ?? existingMeta.era,
+          instrumentation: data.instrumentation ?? existingMeta.instrumentation,
+          instruments: data.instruments ?? existingMeta.instruments,
+          instrumentationFlags: data.instrumentationFlags ?? existingMeta.instrumentationFlags,
+          performanceDifficulty: data.performanceDifficulty ?? existingMeta.performanceDifficulty,
+          musicalIdentity: {
+            genres: data.genres ?? existingMeta.musicalIdentity?.genres ?? [],
+            key: data.key ?? existingMeta.musicalIdentity?.key,
+            tempo: data.tempo ?? existingMeta.musicalIdentity?.tempo,
+            tempoTranslation:
+              data.tempoTranslation ?? existingMeta.musicalIdentity?.tempoTranslation,
+            timeSignature: data.timeSignature ?? existingMeta.musicalIdentity?.timeSignature,
+            bpm: data.bpm ?? existingMeta.musicalIdentity?.bpm,
+            metronomeUnit: data.metronomeUnit ?? existingMeta.musicalIdentity?.metronomeUnit,
+          },
+          impressionDimensions: data.impressionDimensions ?? existingMeta.impressionDimensions,
+          compositionYear: data.compositionYear ?? existingMeta.compositionYear,
+          compositionPeriod: data.compositionPeriod ?? existingMeta.compositionPeriod,
+          nicknames: data.nicknames ?? existingMeta.nicknames,
+          description: data.description ?? existingMeta.description,
+          tags: data.tags ?? existingMeta.tags,
+          basedOn: data.basedOn ?? existingMeta.basedOn,
+        };
 
-            const partMetadata: WorkPartMetadata = {
-              titleComponents: p.titleComponents,
-              catalogues: p.catalogues ?? [],
-              type: p.type,
-              isNameStandard: p.isNameStandard ?? true,
-              description: p.description,
-              musicalIdentity: {
-                genres: p.genres ?? [],
-                key: p.key,
-                tempo: p.tempo,
-                tempoTranslation: p.tempoTranslation,
-                timeSignature: p.timeSignature,
-                bpm: p.bpm,
-                metronomeUnit: p.metronomeUnit,
-              },
-              impressionDimensions: p.impressionDimensions,
-              nicknames: p.nicknames ?? [],
-              instruments: p.instruments ?? [],
-              basedOn: p.basedOn,
-              performanceDifficulty: p.performanceDifficulty,
-              tags: p.tags || [],
-            };
+        const workEntity = new Work({
+          control: workControl,
+          metadata: workMetadata,
+        });
 
-            const partEntity = new WorkPart(partControl, partMetadata);
+        await this.workRepo.save(workEntity);
+        this.logger.info(`Updated Work Core: ${slug} (${workId})`);
 
-            await this.workPartRepo.save(partEntity);
+        // 4. Update Parts (Delete All & Re-Insert) only if parts are provided
+        if (data.parts !== undefined) {
+          // Transactional Safety: Now this delete and subsequent inserts are atomic.
+          await this.workPartRepo.deleteByWorkId(workId);
+
+          const partsData = data.parts;
+          if (partsData.length > 0) {
+            const partsEntities: WorkPart[] = partsData.map((p) => {
+              const partId = generateId<'WorkPart'>();
+
+              const partControl: WorkPartControl = {
+                id: partId,
+                workId: workId,
+                slug: p.slug,
+                order: p.order,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+
+              const partMetadata: WorkPartMetadata = {
+                ...p,
+                catalogues: p.catalogues ?? [],
+                isNameStandard: p.isNameStandard ?? true,
+                tags: p.tags || [],
+                musicalIdentity: {
+                  genres: p.genres ?? [],
+                  key: p.key,
+                  tempo: p.tempo,
+                  tempoTranslation: p.tempoTranslation,
+                  timeSignature: p.timeSignature,
+                  bpm: p.bpm,
+                  metronomeUnit: p.metronomeUnit,
+                },
+                nicknames: p.nicknames ?? [],
+                instruments: p.instruments ?? [],
+              };
+
+              return new WorkPart(partControl, partMetadata);
+            });
+
+            // Use saveAll for batch insert
+            await this.workPartRepo.saveAll(partsEntities);
+            this.logger.info(`Updated (Replaced) ${partsData.length} parts for work: ${slug}`);
+          } else {
+            this.logger.info(`Removed all parts for work: ${slug}`);
           }
-          this.logger.info(`Updated (Replaced) ${partsData.length} parts for work: ${slug}`);
-        } else {
-          this.logger.info(`Removed all parts for work: ${slug}`);
         }
-      }
+      });
     } catch (err) {
       this.logger.error(`Failed to update work: ${composerSlug}/${slug}`, err as Error);
       throw err;

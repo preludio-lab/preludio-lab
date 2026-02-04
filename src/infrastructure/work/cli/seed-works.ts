@@ -37,7 +37,13 @@ async function main() {
     txManager,
     logger,
   );
-  const updateUseCase = new UpdateWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
+  const updateUseCase = new UpdateWorkUseCase(
+    workRepo,
+    workPartRepo,
+    composerRepo,
+    txManager,
+    logger,
+  );
 
   // 楽曲データが格納されているディレクトリ
   const dataDir = path.join(process.cwd(), 'data', 'works');
