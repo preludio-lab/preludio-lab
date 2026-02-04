@@ -23,26 +23,26 @@ jobs:
         with:
           # Vercelから通知されたデプロイURLをターゲットとして使用
           target: ${{ github.event.deployment_status.target_url }}
-          
+
           # 誤検知除外ルールファイル
           rules_file_name: '.zap/zap-rules.conf'
-          
+
           # ZAPコマンドオプション
           # -T 5: タイムアウト5分
           cmd_options: '-T 5'
-          
+
           # 初期段階では警告のみ、ビルドは失敗させない
           fail_action: false
-          
+
           # GitHub Issueへのレポート投稿を有効化
           allow_issue_writing: true
-          
+
           # Issue タイトル
           issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
-          
+
           # 成果物名
           artifact_name: 'dast-scan-report'
-          
+
           # GitHub Token（Issue作成・更新に使用）
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
