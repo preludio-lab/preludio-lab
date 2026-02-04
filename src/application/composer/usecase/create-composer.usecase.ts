@@ -4,8 +4,7 @@ import { CreateComposerCommand } from '../command/create-composer.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
-
-// CreateComposerCommand is now imported from command file
+import { TransactionManager } from '@/domain/shared/transaction-manager.interface';
 
 /**
  * CreateComposerUseCase
@@ -16,6 +15,7 @@ import { generateId } from '@/shared/id';
 export class CreateComposerUseCase {
   constructor(
     private repository: ComposerRepository,
+    private txManager: TransactionManager,
     private logger: Logger,
   ) {}
 
@@ -28,46 +28,36 @@ export class CreateComposerUseCase {
   async execute(command: CreateComposerCommand): Promise<void> {
     const { slug } = command;
 
-    const existing = await this.repository.findBySlug(slug);
-    if (existing) {
-      throw new AppError(`Composer already exists: ${slug}`, 'CONFLICT');
-    }
+    await this.txManager.transaction(async () => {
+      const existing = await this.repository.findBySlug(slug);
+      if (existing) {
+        throw new AppError(`Composer already exists: ${slug}`, 'CONFLICT');
+      }
 
-    const control: ComposerControl = {
-      slug: command.slug,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      id: generateId<'Composer'>(),
-    };
+      const control: ComposerControl = {
+        slug: command.slug,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: generateId<'Composer'>(),
+      };
 
-    const metadata: ComposerMetadata = {
-      fullName: command.fullName,
-      displayName: command.displayName,
-      shortName: command.shortName,
+      const metadata: ComposerMetadata = {
+        ...command,
+        birthDate: command.birthDate ? new Date(command.birthDate) : undefined,
+        deathDate: command.deathDate ? new Date(command.deathDate) : undefined,
+        representativeInstruments: command.representativeInstruments ?? [],
+        representativeGenres: command.representativeGenres ?? [],
+        places: command.places ?? [],
+      };
 
-      era: command.era,
-      biography: command.biography,
+      const entity = new Composer({
+        control,
+        metadata,
+      });
 
-      birthDate: command.birthDate ? new Date(command.birthDate) : undefined,
-      deathDate: command.deathDate ? new Date(command.deathDate) : undefined,
-      nationalityCode: command.nationalityCode,
-
-      representativeInstruments: command.representativeInstruments ?? [],
-      representativeGenres: command.representativeGenres ?? [],
-      places: command.places ?? [],
-
-      portrait: command.portrait,
-
-      impressionDimensions: command.impressionDimensions,
-      tags: command.tags,
-    };
-
-    const entity = new Composer({
-      control,
-      metadata,
+      await this.repository.save(entity);
     });
 
-    await this.repository.save(entity);
-    this.logger.info(`Creating composer: ${slug}`);
+    this.logger.info('Created Composer', { slug });
   }
 }
