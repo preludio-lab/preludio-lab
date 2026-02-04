@@ -96,6 +96,7 @@
         "numerator": 2,
         "denominator": 4
       },
+      "genres": ["sonata-form"],
       "tags": ["dramatic", "tense"],
       "impressionDimensions": {
         "brightness": -5,
@@ -127,6 +128,7 @@
         "numerator": 3,
         "denominator": 8
       },
+      "genres": ["variations"],
       "tags": ["serene", "majestic"],
       "impressionDimensions": {
         "brightness": 5,
@@ -158,6 +160,7 @@
         "numerator": 3,
         "denominator": 4
       },
+      "genres": ["scherzo", "ternary-form"],
       "tags": ["gloomy", "tense"],
       "impressionDimensions": {
         "brightness": -4,
@@ -190,6 +193,7 @@
         "denominator": 4,
         "displayString": "C"
       },
+      "genres": ["sonata-form"],
       "tags": ["joyful", "majestic"],
       "impressionDimensions": {
         "brightness": 9,

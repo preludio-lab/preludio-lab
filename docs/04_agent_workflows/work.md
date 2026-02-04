@@ -29,6 +29,7 @@ AIエージェントが楽曲（作品）のマスターデータを追加、ま
   - `numerator`: 分子 (例: 4)
   - `denominator`: 分母 (例: 4)
   - `displayString`: 必要であれば伝統的表記 (例: "C", "Alla Breve") や特殊な表記。通常は省略可。
+- ジャンル (Genres): 各楽章(`parts`)の`genres`に、その楽章の形式（例: `sonata-form`, `rondo`, `ternary-form`, `variations`）を必ず設定してください。
 - スラッグ命名規則:
   - ケバブケースを使用。
   - 基本形: `[genre-or-title]-[number]` (例: `piano-concerto-no-20`)
@@ -77,11 +78,11 @@ JSONデータの構造は、以下のNext.jsソースコード内のZodスキー
 4. **i18n (7ヶ国語対応)**:
    - 全ての多言語フィールド（タイトル、解説等）において、以下の7つのロケールを必ず含めること：
      - `en` (English), `de` (Deutsch), `fr` (Français), `it` (Italiano), `es` (Español), `ja` (日本語), `zh` (中文)
-   - **一貫性の確保プロセス**: グローバルSEOと一貫性のため、以下のプロセスで生成すること：
-     1. **英語 (en)** を正（Master）として、内容を完全に確定させる。
-     2. 確定した英語の内容をベースに、日本語(ja)を含む他言語へ翻訳・展開する。
+   - **一貫性の確保プロセス**: グローバルSEOと一貫性のため、以下のプロセスで生成すること：2. 確定した英語の内容をベースに、日本語(ja)を含む他言語へ翻訳・展開する。
 5. **カタログ番号**: `catalogues` で `isPrimary: true` となるカタログ（Op.やBWV等）を必ず1つ指定すること。
-6. **楽章管理**: `parts` には `order` を設定し、楽曲の構成を正確に記述すること。
+6. **楽章管理**:
+   - `parts` には `order` を設定し、楽曲の構成を正確に記述すること。
+   - **形式タグ**: 各楽章の `genres` には、`MusicalGenre.FORM` (`sonata-form`, `rondo`, `variations` 等) から最適な形式を必ず1つ以上設定すること。
 7. **トレーサビリティ**: `_generatorMeta` に以下の情報を必ず含めること：
    - `sourceRefs`: 調査に使用した出典URL（IMSLP, Wikipedia等）のリスト。
    - `confidenceScore`: 生成したデータの正確性に対する自己採点（0.0〜1.0）。
