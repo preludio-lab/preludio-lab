@@ -8,6 +8,8 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { generateId } from '@/shared/id';
 
+import { TransactionManager } from '@/domain/shared/transaction-manager.interface';
+
 // CreateWorkCommand is now imported from command file
 
 /**
@@ -16,11 +18,13 @@ import { generateId } from '@/shared/id';
  *
  * 作曲家の存在チェック、作品の重複チェックを行い、作品と作品パートを作成します。
  */
+
 export class CreateWorkUseCase {
   constructor(
     private workRepo: WorkRepository,
     private workPartRepo: WorkPartRepository,
     private composerRepo: ComposerRepository,
+    private txManager: TransactionManager,
     private logger: Logger,
   ) {}
 
@@ -48,100 +52,94 @@ export class CreateWorkUseCase {
     }
 
     try {
-      // 3. Create Work Core
-      const workId = generateId<'Work'>();
+      // Transaction Scope
+      // Note: This relies on the implementation of TransactionManager and Repositories
+      // sharing the same transaction context (e.g. via internal mechanism or nested transaction support).
+      await this.txManager.transaction(async () => {
+        // 3. Create Work Core
+        const workId = generateId<'Work'>();
 
-      const workControl: WorkControl = {
-        id: workId,
-        slug: slug,
-        composerSlug: composerSlug,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+        // Use spread syntax for cleaner object creation
+        const workControl: WorkControl = {
+          id: workId,
+          slug: slug,
+          composerSlug: composerSlug,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
-      const workMetadata: WorkMetadata = {
-        titleComponents: data.titleComponents,
-        catalogues: data.catalogues ?? [],
-        era: data.era,
-        instrumentation: data.instrumentation,
-        instruments: data.instruments ?? [],
-        instrumentationFlags: data.instrumentationFlags ?? {
-          isSolo: false,
-          isChamber: false,
-          isOrchestral: false,
-          hasChorus: false,
-          hasVocal: false,
-        },
-        performanceDifficulty: data.performanceDifficulty,
-        musicalIdentity: {
-          genres: data.genres ?? [],
-          key: data.key,
-          tempo: data.tempo,
-          tempoTranslation: data.tempoTranslation,
-          timeSignature: data.timeSignature,
-          bpm: data.bpm,
-          metronomeUnit: data.metronomeUnit,
-        },
-        impressionDimensions: data.impressionDimensions,
-        compositionYear: data.compositionYear,
-        compositionPeriod: data.compositionPeriod,
-        nicknames: data.nicknames ?? [],
-        description: data.description,
-        tags: data.tags,
-        basedOn: data.basedOn,
-      };
+        const workMetadata: WorkMetadata = {
+          ...data, // Spread all matching properties
+          // Explicit overrides or complex mappings below
+          catalogues: data.catalogues ?? [],
+          instruments: data.instruments ?? [],
+          instrumentationFlags: data.instrumentationFlags ?? {
+            isSolo: false,
+            isChamber: false,
+            isOrchestral: false,
+            hasChorus: false,
+            hasVocal: false,
+          },
+          musicalIdentity: {
+            genres: data.genres ?? [],
+            key: data.key,
+            tempo: data.tempo,
+            tempoTranslation: data.tempoTranslation,
+            timeSignature: data.timeSignature,
+            bpm: data.bpm,
+            metronomeUnit: data.metronomeUnit,
+          },
+          nicknames: data.nicknames ?? [],
+        };
 
-      const workEntity = new Work({
-        control: workControl,
-        metadata: workMetadata,
-      });
+        const workEntity = new Work({
+          control: workControl,
+          metadata: workMetadata,
+        });
 
-      await this.workRepo.save(workEntity);
-      this.logger.info(`Created Work Core: ${slug} (${workId})`);
+        await this.workRepo.save(workEntity);
+        this.logger.info(`Created Work Core: ${slug} (${workId})`);
 
-      // 4. Create Parts
-      const partsData = data.parts || [];
-      if (partsData.length > 0) {
-        for (const p of partsData) {
-          const partId = generateId<'WorkPart'>();
-          const partControl: WorkPartControl = {
-            id: partId,
-            workId: workId,
-            slug: p.slug,
-            order: p.order,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
+        // 4. Create Parts
+        const partsData = data.parts || [];
+        if (partsData.length > 0) {
+          const partsEntities: WorkPart[] = partsData.map((p) => {
+            const partId = generateId<'WorkPart'>();
+            const partControl: WorkPartControl = {
+              id: partId,
+              workId: workId,
+              slug: p.slug,
+              order: p.order,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
 
-          const partMetadata: WorkPartMetadata = {
-            titleComponents: p.titleComponents,
-            catalogues: p.catalogues ?? [],
-            type: p.type,
-            isNameStandard: p.isNameStandard ?? true,
-            description: p.description,
-            musicalIdentity: {
-              genres: p.genres ?? [],
-              key: p.key,
-              tempo: p.tempo,
-              tempoTranslation: p.tempoTranslation,
-              timeSignature: p.timeSignature,
-              bpm: p.bpm,
-              metronomeUnit: p.metronomeUnit,
-            },
-            impressionDimensions: p.impressionDimensions,
-            nicknames: p.nicknames ?? [],
-            instruments: p.instruments ?? [],
-            basedOn: p.basedOn,
-            performanceDifficulty: p.performanceDifficulty,
-            tags: p.tags || [],
-          };
+            const partMetadata: WorkPartMetadata = {
+              ...p,
+              catalogues: p.catalogues ?? [],
+              isNameStandard: p.isNameStandard ?? true,
+              tags: p.tags || [],
+              musicalIdentity: {
+                genres: p.genres ?? [],
+                key: p.key,
+                tempo: p.tempo,
+                tempoTranslation: p.tempoTranslation,
+                timeSignature: p.timeSignature,
+                bpm: p.bpm,
+                metronomeUnit: p.metronomeUnit,
+              },
+              nicknames: p.nicknames ?? [],
+              instruments: p.instruments ?? [],
+            };
 
-          const partEntity = new WorkPart(partControl, partMetadata);
+            return new WorkPart(partControl, partMetadata);
+          });
 
-          await this.workPartRepo.save(partEntity);
+          // Use saveAll for batch insert (Performance fix)
+          await this.workPartRepo.saveAll(partsEntities);
+          this.logger.info(`Created ${partsData.length} parts for work: ${slug}`);
         }
-        this.logger.info(`Created ${partsData.length} parts for work: ${slug}`);
-      }
+      });
     } catch (err) {
       this.logger.error(`Failed to create work: ${composerSlug}/${slug}`, err as Error);
       throw err;

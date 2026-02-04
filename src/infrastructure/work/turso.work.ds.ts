@@ -139,6 +139,29 @@ export class TursoWorkDataSource implements IWorkDataSource {
   }
 
   /**
+   * 複数の構成楽曲（楽章）を一括保存・更新します。
+   * トランザクション内でループ処理を行うことで、個別のトランザクションオーバーヘッドを回避します。
+   */
+  async saveParts(rowsList: WorkPartRows[]): Promise<void> {
+    await this.db.transaction(async (tx) => {
+      for (const rows of rowsList) {
+        await tx.insert(schema.workParts).values(rows.part).onConflictDoUpdate({
+          target: schema.workParts.id,
+          set: rows.part,
+        });
+
+        await tx
+          .delete(schema.workPartTranslations)
+          .where(eq(schema.workPartTranslations.workPartId, rows.part.id));
+
+        if (rows.translations.length > 0) {
+          await tx.insert(schema.workPartTranslations).values(rows.translations);
+        }
+      }
+    });
+  }
+
+  /**
    * 指定された作品IDに紐づく全ての構成楽曲（楽章）を削除します。
    */
   async deletePartsByWorkId(workId: string): Promise<void> {

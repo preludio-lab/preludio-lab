@@ -47,6 +47,16 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
+  async saveAll(parts: WorkPart[]): Promise<void> {
+    try {
+      const rowsList = parts.map(TursoWorkPartMapper.toPersistence);
+      await this.workDS.saveParts(rowsList);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database batch save error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
   /**
    * 指定されたIDのWorkPart（楽章）を削除します。
    */

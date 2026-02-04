@@ -5,6 +5,7 @@ import {
   readJsonFile,
   getLogger,
 } from '@/infrastructure/shared/cli/seeder-utils';
+import { TursoTransactionManager } from '@/infrastructure/shared/turso.transaction-manager';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { TursoWorkDataSource } from '@/infrastructure/work/turso.work.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
@@ -14,13 +15,6 @@ import { CreateWorkUseCase } from '@/application/work/usecase/create-work.usecas
 import { UpdateWorkUseCase } from '@/application/work/usecase/update-work.usecase';
 import { WorkMaster } from '@/application/work/master/work-master.schema';
 
-/**
- * 楽曲マスタデータをデータベースに同期するスクリプト。
- *
- * 指定されたファイル、またはディレクトリ内のすべてのJSONファイルを読み込み、
- * データベースへの保存（新規作成または更新）を行います。
- * 紐付く作曲家の存在チェックも同時に行います。
- */
 async function main() {
   const logger = getLogger();
   const db = initDb();
@@ -33,9 +27,16 @@ async function main() {
   const composerRepo = new ComposerRepositoryImpl(composerDS);
   const workRepo = new WorkRepositoryImpl(workDS, composerDS);
   const workPartRepo = new WorkPartRepositoryImpl(workDS);
+  const txManager = new TursoTransactionManager(db);
 
   // アプリケーション層のユースケース初期化
-  const createUseCase = new CreateWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
+  const createUseCase = new CreateWorkUseCase(
+    workRepo,
+    workPartRepo,
+    composerRepo,
+    txManager,
+    logger,
+  );
   const updateUseCase = new UpdateWorkUseCase(workRepo, workPartRepo, composerRepo, logger);
 
   // 楽曲データが格納されているディレクトリ

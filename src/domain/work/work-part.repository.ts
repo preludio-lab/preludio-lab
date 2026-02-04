@@ -21,6 +21,11 @@ export interface WorkPartRepository {
   save(part: WorkPart): Promise<void>;
 
   /**
+   * 複数の楽章を一括保存
+   */
+  saveAll(parts: WorkPart[]): Promise<void>;
+
+  /**
    * 楽章の削除
    */
   delete(id: string): Promise<void>;

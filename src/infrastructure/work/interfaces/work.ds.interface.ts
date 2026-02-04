@@ -53,6 +53,11 @@ export interface IWorkDataSource {
   savePart(rows: WorkPartRows): Promise<void>;
 
   /**
+   * Upsert multiple Work Parts
+   */
+  saveParts(rows: WorkPartRows[]): Promise<void>;
+
+  /**
    * Delete all parts for a work
    */
   deletePartsByWorkId(workId: string): Promise<void>;

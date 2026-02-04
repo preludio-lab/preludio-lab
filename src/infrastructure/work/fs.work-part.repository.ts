@@ -48,6 +48,13 @@ export class FsWorkPartRepository implements WorkPartRepository {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
   }
 
+  async saveAll(parts: WorkPart[]): Promise<void> {
+    // FS implementation is serial
+    for (const part of parts) {
+      await this.save(part);
+    }
+  }
+
   async delete(id: string): Promise<void> {
     const filePath = path.join(this.dataDirectory, `${id}.json`);
     if (fs.existsSync(filePath)) {
