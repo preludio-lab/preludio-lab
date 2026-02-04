@@ -1,4 +1,5 @@
 import { z } from '@/shared/validation/zod';
+import { MusicalInstrumentSchema } from '../shared/musical-instrument';
 import { MusicalEraSchema } from '../shared/musical-era';
 import {
   DescriptionSchema,
@@ -11,7 +12,7 @@ import {
   TitleComponentsSchema,
   ArrangeTypeSchema,
 } from './work.shared';
-import { TagsSchema, YearSchema, SlugSchema } from '../shared/common.metadata';
+import { MusicalTagsSchema, YearSchema, SlugSchema } from '../shared/common.metadata';
 
 // Re-export common types and schemas for convenience
 export * from './work.shared';
@@ -48,10 +49,27 @@ export const WorkMetadataBaseSchema = z.object({
   era: MusicalEraSchema.optional(),
 
   /**
-   * 楽器編成 (テキスト記述 e.g. "Piano solo", "2.2.2.2 - 4.2.3.1 - tmp - str")
-   * 編成は原則として作品全体で固定されるため、トップレベルで管理。
+   * 楽器編成 (Instrumentation - Display Text)
+   * 演奏に必要な楽器編成を「人間が読むためのテキスト」で記述します。
+   * ※ MusicalInstrumentのIDリストではありません。慣習的な略記法や自然言語記述を用います。
+   *
+   * [記述例]
+   * - 独奏曲: "Piano"
+   * - 室内楽: "Violin, Piano", "String Quartet"
+   * - 管弦楽曲 (略記): "2.2.2.2 - 4.2.3.0 - tmp - str"
+   * - 協奏曲: "Solo: Piano, Orch: 1.2.0.2 - 2.0.0.0 - str"
+   *
+   * 編成は原則として作品全体で固定されるため、トップレベルで管理します。
    */
   instrumentation: z.string().max(200).optional(),
+  /**
+   * 使用楽器リスト (構造化データ)
+   * 検索・フィルタリング用に、楽曲で使用される楽器のIDリストを保持します。
+   * - 独奏・室内楽: 全ての楽器を列挙します。
+   * - 管弦楽曲・協奏曲: ソロ楽器や特徴的な楽器（イングリッシュホルン、ピッコロ等）を優先して登録します。
+   *   標準的な弦楽器なども可能な限り網羅することを推奨します。
+   */
+  instruments: z.array(MusicalInstrumentSchema).default([]),
   /** 楽器編成フラグ (フィルタリング用) */
   instrumentationFlags: InstrumentationFlagsSchema.default({
     isSolo: false,
@@ -78,7 +96,7 @@ export const WorkMetadataBaseSchema = z.object({
   /** 作品解説 */
   description: DescriptionSchema.optional(),
   /** 自由タグ */
-  tags: TagsSchema,
+  tags: MusicalTagsSchema,
   /** 編曲・派生元情報 */
   basedOn: z
     .object({

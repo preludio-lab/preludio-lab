@@ -1,4 +1,5 @@
 import { Work } from './work';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 /**
  * Work Search Criteria
@@ -21,26 +22,37 @@ export interface WorkSearchCriteria {
 export interface WorkRepository {
   /**
    * IDで作品を取得
+   * @param id 作品ID
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findById(id: string): Promise<Work | null>;
+  findById(id: string, ctx?: TransactionContext): Promise<Work | null>;
 
   /**
    * スラグで作品を取得
+   * @param composerId 作曲家ID
+   * @param slug 作品スラグ
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findBySlug(composerId: string, slug: string): Promise<Work | null>;
+  findBySlug(composerId: string, slug: string, ctx?: TransactionContext): Promise<Work | null>;
 
   /**
    * 条件に一致する作品を取得
+   * @param criteria 検索条件
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findMany(criteria: WorkSearchCriteria): Promise<Work[]>;
+  findMany(criteria: WorkSearchCriteria, ctx?: TransactionContext): Promise<Work[]>;
 
   /**
    * 作品の保存
+   * @param work 作品エンティティ
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  save(work: Work): Promise<void>;
+  save(work: Work, ctx?: TransactionContext): Promise<void>;
 
   /**
    * 作品の削除
+   * @param id 作品ID
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  delete(id: string): Promise<void>;
+  delete(id: string, ctx?: TransactionContext): Promise<void>;
 }

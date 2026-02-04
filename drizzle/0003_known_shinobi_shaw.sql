@@ -1,0 +1,1 @@
+ALTER TABLE `work_parts` ADD `instruments` text DEFAULT '[]' NOT NULL;

@@ -3,13 +3,14 @@ import { Composer } from '@/domain/composer/composer';
 import { IComposerDataSource } from './interfaces/composer.ds.interface';
 import { TursoComposerMapper } from './turso.composer.mapper';
 import { AppError } from '@/domain/shared/app-error';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 export class ComposerRepositoryImpl implements ComposerRepository {
   constructor(private ds: IComposerDataSource) {}
 
-  async findById(id: string): Promise<Composer | null> {
+  async findById(id: string, ctx?: TransactionContext): Promise<Composer | null> {
     try {
-      const rows = await this.ds.findById(id);
+      const rows = await this.ds.findById(id, ctx);
       if (!rows) return null;
       return TursoComposerMapper.toDomain(rows);
     } catch (err) {
@@ -18,9 +19,9 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     }
   }
 
-  async findBySlug(slug: string): Promise<Composer | null> {
+  async findBySlug(slug: string, ctx?: TransactionContext): Promise<Composer | null> {
     try {
-      const rows = await this.ds.findBySlug(slug);
+      const rows = await this.ds.findBySlug(slug, ctx);
       if (!rows) return null;
       return TursoComposerMapper.toDomain(rows);
     } catch (err) {
@@ -39,19 +40,19 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     throw new Error('Method not implemented.');
   }
 
-  async save(composer: Composer): Promise<void> {
+  async save(composer: Composer, ctx?: TransactionContext): Promise<void> {
     try {
       const rows = TursoComposerMapper.toPersistence(composer);
-      await this.ds.save(rows);
+      await this.ds.save(rows, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database save error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.ds.delete(id);
+      await this.ds.delete(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
