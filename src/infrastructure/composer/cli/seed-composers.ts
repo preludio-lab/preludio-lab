@@ -11,6 +11,8 @@ import { CreateComposerUseCase } from '@/application/composer/usecase/create-com
 import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
 import { ComposerMaster } from '@/application/composer/master/composer-master.schema';
 
+import { TursoTransactionManager } from '@/infrastructure/shared/turso.transaction-manager';
+
 /**
  * 作曲家マスタデータをデータベースに同期するスクリプト。
  *
@@ -24,10 +26,11 @@ async function main() {
   // インフラ層のデータソースとリポジトリの初期化
   const ds = new TursoComposerDataSource(db);
   const repo = new ComposerRepositoryImpl(ds);
+  const txManager = new TursoTransactionManager(db);
 
   // アプリケーション層のユースケース初期化
-  const createUseCase = new CreateComposerUseCase(repo, logger);
-  const updateUseCase = new UpdateComposerUseCase(repo, logger);
+  const createUseCase = new CreateComposerUseCase(repo, txManager, logger);
+  const updateUseCase = new UpdateComposerUseCase(repo, txManager, logger);
 
   // マスタデータが格納されているルートディレクトリ
   const dataDir = path.join(process.cwd(), 'data', 'composers');

@@ -18,6 +18,7 @@ export const WorkBaseCommandSchema = WorkMetadataBaseSchema.pick({
   nicknames: true,
   tags: true,
   instrumentation: true,
+  instruments: true,
   instrumentationFlags: true,
   performanceDifficulty: true,
   description: true,

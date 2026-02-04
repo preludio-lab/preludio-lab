@@ -4,6 +4,7 @@ import { IWorkDataSource } from './interfaces/work.ds.interface';
 import { IComposerDataSource } from '@/infrastructure/composer/interfaces/composer.ds.interface';
 import { TursoWorkMapper } from './turso.work.mapper';
 import { AppError } from '@/domain/shared/app-error';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 export class WorkRepositoryImpl implements WorkRepository {
   constructor(
@@ -11,9 +12,9 @@ export class WorkRepositoryImpl implements WorkRepository {
     private composerDS: IComposerDataSource,
   ) {}
 
-  async findById(id: string): Promise<Work | null> {
+  async findById(id: string, ctx?: TransactionContext): Promise<Work | null> {
     try {
-      const rows = await this.workDS.findById(id);
+      const rows = await this.workDS.findById(id, ctx);
       if (!rows) return null;
       return TursoWorkMapper.toDomain(rows);
     } catch (err) {
@@ -22,9 +23,13 @@ export class WorkRepositoryImpl implements WorkRepository {
     }
   }
 
-  async findBySlug(composerId: string, slug: string): Promise<Work | null> {
+  async findBySlug(
+    composerId: string,
+    slug: string,
+    ctx?: TransactionContext,
+  ): Promise<Work | null> {
     try {
-      const rows = await this.workDS.findBySlug(composerId, slug);
+      const rows = await this.workDS.findBySlug(composerId, slug, ctx);
       if (!rows) return null;
       return TursoWorkMapper.toDomain(rows);
     } catch (err) {
@@ -38,7 +43,7 @@ export class WorkRepositoryImpl implements WorkRepository {
     throw new Error('Method not implemented.');
   }
 
-  async save(work: Work): Promise<void> {
+  async save(work: Work, ctx?: TransactionContext): Promise<void> {
     try {
       // 1. Resolve Composer ID
       const composerSlug = work.composerSlug;
@@ -46,7 +51,7 @@ export class WorkRepositoryImpl implements WorkRepository {
         throw new AppError('Work must have a composer slug', 'VALIDATION_ERROR', 400);
       }
 
-      const composerRows = await this.composerDS.findBySlug(composerSlug);
+      const composerRows = await this.composerDS.findBySlug(composerSlug, ctx);
       if (!composerRows) {
         throw new AppError(`Composer not found: ${composerSlug}`, 'VALIDATION_ERROR', 400);
       }
@@ -58,20 +63,23 @@ export class WorkRepositoryImpl implements WorkRepository {
       workRow.composerId = composerId;
 
       // 3. Save (Parts excluded)
-      await this.workDS.save({
-        work: workRow,
-        translations,
-        parts: undefined, // Explicitly undefined to preserve parts
-      });
+      await this.workDS.save(
+        {
+          work: workRow,
+          translations,
+          parts: undefined, // Explicitly undefined to preserve parts
+        },
+        ctx,
+      );
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database save error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.workDS.delete(id);
+      await this.workDS.delete(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);

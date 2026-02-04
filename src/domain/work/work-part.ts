@@ -61,6 +61,10 @@ export class WorkPart {
     return this.metadata.performanceDifficulty;
   }
 
+  get instruments() {
+    return this.metadata.instruments;
+  }
+
   get nicknames() {
     return this.metadata.nicknames;
   }

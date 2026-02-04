@@ -1,0 +1,178 @@
+{
+  "_schemaVersion": "1.1.0",
+  "slug": "piano-concerto-no-1",
+  "composerSlug": "chopin",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Concerto No. 1",
+      "ja": "ピアノ協奏曲第1番",
+      "de": "Klavierkonzert Nr. 1",
+      "fr": "Concerto pour piano n° 1",
+      "it": "Concerto per pianoforte n. 1",
+      "es": "Concierto para piano n.º 1",
+      "zh": "第1号钢琴协奏曲"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "11",
+      "isPrimary": true
+    }
+  ],
+  "era": "early-romantic",
+  "genres": ["piano-concerto"],
+  "key": "e-minor",
+  "compositionYear": 1830,
+  "compositionPeriod": {
+    "en": "1830",
+    "ja": "1830年"
+  },
+  "instrumentation": "Solo: Piano, Orch: 2.2.2.2 - 4.2.1.0 - tmp - str",
+  "instruments": [
+    "piano",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "trombone",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
+  "instrumentationFlags": {
+    "isOrchestral": true
+  },
+  "performanceDifficulty": 5,
+  "tags": ["brilliant", "elegant", "passionate", "standard-repertoire"],
+  "description": {
+    "en": "Composed by Chopin at the age of 20, this concerto exhibits the composer's characteristic virtuosic and poetic style.",
+    "ja": "ショパンが20歳の時に作曲したこの協奏曲は、作曲家特有の技巧的で詩的なスタイルを示しています。",
+    "de": "Von Chopin im Alter von 20 Jahren komponiert, zeigt dieses Konzert den charakteristischen virtuosen und poetischen Stil des Komponisten.",
+    "fr": "Composé par Chopin à l'âge de 20 ans, ce concerto présente le style virtuose et poétique caractéristique du compositeur.",
+    "it": "Composto da Chopin all'età di 20 anni, questo concerto mostra lo stile virtuoso e poetico caratteristico del compositore.",
+    "es": "Compuesto por Chopin a la edad de 20 años, este concierto muestra el estilo virtuoso y poético característico del compositor.",
+    "zh": "肖邦在20岁时创作，这部协奏曲展现了作曲家典型的技巧化和诗意化风格。"
+  },
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-02-01T13:51:00Z",
+    "promptVersion": "1.2.0",
+    "confidenceScore": 1.0,
+    "sourceRefs": ["https://en.wikipedia.org/wiki/Piano_Concerto_No._1_(Chopin)"]
+  },
+  "parts": [
+    {
+      "slug": "1st-movement",
+      "order": 1,
+      "titleComponents": {
+        "title": {
+          "en": "Allegro maestoso",
+          "ja": "アレグロ・マエストーソ",
+          "de": "Allegro maestoso",
+          "fr": "Allegro maestoso",
+          "it": "Allegro maestoso",
+          "es": "Allegro maestoso",
+          "zh": "庄严的快板"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": true,
+      "key": "e-minor",
+      "tempo": "Allegro maestoso",
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "genres": ["sonata-form"],
+      "tags": ["majestic", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 2,
+        "vibrancy": 6,
+        "scale": 5,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 8
+      }
+    },
+    {
+      "slug": "2nd-movement",
+      "order": 2,
+      "titleComponents": {
+        "title": {
+          "en": "Romance. Larghetto",
+          "ja": "ロマンス。ラルゲット",
+          "de": "Romance. Larghetto",
+          "fr": "Romance. Larghetto",
+          "it": "Romance. Larghetto",
+          "es": "Romance. Larghetto",
+          "zh": "浪漫曲。小广板"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": false,
+      "key": "e-major",
+      "tempo": "Larghetto",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "genres": ["romance", "ternary-form"],
+      "tags": ["romance", "serene"],
+      "impressionDimensions": {
+        "brightness": -2,
+        "vibrancy": 2,
+        "scale": 4,
+        "depth": 7,
+        "drama": 3,
+        "popularity": 9
+      }
+    },
+    {
+      "slug": "3rd-movement",
+      "order": 3,
+      "titleComponents": {
+        "title": {
+          "en": "Rondo. Vivace",
+          "ja": "ロンド。ヴィヴァーチェ",
+          "de": "Rondo. Vivace",
+          "fr": "Rondo. Vivace",
+          "it": "Rondò. Vivace",
+          "es": "Rondò. Vivace",
+          "zh": "回旋曲。活泼地"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": true,
+      "key": "e-major",
+      "tempo": "Vivace",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "genres": ["rondo"],
+      "tags": ["playful", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 7,
+        "vibrancy": 8,
+        "scale": 5,
+        "depth": 5,
+        "drama": 4,
+        "popularity": 8
+      }
+    }
+  ],
+  "impressionDimensions": {
+    "brightness": 2,
+    "vibrancy": 6,
+    "scale": 5,
+    "depth": 7,
+    "drama": 8,
+    "popularity": 9
+  }
+}
