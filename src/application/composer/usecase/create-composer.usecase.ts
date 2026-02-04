@@ -28,8 +28,8 @@ export class CreateComposerUseCase {
   async execute(command: CreateComposerCommand): Promise<void> {
     const { slug } = command;
 
-    await this.txManager.transaction(async () => {
-      const existing = await this.repository.findBySlug(slug);
+    await this.txManager.run(async (ctx) => {
+      const existing = await this.repository.findBySlug(slug, ctx);
       if (existing) {
         throw new AppError(`Composer already exists: ${slug}`, 'CONFLICT');
       }
@@ -55,7 +55,7 @@ export class CreateComposerUseCase {
         metadata,
       });
 
-      await this.repository.save(entity);
+      await this.repository.save(entity, ctx);
     });
 
     this.logger.info('Created Composer', { slug });

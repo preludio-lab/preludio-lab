@@ -57,7 +57,7 @@ export class CreateWorkUseCase {
        * 注: TransactionManagerとRepositoryの実装が同じトランザクションコンテキストを共有している
        * （例: 内部メカニズムやネストされたトランザクションのサポートを介して）ことに依存します。
        */
-      await this.txManager.transaction(async () => {
+      await this.txManager.run(async (ctx) => {
         /** 3. 作品本体の作成 */
         const workId = generateId<'Work'>();
 
@@ -99,7 +99,7 @@ export class CreateWorkUseCase {
           metadata: workMetadata,
         });
 
-        await this.workRepo.save(workEntity);
+        await this.workRepo.save(workEntity, ctx);
         this.logger.info('Created Work Core', { slug, workId });
 
         /** 4. パート（楽章など）の作成 */
@@ -138,7 +138,7 @@ export class CreateWorkUseCase {
           });
 
           /** バルクインサートによるパフォーマンス最適化 */
-          await this.workPartRepo.saveAll(partsEntities);
+          await this.workPartRepo.saveAll(partsEntities, ctx);
           this.logger.info(`Created parts`, { count: partsData.length, slug });
         }
       });

@@ -3,6 +3,7 @@ import { WorkPart } from '@/domain/work/work-part';
 import { IWorkDataSource } from './interfaces/work.ds.interface';
 import { TursoWorkPartMapper } from './turso.work-part.mapper';
 import { AppError } from '@/domain/shared/app-error';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 export class WorkPartRepositoryImpl implements WorkPartRepository {
   constructor(private workDS: IWorkDataSource) {}
@@ -10,9 +11,9 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
   /**
    * 指定されたIDのWorkPart（楽章）を取得します。
    */
-  async findById(id: string): Promise<WorkPart | null> {
+  async findById(id: string, ctx?: TransactionContext): Promise<WorkPart | null> {
     try {
-      const rows = await this.workDS.findPartById(id);
+      const rows = await this.workDS.findPartById(id, ctx);
       if (!rows) return null;
       return TursoWorkPartMapper.toDomain(rows);
     } catch (err) {
@@ -21,9 +22,9 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
-  async findByWorkId(workId: string): Promise<WorkPart[]> {
+  async findByWorkId(workId: string, ctx?: TransactionContext): Promise<WorkPart[]> {
     try {
-      const workRows = await this.workDS.findById(workId);
+      const workRows = await this.workDS.findById(workId, ctx);
       if (!workRows) return [];
 
       // workRows.parts は WorkPartRows[] 型
@@ -37,20 +38,20 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
     }
   }
 
-  async save(part: WorkPart): Promise<void> {
+  async save(part: WorkPart, ctx?: TransactionContext): Promise<void> {
     try {
       const rows = TursoWorkPartMapper.toPersistence(part);
-      await this.workDS.savePart(rows);
+      await this.workDS.savePart(rows, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database save error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  async saveAll(parts: WorkPart[]): Promise<void> {
+  async saveAll(parts: WorkPart[], ctx?: TransactionContext): Promise<void> {
     try {
       const rowsList = parts.map(TursoWorkPartMapper.toPersistence);
-      await this.workDS.saveParts(rowsList);
+      await this.workDS.saveParts(rowsList, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database batch save error', 'INFRASTRUCTURE_ERROR', 500, err);
@@ -60,18 +61,18 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
   /**
    * 指定されたIDのWorkPart（楽章）を削除します。
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.workDS.deletePart(id);
+      await this.workDS.deletePart(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  async deleteByWorkId(workId: string): Promise<void> {
+  async deleteByWorkId(workId: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.workDS.deletePartsByWorkId(workId);
+      await this.workDS.deletePartsByWorkId(workId, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);

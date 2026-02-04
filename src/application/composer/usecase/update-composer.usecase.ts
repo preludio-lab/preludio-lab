@@ -27,8 +27,8 @@ export class UpdateComposerUseCase {
   async execute(command: UpdateComposerCommand): Promise<void> {
     const { slug } = command;
 
-    await this.txManager.transaction(async () => {
-      const existing = await this.repository.findBySlug(slug);
+    await this.txManager.run(async (ctx) => {
+      const existing = await this.repository.findBySlug(slug, ctx);
       if (!existing) {
         throw new AppError(`Composer not found: ${slug}`, 'NOT_FOUND');
       }
@@ -53,7 +53,7 @@ export class UpdateComposerUseCase {
         metadata,
       });
 
-      await this.repository.save(entity);
+      await this.repository.save(entity, ctx);
     });
 
     this.logger.info('Updated Composer', { slug });

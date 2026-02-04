@@ -53,7 +53,7 @@ export class UpdateWorkUseCase {
 
     try {
       /** トランザクション範囲 */
-      await this.txManager.transaction(async () => {
+      await this.txManager.run(async (ctx) => {
         /** 3. 作品本体の更新 */
         const workId = existingWork.id;
 
@@ -117,13 +117,13 @@ export class UpdateWorkUseCase {
           metadata: workMetadata,
         });
 
-        await this.workRepo.save(workEntity);
+        await this.workRepo.save(workEntity, ctx);
         this.logger.info(`Updated Work Core`, { slug, workId });
 
         /** 4. パートの更新（全削除後に再挿入）、パートデータが提供されている場合のみ実行 */
         if (data.parts !== undefined) {
           /** トランザクションの安全性: 削除とその後の挿入がアトミックに行われます。 */
-          await this.workPartRepo.deleteByWorkId(workId);
+          await this.workPartRepo.deleteByWorkId(workId, ctx);
 
           const partsData = data.parts;
           if (partsData.length > 0) {
@@ -161,7 +161,7 @@ export class UpdateWorkUseCase {
             });
 
             /** バルクインサートによる一括保存 */
-            await this.workPartRepo.saveAll(partsEntities);
+            await this.workPartRepo.saveAll(partsEntities, ctx);
             this.logger.info(`Updated (Replaced) parts`, { count: partsData.length, slug });
           } else {
             this.logger.info(`Removed all parts`, { slug });
