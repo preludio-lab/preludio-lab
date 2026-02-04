@@ -86,14 +86,16 @@ export class TursoWorkMapper {
     const meta = work.metadata;
     const mid = meta.musicalIdentity;
 
+    const primaryCatalogue = meta.catalogues.find((c) => c.isPrimary) || meta.catalogues[0];
+
     const workRow: WorkRow = {
       id: ctrl.id,
       composerId: '', // To be filled by Repository
       slug: ctrl.slug,
       catalogues: meta.catalogues,
-      cataloguePrefix: '',
-      catalogueNumber: '',
-      catalogueSortOrder: 0,
+      cataloguePrefix: primaryCatalogue?.prefix || null,
+      catalogueNumber: primaryCatalogue?.number || null,
+      catalogueSortOrder: primaryCatalogue?.sortOrder || 0,
       era: meta.era || null,
       instrumentation: meta.instrumentation || null,
       instrumentationFlags: meta.instrumentationFlags,
