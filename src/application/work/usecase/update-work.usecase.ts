@@ -38,23 +38,23 @@ export class UpdateWorkUseCase {
   async execute(data: UpdateWorkCommand): Promise<void> {
     const { composerSlug, slug } = data;
 
-    // 1. Validate Composer Exists & Get ID
+    /** 1. 作曲家の存在確認とIDの取得 */
     const composer = await this.composerRepo.findBySlug(composerSlug);
     if (!composer) {
       throw new AppError(`Composer not found: ${composerSlug}`, 'NOT_FOUND', 400);
     }
     const composerId = composer.id;
 
-    // 2. Check if Work exists
+    /** 2. 作品の存在チェック */
     const existingWork = await this.workRepo.findBySlug(composerId, slug);
     if (!existingWork) {
       throw new AppError(`Work not found: ${composerSlug}/${slug}`, 'NOT_FOUND');
     }
 
     try {
-      // Transaction Scope
+      /** トランザクション範囲 */
       await this.txManager.transaction(async () => {
-        // 3. Update Work Core
+        /** 3. 作品本体の更新 */
         const workId = existingWork.id;
 
         const workControl: WorkControl = {
@@ -67,21 +67,24 @@ export class UpdateWorkUseCase {
 
         const existingMeta = existingWork.metadata;
 
-        // Use spread for potentially new data, falling back to existing data if undefined
-        // Note: For partial updates, we need to be careful. The command might have partial data?
-        // Typically UpdateCommand in this system seems to carry full data replacement or partial.
-        // Based on previous code: `data.X ?? existing.X` logic.
+        /**
+         * 新しいデータの反映にあたり、値が未定義の場合は既存データを保持します。
+         * Note: 部分更新の際、Commandが部分的なデータのみを持つ可能性があるため。
+         * システム内のUpdateCommandは通常、完全な置き換えまたは部分的な更新を想定しています。
+         */
 
-        // Let's keep the explicit merge logic for safety but clean it up or keep as is if too complex to spread.
-        // Actually, since we want to be safe, let's keep the explicit merge but inside the transaction.
-        // Or we can construct it more cleanly.
+        /**
+         * 安全性を期すため、明示的なマージロジックを維持します。
+         * または、より簡潔に構築することも可能です。
+         */
 
         const workMetadata: WorkMetadata = {
-          ...data, // Spread data first
-          // Then manually handle fields that need "existing fallback" if data is undefined
-          // But wait, if `data.titleComponents` is undefined, `{...data}` won't have it (or have it as undefined).
-          // We need `data.prop ?? existing.prop`.
-          // Spread doesn't do `??`.
+          ...data /** データをまずスプレッド */,
+          /**
+           * dataがundefinedの場合に既存データをフォールバックとして使用するフィールドを個別に制御。
+           * Note: data.prop が undefined の場合、スプレッド構文だけでは既存値を維持できないため
+           * `data.prop ?? existing.prop` の形式を併用します。
+           */
 
           titleComponents: data.titleComponents ?? existingMeta.titleComponents,
           catalogues: data.catalogues ?? existingMeta.catalogues,
@@ -117,9 +120,9 @@ export class UpdateWorkUseCase {
         await this.workRepo.save(workEntity);
         this.logger.info(`Updated Work Core`, { slug, workId });
 
-        // 4. Update Parts (Delete All & Re-Insert) only if parts are provided
+        /** 4. パートの更新（全削除後に再挿入）、パートデータが提供されている場合のみ実行 */
         if (data.parts !== undefined) {
-          // Transactional Safety: Now this delete and subsequent inserts are atomic.
+          /** トランザクションの安全性: 削除とその後の挿入がアトミックに行われます。 */
           await this.workPartRepo.deleteByWorkId(workId);
 
           const partsData = data.parts;
@@ -157,7 +160,7 @@ export class UpdateWorkUseCase {
               return new WorkPart(partControl, partMetadata);
             });
 
-            // Use saveAll for batch insert
+            /** バルクインサートによる一括保存 */
             await this.workPartRepo.saveAll(partsEntities);
             this.logger.info(`Updated (Replaced) parts`, { count: partsData.length, slug });
           } else {

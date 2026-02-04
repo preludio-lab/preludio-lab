@@ -38,28 +38,30 @@ export class CreateWorkUseCase {
   async execute(data: CreateWorkCommand): Promise<void> {
     const { composerSlug, slug } = data;
 
-    // 1. Validate Composer Exists & Get ID
+    /** 1. 作曲家の存在確認とIDの取得 */
     const composer = await this.composerRepo.findBySlug(composerSlug);
     if (!composer) {
       throw new AppError(`Composer not found: ${composerSlug}`, 'NOT_FOUND', 400);
     }
     const composerId = composer.id;
 
-    // 2. Check if Work exists
+    /** 2. 作品の重複チェック */
     const existingWork = await this.workRepo.findBySlug(composerId, slug);
     if (existingWork) {
       throw new AppError(`Work already exists: ${composerSlug}/${slug}`, 'CONFLICT');
     }
 
     try {
-      // Transaction Scope
-      // Note: This relies on the implementation of TransactionManager and Repositories
-      // sharing the same transaction context (e.g. via internal mechanism or nested transaction support).
+      /**
+       * トランザクション範囲
+       * 注: TransactionManagerとRepositoryの実装が同じトランザクションコンテキストを共有している
+       * （例: 内部メカニズムやネストされたトランザクションのサポートを介して）ことに依存します。
+       */
       await this.txManager.transaction(async () => {
-        // 3. Create Work Core
+        /** 3. 作品本体の作成 */
         const workId = generateId<'Work'>();
 
-        // Use spread syntax for cleaner object creation
+        /** オブジェクト作成を簡潔にするためスプレッド構文を使用 */
         const workControl: WorkControl = {
           id: workId,
           slug: slug,
@@ -69,8 +71,8 @@ export class CreateWorkUseCase {
         };
 
         const workMetadata: WorkMetadata = {
-          ...data, // Spread all matching properties
-          // Explicit overrides or complex mappings below
+          ...data /** 全てのプロパティをスプレッド */,
+          /** 以下、明示的な上書きまたは複雑なマッピング */
           catalogues: data.catalogues ?? [],
           instruments: data.instruments ?? [],
           instrumentationFlags: data.instrumentationFlags ?? {
@@ -100,7 +102,7 @@ export class CreateWorkUseCase {
         await this.workRepo.save(workEntity);
         this.logger.info('Created Work Core', { slug, workId });
 
-        // 4. Create Parts
+        /** 4. パート（楽章など）の作成 */
         const partsData = data.parts || [];
         if (partsData.length > 0) {
           const partsEntities: WorkPart[] = partsData.map((p) => {
@@ -135,7 +137,7 @@ export class CreateWorkUseCase {
             return new WorkPart(partControl, partMetadata);
           });
 
-          // Use saveAll for batch insert (Performance fix)
+          /** バルクインサートによるパフォーマンス最適化 */
           await this.workPartRepo.saveAll(partsEntities);
           this.logger.info(`Created parts`, { count: partsData.length, slug });
         }
