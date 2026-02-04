@@ -1,0 +1,63 @@
+name: DAST Security Scan
+
+on:
+  deployment_status:
+
+jobs:
+  dast-scan:
+    # Vercel Preview (Production以外) のデプロイ成功時のみ実行
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          # Vercelから通知されたデプロイURLをターゲットとして使用
+          target: ${{ github.event.deployment_status.target_url }}
+          
+          # 誤検知除外ルールファイル
+          rules_file_name: '.zap/zap-rules.conf'
+          
+          # ZAPコマンドオプション
+          # -T 5: タイムアウト5分
+          cmd_options: '-T 5'
+          
+          # 初期段階では警告のみ、ビルドは失敗させない
+          fail_action: false
+          
+          # GitHub Issueへのレポート投稿を有効化
+          allow_issue_writing: true
+          
+          # Issue タイトル
+          issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
+          
+          # 成果物名
+          artifact_name: 'dast-scan-report'
+          
+          # GitHub Token（Issue作成・更新に使用）
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          # Vercelの保護をバイパスするためのヘッダー設定
+          # E2Eテストと同じBypass Secretを再利用
+          ZAP_AUTH_HEADER: 'x-vercel-protection-bypass'
+          ZAP_AUTH_HEADER_VALUE: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      - name: Upload DAST Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dast-scan-report
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
+          retention-days: 30
