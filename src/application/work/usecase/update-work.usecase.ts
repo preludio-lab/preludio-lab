@@ -115,7 +115,7 @@ export class UpdateWorkUseCase {
         });
 
         await this.workRepo.save(workEntity);
-        this.logger.info(`Updated Work Core: ${slug} (${workId})`);
+        this.logger.info(`Updated Work Core`, { slug, workId });
 
         // 4. Update Parts (Delete All & Re-Insert) only if parts are provided
         if (data.parts !== undefined) {
@@ -159,14 +159,14 @@ export class UpdateWorkUseCase {
 
             // Use saveAll for batch insert
             await this.workPartRepo.saveAll(partsEntities);
-            this.logger.info(`Updated (Replaced) ${partsData.length} parts for work: ${slug}`);
+            this.logger.info(`Updated (Replaced) parts`, { count: partsData.length, slug });
           } else {
-            this.logger.info(`Removed all parts for work: ${slug}`);
+            this.logger.info(`Removed all parts`, { slug });
           }
         }
       });
     } catch (err) {
-      this.logger.error(`Failed to update work: ${composerSlug}/${slug}`, err as Error);
+      this.logger.error(`Failed to update work`, err as Error, { composerSlug, slug });
       throw err;
     }
   }

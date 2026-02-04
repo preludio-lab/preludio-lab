@@ -98,7 +98,7 @@ export class CreateWorkUseCase {
         });
 
         await this.workRepo.save(workEntity);
-        this.logger.info(`Created Work Core: ${slug} (${workId})`);
+        this.logger.info('Created Work Core', { slug, workId });
 
         // 4. Create Parts
         const partsData = data.parts || [];
@@ -137,11 +137,11 @@ export class CreateWorkUseCase {
 
           // Use saveAll for batch insert (Performance fix)
           await this.workPartRepo.saveAll(partsEntities);
-          this.logger.info(`Created ${partsData.length} parts for work: ${slug}`);
+          this.logger.info(`Created parts`, { count: partsData.length, slug });
         }
       });
     } catch (err) {
-      this.logger.error(`Failed to create work: ${composerSlug}/${slug}`, err as Error);
+      this.logger.error('Failed to create work', err as Error, { composerSlug, slug });
       throw err;
     }
   }
