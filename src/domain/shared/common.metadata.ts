@@ -1,6 +1,7 @@
 import { z, zInt } from '@/shared/validation/zod';
 import { MusicalPlaceSchema } from './musical-place';
 import { NationalitySchema } from './nationality';
+import { MusicalTagSchema } from './musical-tag';
 
 /**
  * 共有のメタデータスキーマ定義 (CommonMetadata)
@@ -21,9 +22,15 @@ export const UrlSchema = z.string().url().max(MAX_URL_LENGTH);
 export const ResourcePathSchema = z.string().max(MAX_URL_LENGTH).optional().or(z.literal(''));
 
 /**
- * タグリストのスキーマ
+ * タグリストのスキーマ (汎用)
  */
 export const TagsSchema = z.array(z.string().max(50)).max(100).default([]);
+
+/**
+ * 楽曲タグリストのスキーマ (Taxonomy準拠)
+ * Taxonomy準拠の MusicalTag Enum値のみを許容します。
+ */
+export const MusicalTagsSchema = z.array(MusicalTagSchema).max(100).default([]);
 
 /**
  * 西暦のスキーマ

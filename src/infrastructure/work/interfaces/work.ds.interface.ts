@@ -1,5 +1,6 @@
 import { InferSelectModel } from 'drizzle-orm';
 import * as schema from '@/infrastructure/database/schema';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 // Row Types
 export type WorkRow = InferSelectModel<typeof schema.works>;
@@ -28,42 +29,47 @@ export interface IWorkDataSource {
   /**
    * Find work by ID
    */
-  findById(id: string): Promise<WorkRows | null>;
+  findById(id: string, ctx?: TransactionContext): Promise<WorkRows | null>;
 
   /**
    * Find work by Slug
    */
-  findBySlug(composerId: string, slug: string): Promise<WorkRows | null>;
+  findBySlug(composerId: string, slug: string, ctx?: TransactionContext): Promise<WorkRows | null>;
 
   /**
    * Upsert Work Chain (Atomic Transaction)
    */
-  save(rows: WorkRows): Promise<void>;
+  save(rows: WorkRows, ctx?: TransactionContext): Promise<void>;
 
   /**
    * Delete Work
    */
-  delete(id: string): Promise<void>;
+  delete(id: string, ctx?: TransactionContext): Promise<void>;
 
   // --- Part Operations ---
 
   /**
    * Upsert a single Work Part
    */
-  savePart(rows: WorkPartRows): Promise<void>;
+  savePart(rows: WorkPartRows, ctx?: TransactionContext): Promise<void>;
+
+  /**
+   * Upsert multiple Work Parts
+   */
+  saveParts(rows: WorkPartRows[], ctx?: TransactionContext): Promise<void>;
 
   /**
    * Delete all parts for a work
    */
-  deletePartsByWorkId(workId: string): Promise<void>;
+  deletePartsByWorkId(workId: string, ctx?: TransactionContext): Promise<void>;
 
   /**
    * Find a single Work Part by ID
    */
-  findPartById(partId: string): Promise<WorkPartRows | null>;
+  findPartById(partId: string, ctx?: TransactionContext): Promise<WorkPartRows | null>;
 
   /**
    * Delete a single Work Part by ID
    */
-  deletePart(partId: string): Promise<void>;
+  deletePart(partId: string, ctx?: TransactionContext): Promise<void>;
 }

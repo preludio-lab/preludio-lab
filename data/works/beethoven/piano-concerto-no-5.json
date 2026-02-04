@@ -1,0 +1,187 @@
+{
+  "_schemaVersion": "1.1.0",
+  "slug": "piano-concerto-no-5",
+  "composerSlug": "beethoven",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Concerto No. 5 \"Emperor\"",
+      "ja": "ピアノ協奏曲第5番「皇帝」",
+      "de": "Klavierkonzert Nr. 5 „Eis“",
+      "fr": "Concerto pour piano n° 5 « L'Empereur »",
+      "it": "Concerto per pianoforte n. 5 \"Imperatore\"",
+      "es": "Concierto para piano n.º 5 \"Emperador\"",
+      "zh": "第5号钢琴协奏曲“皇帝”"
+    },
+    "nickname": {
+      "en": "Emperor",
+      "ja": "皇帝",
+      "de": "Eis",
+      "fr": "L'Empereur",
+      "it": "Imperatore",
+      "es": "Emperador",
+      "zh": "皇帝"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "73",
+      "isPrimary": true
+    }
+  ],
+  "era": "early-romantic",
+  "genres": ["piano-concerto"],
+  "key": "e-flat-major",
+  "compositionYear": 1809,
+  "compositionPeriod": {
+    "en": "1809-1811",
+    "ja": "1809-1811年"
+  },
+  "instrumentation": "Solo: Piano, Orch: 2.2.2.2 - 2.2.0.0 - tmp - str",
+  "instruments": [
+    "piano",
+    "flute",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
+  "instrumentationFlags": {
+    "isOrchestral": true
+  },
+  "performanceDifficulty": 5,
+  "tags": ["majestic", "brilliant", "standard-repertoire", "nicknamed-work"],
+  "description": {
+    "en": "Beethoven's last completed piano concerto, known for its grand scale and heroic character.",
+    "ja": "ベートーヴェンの最後に完成されたピアノ協奏曲で、その壮大なスケールと英雄的な性格で知られています。",
+    "de": "Beethovens letztes vollendetes Klavierkonzert, bekannt für seine Größe und seinen heroischen Charakter.",
+    "fr": "Le dernier concerto per piano achevé de Beethoven, connu pour sa grande échelle et son caractère héroïque.",
+    "it": "L'ultimo concerto per pianoforte completato da Beethoven, noto per la sua scala grandiosa e il suo carattere eroico.",
+    "es": "El último concierto para piano completado de Beethoven, conocido por su gran escala y carácter heroico.",
+    "zh": "贝多芬最后完成的钢琴协奏曲，以其宏大的规模和英雄色彩而闻名。"
+  },
+  "_generatorMeta": {
+    "model": "gemini-3-flash-preview",
+    "generatedAt": "2026-02-01T13:48:00Z",
+    "promptVersion": "1.2.0",
+    "confidenceScore": 1.0,
+    "sourceRefs": ["https://en.wikipedia.org/wiki/Piano_Concerto_No._5_(Beethoven)"]
+  },
+  "parts": [
+    {
+      "slug": "1st-movement",
+      "order": 1,
+      "titleComponents": {
+        "title": {
+          "en": "Allegro",
+          "ja": "アレグロ",
+          "de": "Allegro",
+          "fr": "Allegro",
+          "it": "Allegro",
+          "es": "Allegro",
+          "zh": "快板"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": true,
+      "key": "e-flat-major",
+      "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "genres": ["sonata-form"],
+      "tags": ["majestic", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 8,
+        "vibrancy": 8,
+        "scale": 8,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 10
+      }
+    },
+    {
+      "slug": "2nd-movement",
+      "order": 2,
+      "titleComponents": {
+        "title": {
+          "en": "Adagio un poco mosso",
+          "ja": "アダージョ・ウン・ポコ・モッソ",
+          "de": "Adagio un poco mosso",
+          "fr": "Adagio un poco mosso",
+          "it": "Adagio un poco mosso",
+          "es": "Adagio un poco mosso",
+          "zh": "稍快的小慢板"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": true,
+      "key": "b-major",
+      "tempo": "Adagio un poco mosso",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "genres": ["variations"],
+      "tags": ["serene", "ethereal"],
+      "impressionDimensions": {
+        "brightness": 2,
+        "vibrancy": 1,
+        "scale": 5,
+        "depth": 8,
+        "drama": 3,
+        "popularity": 9
+      }
+    },
+    {
+      "slug": "3rd-movement",
+      "order": 3,
+      "titleComponents": {
+        "title": {
+          "en": "Rondo. Allegro ma non troppo",
+          "ja": "ロンド。アレグロ・マ・ノン・トロッポ",
+          "de": "Rondo. Allegro ma non troppo",
+          "fr": "Rondo. Allegro ma non troppo",
+          "it": "Rondò. Allegro ma non troppo",
+          "es": "Rondò. Allegro ma non troppo",
+          "zh": "回旋曲。不太快的快板"
+        }
+      },
+      "type": "movement",
+      "isNameStandard": true,
+      "key": "e-flat-major",
+      "tempo": "Allegro ma non troppo",
+      "timeSignature": {
+        "numerator": 6,
+        "denominator": 8
+      },
+      "genres": ["rondo"],
+      "tags": ["joyful", "energetic-start"],
+      "impressionDimensions": {
+        "brightness": 8,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 5,
+        "drama": 6,
+        "popularity": 9
+      }
+    }
+  ],
+  "impressionDimensions": {
+    "brightness": 8,
+    "vibrancy": 8,
+    "scale": 8,
+    "depth": 6,
+    "drama": 7,
+    "popularity": 10
+  }
+}

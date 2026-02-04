@@ -1,4 +1,5 @@
 import { Composer } from './composer';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 /**
  * Composer Search Criteria
@@ -16,31 +17,43 @@ export interface ComposerSearchCriteria {
 export interface ComposerRepository {
   /**
    * IDによる取得
+   * @param id 作曲家ID
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findById(id: string): Promise<Composer | null>;
+  findById(id: string, ctx?: TransactionContext): Promise<Composer | null>;
 
   /**
    * Slugによる取得
+   * @param slug URL用スラグ
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findBySlug(slug: string): Promise<Composer | null>;
+  findBySlug(slug: string, ctx?: TransactionContext): Promise<Composer | null>;
 
   /**
    * 複数のIDによる取得
+   * @param ids 作曲家IDリスト
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findByIds(ids: string[]): Promise<Composer[]>;
+  findByIds(ids: string[], ctx?: TransactionContext): Promise<Composer[]>;
 
   /**
    * 条件検索
+   * @param criteria 検索条件
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  findMany(criteria?: ComposerSearchCriteria): Promise<Composer[]>;
+  findMany(criteria?: ComposerSearchCriteria, ctx?: TransactionContext): Promise<Composer[]>;
 
   /**
    * 保存
+   * @param composer 作曲家エンティティ
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  save(composer: Composer): Promise<void>;
+  save(composer: Composer, ctx?: TransactionContext): Promise<void>;
 
   /**
    * 削除
+   * @param id 作曲家ID
+   * @param ctx トランザクションコンテキスト（オプション）
    */
-  delete(id: string): Promise<void>;
+  delete(id: string, ctx?: TransactionContext): Promise<void>;
 }

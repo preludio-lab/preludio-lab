@@ -75,6 +75,7 @@ export class TursoWorkMapper {
         nicknames: work.tags || [],
         description: description,
         tags: work.tags || [],
+        instruments: work.instruments || [],
         basedOn: work.basedOn || undefined,
       } as any,
     });
@@ -90,9 +91,7 @@ export class TursoWorkMapper {
       composerId: '', // To be filled by Repository
       slug: ctrl.slug,
       catalogues: meta.catalogues,
-      cataloguePrefix: '',
-      catalogueNumber: '',
-      catalogueSortOrder: 0,
+      // Generated Columns: cataloguePrefix, catalogueNumber, catalogueSortOrder are handled by DB
       era: meta.era || null,
       instrumentation: meta.instrumentation || null,
       instrumentationFlags: meta.instrumentationFlags,
@@ -113,13 +112,14 @@ export class TursoWorkMapper {
       impressionDimensions: meta.impressionDimensions || null,
       genres: (mid?.genres as any) || [],
       tags: meta.tags as any,
+      instruments: meta.instruments as any,
       compositionYear: meta.compositionYear || null,
       compositionPeriod: null,
       basedOn: meta.basedOn || null,
 
       createdAt: ctrl.createdAt.toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    } as unknown as WorkRow;
 
     // Decompose Translations
     // Fields: title(Req), titlePrefix, titleContent, titleNickname, compositionPeriod, description
