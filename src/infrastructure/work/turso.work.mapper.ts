@@ -86,16 +86,12 @@ export class TursoWorkMapper {
     const meta = work.metadata;
     const mid = meta.musicalIdentity;
 
-    const primaryCatalogue = meta.catalogues.find((c) => c.isPrimary) || meta.catalogues[0];
-
     const workRow: WorkRow = {
       id: ctrl.id,
       composerId: '', // To be filled by Repository
       slug: ctrl.slug,
       catalogues: meta.catalogues,
-      cataloguePrefix: primaryCatalogue?.prefix || null,
-      catalogueNumber: primaryCatalogue?.number || null,
-      catalogueSortOrder: primaryCatalogue?.sortOrder || 0,
+      // Generated Columns: cataloguePrefix, catalogueNumber, catalogueSortOrder are handled by DB
       era: meta.era || null,
       instrumentation: meta.instrumentation || null,
       instrumentationFlags: meta.instrumentationFlags,
@@ -123,7 +119,7 @@ export class TursoWorkMapper {
 
       createdAt: ctrl.createdAt.toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    } as unknown as WorkRow;
 
     // Decompose Translations
     // Fields: title(Req), titlePrefix, titleContent, titleNickname, compositionPeriod, description

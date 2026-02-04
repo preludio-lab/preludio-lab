@@ -23,9 +23,18 @@ export const works = sqliteTable(
       .references(() => composers.id, { onDelete: 'cascade' }),
     slug: text('slug').notNull(),
     catalogues: text('catalogues', { mode: 'json' }).default('[]').notNull().$type<Catalogue[]>(),
-    cataloguePrefix: text('catalogue_prefix'), // e.g. 'op', 'bwv' (Legacy)
-    catalogueNumber: text('catalogue_number'), // e.g. '67' (Legacy)
-    catalogueSortOrder: real('catalogue_sort_order'), // (Legacy)
+    cataloguePrefix: text('catalogue_prefix').generatedAlwaysAs(
+      sql`json_extract(catalogues, '$[0].prefix')`,
+      { mode: 'virtual' },
+    ),
+    catalogueNumber: text('catalogue_number').generatedAlwaysAs(
+      sql`json_extract(catalogues, '$[0].number')`,
+      { mode: 'virtual' },
+    ),
+    catalogueSortOrder: real('catalogue_sort_order').generatedAlwaysAs(
+      sql`json_extract(catalogues, '$[0].sortOrder')`,
+      { mode: 'virtual' },
+    ),
     era: text('era'), // MusicalEra ID
     instrumentation: text('instrumentation'),
     instrumentationFlags: text('instrumentation_flags', { mode: 'json' })
@@ -124,6 +133,7 @@ export const workParts = sqliteTable(
       mode: 'json',
     }).$type<ImpressionDimensions>(),
     genres: text('genres', { mode: 'json' }).default('[]').notNull().$type<MusicalGenre[]>(),
+    instruments: text('instruments', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
     nicknames: text('nicknames', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
     basedOn: text('based_on', { mode: 'json' }).$type<BasedOn>(),
 
