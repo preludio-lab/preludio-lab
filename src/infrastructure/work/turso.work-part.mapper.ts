@@ -63,6 +63,7 @@ export class TursoWorkPartMapper {
         },
         impressionDimensions: part.impressionDimensions || undefined,
         nicknames: part.nicknames || [],
+        instruments: part.instruments || [],
         basedOn: part.basedOn || undefined,
         performanceDifficulty: part.performanceDifficulty || undefined,
       } as any as any, // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -101,6 +102,7 @@ export class TursoWorkPartMapper {
       performanceDifficulty: meta.performanceDifficulty || null,
 
       nicknames: meta.nicknames || [],
+      instruments: meta.instruments, // Drizzle type inference limitation
 
       basedOn: meta.basedOn || null,
 

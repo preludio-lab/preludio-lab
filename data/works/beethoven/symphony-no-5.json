@@ -92,7 +92,19 @@
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro con brio",
-      "tags": ["dramatic", "tense"]
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "tags": ["dramatic", "tense"],
+      "impressionDimensions": {
+        "brightness": -5,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 5,
+        "drama": 9,
+        "popularity": 10
+      }
     },
     {
       "slug": "2nd-movement",
@@ -111,7 +123,19 @@
       "type": "movement",
       "key": "a-flat-major",
       "tempo": "Andante con moto",
-      "tags": ["serene", "majestic"]
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 8
+      },
+      "tags": ["serene", "majestic"],
+      "impressionDimensions": {
+        "brightness": 5,
+        "vibrancy": 4,
+        "scale": 6,
+        "depth": 5,
+        "drama": 4,
+        "popularity": 9
+      }
     },
     {
       "slug": "3rd-movement",
@@ -130,7 +154,19 @@
       "type": "movement",
       "key": "c-minor",
       "tempo": "Allegro",
-      "tags": ["gloomy", "tense"]
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "tags": ["gloomy", "tense"],
+      "impressionDimensions": {
+        "brightness": -4,
+        "vibrancy": 7,
+        "scale": 6,
+        "depth": 5,
+        "drama": 7,
+        "popularity": 9
+      }
     },
     {
       "slug": "4th-movement",
@@ -149,7 +185,20 @@
       "type": "movement",
       "key": "c-major",
       "tempo": "Allegro",
-      "tags": ["joyful", "majestic"]
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "tags": ["joyful", "majestic"],
+      "impressionDimensions": {
+        "brightness": 9,
+        "vibrancy": 9,
+        "scale": 8,
+        "depth": 5,
+        "drama": 8,
+        "popularity": 10
+      }
     }
   ]
 }

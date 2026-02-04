@@ -131,6 +131,7 @@ export class UpdateWorkUseCase {
               },
               impressionDimensions: p.impressionDimensions,
               nicknames: p.nicknames ?? [],
+              instruments: p.instruments ?? [],
               basedOn: p.basedOn,
               performanceDifficulty: p.performanceDifficulty,
               tags: p.tags || [],

@@ -84,7 +84,19 @@
       "isNameStandard": true,
       "key": "e-minor",
       "tempo": "Allegro maestoso",
-      "tags": ["majestic", "brilliant"]
+      "timeSignature": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "tags": ["majestic", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 2,
+        "vibrancy": 6,
+        "scale": 5,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 8
+      }
     },
     {
       "slug": "2nd-movement",
@@ -104,7 +116,20 @@
       "isNameStandard": false,
       "key": "e-major",
       "tempo": "Larghetto",
-      "tags": ["romance", "serene"]
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "tags": ["romance", "serene"],
+      "impressionDimensions": {
+        "brightness": -2,
+        "vibrancy": 2,
+        "scale": 4,
+        "depth": 7,
+        "drama": 3,
+        "popularity": 9
+      }
     },
     {
       "slug": "3rd-movement",
@@ -124,7 +149,27 @@
       "isNameStandard": true,
       "key": "e-major",
       "tempo": "Vivace",
-      "tags": ["playful", "brilliant"]
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "tags": ["playful", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 7,
+        "vibrancy": 8,
+        "scale": 5,
+        "depth": 5,
+        "drama": 4,
+        "popularity": 8
+      }
     }
-  ]
+  ],
+  "impressionDimensions": {
+    "brightness": 2,
+    "vibrancy": 6,
+    "scale": 5,
+    "depth": 7,
+    "drama": 8,
+    "popularity": 9
+  }
 }

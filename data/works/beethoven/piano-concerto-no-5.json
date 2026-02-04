@@ -92,7 +92,20 @@
       "isNameStandard": true,
       "key": "e-flat-major",
       "tempo": "Allegro",
-      "tags": ["majestic", "brilliant"]
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "tags": ["majestic", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 8,
+        "vibrancy": 8,
+        "scale": 8,
+        "depth": 6,
+        "drama": 7,
+        "popularity": 10
+      }
     },
     {
       "slug": "2nd-movement",
@@ -112,7 +125,20 @@
       "isNameStandard": true,
       "key": "b-major",
       "tempo": "Adagio un poco mosso",
-      "tags": ["serene", "ethereal"]
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
+      "tags": ["serene", "ethereal"],
+      "impressionDimensions": {
+        "brightness": 2,
+        "vibrancy": 1,
+        "scale": 5,
+        "depth": 8,
+        "drama": 3,
+        "popularity": 9
+      }
     },
     {
       "slug": "3rd-movement",
@@ -132,7 +158,27 @@
       "isNameStandard": true,
       "key": "e-flat-major",
       "tempo": "Allegro ma non troppo",
-      "tags": ["joyful", "energetic-start"]
+      "timeSignature": {
+        "numerator": 6,
+        "denominator": 8
+      },
+      "tags": ["joyful", "energetic-start"],
+      "impressionDimensions": {
+        "brightness": 8,
+        "vibrancy": 9,
+        "scale": 7,
+        "depth": 5,
+        "drama": 6,
+        "popularity": 9
+      }
     }
-  ]
+  ],
+  "impressionDimensions": {
+    "brightness": 8,
+    "vibrancy": 8,
+    "scale": 8,
+    "depth": 6,
+    "drama": 7,
+    "popularity": 10
+  }
 }

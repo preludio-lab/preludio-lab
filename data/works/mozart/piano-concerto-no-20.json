@@ -91,8 +91,21 @@
       "isNameStandard": true,
       "key": "d-minor",
       "tempo": "Allegro",
+      "timeSignature": {
+        "numerator": 4,
+        "denominator": 4,
+        "displayString": "C"
+      },
       "genres": ["sonata-form"],
-      "tags": ["dramatic", "tense"]
+      "tags": ["dramatic", "tense"],
+      "impressionDimensions": {
+        "brightness": -6,
+        "vibrancy": 7,
+        "scale": 5,
+        "depth": 6,
+        "drama": 8,
+        "popularity": 9
+      }
     },
     {
       "slug": "2nd-movement",
@@ -112,8 +125,21 @@
       "isNameStandard": false,
       "key": "b-flat-major",
       "tempo": "Andante",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 2,
+        "displayString": "C|"
+      },
       "genres": ["rondo"],
-      "tags": ["serene", "elegant"]
+      "tags": ["serene", "elegant"],
+      "impressionDimensions": {
+        "brightness": 3,
+        "vibrancy": 2,
+        "scale": 4,
+        "depth": 5,
+        "drama": 2,
+        "popularity": 8
+      }
     },
     {
       "slug": "3rd-movement",
@@ -133,8 +159,29 @@
       "isNameStandard": true,
       "key": "d-minor",
       "tempo": "Allegro assai",
+      "timeSignature": {
+        "numerator": 2,
+        "denominator": 2,
+        "displayString": "C|"
+      },
       "genres": ["rondo"],
-      "tags": ["joyful", "brilliant"]
+      "tags": ["joyful", "brilliant"],
+      "impressionDimensions": {
+        "brightness": 7,
+        "vibrancy": 8,
+        "scale": 5,
+        "depth": 5,
+        "drama": 4,
+        "popularity": 8
+      }
     }
-  ]
+  ],
+  "impressionDimensions": {
+    "brightness": -5,
+    "vibrancy": 7,
+    "scale": 5,
+    "depth": 6,
+    "drama": 8,
+    "popularity": 9
+  }
 }

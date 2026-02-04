@@ -130,6 +130,7 @@ export class CreateWorkUseCase {
             },
             impressionDimensions: p.impressionDimensions,
             nicknames: p.nicknames ?? [],
+            instruments: p.instruments ?? [],
             basedOn: p.basedOn,
             performanceDifficulty: p.performanceDifficulty,
             tags: p.tags || [],
