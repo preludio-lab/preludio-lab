@@ -1,7 +1,7 @@
 import { getLocale } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { verifyAdminUseCase } from '@/application/admin/usecase/verify-admin.usecase';
-import { AdminLayoutClient } from './AdminLayoutClient';
+import { AdminLayout } from '@/components/admin/layout/AdminLayout';
 
 /**
  * AdminLayout - 管理画面レイアウト (Server Component)
@@ -11,7 +11,7 @@ import { AdminLayoutClient } from './AdminLayoutClient';
  * - UI言語の取得（next-intl）
  * - Clientコンポーネントへのデータ伝達
  */
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayoutPage({ children }: { children: React.ReactNode }) {
   // UseCase経由で認証済みユーザー情報を取得
   const adminUser = await verifyAdminUseCase();
 
@@ -25,8 +25,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const uiLocale = await getLocale();
 
   return (
-    <AdminLayoutClient userEmail={adminUser.email} uiLocale={uiLocale}>
+    <AdminLayout userEmail={adminUser.email} uiLocale={uiLocale}>
       {children}
-    </AdminLayoutClient>
+    </AdminLayout>
   );
 }

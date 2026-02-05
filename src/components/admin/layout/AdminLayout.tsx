@@ -1,24 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  AdminSidebar,
-  type AdminLocale,
-  type AdminNavItem,
-} from '@/components/layout/admin/AdminSidebar';
-import { AdminHeader } from '@/components/layout/admin/AdminHeader';
-import {
-  UsersIcon,
-  MusicalNoteIcon,
-  DocumentTextIcon,
-  NewspaperIcon,
-} from '@/components/layout/admin/AdminIcons';
+import { AdminSidebar, type AdminLocale, type AdminNavItem } from './AdminSidebar';
+import { AdminHeader } from './AdminHeader';
+import { UsersIcon, MusicalNoteIcon, DocumentTextIcon, NewspaperIcon } from './AdminIcons';
 import { signOutAction } from '@/infrastructure/auth/auth';
 
 /**
- * AdminLayoutClientのProps
+ * AdminLayoutのProps
  */
-interface AdminLayoutClientProps {
+interface AdminLayoutProps {
   /** 認証済みユーザーのメールアドレス */
   userEmail: string;
   /** 現在のUI言語（next-intlから取得） */
@@ -59,7 +50,7 @@ const NAVIGATION_ITEMS: AdminNavItem[] = [
 ];
 
 /**
- * AdminLayoutClient - 管理画面レイアウト (Client Component)
+ * AdminLayout - 管理画面レイアウト (Client Component)
  *
  * Container層: UseCaseからのデータをPresentationalコンポーネントに渡す
  *
@@ -68,7 +59,7 @@ const NAVIGATION_ITEMS: AdminNavItem[] = [
  * - Server Actionの呼び出し
  * - PresentationalコンポーネントへのProps伝達
  */
-export function AdminLayoutClient({ userEmail, uiLocale, children }: AdminLayoutClientProps) {
+export function AdminLayout({ userEmail, uiLocale, children }: AdminLayoutProps) {
   // Content編集言語の状態管理（デフォルトはUIの言語に合わせる）
   const [contentLocale, setContentLocale] = useState<AdminLocale>(
     (uiLocale as AdminLocale) || 'ja',

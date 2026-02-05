@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PhraseList, type PhraseListItem } from '@/components/features/admin/PhraseList';
+import { PhraseList, type PhraseListItem } from '@/components/admin/phrases/PhraseList';
 import { useRouter } from 'next/navigation';
 
 const MOCK_PHRASES: PhraseListItem[] = [

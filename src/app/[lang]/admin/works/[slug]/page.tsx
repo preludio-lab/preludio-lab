@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { WorkDetail } from '@/components/features/admin/WorkDetail';
+import { WorkDetail } from '@/components/admin/works/WorkDetail';
 
 const getMockWork = (slug: string) => {
   return {

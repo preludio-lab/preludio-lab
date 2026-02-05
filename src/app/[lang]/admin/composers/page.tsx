@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ComposerList, type ComposerListItem } from '@/components/features/admin/ComposerList';
+import { ComposerList, type ComposerListItem } from '@/components/admin/composers/ComposerList';
 import { useRouter } from 'next/navigation';
 
 /**

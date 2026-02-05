@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { WorkList, type WorkListItem } from '@/components/features/admin/WorkList';
+import { WorkList, type WorkListItem } from '@/components/admin/works/WorkList';
 import { useRouter } from 'next/navigation';
 
 const MOCK_WORKS: WorkListItem[] = [

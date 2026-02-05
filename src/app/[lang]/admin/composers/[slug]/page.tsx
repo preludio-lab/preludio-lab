@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { ComposerDetail } from '@/components/features/admin/ComposerDetail';
+import { ComposerDetail } from '@/components/admin/composers/ComposerDetail';
 
 /**
  * MOCK DATA FETCHING (将来は UseCase 経由)

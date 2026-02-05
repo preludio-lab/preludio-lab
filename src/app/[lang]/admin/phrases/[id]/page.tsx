@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams } from 'next/navigation';
-import { PhraseEditor } from '@/components/features/admin/PhraseEditor';
+import { PhraseEditor } from '@/components/admin/phrases/PhraseEditor';
 
 const getMockPhrase = (id: string) => {
   return {
