@@ -3,6 +3,7 @@ import { R2ArticleContentDataSource } from './r2.article.content.ds';
 import { r2Client } from '../storage/r2.client';
 import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
 import { ContentNotFoundError, ContentFetchError } from './interfaces/article.content.ds.interface';
+import { Logger } from '@/shared/logging/logger';
 
 // r2-client モジュールのモック
 vi.mock('../storage/r2.client', () => ({
@@ -13,9 +14,15 @@ vi.mock('../storage/r2.client', () => ({
 
 describe('R2ArticleContentDataSource', () => {
   let dataSource: R2ArticleContentDataSource;
+  const mockLogger = {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  };
 
   beforeEach(() => {
-    dataSource = new R2ArticleContentDataSource();
+    dataSource = new R2ArticleContentDataSource(mockLogger as unknown as Logger);
     vi.clearAllMocks();
   });
 
@@ -67,15 +74,13 @@ describe('R2ArticleContentDataSource', () => {
     vi.mocked(r2Client.send).mockRejectedValue(noSuchKeyError);
 
     await expect(dataSource.getContent('not-found.mdx')).rejects.toThrow(ContentNotFoundError);
+    expect(mockLogger.warn).toHaveBeenCalled();
   });
 
   it('should throw ContentFetchError and log error on other errors', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.mocked(r2Client.send).mockRejectedValue(new Error('Access Denied'));
 
     await expect(dataSource.getContent('error.mdx')).rejects.toThrow(ContentFetchError);
-    expect(consoleSpy).toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
+    expect(mockLogger.error).toHaveBeenCalled();
   });
 });

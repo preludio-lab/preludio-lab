@@ -2,17 +2,29 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleRepositoryImpl } from './article.repository';
 import { FsArticleMetadataDataSource } from './fs.article.metadata.ds';
 import { FsArticleContentDataSource } from './fs.article.content.ds';
+import { TursoArticleMetadataDataSource } from './turso.article.metadata.ds';
+import { R2ArticleContentDataSource } from './r2.article.content.ds';
 
 import { logger } from '@/infrastructure/logging';
+import { env } from '@/lib/env';
+import { APP_ENV } from '@/lib/constants';
 
 /**
  * ArticleRepository の共有インスタンス (Singleton)
  *
- * 将来的にデータベース（Turso 等）へ移行する際は、ここでインスタンス化するクラス
- * を差し替えることで、アプリケーション全体の実装を透過的に切り替えることができます。
+ * 実行環境に応じて、ローカルファイルシステムまたは R2/Turso を切り替えます。
  */
-const metadataDS = new FsArticleMetadataDataSource();
-const contentDS = new FsArticleContentDataSource();
+const isProductionLike =
+  env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION || env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING;
+
+const metadataDS = isProductionLike
+  ? new TursoArticleMetadataDataSource(logger)
+  : new FsArticleMetadataDataSource();
+
+const contentDS = isProductionLike
+  ? new R2ArticleContentDataSource(logger)
+  : new FsArticleContentDataSource();
+
 export const articleRepository: ArticleRepository = new ArticleRepositoryImpl(
   metadataDS,
   contentDS,

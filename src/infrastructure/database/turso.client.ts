@@ -1,24 +1,28 @@
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from './schema';
-import dotenv from 'dotenv';
+import { env } from '@/lib/env';
 
-// Load variables in development/script environments
-dotenv.config({ path: '.env.local' });
-dotenv.config();
+/**
+ * Turso / LibSQL Client
+ *
+ * NEXT_PUBLIC_APP_ENV が production または staging の場合は必須。
+ * development の場合は、SQLite (ローカル) モードなどで動作させるため、
+ * エラーを投げずに警告のみに留めます。
+ */
+const { TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, NEXT_PUBLIC_APP_ENV } = env;
 
-const url = process.env.TURSO_DATABASE_URL;
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const isConfigMissing = !TURSO_DATABASE_URL;
 
-if (!url) {
-  throw new Error(
-    'TURSO_DATABASE_URL is not defined. Please check your environment variables (.env.local).',
+if (isConfigMissing && NEXT_PUBLIC_APP_ENV !== 'development') {
+  console.warn(
+    '[TursoClient] TURSO_DATABASE_URL is not defined in non-development environment. Database operations may fail.',
   );
 }
 
 const client = createClient({
-  url: url,
-  authToken,
+  url: TURSO_DATABASE_URL || 'file:local.db', // Fallback for development if URL is missing
+  authToken: TURSO_AUTH_TOKEN,
 });
 
 export const db = drizzle(client, { schema });

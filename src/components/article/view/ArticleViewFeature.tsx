@@ -50,7 +50,7 @@ export async function ArticleViewFeature({
     : undefined;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mdxComponents = createArticleMdxComponents(audioMetadata as any);
+  const mdxComponents = createArticleMdxComponents(audioMetadata as any, metadata);
 
   return (
     <div className="container mx-auto px-4 py-32 max-w-7xl">

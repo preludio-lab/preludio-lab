@@ -6,13 +6,16 @@ import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
 import { ComponentProps, isValidElement, ReactElement } from 'react';
 import Image from 'next/image';
 
+import { ArticleMetadata } from '@/domain/article/article.metadata';
+
 /**
  * createArticleMdxComponents
  * 記事詳細で使用するMDXコンポーネント定義を生成します。
- * 記事ごとの音源情報をフォールバックとして利用するため、関数形式にしています。
+ * 記事ごとの音源情報やパス情報を反映させるため、関数形式にしています。
  */
 export const createArticleMdxComponents = (
   audioMetadata?: Partial<PlayerFlatProperties> & Record<string, unknown>,
+  articleMetadata?: ArticleMetadata,
 ) => ({
   a: MdxLink,
   pre: (props: ComponentProps<'pre'>) => {
@@ -92,12 +95,25 @@ export const createArticleMdxComponents = (
     description?: string;
     id?: string;
   }) => {
-    // Determine path: prefer src, fallback to id-based convention
-    const imagePath = src
-      ? `/images/article/${src}`
-      : id
-        ? `/images/article/beethoven/${id}.svg`
-        : '';
+    // Determine path based on infrastructure design:
+    // Articles: public/articles/{slug}/images/
+    // Works: public/works/{composer}/{work}/musical-examples/
+
+    let imagePath = '';
+
+    if (articleMetadata?.slug) {
+      if (src) {
+        imagePath = `/articles/${articleMetadata.slug}/images/${src}`;
+      } else if (id) {
+        // Fallback or convention for IDs
+        imagePath = `/articles/${articleMetadata.slug}/images/${id}.svg`;
+      }
+    }
+
+    // Traditional/Legacy fallback or direct src if provided as relative to /images/article/
+    if (!imagePath) {
+      imagePath = src ? `/images/article/${src}` : id ? `/images/article/beethoven/${id}.svg` : '';
+    }
 
     if (!imagePath) return null;
 

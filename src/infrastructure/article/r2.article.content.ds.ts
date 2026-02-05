@@ -5,24 +5,14 @@ import {
   ContentNotFoundError,
   ContentFetchError,
 } from './interfaces/article.content.ds.interface';
+import { env } from '@/lib/env';
+import { Logger } from '@/shared/logging/logger';
 
 export class R2ArticleContentDataSource implements IArticleContentDataSource {
   private readonly bucketName: string;
 
-  constructor() {
-    const bucket = process.env.R2_BUCKET_NAME;
-    // note: 本番以外では .env が読み込まれていない場合があるため、デフォルト値は危険だが一旦許容するか、あるいはDIで注入するのが本来は望ましい。
-    // 今回はレビュー指摘に従い、環境変数の存在をチェックするが、既存の動作（デフォルト値）を維持するかどうか検討。
-    // レビューでは「環境変数の存在を強制する方が安全」とあるため、強制する方向で実装。
-    // ただし、もしこれで動かなくなる環境がある場合は修正必要。
-    if (!bucket) {
-      // 開発の便宜上、フォールバックを残すか、厳密にするか。
-      // エンタープライズ品質としては厳密にするのが正解。
-      // throw new Error('Environment variable R2_BUCKET_NAME is not set.');
-      // いったん元の挙動(デフォルト値)は廃止し、厳密にチェックする。
-    }
-
-    this.bucketName = bucket || 'preludiolab-storage'; // 安全策として一旦元のデフォルトも残すが、基本はenvを見る
+  constructor(private readonly logger: Logger) {
+    this.bucketName = env.R2_BUCKET_NAME || 'preludiolab-storage';
   }
 
   /**
@@ -58,10 +48,14 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
           (error as { name: string }).name === 'NoSuchKey');
 
       if (isNoSuchKey) {
+        this.logger.warn(`Content not found in R2: ${path}`, { bucket: this.bucketName, path });
         throw new ContentNotFoundError(path);
       }
 
-      console.error(`[R2ArticleContentDataSource] Failed to fetch content from R2: ${path}`, error);
+      this.logger.error(`Failed to fetch content from R2: ${path}`, error as Error, {
+        bucket: this.bucketName,
+        path,
+      });
       throw new ContentFetchError(`Failed to fetch content from R2: ${path}`, error);
     }
   }
