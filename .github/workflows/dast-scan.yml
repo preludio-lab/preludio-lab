@@ -41,8 +41,8 @@ jobs:
           # Issue タイトル
           issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
 
-          # 成果物アップロードを無効化（権限エラー回避のため）
-          artifact_name: ''
+          # 成果物名（一意な名前を設定）
+          artifact_name: 'dast-report-${{ github.run_id }}'
 
           # GitHub Token（Issue作成・更新に使用）
           token: ${{ secrets.GITHUB_TOKEN }}
