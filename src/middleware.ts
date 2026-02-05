@@ -22,6 +22,18 @@ export default function middleware(req: NextRequest) {
       response.headers.set('Cache-Control', 'private, no-cache, no-transform, must-revalidate');
     }
 
+    // セキュリティ強化: NEXT_LOCALE Cookieに HttpOnly と Secure フラグを追加
+    const locale = response.cookies.get('NEXT_LOCALE')?.value;
+    if (locale) {
+      response.cookies.set('NEXT_LOCALE', locale, {
+        httpOnly: true, // JavaScript からのアクセスを防ぐ (DAST Alert ID: 10010)
+        secure: process.env.NODE_ENV === 'production', // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
+        sameSite: 'lax', // CSRF 対策
+        maxAge: 31536000, // 1年
+        path: '/',
+      });
+    }
+
     return response;
   }
 
