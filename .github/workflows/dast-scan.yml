@@ -41,7 +41,7 @@ jobs:
           issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
 
           # 成果物名
-          artifact_name: 'dast-scan-report'
+          artifact_name: 'dast-scan-report-${{ github.run_id }}'
 
           # GitHub Token（Issue作成・更新に使用）
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: dast-scan-report
+          name: dast-scan-report-${{ github.run_id }}
           path: |
             report_html.html
             report_json.json

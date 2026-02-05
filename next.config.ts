@@ -74,10 +74,10 @@ const nextConfig: NextConfig = {
             key: 'Cross-Origin-Resource-Policy',
             value: 'same-origin',
           },
-          // Content Security Policy (Report-Onlyモード)
-          // 段階的導入: まず違反を監視し、問題がなければEnforceモードに移行
+          // Content Security Policy (Enforceモード)
+          // 段階的導入完了: 違反をブロックし、ZAP警告を解消
           {
-            key: 'Content-Security-Policy-Report-Only',
+            key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com https://www.google-analytics.com",
