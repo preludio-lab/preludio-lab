@@ -14,7 +14,9 @@ export const authConfig = {
      */
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isAdminPath = nextUrl.pathname.startsWith('/admin');
+
+      // /admin や /ja/admin, /en/admin などにマッチさせる
+      const isAdminPath = /^\/([a-z]{2}\/)?admin/.test(nextUrl.pathname);
 
       if (isAdminPath) {
         if (isLoggedIn) return true;
@@ -48,6 +50,6 @@ export const authConfig = {
     },
   },
   pages: {
-    signIn: '/api/auth/signin', // 標準のサインインページを使用
+    // signIn: '/api/auth/signin', // Default is used
   },
 } satisfies NextAuthConfig;
