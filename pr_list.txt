@@ -1,0 +1,15 @@
+79	DAST自動化基盤の実装	feat/dast-implementation	OPEN	2026-02-04T17:22:14Z
+74	chore(deps-dev): bump vitest from 4.0.17 to 4.0.18	dependabot/npm_and_yarn/vitest-4.0.18	OPEN	2026-02-01T15:15:13Z
+73	chore(deps): bump @sentry/nextjs from 10.37.0 to 10.38.0	dependabot/npm_and_yarn/sentry/nextjs-10.38.0	OPEN	2026-02-01T15:14:45Z
+72	chore(deps): bump @supabase/supabase-js from 2.93.2 to 2.93.3	dependabot/npm_and_yarn/supabase/supabase-js-2.93.3	OPEN	2026-02-01T15:14:17Z
+71	chore(deps-dev): bump eslint-config-next from 16.0.8 to 16.1.6	dependabot/npm_and_yarn/eslint-config-next-16.1.6	OPEN	2026-02-01T15:13:56Z
+70	chore(deps-dev): bump @playwright/test from 1.58.0 to 1.58.1	dependabot/npm_and_yarn/playwright/test-1.58.1	OPEN	2026-02-01T15:13:24Z
+69	chore(deps): bump next from 16.0.8 to 16.1.6	dependabot/npm_and_yarn/next-16.1.6	OPEN	2026-02-01T15:13:01Z
+68	chore(deps): bump next-intl from 4.7.0 to 4.8.1	dependabot/npm_and_yarn/next-intl-4.8.1	OPEN	2026-02-01T15:12:19Z
+67	chore(deps): bump zod from 4.3.5 to 4.3.6	dependabot/npm_and_yarn/zod-4.3.6	OPEN	2026-02-01T15:11:57Z
+66	chore(deps-dev): bump @types/react-youtube from 7.6.2 to 7.10.0	dependabot/npm_and_yarn/types/react-youtube-7.10.0	OPEN	2026-02-01T15:11:37Z
+65	chore(deps): bump @aws-sdk/client-s3 from 3.975.0 to 3.980.0	dependabot/npm_and_yarn/aws-sdk/client-s3-3.980.0	OPEN	2026-02-01T15:11:08Z
+64	chore(deps): bump fast-xml-parser from 5.3.3 to 5.3.4 in /tools/musical-example-generator	dependabot/npm_and_yarn/tools/musical-example-generator/fast-xml-parser-5.3.4	OPEN	2026-02-01T15:10:39Z
+63	chore(deps): bump commander from 14.0.2 to 14.0.3 in /tools/musical-example-generator	dependabot/npm_and_yarn/tools/musical-example-generator/commander-14.0.3	OPEN	2026-02-01T15:10:31Z
+62	chore(deps): bump verovio from 6.0.0 to 6.0.1 in /tools/musical-example-generator	dependabot/npm_and_yarn/tools/musical-example-generator/verovio-6.0.1	OPEN	2026-02-01T15:10:25Z
+61	chore(deps): bump actions/upload-artifact from 4 to 6	dependabot/github_actions/actions/upload-artifact-6	OPEN	2026-02-01T15:10:14Z
