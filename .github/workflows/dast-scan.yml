@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
@@ -41,8 +41,8 @@ jobs:
           # Issue タイトル
           issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
 
-          # 成果物名（手動ステップでアップロードするためここでは無効化）
-          # artifact_name: 'dast-scan-report-${{ github.run_id }}'
+          # 成果物アップロードを無効化（権限エラー回避のため）
+          artifact_name: ''
 
           # GitHub Token（Issue作成・更新に使用）
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -51,14 +51,3 @@ jobs:
           # E2Eテストと同じBypass Secretを再利用
           ZAP_AUTH_HEADER: 'x-vercel-protection-bypass'
           ZAP_AUTH_HEADER_VALUE: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-
-      - name: Upload DAST Report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: dast-scan-report-${{ github.run_id }}
-          path: |
-            report_html.html
-            report_json.json
-            report_md.md
-          retention-days: 30
