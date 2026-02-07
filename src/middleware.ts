@@ -1,4 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './shared/i18n/routing';
 import { auth } from '@/infrastructure/auth/auth';
 
@@ -17,10 +18,11 @@ export default auth((req) => {
   const segments = pathname.split('/');
   const firstSegment = segments[1];
 
-  // ルートパス、または有効なロケールの場合は next-intl に任せる
   if (!firstSegment || (routing.locales as readonly string[]).includes(firstSegment)) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = intlMiddleware(req as any);
+    // FIXME: next-auth の NextAuthRequest と next-intl が期待する NextRequest の間に、
+    // Next.js のマイナーバージョン差異に起因する内部型の不整合があるため、unknown を経由してキャストしています。
+    // 将来的にライブラリ側の型定義が更新されたら直接渡せるようになるはずです。
+    const response = intlMiddleware(req as unknown as NextRequest);
 
     // UX 向上: スムーズな遷移のために BFcache (Back/Forward Cache) を有効化
     if (!response.headers.has('Cache-Control')) {
@@ -36,12 +38,10 @@ export default auth((req) => {
 
   const url = req.nextUrl.clone();
   url.pathname = newPath;
-  return Response.redirect(url);
+  return NextResponse.redirect(url);
 });
 
 export const config = {
-  // API, _next, _vercel, 静的ファイル(拡張子あり)を除外してすべてにマッチさせる
-  // Note: この設定により、URLパスに「.」を含むページ（例: /works/op.55）はミドルウェアの対象外となります。
-  // そのため、スラグには「.」を使用しない運用（kebab-case）を徹底してください。
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  // API, _next, _vercel, 静的ファイルを除外してすべてにマッチさせる
+  matcher: ['/((?!api|_next|_vercel|favicon.ico|sitemap.xml|robots.txt|.*\\..*).*)'],
 };
