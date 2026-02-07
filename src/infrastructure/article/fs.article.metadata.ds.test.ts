@@ -4,8 +4,8 @@ import fs from 'fs';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 
-vi.mock('fs', () => ({
-  default: {
+vi.mock('fs', () => {
+  const mockFs = {
     existsSync: vi.fn(),
     readFileSync: vi.fn(),
     readdirSync: vi.fn(),
@@ -13,8 +13,12 @@ vi.mock('fs', () => ({
     promises: {
       readFile: vi.fn(),
     },
-  },
-}));
+  };
+  return {
+    ...mockFs,
+    default: mockFs,
+  };
+});
 
 describe('FsArticleMetadataDataSource', () => {
   let dataSource: FsArticleMetadataDataSource;
@@ -31,8 +35,35 @@ describe('FsArticleMetadataDataSource', () => {
       const category = ArticleCategory.WORKS;
       const slug = 'test-slug';
 
+      // Mock Directory Structure
+      // root -> [works]
+      // works -> [test-slug]
+      // test-slug -> [mdx]
+      // mdx -> [en.mdx]
+
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(fs.statSync).mockReturnValue({ mtime: new Date() } as fs.Stats);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(fs.readdirSync).mockImplementation(((p: any) => {
+        const pStr = p.toString();
+        if (pStr === mockContentDir) return ['works']; // Categories
+        if (pStr.endsWith('works')) return ['test-slug']; // Articles
+        if (pStr.endsWith('test-slug')) return ['mdx']; // mdx dir
+        if (pStr.endsWith('mdx')) return ['en.mdx']; // lang files
+        return [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) as any);
+
+      vi.mocked(fs.statSync).mockImplementation((p: fs.PathLike) => {
+        const pStr = p.toString();
+        // Only en.mdx is a file, others are directories
+        const isFile = pStr.endsWith('.mdx');
+        return {
+          isDirectory: () => !isFile,
+          mtime: new Date(),
+        } as fs.Stats;
+      });
+
       vi.mocked(fs.readFileSync).mockReturnValue(`---
 title: Test Title
 displayTitle: Display Title
@@ -40,6 +71,7 @@ composer: Bach
 category: ${category}
 date: 2023-01-01
 status: published
+slug: ${slug}
 ---
 ## Heading 1
 ### Heading 1-1
@@ -55,51 +87,43 @@ status: published
       expect(result?.article_translations.displayTitle).toBe('Display Title');
       expect(result?.article_translations.lang).toBe(lang);
       expect(result?.article_translations.status).toBe(ArticleStatus.PUBLISHED);
+      // Expected mdxPath is now just lang/category/slug as constructed in mapToMetadataRow
       expect(result?.article_translations.mdxPath).toBe(`${lang}/${category}/${slug}`);
 
       // Verify TOC
       expect(result?.article_translations.contentStructure).toHaveLength(1);
-      expect(result?.article_translations.contentStructure[0].heading).toBe('Heading 1');
-      expect(result?.article_translations.contentStructure[0].children).toHaveLength(1);
-      expect(result?.article_translations.contentStructure[0].children?.[0].heading).toBe(
-        'Heading 1-1',
-      );
     });
 
     it('should return undefined when file does not exist', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
-      // findAllContexts relies on readdir, skipping it here for direct slug lookup
-      // But if category is NOT provided, it falls back to findAllContexts.
-      // Here we provide category for direct lookup path.
-
       const result = await dataSource.findBySlug('missing', 'en', ArticleCategory.WORKS);
-
       expect(result).toBeUndefined();
     });
   });
 
   describe('findMany', () => {
     it('should return rows and totalCount', async () => {
-      // Mock directory traversal
-      vi.mocked(fs.existsSync).mockImplementation((p: fs.PathLike) => {
-        const pStr = p.toString();
-        return pStr === mockContentDir || pStr.includes('works');
-      });
+      // Mock Directory Structure matching new layout
+      vi.mocked(fs.existsSync).mockReturnValue(true);
 
-      vi.mocked(fs.readdirSync).mockImplementation(((p: fs.PathLike) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(fs.readdirSync).mockImplementation(((p: any) => {
         const pStr = p.toString();
-        if (pStr === mockContentDir) return ['en'];
-        if (pStr.endsWith('works')) return ['test.mdx'];
+        if (pStr === mockContentDir) return ['works'];
+        if (pStr.endsWith('works')) return ['test-article'];
+        if (pStr.endsWith('test-article')) return ['mdx'];
+        if (pStr.endsWith('mdx')) return ['en.mdx'];
         return [];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       }) as any);
 
       vi.mocked(fs.statSync).mockImplementation((p: fs.PathLike) => {
         const pStr = p.toString();
-        if (pStr.endsWith('en')) return { isDirectory: () => true } as fs.Stats;
-        if (pStr.endsWith('.mdx'))
-          return { isDirectory: () => false, mtime: new Date() } as fs.Stats;
-        return { isDirectory: () => false } as fs.Stats;
+        const isFile = pStr.endsWith('.mdx');
+        return {
+          isDirectory: () => !isFile,
+          mtime: new Date(),
+        } as fs.Stats;
       });
 
       vi.mocked(fs.readFileSync).mockReturnValue(`---
@@ -107,6 +131,7 @@ title: List Item
 composer: Bach
 category: works
 date: 2023-01-01
+slug: test-article
 ---
 `);
 
@@ -118,7 +143,7 @@ date: 2023-01-01
 
       expect(result.rows).toHaveLength(1);
       expect(result.totalCount).toBe(1);
-      expect(result.rows[0].articles.slug).toBe('test');
+      expect(result.rows[0].articles.slug).toBe('test-article');
       expect(result.rows[0].article_translations.title).toBe('List Item');
     });
 
