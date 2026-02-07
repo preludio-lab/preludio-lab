@@ -8,6 +8,7 @@ import {
 } from './interfaces/article.content.ds.interface';
 import { env } from '@/lib/env';
 import { Logger } from '@/shared/logging/logger';
+import { preprocessMdx } from './mdx.preprocessor';
 
 export class R2ArticleContentDataSource implements IArticleContentDataSource {
   private readonly bucketName: string;
@@ -60,7 +61,7 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
 
       // Frontmatterをパースして、コンテンツ部分のみを返す
       const { content } = matter(rawContent);
-      return content;
+      return preprocessMdx(content);
     } catch (error: unknown) {
       // AWS SDKのエラー識別
       const isNoSuchKey =

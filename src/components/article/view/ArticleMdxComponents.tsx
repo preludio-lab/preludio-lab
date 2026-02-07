@@ -102,15 +102,24 @@ export const createArticleMdxComponents = (
     let imagePath = '';
 
     if (articleMetadata?.slug) {
-      if (src) {
-        imagePath = `/articles/${articleMetadata.slug}/images/${src}`;
+      const cleanSrc = src?.startsWith('./') ? src.slice(2) : src;
+      const category = articleMetadata.category || 'works';
+
+      if (cleanSrc) {
+        if (cleanSrc.startsWith('images/')) {
+          imagePath = `/articles/${category}/${articleMetadata.slug}/${cleanSrc}`;
+        } else {
+          // If it contains a slash, it might be a legacy path (e.g. beethoven/score.svg)
+          // In the new structure, we colocate assets directly in the images/ folder.
+          const filename = cleanSrc.split('/').pop() || cleanSrc;
+          imagePath = `/articles/${category}/${articleMetadata.slug}/images/${filename}`;
+        }
       } else if (id) {
-        // Fallback or convention for IDs
-        imagePath = `/articles/${articleMetadata.slug}/images/${id}.svg`;
+        imagePath = `/articles/${category}/${articleMetadata.slug}/images/${id}.svg`;
       }
     }
 
-    // Traditional/Legacy fallback or direct src if provided as relative to /images/article/
+    // Traditional/Legacy fallback
     if (!imagePath) {
       imagePath = src ? `/images/article/${src}` : id ? `/images/article/beethoven/${id}.svg` : '';
     }
@@ -127,6 +136,7 @@ export const createArticleMdxComponents = (
             height={0}
             sizes="100vw"
             className="w-full h-auto"
+            crossOrigin="anonymous"
           />
         </div>
         {description && (

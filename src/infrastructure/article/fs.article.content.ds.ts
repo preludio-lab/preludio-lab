@@ -6,6 +6,7 @@ import {
   ContentNotFoundError,
   ContentFetchError,
 } from './interfaces/article.content.ds.interface';
+import { preprocessMdx } from './mdx.preprocessor';
 
 export class FsArticleContentDataSource implements IArticleContentDataSource {
   private readonly contentDirectory: string;
@@ -28,7 +29,7 @@ export class FsArticleContentDataSource implements IArticleContentDataSource {
 
       const fileContents = fs.readFileSync(resolvedPath, 'utf8');
       const { content } = matter(fileContents);
-      return content;
+      return preprocessMdx(content);
     } catch (err) {
       if (err instanceof ContentNotFoundError) {
         throw err;
