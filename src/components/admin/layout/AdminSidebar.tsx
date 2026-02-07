@@ -1,7 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { usePathname } from '@/shared/i18n/navigation';
+import { Link } from '@/shared/i18n/navigation';
 
 /**
  * 管理画面のナビゲーション項目の型定義
