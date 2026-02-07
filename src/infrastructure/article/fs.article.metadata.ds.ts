@@ -234,14 +234,25 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
     const level = difficultyMap[data.difficulty] || 3;
 
+    // Debug logging for missing composer
+    const composerName = data.composer || data.composerName || 'Unknown';
+    if (composerName === 'Unknown') {
+      logger.warn('Legacy metadata mapping: Unknown composer', {
+        slug: data.slug,
+        title: data.title,
+        availableKeys: Object.keys(data),
+      });
+    }
+
     return {
       title: data.title || 'No Title',
       catchcopy: data.catchcopy || undefined,
       displayTitle: data.displayTitle || data.title,
       excerpt: data.excerpt || data.ogp_excerpt || undefined,
-      composerName: data.composer || data.composerName || 'Unknown',
+      composerName: composerName,
       workTitle: data.workTitle || data.work || undefined,
       workCatalogueId: undefined,
+
       instrumentations: [],
       genre: undefined,
       era: undefined,

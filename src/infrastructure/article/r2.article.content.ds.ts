@@ -1,4 +1,5 @@
 import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
+import matter from 'gray-matter';
 import { r2Client } from '../storage/r2.client';
 import {
   IArticleContentDataSource,
@@ -24,10 +25,28 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
       throw new ContentNotFoundError('Empty path provided');
     }
 
+    // Path transformation:
+    // Input (Logical): {lang}/{category}/{slug}.mdx
+    // Output (Physical): private/articles/{category}/{slug}/mdx/{lang}.mdx
+
+    let key = path;
+    const parts = path.split('/');
+    // Check if it looks like a logical path (at least 3 segments: lang, category, slug...) and ends with .mdx
+    if (parts.length >= 3 && path.endsWith('.mdx')) {
+      const lang = parts[0];
+      const category = parts[1];
+      const slugWithExt = parts.slice(2).join('/');
+      const slug = slugWithExt.replace(/\.mdx$/, '');
+
+      // Construct new R2 key
+      key = `private/articles/${category}/${slug}/mdx/${lang}.mdx`;
+      this.logger.debug(`Mapped logical path ${path} to R2 key ${key}`);
+    }
+
     try {
       const command = new GetObjectCommand({
         Bucket: this.bucketName,
-        Key: path,
+        Key: key,
       });
 
       const response = await r2Client.send(command);
@@ -37,7 +56,11 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
       }
 
       // AWS SDK V3 stream to string
-      return await response.Body.transformToString();
+      const rawContent = await response.Body.transformToString();
+
+      // Frontmatterをパースして、コンテンツ部分のみを返す
+      const { content } = matter(rawContent);
+      return content;
     } catch (error: unknown) {
       // AWS SDKのエラー識別
       const isNoSuchKey =

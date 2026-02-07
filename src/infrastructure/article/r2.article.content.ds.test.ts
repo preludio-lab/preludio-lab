@@ -26,7 +26,7 @@ describe('R2ArticleContentDataSource', () => {
     vi.clearAllMocks();
   });
 
-  it('should return content string when R2 returns existing object', async () => {
+  it('should transform logical path to R2 physical path and return content', async () => {
     const mockContent = '# Hello World';
     const mockBody = {
       transformToString: vi.fn().mockResolvedValue(mockContent),
@@ -36,8 +36,10 @@ describe('R2ArticleContentDataSource', () => {
       Body: mockBody as unknown as undefined, // Type assertion for S3 output body
     } as never);
 
-    const path = 'articles/test.mdx';
-    const result = await dataSource.getContent(path);
+    const inputPath = 'ja/works/bach/prelude.mdx';
+    const expectedKey = 'private/articles/works/bach/prelude/mdx/ja.mdx';
+
+    const result = await dataSource.getContent(inputPath);
 
     expect(result).toBe(mockContent);
     expect(r2Client.send).toHaveBeenCalledTimes(1);
@@ -47,9 +49,34 @@ describe('R2ArticleContentDataSource', () => {
     expect(callArgs).toBeInstanceOf(GetObjectCommand);
     expect(callArgs.input).toEqual(
       expect.objectContaining({
-        Key: path,
+        Key: expectedKey,
       }),
     );
+  });
+
+  it('should use original path if it does not match logical path pattern', async () => {
+    const mockContent = '# Legacy';
+    const mockBody = { transformToString: vi.fn().mockResolvedValue(mockContent) };
+    vi.mocked(r2Client.send).mockResolvedValue({ Body: mockBody as unknown as undefined } as never);
+
+    const rawPath = 'some-folder/file.mdx'; // less than 3 segments
+    await dataSource.getContent(rawPath);
+
+    const callArgs = vi.mocked(r2Client.send).mock.calls[0][0];
+    // Cast input to any or specific type to avoid TS error
+    expect((callArgs.input as { Key: string }).Key).toBe(rawPath);
+  });
+
+  it('should use original path if extension is not .mdx', async () => {
+    const mockContent = 'text data';
+    const mockBody = { transformToString: vi.fn().mockResolvedValue(mockContent) };
+    vi.mocked(r2Client.send).mockResolvedValue({ Body: mockBody as unknown as undefined } as never);
+
+    const rawPath = 'ja/works/bach/prelude.txt';
+    await dataSource.getContent(rawPath);
+
+    const callArgs = vi.mocked(r2Client.send).mock.calls[0][0];
+    expect((callArgs.input as { Key: string }).Key).toBe(rawPath);
   });
 
   it('should throw ContentNotFoundError if path is empty', async () => {
@@ -82,5 +109,21 @@ describe('R2ArticleContentDataSource', () => {
 
     await expect(dataSource.getContent('error.mdx')).rejects.toThrow(ContentFetchError);
     expect(mockLogger.error).toHaveBeenCalled();
+  });
+
+  it('should strip frontmatter from content', async () => {
+    const mockRawContent = '---\ntitle: Test\n---\n# Actual Content';
+    const expectedContent = '# Actual Content';
+    const mockBody = {
+      transformToString: vi.fn().mockResolvedValue(mockRawContent),
+    };
+
+    vi.mocked(r2Client.send).mockResolvedValue({
+      Body: mockBody as unknown as undefined,
+    } as never);
+
+    const result = await dataSource.getContent('ja/works/bach/prelude.mdx');
+
+    expect(result.trim()).toBe(expectedContent);
   });
 });
