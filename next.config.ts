@@ -3,6 +3,13 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/shared/i18n/config.ts');
 
+// 環境変数からベースURLを取得 (ビルド時に決定)
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'https://preludiolab.com');
+
 const nextConfig: NextConfig = {
   serverExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
   compiler: {
@@ -98,6 +105,7 @@ const nextConfig: NextConfig = {
       },
       {
         // サイトマップ用 (Middlewareがスキップされるため個別に設定)。パス配下も含む。
+        // source: '/sitemap.xml/:path*' は /sitemap.xml/about などにマッチ
         source: '/sitemap.xml/:path*',
         headers: [
           {
@@ -116,7 +124,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // ルートの sitemap.xml 用
+        // ルートの sitemap.xml 用 (完全一致)
         source: '/sitemap.xml',
         headers: [
           {
@@ -135,15 +143,28 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // 公開ファイル (robots.txt, favicon.ico) のCORS制限
-        source: '/(robots.txt|favicon.ico)',
+        // robots.txt のCORS制限 (Regexでの指定をやめて明示的に分離)
+        source: '/robots.txt',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'null', // ワイルドカードを無効化
+            value: BASE_URL, // 明示的に制限 (必要に応じて環境変数化)
           },
           {
-            // robots.txt等にも念のためCSP付与
+            key: 'Content-Security-Policy',
+            value: "default-src 'none'; frame-ancestors 'none';",
+          },
+        ],
+      },
+      {
+        // favicon.ico のCORS制限
+        source: '/favicon.ico',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: BASE_URL, // 明示的に制限
+          },
+          {
             key: 'Content-Security-Policy',
             value: "default-src 'none'; frame-ancestors 'none';",
           },
