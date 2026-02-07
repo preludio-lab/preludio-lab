@@ -22,26 +22,27 @@
 | **Development** | **Antigravity (IDE)**   | **Subscription**        | **"The Partner":**<br>・コードの実装、デバッグ、テスト生成。<br>・アーキテクチャの議論とプロトタイプ作成。 |
 | **Production**  | **Google AI SDK / CLI** | **Free Tier (API Key)** | **"The Factory":**<br>・マスターデータの量産 (One to Hundred)。<br>・多言語翻訳、アセット収集、定期更新。  |
 
-## 3. Production Strategy: "Automated Pipe"
+## 3. Production Strategy: "Automated Pipe" (Robust & Stateful)
 
-制作プロセスは、チャットボットとの会話ではなく、**「厳格なI/O定義に基づいた自動処理パイプ」**として実装します。
+制作プロセスは、チャットボットとの会話ではなく、**「厳格なI/O定義に基づいたステートフルな自動処理パイプ」**として実装します。
 
-1.  **System Prompt Control**: バリデーション済みのプロンプトをスクリプト内に固定し、再現性を確保。
-2.  **Schema Enforcement**: JSON Schema（Function Calling等）を利用し、TypeScript の型に完全に準拠した出力を強制。
-3.  **Distributed Batch**: GitHub Actions により、レート制限を回避しながら時間差で非同期処理を実行。
+1.  **Logical Core Domain**: `src/domain`, `src/application` を純粋なドメイン層として維持し、Agent から直接インポートして再利用する（物理的な移動は行わない）。
+2.  **State Management**: 中間生成物と進捗をローカル DB (SQLite) 等に永続化し、エラー時の中断・再開 (Resumability) を保証する。
+3.  **Deterministic Validation**: LLM による修正の前に、Zod によるプログラム的な型チェックと自動修復を優先し、コストを削減する。
 
 ## 4. Execution Environments & Limits
 
-### A. Local Environment
+### A. Local Environment (Admin CLI)
 
 - 目的: 試行錯誤、即時修正、特定のマスターデータの先行生成。
+- 構成: `agents/` ディレクトリ内のスクリプトを実行。
 
-### B. GitHub Actions Environment
+### B. GitHub Actions Environment (Batch)
 
 - 目的: 定形作業、多言語展開、バルク処理。
 - **制約 (Zero Cost):**
   - **Flash Model (Gemini 2.0 Flash):** 1.5K RPD / 15 RPM を最大限活用。データ量産は原則 Flash を推奨。
-  - **Pro Model (Gemini 2.0 Pro):** 高度な推論や長い文脈が必要な「記事執筆」等に限定。
+  - **Staging State:** いきなり公開せず、`status: review_pending` として保存し、人間による最終承認プロセスを経る。
 
 ## 5. Roadmap
 
