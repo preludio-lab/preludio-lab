@@ -1,0 +1,114 @@
+name: DAST Security Scan
+
+on:
+  deployment_status:
+
+jobs:
+  dast-scan:
+    # Vercel Preview (Production以外) のデプロイ成功時のみ実行
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'preview'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      issues: write
+      actions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare workspace permissions
+        run: chmod -R 777 ${{ github.workspace }}
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          # Vercelから通知されたデプロイURLをターゲットとして使用
+          target: ${{ github.event.deployment_status.target_url }}
+
+          # 誤検知除外ルールファイル
+          rules_file_name: '.zap/zap-rules.conf'
+
+          # ZAPコマンドオプション
+          # -T 5: タイムアウト5分
+          cmd_options: '-T 5'
+
+          # 初期段階では警告のみ、ビルドは失敗させない
+          fail_action: false
+
+          # GitHub Issueへのレポート投稿を無効化し、後続のステップで条件付き作成を行う
+          allow_issue_writing: false
+
+          # Issue タイトル (後続ステップで使用するためコメントアウトまたは削除)
+          # issue_title: 'DAST Scan Report - ${{ github.event.deployment.sha }}'
+
+          # GitHub Token（Issue作成・更新に使用）
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          # Vercelの保護をバイパスするためのヘッダー設定
+          # E2Eテストと同じBypass Secretを再利用
+          ZAP_AUTH_HEADER: 'x-vercel-protection-bypass'
+          ZAP_AUTH_HEADER_VALUE: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      - name: Create Issue if Vulnerabilities (Low+) Found
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            // ZAPのJSONレポートが存在するか確認
+            if (!fs.existsSync('report_json.json')) {
+              console.log('No ZAP report found. Skipping issue creation.');
+              return;
+            }
+
+            const report = JSON.parse(fs.readFileSync('report_json.json', 'utf8'));
+            let maxRisk = 0;
+
+            // 各サイトのアラートを確認
+            if (report.site) {
+              report.site.forEach(site => {
+                if (site.alerts) {
+                  site.alerts.forEach(alert => {
+                    const risk = parseInt(alert.riskcode, 10);
+                    if (risk > maxRisk) maxRisk = risk;
+                  });
+                }
+              });
+            }
+
+            // Risk: 0=Info, 1=Low, 2=Medium, 3=High
+            // Low以上 (>= 1) の場合のみIssueを作成
+            if (maxRisk >= 1) {
+              console.log('Vulnerabilities found (Risk Level >= Low). Creating issue...');
+              
+              const issueTitle = 'DAST Scan Report - ${{ github.event.deployment.sha }}';
+              let issueBody = '';
+              if (fs.existsSync('report_md.md')) {
+                issueBody = fs.readFileSync('report_md.md', 'utf8');
+              } else {
+                issueBody = 'No markdown report generated.';
+              }
+
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: issueBody
+              });
+            } else {
+              console.log('Only Informational alerts found (or none). Skipping issue creation.');
+            }
+
+      - name: Upload DAST Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dast-report-${{ github.run_id }}
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
+          retention-days: 30
