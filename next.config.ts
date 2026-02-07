@@ -97,8 +97,8 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // サイトマップとrobots.txt用 (Middlewareがスキップされるため個別に設定)
-        source: '/(sitemap.xml|robots.txt)',
+        // サイトマップ用 (Middlewareがスキップされるため個別に設定)。パス配下も含む。
+        source: '/sitemap.xml/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -112,6 +112,40 @@ const nextConfig: NextConfig = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
+          },
+        ],
+      },
+      {
+        // ルートの sitemap.xml 用
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "default-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      {
+        // 公開ファイル (robots.txt, favicon.ico) のCORS制限
+        source: '/(robots.txt|favicon.ico)',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'null', // ワイルドカードを無効化
+          },
+          {
+            // robots.txt等にも念のためCSP付与
+            key: 'Content-Security-Policy',
+            value: "default-src 'none'; frame-ancestors 'none';",
           },
         ],
       },
