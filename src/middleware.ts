@@ -7,6 +7,27 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  const nonce = crypto.randomUUID();
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http: ${
+      process.env.NODE_ENV === 'production' ? '' : "'unsafe-eval'"
+    };
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
+    font-src 'self' data:;
+    connect-src 'self' https://www.google-analytics.com;
+    frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
+    media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://cdn.preludiolab.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  `
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+
   // パスをセグメントに分割 ('/jaa/foo' -> ['', 'jaa', 'foo'])
   const segments = pathname.split('/');
   const firstSegment = segments[1];
@@ -21,6 +42,11 @@ export default function middleware(req: NextRequest) {
     if (!response.headers.has('Cache-Control')) {
       response.headers.set('Cache-Control', 'private, no-cache, no-transform, must-revalidate');
     }
+
+    // セキュリティ強化: CSPヘッダーを設定
+    response.headers.set('Content-Security-Policy', cspHeader);
+    // Nonceをリクエストヘッダーにセット（Server Componentsで取得するため）
+    response.headers.set('x-nonce', nonce);
 
     // セキュリティ強化: NEXT_LOCALE Cookieに HttpOnly と Secure フラグを追加
     const locale = response.cookies.get('NEXT_LOCALE')?.value;
@@ -54,5 +80,13 @@ export const config = {
   // API, _next, _vercel, 静的ファイル(拡張子あり)を除外してすべてにマッチさせる
   // Note: この設定により、URLパスに「.」を含むページ（例: /works/op.55）はミドルウェアの対象外となります。
   // そのため、スラグには「.」を使用しない運用（kebab-case）を徹底してください。
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  matcher: [
+    {
+      source: '/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt).*)',
+      missing: [
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
+      ],
+    },
+  ],
 };

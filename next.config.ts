@@ -6,7 +6,22 @@ const withNextIntl = createNextIntlPlugin('./src/shared/i18n/config.ts');
 const nextConfig: NextConfig = {
   serverExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  webpack: (config, { dev }) => {
+    // 本番ビルド時にコメントを削除 (DAST Alert: Information Disclosure - Suspicious Comments)
+    if (!dev && config.optimization.minimizer) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      config.optimization.minimizer.forEach((minimizer: any) => {
+        if (minimizer.options?.terserOptions?.format) {
+          minimizer.options.terserOptions.format.comments = false;
+        }
+        if (minimizer.options) {
+          minimizer.options.extractComments = false;
+        }
+      });
+    }
+    return config;
   },
   images: {
     loader: 'custom',
@@ -74,35 +89,26 @@ const nextConfig: NextConfig = {
             key: 'Cross-Origin-Resource-Policy',
             value: 'same-origin',
           },
-          // Content Security Policy (Enforceモード)
-          // 段階的導入完了: 違反をブロックし、ZAP警告を解消
+          // キャッシュ制御 (デフォルト): 動的コンテンツはキャッシュしない (DAST Alert: Non-Storable Content)
           {
-            key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.youtube.com https://www.youtube-nocookie.com https://www.google-analytics.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com",
-              "font-src 'self' data:",
-              "connect-src 'self' https://www.google-analytics.com",
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
-              "media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://cdn.preludiolab.com",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-              "frame-ancestors 'none'",
-              'upgrade-insecure-requests',
-            ].join('; '),
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
           },
         ],
       },
       {
-        // 静的アセット用: CDNからのアクセスを許可
+        // 静的アセット用: 長期間キャッシュ＆CORS制限
         source: '/_next/static/:path*',
         headers: [
           {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          // DAST Alert: Cross-Domain Misconfiguration
+          // ワイルドカード許可をやめ、同一オリジンポリシーを推奨する形へ
+          {
             key: 'Cross-Origin-Resource-Policy',
-            value: 'cross-origin',
+            value: 'same-origin',
           },
         ],
       },
