@@ -97,6 +97,25 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // サイトマップとrobots.txt用 (Middlewareがスキップされるため個別に設定)
+        source: '/(sitemap.xml|robots.txt)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value:
+              "default-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none';",
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+        ],
+      },
+      {
         // 静的アセット用: 長期間キャッシュ＆CORS制限
         source: '/_next/static/:path*',
         headers: [
@@ -109,6 +128,10 @@ const nextConfig: NextConfig = {
           {
             key: 'Cross-Origin-Resource-Policy',
             value: 'same-origin',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: 'null', // または特定のオリジン
           },
         ],
       },

@@ -23,15 +23,16 @@ export default auth((req) => {
   const nonce = crypto.randomUUID();
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http: ${
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
       process.env.NODE_ENV === 'production' ? '' : "'unsafe-eval'"
     };
-    style-src 'self' 'unsafe-inline';
+    style-src 'self' 'nonce-${nonce}';
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
     connect-src 'self' https://www.google-analytics.com;
     frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
     media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://cdn.preludiolab.com;
+    worker-src 'self';
     object-src 'none';
     base-uri 'self';
     form-action 'self';
