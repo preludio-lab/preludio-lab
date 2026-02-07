@@ -204,7 +204,7 @@ Status: `[/]` 進行中
 
 ## Phase 6: セキュリティテストとパフォーマンスチューニング
 
-- [ ] **6.1 セキュリティテストと脆弱性診断の自動化 (Security Analysis)**
+- [x] **6.1 セキュリティテストと脆弱性診断の自動化 (Security Analysis)**
   - [x] **[SAST]** **GitHub CodeQL** のワークフロー統合（コードスキャン）
   - [x] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
   - [x] **[DAST]** **OWASP ZAP (GitHub Action)** による動的診断環境の構築
@@ -212,7 +212,7 @@ Status: `[/]` 進行中
     - [x] セキュリティテスト設計書の作成 (`docs/05_design/security_test_design.md`)
     - [x] ZAP設定ファイルの作成 (`.zap/zap-rules.conf`)
     - [x] GitHub Actions ワークフローの実装 (`.github/workflows/dast-scan.yml`)
-  - [ ] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
+  - [x] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
 
 - [x] **6.2 パフォーマンス耐久テストと最適化の極致 (Performance & Asset Optimization)**
   - [x] **[基盤]** **Cloudflare Images / R2** の導入。画像アセットの管理・配信を統合。 (Done with Custom Domain `cdn.preludiolab.com`)
