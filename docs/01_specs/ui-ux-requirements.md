@@ -98,7 +98,10 @@
 ### [REQ-UI-PROCESS-001] AI-First Design Workflow
 
 - **[REQ-UI-PROCESS-001-01] Concept & Inspiration:** 人間（Producer）がムードボードやキーワード（例: "Timeless & Modern", "Swiss Style"）を定義し、AIエージェントがそれを具体的なカラースキームやフォントの組み合わせ（Tokens）に変換する。
-- **[REQ-UI-PROCESS-001-02] Component Generation:** `Designer Agent` がデザインシステムに基づき、Reactコンポーネント（Tailwind CSS）を直接生成する。Figma等のデザインツールは「思考の補助」としてのみ使用し、**正としてのデザインデータ（Master）はコード（Github）に置く。**
+- [REQ-UI-PROCESS-001-02] Component Generation: **Figma-First Workflow.**
+  - **Source of Truth:** デザインの視覚的定義（レイアウト、色、振る舞い）の正解は **Figma** とする。
+  - **Implementation:** Reactコンポーネントの実装は、Figma上の定義（Tokens/Variables）が完全に固まった後に行う。Figmaなしでの「想像による実装」は原則禁止とする。
+  - **Code Quality:** Figmaという「設計図」を用意することで、AIが生成するコードの品質と安定性を担保する（Zero-Cost Architecture）。
 
 ### [REQ-UI-PROCESS-002] Design System as Code
 
