@@ -119,7 +119,8 @@
       "instruments": "楽器",
       "performers": "演奏家",
       "terminology": "用語集",
-      "columns": "コラム"
+      "columns": "コラム",
+      "admin": "管理画面"
     },
     "difficulty": {
       "1": "初級",

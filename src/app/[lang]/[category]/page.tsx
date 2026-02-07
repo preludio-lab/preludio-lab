@@ -31,6 +31,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { lang, category } = await params;
   const { sort, difficulty, keyword } = await searchParams;
 
+  // 重要: admin パスへの対応は Middleware と AdminLayout で完結させる
   const validCategories = Object.values(ArticleCategory) as string[];
   if (!validCategories.includes(category)) {
     notFound();
@@ -65,6 +66,15 @@ export default async function CategoryPage({ params, searchParams }: Props) {
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, category } = await params;
+
+  // DEBUG: Force Rebuild 12345
+
+  // バリデーション: 無効なカテゴリーの場合はメタデータを生成しない
+  const validCategories = Object.values(ArticleCategory) as string[];
+  if (!validCategories.includes(category)) {
+    return {};
+  }
+
   const t = await getTranslations({ locale: lang, namespace: 'CategoryIndex' });
 
   const categoryName = t(`categories.${category}`);

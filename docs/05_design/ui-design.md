@@ -7,6 +7,19 @@
 
 ---
 
+## 0. Design-First Protocol (Must Follow)
+
+本プロジェクトでは「Design-First」アプローチを徹底する。
+
+- **Figma as Source of Truth:**
+  - すべてのUI実装は、事前にFigma上で定義されたデザインを正解として行う。
+  - コード（Tailwind CSS）はFigmaのVariables/Tokensを忠実に再現するものでなければならない。
+- **No Code before Design:**
+  - Figmaによる視覚的な合意（Visual Verification）が完了するまで、実装コードは記述しない。
+  - これにより、手戻りを防ぎ、AIによるコード生成精度を最大化する。
+
+---
+
 ## 2. カラーシステム (Tailwind Base)
 
 ### プライマリパレット (ブランドカラー)
