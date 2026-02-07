@@ -5,15 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { SITE_NAME } from '@/lib/constants';
 
-type Props = {
-  nonce?: string;
-};
-
-/**
- * [REQ-UI-006-02] Privacy Consent Banner
- * GDPR-compliant cookie consent banner.
- */
-export function ConsentBanner({ nonce: _nonce }: Props) {
+export function ConsentBanner() {
   const t = useTranslations('Consent');
   const [isVisible, setIsVisible] = useState(false);
 

@@ -98,14 +98,9 @@ export async function generateStaticParams() {
   return supportedLocales.map((lang) => ({ lang }));
 }
 
-import { headers } from 'next/headers';
-
 export default async function RootLayout({ children, params }: Props) {
   const { lang } = await params;
   const messages = await getMessages();
-
-  // Middlewareから渡されたNonceを取得
-  const nonce = (await headers()).get('x-nonce') || '';
 
   // 言語に基づいてフォント変数とベースクラスを決定
   // 最適化: 必要な言語のフォント変数のみを注入し、不要なフォントのプリロードを防ぐ
@@ -137,7 +132,7 @@ export default async function RootLayout({ children, params }: Props) {
               {/* グローバルオーディオプレイヤー (遅延読み込み) */}
               <DynamicAudioPlayer />
 
-              <ConsentBanner nonce={nonce} />
+              <ConsentBanner />
               <Toaster position="bottom-right" />
             </LazyMotionConfig>
           </AudioPlayerProvider>
