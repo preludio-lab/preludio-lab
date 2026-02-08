@@ -15,6 +15,13 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  experimental: {
+    // @ts-expect-error outputFileTracingIncludes exists in Next.js config but missing in types
+    outputFileTracingIncludes: {
+      '/[lang]/**/*': ['./article/**/*'],
+      '/api/**/*': ['./article/**/*'],
+    },
+  },
   webpack: (config, { dev }) => {
     // 本番ビルド時にコメントを削除 (DAST Alert: Information Disclosure - Suspicious Comments)
     if (!dev && config.optimization.minimizer) {

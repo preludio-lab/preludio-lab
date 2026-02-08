@@ -19,6 +19,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "seed:composers": "tsx src/infrastructure/composer/cli/seed-composers.ts",
+    "sync:content:r2": "tsx scripts/sync-r2.ts",
     "seed:works": "tsx src/infrastructure/work/cli/seed-works.ts",
     "validate:composers": "tsx src/infrastructure/composer/cli/validate-composers.ts",
     "validate:works": "tsx src/infrastructure/work/cli/validate-works.ts",
