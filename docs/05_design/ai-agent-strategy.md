@@ -27,8 +27,8 @@
 制作プロセスは、チャットボットとの会話ではなく、**「厳格なI/O定義に基づいたステートフルな自動処理パイプ」**として実装します。
 
 1.  **Logical Core Domain**: `src/domain`, `src/application` を純粋なドメイン層として維持し、Agent から直接インポートして再利用する（物理的な移動は行わない）。
-2.  **State Management**: 中間生成物と進捗をローカル DB (SQLite) 等に永続化し、エラー時の中断・再開 (Resumability) を保証する。
-3.  **Deterministic Validation**: LLM による修正の前に、Zod によるプログラム的な型チェックと自動修復を優先し、コストを削減する。
+    30: 2. **State Management**: 中間生成物と進捗をローカルファイル (`agents/state`) や DB に永続化し、エラー時の中断・再開 (Resumability) を保証する。手軽なファイルベース管理を基本とする。
+    31: 3. **Deterministic Validation**: LLM による修正の前に、Zod によるプログラム的な型チェックと自動修復を優先し、コストを削減する。
 
 ## 4. Execution Environments & Limits
 
