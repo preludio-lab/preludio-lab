@@ -4,44 +4,65 @@
 
 ## 1. Directory Structure
 
-Next.js アプリケーションの既存モジュール (`src/`) を「Core Domain」として定義し、Agent からも再利用する Pragmatic な構成を採用します。
-物理的な `packages/` への移動は行わず、`tsconfig` の Path Alias と厳格なインポートルールによって論理的な分離を実現します。
+Next.js フロントエンド、共有ドメインロジック、エージェントを、論理的・物理的に整合性を持って配置します。
 
 ```text
 .
-├── agents/             # AI Batch Processor (Stateful & Robust)
-│   ├── core/           # Orchestrator, Gemini Wrapper
-│   ├── workflows/      # Workflow Defs (Composer, Work, Content)
-│   ├── state/          # State Management (Local JSON/SQLite)
-│   ├── infrastructure/ # CLI/Batch Environment specific Repositories
-│   └── prompts/        # System Prompts
+├── agents/                  # AI Data Pipeline & Batch Processor (Node.js/TS)
+│   ├── src/
+│   │   ├── core/            # Gemini API Wrapper, ADK Orchestrator
+│   │   ├── workflows/       # 業務フロー (ex: score-extraction-flow.ts)
+│   │   ├── infrastructure/  # CLI用Repo実装 (File System, Direct DB Access)
+│   │   ├── state/           # 進捗管理 (SQLite/Local JSON)
+│   │   └── prompts/         # プロンプトテンプレート (.md / .txt)
+│   ├── tsconfig.json        # src/domain を参照するための Path Alias 設定
+│   └── package.json
 │
-└── src/                # Shared Core Domain & Next.js App
-    ├── domain/         # ★ Entity, ValueObject, ZodSchema (Agentから利用可)
-    ├── application/    # ★ UseCase, IO Interface (Agentから利用可)
-    ├── infrastructure/ # Repository Impl (Agentからは原則利用せず、DIで差し替えるか、慎重に利用)
-    └── app/            # Next.js Routing (Agentからは利用不可)
+├── src/                     # Shared Core & Web Application
+│   ├── domain/              # ★ ビジネスルール・エンティティ (Agentと共有)
+│   │   ├── models/          # Article, Work, MusicalExample 等の型定義
+│   │   ├── schemas/         # Zodによるバリデーションスキーマ
+│   │   └── services/        # 譜例抽出ロジック等の純粋なドメインサービス
+│   │
+│   ├── application/         # ★ ユースケース・インターフェース (Agentと共有)
+│   │   ├── use-cases/       # 記事生成、楽譜パース等の抽象シナリオ
+│   │   └── repositories/    # IArticleRepository 等のインターフェース定義
+│   │
+│   ├── infrastructure/      # Webアプリ用実装 (Next.js環境依存)
+│   │   ├── turso/           # LibSQL Client / Drizzle ORM
+│   │   ├── r2/              # Cloudflare R2 Client (MDX配信)
+│   │   └── verovio/         # サーバーサイドSVGレンダラー実装
+│   │
+│   └── app/                 # Next.js App Router (UI/Routing)
+│
+├── public/                  # 静的資産 (生成済みSVG譜例等のキャッシュ先)
+└── tsconfig.json            # Path Aliases (@/* -> src/*)
 ```
 
 ## 2. Technical Approach: Efficient Integration
 
 ### Logical Core Domain
 
-`src/domain` と `src/application` は、Next.js 固有機能（`next/navigation`等）への依存を持たない純粋な TypeScript モジュールとして実装されています。
-これらを Agent プロジェクト (`agents/tsconfig.json`) から `src/` として直接インポートすることで、コードの重複とリファクタリングコストをゼロにします。
+`src/domain` と `src/application` は、Next.js 固有機能（`next/navigation`等）への依存を持たない純粋な TypeScript モジュールとして実装します。これらを Agent から直接インポートすることで、コードの重複を排除します。
 
-### Interface-based Dependency Injection
+### Abstraction of Infrastructure
 
-`src/application` 内のユースケースは、`IRepository` インターフェースにのみ依存しています。
-Agent 実行環境では、Next.js 用の `infrastructure` (Vercel Postgres等) の代わりに、CLI 用の `agents/infrastructure` (Direct DB Access / SQLite) を DI することで、同じビジネスロジックを安全に再利用します。
+`src/application/repositories` でインターフェースを定義し、環境に応じて実装を差し替えます。
+
+- **Web 実行時**: `src/infrastructure` の実装（LibSQL/Drizzle, R2 Client 等）を使用。
+- **Agent 実行時**: `agents/infrastructure` の実装を使用。レート制限を考慮した直接的な DB 操作や、中間データの保存（State 管理）を行います。
+
+### Async Score Generation Workflow
+
+譜例（SVG）生成は Verovio (WASM) の負荷が高いため、テキスト生成とは別の非同期ステップとして実行します。
+
+1. **Drafting**: Agent が記事テキストと「必要な譜例の定義（小節番号、パート等）」を生成し DB に保存。
+2. **Engraving**: 別の Worker (Agent) が DB を監視し、定義に基づき `src/domain/services` のロジックで小節を抽出。
+3. **Rendering**: Verovio を用いて SVG を生成し、R2 または `public/` へ配置し、パスを DB に更新。
 
 ### Strict Dependency Rules
 
-Agent が `src/` を利用する際、Next.js 固有機能（`next/*`）が含まれているとランタイムエラーが発生します。
-これを防ぐため、`eslint-plugin-import` 等を用いて以下のルールを機械的に強制します。
-
-- `src/domain/**` は `next/*`, `react`, `src/infrastructure/**` に依存してはならない。
-- `src/application/**` は `next/*`, `react` に依存してはならない。
+`eslint-plugin-import` を用い、`domain` 層や `application` 層が `next/*` や `react`、`infrastructure` に依存することを厳格に禁止します。
 
 ## 3. Agent Execution Lifecycle (Stateful & Cost-Effective)
 
