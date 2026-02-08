@@ -30,12 +30,27 @@ export default defineConfig({
   },
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command:
-      'SKIP_ENV_VALIDATION=true NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321 NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-key pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
+  // Vercel Preview 等の外部 URL をテストする場合は、ローカルサーバーの起動をスキップする
+  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
+    ? undefined
+    : {
+        command: 'pnpm dev',
+        url: 'http://localhost:3000',
+        reuseExistingServer: !process.env.CI,
+        env: {
+          SKIP_ENV_VALIDATION: 'true',
+          NEXT_PUBLIC_APP_ENV: 'development',
+          // Auth.js 起動用 (32文字以上の文字列)
+          AUTH_SECRET: 'dummy_secret_for_e2e_testing_purposes_only_32_chars',
+          // ダミーインフラ設定
+          NEXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-key',
+          TURSO_DATABASE_URL: 'file:local-e2e.db',
+          R2_ENDPOINT: 'http://localhost:20000',
+          R2_ACCESS_KEY_ID: 'dummy-id',
+          R2_SECRET_ACCESS_KEY: 'dummy-secret',
+        },
+      },
 
   /* Configure projects for major browsers */
   projects: [
