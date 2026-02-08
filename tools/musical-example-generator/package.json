@@ -8,7 +8,7 @@
     "verify": "tsx src/index.ts --url https://raw.githubusercontent.com/w3c/musicxml/master/samples/hello_world.musicxml --output data/verify.svg"
   },
   "dependencies": {
-    "axios": "^1.13.4",
+    "axios": "^1.13.5",
     "commander": "^14.0.3",
     "fast-xml-parser": "^5.3.4",
     "verovio": "^6.0.1",
