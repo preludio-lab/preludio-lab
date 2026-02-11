@@ -7,7 +7,7 @@ import {
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
 import { ArticleContent } from '@/domain/article/article.content';
-import { articles, articleTranslations } from '../database/schema';
+import { articles, articleTranslations } from '@/infrastructure/database/schema';
 import { InferSelectModel } from 'drizzle-orm';
 
 import { AppError } from '@/domain/shared/app-error';
@@ -25,14 +25,14 @@ export class TursoArticleMapper {
   static toDomain(
     articleRow: ArticleRow,
     translationRow: TranslationRow,
-    mdxContent?: string | null, // Optional for list views
+    mdxContent?: string | null, // 一覧表示などではOptional
   ): Article {
-    // 1. Language Validation
+    // 1. 言語の検証
     // 簡易的なチェック。厳密には AppLocales 定数などと比較すべき
     const lang = translationRow.lang as AppLocale;
     // 必要であればここで isValidLocale(lang) のようなチェックを行う
 
-    // 2. Metadata Parsing & Validation
+    // 2. メタデータのパースと検証 (validation)
     const rawMetadata = translationRow.metadata || {};
     const parsedMetadataResult = MetadataSchema.safeParse(rawMetadata);
 
@@ -47,7 +47,7 @@ export class TursoArticleMapper {
     }
     const safeBaseMetadata = parsedMetadataResult.data;
 
-    // 3. Control & Status Safety
+    // 3. 制御情報とステータスの安全性確認
     // DBの値がDomainのEnumに存在するかチェック
     const rawStatus = translationRow.status;
     const status = rawStatus as ArticleStatus;
@@ -63,11 +63,11 @@ export class TursoArticleMapper {
       updatedAt: new Date(translationRow.updatedAt),
     };
 
-    // 4. Resolve Category & Slug
-    // Snapshot (sl_) -> Master Fallback
+    // 4. カテゴリとスラッグの解決
+    // スナップショット (sl_) -> マスタへのフォールバック
     const categoryName = translationRow.slCategory || articleRow.category;
 
-    // Category Safety Check
+    // カテゴリの安全性確認
     // カテゴリが不正な場合、エラーにするかデフォルト('WORK'等)にするか。
     // ここではデータ不整合として検知するためにエラーログに近い挙動を想定しつつ、安全に倒す
     const category = categoryName as ArticleCategory;
@@ -81,7 +81,7 @@ export class TursoArticleMapper {
 
     const slug = translationRow.slSlug || articleRow.slug;
 
-    // 5. Metadata Assembly
+    // 5. メタデータの組み立て
     const metadata: ArticleMetadata = {
       // JSON由来のデータ
       ...safeBaseMetadata,
@@ -95,14 +95,14 @@ export class TursoArticleMapper {
       displayTitle: translationRow.displayTitle,
       readingTimeSeconds: articleRow.readingTimeSeconds,
 
-      // Snapshot / JSON values (with fallbacks for required fields)
+      // スナップショット / JSONの値 (必須フィールドへのフォールバックあり)
       composerName: translationRow.slComposerName || safeBaseMetadata.composerName || '',
       thumbnail: articleRow.thumbnailPath || safeBaseMetadata.thumbnail || undefined,
-      // tags are already mapped above, but need default
+      // タグは既に上でマップされているが、デフォルト値を設定
       tags: safeBaseMetadata.tags || [],
     };
 
-    // 6. Content
+    // 6. コンテンツ
     // contentStructureの型安全性を少し向上
     const rawStructure = translationRow.contentStructure;
     const structure = Array.isArray(rawStructure) ? rawStructure : [];

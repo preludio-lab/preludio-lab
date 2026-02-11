@@ -6,17 +6,24 @@ import {
   ArticleMetadata,
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
-import { ContentStructure, ContentSection } from '@/domain/article/article';
-import { ArticleStatus } from '@/domain/article/article.control';
-import { logger } from '@/infrastructure/logging';
 import {
-  IArticleMetadataDataSource,
-  MetadataRow,
-} from './interfaces/article.metadata.ds.interface';
+  Article,
+  ArticleContent,
+  ArticleId,
+  ContentStructure,
+  ContentSection,
+} from '@/domain/article/article';
+import { ArticleStatus, ArticleControl } from '@/domain/article/article.control';
+import { AppLocale } from '@/domain/i18n/locale';
+import { logger } from '@/infrastructure/logging';
+import { IArticleMetadataDataSource } from './article.metadata.ds.interface';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
+/**
+ * ファイルシステム上の記事コンテキスト情報
+ */
 export interface FsArticleContext {
-  id: string; // slug for FS
+  id: string; // FS用のスラグ
   slug: string;
   lang: string;
   category: ArticleCategory;
@@ -35,27 +42,26 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     this.contentDirectory = contentDir || path.join(process.cwd(), 'article');
   }
 
-  async findById(id: string, lang: string): Promise<MetadataRow | undefined> {
-    // FS implementation treats ID as Slug mostly, but it's inefficient to search by ID (File scan).
-    // For now, iterate all files to find matching ID.
-    // However, in FS implementation, ID was defined as `slug`.
+  /**
+   * IDと言語コードを指定して記事のメタデータを取得します。
+   */
+  async findById(id: string, lang: string): Promise<Article | undefined> {
     const all = await this.findAllContexts();
     const match = all.find((c) => c.id === id && c.lang === lang);
     if (!match) return undefined;
-    return this.mapToMetadataRow(match);
+    return this.toDomain(match);
   }
 
+  /**
+   * スラッグと言語コードを指定して記事のメタデータを取得します。
+   */
   async findBySlug(
     slug: string,
     lang: string,
     category?: ArticleCategory,
-  ): Promise<MetadataRow | undefined> {
+  ): Promise<Article | undefined> {
     const contexts = await this.findAllContexts();
 
-    // Attempt to match by slug.
-    // In our new structure, 'slug' might be 'beethoven/symphony-no-5'
-    // but the incoming request might only have the last part or the whole path.
-    // The most reliable match is finding the one where context.slug === incoming slug.
     const match = contexts.find((c) => {
       const isSlugMatch = c.slug === slug;
       const isLangMatch = c.lang === lang;
@@ -63,11 +69,14 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       return isSlugMatch && isLangMatch && isCategoryMatch;
     });
 
-    return match ? this.mapToMetadataRow(match) : undefined;
+    return match ? this.toDomain(match) : undefined;
   }
 
+  /**
+   * 指定された検索条件に基づいて記事メタデータの一覧を取得します。
+   */
   async findMany(criteria: ArticleSearchCriteria): Promise<{
-    rows: MetadataRow[];
+    items: Article[];
     totalCount: number;
   }> {
     const contexts = await this.findAllContexts();
@@ -93,19 +102,21 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     }
 
     const totalCount = candidates.length;
-    // Apply Pagination
     const offset = criteria.pagination.offset || 0;
     const limit = criteria.pagination.limit || 20;
     const pagedCandidates = candidates.slice(offset, offset + limit);
 
     return {
-      rows: pagedCandidates.map((c) => this.mapToMetadataRow(c)),
+      items: pagedCandidates.map((c) => this.toDomain(c)),
       totalCount,
     };
   }
 
-  // --- Helpers ---
+  // --- ヘルパーメソッド ---
 
+  /**
+   * ファイルシステムを走査し、全ての記事コンテキストを取得します。
+   */
   private async findAllContexts(): Promise<FsArticleContext[]> {
     if (!fs.existsSync(this.contentDirectory)) return [];
 
@@ -120,16 +131,22 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
 
       const categoryPath = path.join(this.contentDirectory, categoryName);
 
-      const scanDir = (dir: string) => {
+      interface ScanResult {
+        filePath: string;
+        lang: string;
+        category: ArticleCategory;
+        slug: string;
+      }
+
+      const scanDir = (dir: string): ScanResult[] => {
         const items = fs.readdirSync(dir);
 
-        // Check if this is an article root (contains mdx folder)
         if (items.includes('mdx')) {
           const mdxDirPath = path.join(dir, 'mdx');
           const slug = path.relative(categoryPath, dir).replace(/\\/g, '/');
 
           const langFiles = fs.readdirSync(mdxDirPath).filter((f) => f.endsWith('.mdx'));
-          const articleResults = [];
+          const articleResults: ScanResult[] = [];
           for (const langFile of langFiles) {
             const lang = langFile.replace(/\.mdx$/, '');
             const filePath = path.join(mdxDirPath, langFile);
@@ -138,8 +155,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
           return articleResults;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let subResults: any[] = [];
+        let subResults: ScanResult[] = [];
         for (const item of items) {
           const fullPath = path.join(dir, item);
           if (fs.statSync(fullPath).isDirectory() && item !== 'mdx' && item !== 'images') {
@@ -163,23 +179,9 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     return results;
   }
 
-  private getAllMdxFiles(dir: string): string[] {
-    let results: string[] = [];
-    if (!fs.existsSync(dir)) return [];
-
-    const list = fs.readdirSync(dir);
-    list.forEach((file) => {
-      const filePath = path.join(dir, file);
-      const stat = fs.statSync(filePath);
-      if (stat && stat.isDirectory()) {
-        results = results.concat(this.getAllMdxFiles(filePath));
-      } else if (file.endsWith('.mdx')) {
-        results.push(filePath);
-      }
-    });
-    return results;
-  }
-
+  /**
+   * MDXファイルをパースしてメタデータとコンテンツ情報を抽出します。
+   */
   private async parseMetadata(
     filePath: string,
     lang: string,
@@ -217,11 +219,10 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
 
       const status = (data.status as ArticleStatus) || ArticleStatus.PUBLISHED;
 
-      // Extract TOC
       const contentStructure = this.extractToc(content);
 
       return {
-        id: slug, // Using slug as ID for FS
+        id: slug,
         slug,
         lang,
         category,
@@ -238,6 +239,9 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     }
   }
 
+  /**
+   * レガシーなメタデータ構造を新しいArticleMetadataにマッピングします。
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapLegacyMetadata(data: any): ArticleMetadata {
     const difficultyMap: Record<string, number> = {
@@ -249,25 +253,14 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
     const level = difficultyMap[data.difficulty] || 3;
 
-    // Debug logging for missing composer
-    const composerName = data.composer || data.composerName || 'Unknown';
-    if (composerName === 'Unknown') {
-      logger.warn('Legacy metadata mapping: Unknown composer', {
-        slug: data.slug,
-        title: data.title,
-        availableKeys: Object.keys(data),
-      });
-    }
-
     return {
       title: data.title || 'No Title',
       catchcopy: data.catchcopy || undefined,
       displayTitle: data.displayTitle || data.title,
       excerpt: data.excerpt || data.ogp_excerpt || undefined,
-      composerName: composerName,
+      composerName: data.composer || data.composerName || 'Unknown',
       workTitle: data.workTitle || data.work || undefined,
       workCatalogueId: undefined,
-
       instrumentations: [],
       genre: undefined,
       era: undefined,
@@ -293,56 +286,40 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
   }
 
-  private mapToMetadataRow(context: FsArticleContext): MetadataRow {
-    // Construct MDX Path: lang/category/slug
-    const mdxPath = `${context.lang}/${context.category}/${context.slug}`;
-
-    return {
-      articles: {
-        id: context.id,
-        workId: null,
-        slug: context.slug,
-        category: context.category,
-        isFeatured: context.metadata.isFeatured,
-        readingTimeSeconds: context.metadata.readingTimeSeconds,
-        thumbnailPath: context.metadata.thumbnail || null,
-        createdAt: context.createdAt.toISOString(),
-        updatedAt: context.updatedAt.toISOString(),
-      },
-      article_translations: {
-        id: `${context.id}-${context.lang}`, // Mock ID
-        articleId: context.id,
-        lang: context.lang,
-        status: context.status,
-        title: context.metadata.title,
-        displayTitle: context.metadata.displayTitle,
-        catchcopy: context.metadata.catchcopy || null,
-        excerpt: context.metadata.excerpt || null,
-        publishedAt: context.metadata.publishedAt?.toISOString() || null,
-        isFeatured: context.metadata.isFeatured,
-        mdxPath: mdxPath,
-        slSlug: context.slug,
-        slCategory: context.category,
-        slComposerName: context.metadata.composerName || null,
-        slWorkCatalogueId: null,
-        slWorkNicknames: null,
-        slGenre: null,
-        slInstrumentations: null,
-        slEra: null,
-        slNationality: null,
-        slKey: context.metadata.key || null,
-        slPerformanceDifficulty: context.metadata.performanceDifficulty || null,
-        slImpressionDimensions: null,
-        contentEmbedding: null,
-        slSeriesAssignments: [],
-        metadata: context.metadata,
-        contentStructure: context.contentStructure,
-        createdAt: context.createdAt.toISOString(),
-        updatedAt: context.updatedAt.toISOString(),
-      },
+  /**
+   * FsArticleContextをArticleドメインオブジェクトに変換します。
+   */
+  private toDomain(context: FsArticleContext): Article {
+    const control: ArticleControl = {
+      id: context.id as ArticleId,
+      lang: context.lang as AppLocale,
+      status: context.status,
+      createdAt: context.createdAt,
+      updatedAt: context.updatedAt,
     };
+
+    const content = new ArticleContent({
+      body: null,
+      structure: context.contentStructure,
+    });
+
+    return new Article({
+      control,
+      metadata: context.metadata,
+      content,
+      context: {
+        seriesAssignments: [],
+        relatedArticles: [],
+        sourceAttributions: [],
+        monetizationElements: [],
+      },
+      engagement: undefined,
+    });
   }
 
+  /**
+   * MDXコンテンツから目次構造を抽出します。
+   */
   private extractToc(content: string): ContentStructure {
     const lines = content.split('\n');
     const sections: ContentStructure = [];
@@ -375,6 +352,9 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     return sections;
   }
 
+  /**
+   * テキストをURLセーフなスラグに変換します。
+   */
   private slugify(text: string): string {
     return text
       .toLowerCase()

@@ -1,30 +1,24 @@
 import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
-import { db } from '../database/turso.client';
-import { articles, articleTranslations } from '../database/schema';
+import { db } from '../../database/turso.client';
+import { articles, articleTranslations } from '../../database/schema';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSearchCriteria, ArticleKeywordScope } from '@/domain/article/article.repository';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
+import { Article } from '@/domain/article/article';
 
-import {
-  IArticleMetadataDataSource,
-  MetadataRow,
-} from './interfaces/article.metadata.ds.interface';
+import { IArticleMetadataDataSource } from './article.metadata.ds.interface';
+import { TursoArticleMapper } from './turso.article.mapper';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}
+
   /**
    * IDと言語コードを指定して記事のメタデータを取得します。
-   * 公開ステータスに関わらず、指定されたIDの記事が存在すれば返却します。
-   * 詳細ページやプレビュー表示で使用されます。
-   *
-   * @param id 記事ID
-   * @param lang 言語コード
-   * @returns 記事メタデータと翻訳データのペア。存在しない場合は undefined
    */
-  async findById(id: string, lang: string): Promise<MetadataRow | undefined> {
+  async findById(id: string, lang: string): Promise<Article | undefined> {
     try {
       const result = await db
         .select()
@@ -33,9 +27,15 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
         .limit(1);
 
-      return result[0];
+      const row = result[0];
+      if (!row) return undefined;
+
+      return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
     } catch (error) {
-      this.logger.error('ArticleMetadataDataSource.findById error', error as Error, { id, lang });
+      this.logger.error('TursoArticleMetadataDataSource.findById error', error as Error, {
+        id,
+        lang,
+      });
       throw new AppError(
         'Failed to retrieve article metadata by ID',
         'INFRASTRUCTURE_ERROR',
@@ -47,21 +47,13 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
   /**
    * スラッグと言語コードを指定して記事のメタデータを取得します。
-   * 任意でカテゴリを指定して絞り込むことも可能です。
-   * 公開ステータスに関わらず取得します。
-   *
-   * @param slug 記事のスラッグ
-   * @param lang 言語コード
-   * @param category 記事カテゴリ（オプション）
-   * @returns 記事メタデータと翻訳データのペア。存在しない場合は undefined
    */
   async findBySlug(
     slug: string,
     lang: string,
-    category?: ArticleCategory, // 型をEnumに厳格化
-  ): Promise<MetadataRow | undefined> {
+    category?: ArticleCategory,
+  ): Promise<Article | undefined> {
     try {
-      // string で渡ってきた場合に備えて Enum として扱う
       const filters = [eq(articles.slug, slug), eq(articleTranslations.lang, lang)];
 
       if (category) {
@@ -75,9 +67,12 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(...filters))
         .limit(1);
 
-      return result[0];
+      const row = result[0];
+      if (!row) return undefined;
+
+      return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
     } catch (error) {
-      this.logger.error('ArticleMetadataDataSource.findBySlug error', error as Error, {
+      this.logger.error('TursoArticleMetadataDataSource.findBySlug error', error as Error, {
         slug,
         lang,
         category,
@@ -93,22 +88,16 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
   /**
    * 指定された検索条件に基づいて記事メタデータの一覧を取得します。
-   * ページネーション、ソート、フィルタリング（カテゴリ、キーワード、ステータス等）に対応しています。
-   *
-   * @param criteria 検索条件（フィルタ、ソート、ページネーション設定が含まれるオブジェクト）
-   * @returns 検索結果の行配列と、条件に合致する総件数を含むオブジェクト
    */
-  async findMany(criteria: ArticleSearchCriteria) {
+  async findMany(
+    criteria: ArticleSearchCriteria,
+  ): Promise<{ items: Article[]; totalCount: number }> {
     try {
       const { filter, sort, pagination } = criteria;
       const filters = [];
 
-      // --- 1. Filter Construction ---
-
-      // 言語 (必須)
       filters.push(eq(articleTranslations.lang, filter.lang));
 
-      // ステータス: 空配列の場合はフィルタしない、あるいはデフォルト(PUBLISHED)を設定
       const targetStatuses = filter.status?.length ? filter.status : [ArticleStatus.PUBLISHED];
       filters.push(inArray(articleTranslations.status, targetStatuses));
 
@@ -120,13 +109,11 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         filters.push(eq(articleTranslations.isFeatured, filter.isFeatured));
       }
 
-      // キーワード検索 (FTS導入までの暫定対応としての LIKE 改善版)
       if (filter.keyword) {
         const pattern = `%${filter.keyword}%`;
         const scope = filter.keywordScope || ArticleKeywordScope.ALL;
         const keywordConditions = [];
 
-        // スコープ定義に基づいて検索対象を決定
         const searchTitle =
           scope === ArticleKeywordScope.TITLE || scope === ArticleKeywordScope.ALL;
         const searchSummary =
@@ -139,8 +126,6 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
         if (searchSummary) {
           keywordConditions.push(like(articleTranslations.excerpt, pattern));
-          // スキーマにカラムが存在する前提で追加 (データがNULLならヒットしないだけなので安全)
-          // 以前の if (articleTranslations.catchcopy) は定義情報の判定だったので削除
           keywordConditions.push(like(articleTranslations.catchcopy, pattern));
         }
 
@@ -148,8 +133,6 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
           filters.push(or(...keywordConditions));
         }
       }
-
-      // --- 2. Sort Strategy ---
 
       const sortMapping: Partial<Record<ArticleSortOption, AnyColumn>> = {
         [ArticleSortOption.TITLE]: articleTranslations.displayTitle,
@@ -162,11 +145,6 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
       const direction = sort?.direction === SortDirection.ASC ? asc : desc;
       const orderByClause = direction(targetColumn);
-
-      // --- 3. Execution ---
-
-      // Drizzleのクエリビルダは状態を持つことがあるため、
-      // count用とselect用でクエリ定義を分けて明示的に構築
 
       const rowsPromise = db
         .select()
@@ -185,12 +163,25 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
+      const items = rows
+        .map((row) => {
+          try {
+            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+          } catch (e) {
+            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
+            return null;
+          }
+        })
+        .filter((item): item is Article => item !== null);
+
       return {
-        rows,
+        items,
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {
-      this.logger.error('ArticleMetadataDataSource.findMany error', error as Error, { criteria });
+      this.logger.error('TursoArticleMetadataDataSource.findMany error', error as Error, {
+        criteria,
+      });
       throw new AppError(
         'Failed to retrieve article metadata list',
         'INFRASTRUCTURE_ERROR',

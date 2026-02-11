@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArticleRepositoryImpl } from './article.repository';
-import { IArticleMetadataDataSource } from './interfaces/article.metadata.ds.interface';
-import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
-import { ArticleCategory } from '@/domain/article/article.metadata';
+import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
+import { ArticleCategory, ArticleMetadata } from '@/domain/article/article.metadata';
+import { Article, ArticleContent, ArticleId } from '@/domain/article/article';
+import { ArticleStatus } from '@/domain/article/article.control';
+import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
-import { articles, articleTranslations } from '../database/schema/articles';
+import { IObjectStorage, ObjectNotFoundError } from '../storage/storage.interface';
+import { ArticlePathStrategy } from './content/article.path.strategy';
 
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
@@ -15,8 +18,8 @@ describe('ArticleRepositoryImpl', () => {
     findMany: vi.fn(),
   };
 
-  const mockContentDS = {
-    getContent: vi.fn(),
+  const mockStorage = {
+    get: vi.fn(),
   };
 
   const mockLogger = {
@@ -26,10 +29,47 @@ describe('ArticleRepositoryImpl', () => {
     error: vi.fn(),
   };
 
+  const pathStrategy = new ArticlePathStrategy();
+
+  const createMockArticle = (id: string, slug: string, lang: AppLocale) => {
+    return new Article({
+      control: {
+        id: id as ArticleId,
+        lang,
+        status: ArticleStatus.PUBLISHED,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      metadata: {
+        title: 'Title',
+        displayTitle: 'Display Title',
+        slug,
+        category: ArticleCategory.WORKS,
+        composerName: 'Composer',
+        tags: [],
+        thumbnail: 'thumb.jpg',
+        publishedAt: new Date(),
+        isFeatured: false,
+        readingTimeSeconds: 60,
+      } as ArticleMetadata,
+      content: new ArticleContent({
+        body: null,
+        structure: [{ id: 'intro', heading: 'Introduction', level: 2 }],
+      }),
+      context: {
+        seriesAssignments: [],
+        relatedArticles: [],
+        sourceAttributions: [],
+        monetizationElements: [],
+      },
+    });
+  };
+
   beforeEach(() => {
     repo = new ArticleRepositoryImpl(
       mockMetadataDS as unknown as IArticleMetadataDataSource,
-      mockContentDS as unknown as IArticleContentDataSource,
+      mockStorage as unknown as IObjectStorage,
+      pathStrategy,
       mockLogger as unknown as Logger,
     );
     vi.clearAllMocks();
@@ -37,30 +77,17 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockRow = {
-        articles: { id: '1', slug: 'slug', category: 'works', createdAt: '2023-01-01' },
-        article_translations: {
-          articleId: '1',
-          lang: 'en',
-          status: 'published',
-          title: 'Title',
-          displayTitle: 'Display Title',
-          updatedAt: '2023-01-01',
-          slSlug: 'slug',
-          slComposerName: 'Composer',
-          metadata: { category: 'works', tags: [] },
-          mdxPath: 'en/works/slug',
-          contentStructure: [], // Provided by DS now
-        },
-      };
-      mockMetadataDS.findById.mockResolvedValue(mockRow);
-      mockContentDS.getContent.mockResolvedValue('# Hello');
+      const mockArticle = createMockArticle('1', 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockArticle);
+      mockStorage.get.mockResolvedValue('# Hello');
 
       const result = await repo.findById('1', 'en');
 
       expect(result).not.toBeNull();
       expect(result?.control.id).toBe('1');
+      expect(result?.content.body).toBe('# Hello');
       expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
+      expect(mockStorage.get).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
 
     it('should return null if metadata not found', async () => {
@@ -68,108 +95,45 @@ describe('ArticleRepositoryImpl', () => {
 
       const result = await repo.findById('999', 'en');
       expect(result).toBeNull();
+      expect(mockLogger.warn).toHaveBeenCalled();
+    });
+
+    it('should return Article even if content is missing (e.g. 404 in storage)', async () => {
+      const mockArticle = createMockArticle('1', 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockArticle);
+      mockStorage.get.mockRejectedValue(new ObjectNotFoundError('key'));
+
+      const result = await repo.findById('1', 'en');
+      expect(result).not.toBeNull();
+      expect(result?.content.body).toBeNull();
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
   });
 
   describe('findBySlug', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockRow = {
-        articles: {
-          id: '1',
-          slug: 'slug',
-          category: 'works',
-          isFeatured: false,
-          createdAt: '2023-01-01',
-        },
-        article_translations: {
-          articleId: '1',
-          lang: 'en',
-          status: 'published',
-          title: 'Title',
-          displayTitle: 'Display Title',
-          updatedAt: '2023-01-01',
-          slSlug: 'slug',
-          slComposerName: 'Composer',
-          metadata: { category: 'works', tags: [] },
-          mdxPath: 'en/works/slug',
-          contentStructure: [{ id: 'intro', heading: 'Introduction', level: 2 }],
-        },
-      };
-      mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
-      mockContentDS.getContent.mockResolvedValue('# Hello');
+      const mockArticle = createMockArticle('1', 'test-slug', 'en');
+      mockMetadataDS.findBySlug.mockResolvedValue(mockArticle);
+      mockStorage.get.mockResolvedValue('# Hello');
 
-      const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
+      const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'test-slug');
 
       expect(result).not.toBeNull();
       expect(result?.metadata.title).toBe('Title');
       expect(result?.content.body).toBe('# Hello');
-      expect(result?.content.structure).toHaveLength(1); // Mapped from metadata
-      expect(result?.content.structure[0].heading).toBe('Introduction');
-
-      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en', ArticleCategory.WORKS);
-      expect(mockContentDS.getContent).toHaveBeenCalledWith('en/works/slug.mdx');
-    });
-
-    it('should return null if metadata not found', async () => {
-      mockMetadataDS.findBySlug.mockResolvedValue(null);
-
-      const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
-
-      expect(result).toBeNull();
-      expect(mockLogger.warn).toHaveBeenCalled();
-      expect(mockContentDS.getContent).not.toHaveBeenCalled();
+      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith(
+        'test-slug',
+        'en',
+        ArticleCategory.WORKS,
+      );
     });
   });
 
   describe('findMany', () => {
     it('should return articles with null content', async () => {
-      vi.mocked(mockMetadataDS.findMany).mockResolvedValue({
-        rows: [
-          {
-            articles: {
-              id: '1',
-              slug: 'slug1',
-              category: 'works',
-              isFeatured: false,
-              readingTimeSeconds: 60,
-              thumbnailPath: null,
-              createdAt: '2023-01-01',
-              updatedAt: '2023-01-01',
-              workId: null,
-            } as typeof articles.$inferSelect,
-            article_translations: {
-              id: '1',
-              articleId: '1',
-              title: 'Title 1',
-              displayTitle: 'Title 1',
-              lang: 'en',
-              status: 'published',
-              metadata: { category: 'works' },
-              slSlug: 'slug1',
-              slCategory: 'works',
-              updatedAt: '2023-01-01',
-              slComposerName: 'Composer',
-              publishedAt: '2023-01-01',
-              catchcopy: null,
-              excerpt: null,
-              isFeatured: false,
-              mdxPath: 'en/works/slug1',
-              slEra: null,
-              slGenre: [],
-              slImpressionDimensions: null,
-              slInstrumentations: [],
-              slKey: null,
-              slNationality: null,
-              slPerformanceDifficulty: null,
-              slSeriesAssignments: [],
-              slWorkCatalogueId: null,
-              slWorkNicknames: [],
-              contentEmbedding: null,
-              contentStructure: {},
-              createdAt: '2023-01-01',
-            } as unknown as typeof articleTranslations.$inferSelect,
-          },
-        ],
+      const mockArticle = createMockArticle('1', 'test-slug', 'en');
+      mockMetadataDS.findMany.mockResolvedValue({
+        items: [mockArticle],
         totalCount: 1,
       });
 
@@ -182,6 +146,7 @@ describe('ArticleRepositoryImpl', () => {
       expect(result.items[0].content.body).toBeNull();
       expect(result.totalCount).toBe(1);
       expect(mockMetadataDS.findMany).toHaveBeenCalled();
+      expect(mockStorage.get).not.toHaveBeenCalled(); // Storage should NOT be called for list
     });
   });
 });

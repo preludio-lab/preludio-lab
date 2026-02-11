@@ -1,32 +1,35 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
 import { ArticleCategory } from '@/domain/article/article.metadata';
-import { Article } from '@/domain/article/article';
+import { Article, ArticleContent } from '@/domain/article/article';
 import { PagedResponse } from '@/domain/shared/pagination';
-import {
-  IArticleMetadataDataSource,
-  MetadataRow,
-} from './interfaces/article.metadata.ds.interface';
-import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
+import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { TursoArticleMapper } from './turso.article.mapper';
+import { BaseRepository } from '../shared/base.repository';
+import { IObjectStorage } from '../storage/storage.interface';
+import { ArticlePathStrategy } from './content/article.path.strategy';
+import { preprocessMdx } from './content/mdx.preprocessor';
 
-export class ArticleRepositoryImpl implements ArticleRepository {
+/**
+ * ArticleRepository の実装クラス。
+ * BaseRepository を拡張し、メタデータとコンテンツの統合管理を行います。
+ */
+export class ArticleRepositoryImpl
+  extends BaseRepository<Article, Article, IArticleMetadataDataSource>
+  implements ArticleRepository
+{
   constructor(
-    private metadataDS: IArticleMetadataDataSource,
-    private contentDS: IArticleContentDataSource,
-    private logger: Logger,
-  ) {}
+    metadataDS: IArticleMetadataDataSource,
+    storage: IObjectStorage,
+    private readonly pathStrategy: ArticlePathStrategy,
+    logger: Logger,
+  ) {
+    super(metadataDS, storage, logger);
+  }
 
   async findById(id: string, lang: string): Promise<Article | null> {
     try {
-      const row = await this.metadataDS.findById(id, lang);
-      if (!row) {
-        this.logger.warn(`Article not found by ID: ${id} (${lang})`, { id, lang });
-        return null;
-      }
-
-      return await this._assembleArticle(row, id);
+      return await this.findOne((ds: IArticleMetadataDataSource) => ds.findById(id, lang), id);
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindById failed: ${id}`, err as Error, { id, lang });
@@ -36,13 +39,10 @@ export class ArticleRepositoryImpl implements ArticleRepository {
 
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
-      const row = await this.metadataDS.findBySlug(slug, lang, category);
-      if (!row) {
-        this.logger.warn(`Article not found by slug: ${slug} (${lang})`, { category, slug, lang });
-        return null;
-      }
-
-      return await this._assembleArticle(row, slug);
+      return await this.findOne(
+        (ds: IArticleMetadataDataSource) => ds.findBySlug(slug, lang, category),
+        slug,
+      );
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindBySlug failed: ${slug}`, err as Error, { slug, lang, category });
@@ -52,21 +52,8 @@ export class ArticleRepositoryImpl implements ArticleRepository {
 
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
-      // 1. Get metadata rows (Content fetch skipped for performance)
-      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
-
-      // 2. Map to domain
-      const items = rows
-        .map((row) => {
-          try {
-            // Null content for list view
-            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
-          } catch (e) {
-            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
-            return null;
-          }
-        })
-        .filter((item): item is Article => item !== null);
+      // 1. メタデータDSから記事を取得 (一覧取得ではパフォーマンスのためコンテンツ取得はスキップ)
+      const { items, totalCount } = await this.dataSource.findMany(criteria);
 
       return {
         items,
@@ -80,51 +67,37 @@ export class ArticleRepositoryImpl implements ArticleRepository {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async save(_: Article): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async delete(_: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  // --- Private Helpers ---
+  // --- Implementation of BaseRepository ---
 
-  private async _assembleArticle(row: MetadataRow, contextId: string): Promise<Article> {
-    let content = '';
+  protected resolveStorageKey(article: Article): string | null {
+    return this.pathStrategy.resolvePath(article);
+  }
 
-    // Fetch Content if path exists
-    if (row.article_translations.mdxPath) {
-      // Ensure extension if missing (FS DS might provide path without extension or with)
-      // Turso mapper usually expects just path.
-      // The contentDS usually takes the full path or relative path.
-      // FsContentDS expects relative path, R2 expects key.
-      // Let's assume standard behavior: mdxPath should be complete or we append .mdx if likely missing
-      // However, FsArticleMetadataDS now sets mdxPath as "lang/category/slug" (no ext).
-      // R2 likely sets it with extension or without?
-      // Check TursoArticleRepository:
-      //     const fullPath = `${row.article_translations.mdxPath}.mdx`;
-      // It appends .mdx. So we should do the same here for consistency.
-
-      const fullPath = row.article_translations.mdxPath.endsWith('.mdx')
-        ? row.article_translations.mdxPath
-        : `${row.article_translations.mdxPath}.mdx`;
-
-      try {
-        content = await this.contentDS.getContent(fullPath);
-      } catch (err) {
-        this.logger.error(`Content fetch failed: ${fullPath}`, err as Error, { contextId });
-        throw new AppError('Content fetch failed', 'INFRASTRUCTURE_ERROR', 500, err);
-      }
+  protected reconstitute(article: Article, payload: string | null): Article {
+    if (!payload) {
+      return article; // Already has null body
     }
 
-    try {
-      return TursoArticleMapper.toDomain(row.articles, row.article_translations, content);
-    } catch (err) {
-      this.logger.error(`Mapping failed: ${contextId}`, err as Error, { contextId });
-      throw new AppError('Data mapping error', 'INTERNAL_SERVER_ERROR', 500, err);
-    }
+    // MDXコンテンツを処理
+    const processedContent = preprocessMdx(payload);
+
+    return new Article({
+      control: article.control,
+      metadata: article.metadata,
+      content: new ArticleContent({
+        body: processedContent,
+        structure: article.content.structure,
+      }),
+      context: article.context,
+      engagement: article.engagement,
+    });
   }
 }

@@ -1,10 +1,12 @@
+import path from 'path';
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleRepositoryImpl } from './article.repository';
-import { FsArticleMetadataDataSource } from './fs.article.metadata.ds';
-import { FsArticleContentDataSource } from './fs.article.content.ds';
-import { TursoArticleMetadataDataSource } from './turso.article.metadata.ds';
-import { R2ArticleContentDataSource } from './r2.article.content.ds';
+import { FsArticleMetadataDataSource } from './metadata/fs.article.metadata.ds';
+import { TursoArticleMetadataDataSource } from './metadata/turso.article.metadata.ds';
 import { logger } from '@/infrastructure/logging';
+import { R2StorageService } from '../storage/r2.storage';
+import { FileSystemStorageService } from '../storage/fs.storage';
+import { ArticlePathStrategy } from './content/article.path.strategy';
 
 export interface ArticleRepositoryConfig {
   isProductionLike: boolean;
@@ -14,11 +16,11 @@ export class ArticleRepositoryFactory {
   private static instance: ArticleRepository;
 
   /**
-   * Returns a singleton instance of ArticleRepository.
-   * If an instance already exists, it returns the existing one.
-   * Otherwise, it creates a new instance based on the provided configuration.
+   * ArticleRepository のシングルトンインスタンスを返します。
+   * インスタンスが既に存在する場合は、既存のものを返します。
+   * そうでない場合は、提供された設定に基づいて新しいインスタンスを作成します。
    *
-   * @param config Configuration object determining which data sources to use
+   * @param config 使用するデータソースを決定する設定オブジェクト
    */
   static getInstance(config: ArticleRepositoryConfig): ArticleRepository {
     if (this.instance) {
@@ -33,11 +35,13 @@ export class ArticleRepositoryFactory {
       ? new TursoArticleMetadataDataSource(logger)
       : new FsArticleMetadataDataSource();
 
-    const contentDS = isProductionLike
-      ? new R2ArticleContentDataSource(logger)
-      : new FsArticleContentDataSource();
+    const storage = isProductionLike
+      ? new R2StorageService(undefined, 'private/articles/')
+      : new FileSystemStorageService(path.join(process.cwd(), 'article'));
 
-    this.instance = new ArticleRepositoryImpl(metadataDS, contentDS, logger);
+    const pathStrategy = new ArticlePathStrategy();
+
+    this.instance = new ArticleRepositoryImpl(metadataDS, storage, pathStrategy, logger);
 
     return this.instance;
   }
