@@ -50,19 +50,19 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     lang: string,
     category?: ArticleCategory,
   ): Promise<MetadataRow | undefined> {
-    // If category is provided, faster lookup
-    if (category) {
-      const filePath = path.join(this.contentDirectory, lang, category, `${slug}.mdx`);
-      if (fs.existsSync(filePath)) {
-        const context = await this.parseMetadata(filePath, lang, category, slug);
-        return context ? this.mapToMetadataRow(context) : undefined;
-      }
-      return undefined;
-    }
-
-    // Scan all categories if not provided
     const contexts = await this.findAllContexts();
-    const match = contexts.find((c) => c.slug === slug && c.lang === lang);
+
+    // Attempt to match by slug.
+    // In our new structure, 'slug' might be 'beethoven/symphony-no-5'
+    // but the incoming request might only have the last part or the whole path.
+    // The most reliable match is finding the one where context.slug === incoming slug.
+    const match = contexts.find((c) => {
+      const isSlugMatch = c.slug === slug;
+      const isLangMatch = c.lang === lang;
+      const isCategoryMatch = category ? c.category === category : true;
+      return isSlugMatch && isLangMatch && isCategoryMatch;
+    });
+
     return match ? this.mapToMetadataRow(match) : undefined;
   }
 
@@ -91,15 +91,6 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     if (filter.isFeatured !== undefined) {
       candidates = candidates.filter((c) => c.metadata.isFeatured === filter.isFeatured);
     }
-    // Keyword search omitted for simplicity, similar to original
-
-    // Filtering logic matches original `FsArticleRepository.findMany` roughly.
-    // Sorting and Pagination should ideally happen here too for strict interface compliance,
-    // but the interface returns `rows` and `totalCount`.
-    // We will return ALL matching rows and let the Repository layer handle pagination/sort if it wants?
-    // Wait, typical generic repository expects DS to handle pagination.
-    // Currently Turso implementation handles it in SQL.
-    // Here we must handle in memory.
 
     const totalCount = candidates.length;
     // Apply Pagination
@@ -115,34 +106,58 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
 
   // --- Helpers ---
 
-  // Re-expose for legacy use if needed, but preferably internal
   private async findAllContexts(): Promise<FsArticleContext[]> {
-    const categories = Object.values(ArticleCategory);
     if (!fs.existsSync(this.contentDirectory)) return [];
 
-    const langs = fs
+    const results: FsArticleContext[] = [];
+    const categories = fs
       .readdirSync(this.contentDirectory)
       .filter((f) => fs.statSync(path.join(this.contentDirectory, f)).isDirectory());
 
-    const results: FsArticleContext[] = [];
+    for (const categoryName of categories) {
+      const category = categoryName as ArticleCategory;
+      if (!Object.values(ArticleCategory).includes(category)) continue;
 
-    for (const lang of langs) {
-      for (const category of categories) {
-        const dirPath = path.join(this.contentDirectory, lang, category as string);
-        if (fs.existsSync(dirPath)) {
-          const files = this.getAllMdxFiles(dirPath);
-          for (const filePath of files) {
-            const relativePath = path.relative(dirPath, filePath);
-            const slug = relativePath.replace(/\\/g, '/').replace(/\.mdx$/, '');
-            const context = await this.parseMetadata(
-              filePath,
-              lang,
-              category as ArticleCategory,
-              slug,
-            );
-            if (context) results.push(context);
+      const categoryPath = path.join(this.contentDirectory, categoryName);
+
+      const scanDir = (dir: string) => {
+        const items = fs.readdirSync(dir);
+
+        // Check if this is an article root (contains mdx folder)
+        if (items.includes('mdx')) {
+          const mdxDirPath = path.join(dir, 'mdx');
+          const slug = path.relative(categoryPath, dir).replace(/\\/g, '/');
+
+          const langFiles = fs.readdirSync(mdxDirPath).filter((f) => f.endsWith('.mdx'));
+          const articleResults = [];
+          for (const langFile of langFiles) {
+            const lang = langFile.replace(/\.mdx$/, '');
+            const filePath = path.join(mdxDirPath, langFile);
+            articleResults.push({ filePath, lang, category, slug });
+          }
+          return articleResults;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let subResults: any[] = [];
+        for (const item of items) {
+          const fullPath = path.join(dir, item);
+          if (fs.statSync(fullPath).isDirectory() && item !== 'mdx' && item !== 'images') {
+            subResults = subResults.concat(scanDir(fullPath));
           }
         }
+        return subResults;
+      };
+
+      const found = scanDir(categoryPath);
+      for (const info of found) {
+        const context = await this.parseMetadata(
+          info.filePath,
+          info.lang,
+          info.category,
+          info.slug,
+        );
+        if (context) results.push(context);
       }
     }
     return results;
@@ -234,14 +249,25 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
     const level = difficultyMap[data.difficulty] || 3;
 
+    // Debug logging for missing composer
+    const composerName = data.composer || data.composerName || 'Unknown';
+    if (composerName === 'Unknown') {
+      logger.warn('Legacy metadata mapping: Unknown composer', {
+        slug: data.slug,
+        title: data.title,
+        availableKeys: Object.keys(data),
+      });
+    }
+
     return {
       title: data.title || 'No Title',
       catchcopy: data.catchcopy || undefined,
       displayTitle: data.displayTitle || data.title,
       excerpt: data.excerpt || data.ogp_excerpt || undefined,
-      composerName: data.composer || data.composerName || 'Unknown',
+      composerName: composerName,
       workTitle: data.workTitle || data.work || undefined,
       workCatalogueId: undefined,
+
       instrumentations: [],
       genre: undefined,
       era: undefined,

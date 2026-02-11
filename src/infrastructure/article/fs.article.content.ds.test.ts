@@ -5,12 +5,16 @@ import fs from 'fs';
 import path from 'path';
 
 // fs モジュールのモック
-vi.mock('fs', () => ({
-  default: {
+vi.mock('fs', () => {
+  const mockFs = {
     existsSync: vi.fn(),
     readFileSync: vi.fn(),
-  },
-}));
+  };
+  return {
+    ...mockFs,
+    default: mockFs,
+  };
+});
 
 describe('FsArticleContentDataSource', () => {
   let dataSource: FsArticleContentDataSource;

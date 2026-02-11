@@ -1,0 +1,94 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
+async function syncArticles() {
+  // 動的インポートを使用して、dotenv.config() の後に読み込まれるようにする
+  const { FsArticleMetadataDataSource } =
+    await import('@/infrastructure/article/fs.article.metadata.ds');
+  const { db } = await import('@/infrastructure/database/turso.client');
+  const { articles, articleTranslations } = await import('@/infrastructure/database/schema');
+  const { eq, and } = await import('drizzle-orm');
+  const { logger } = await import('@/infrastructure/logging');
+  const { ArticleSortOption, SortDirection } = await import('@/domain/article/article.constants');
+
+  logger.info('Starting article sync...');
+
+  // Use new instance
+  const fsSource = new FsArticleMetadataDataSource();
+
+  // Get all articles (setting high limit)
+  // Casting to bypass "lang required" check in repo interface,
+  // as FsArticleMetadataDataSource implementation allows empty lang to return all.
+  const result = await fsSource.findMany({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filter: {} as any,
+    pagination: { limit: 1000, offset: 0 },
+    sort: { field: ArticleSortOption.PUBLISHED_AT, direction: SortDirection.DESC },
+  });
+
+  logger.info(`Found ${result.totalCount} articles in file system.`);
+
+  for (const row of result.rows) {
+    try {
+      const article = row.articles;
+      const translation = row.article_translations;
+
+      // Remove generated columns from payload
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { mdxPath, ...translationData } = translation;
+
+      logger.info(`Syncing article: ${article.slug} (${translation.lang})`);
+
+      // Check existing article
+      const existingArticle = await db.query.articles.findFirst({
+        where: eq(articles.id, article.id),
+      });
+
+      if (!existingArticle) {
+        await db.insert(articles).values(article);
+        logger.info(`Inserted article: ${article.slug}`);
+      } else {
+        logger.info(`Article exists: ${article.slug}`);
+      }
+
+      // Check existing translation
+      const existingTrans = await db.query.articleTranslations.findFirst({
+        where: and(
+          eq(articleTranslations.articleId, article.id),
+          eq(articleTranslations.lang, translation.lang),
+        ),
+      });
+
+      if (!existingTrans) {
+        // Remove id form translation row if it conflicts or auto-generated?
+        // Usually translation ID is composite or unique string.
+        // FsArticleMetadataDS generates ID: `${context.id}-${context.lang}`
+        await db.insert(articleTranslations).values(translationData);
+        logger.info(`Inserted translation: ${translation.lang}`);
+      } else {
+        // Update
+        await db
+          .update(articleTranslations)
+          .set(translationData)
+          .where(
+            and(
+              eq(articleTranslations.articleId, article.id),
+              eq(articleTranslations.lang, translation.lang),
+            ),
+          );
+        logger.info(`Updated translation: ${translation.lang}`);
+      }
+    } catch (e) {
+      logger.error(`Failed to sync article ${row.articles.slug}`, e as Error);
+    }
+  }
+
+  logger.info('Sync complete.');
+}
+
+syncArticles()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

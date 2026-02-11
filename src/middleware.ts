@@ -74,7 +74,8 @@ export const config = {
   // そのため、スラグには「.」を使用しない運用（kebab-case）を徹底してください。
   matcher: [
     {
-      source: '/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt).*)',
+      source:
+        '/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt|articles).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

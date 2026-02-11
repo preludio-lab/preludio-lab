@@ -1,19 +1,21 @@
 import { S3Client } from '@aws-sdk/client-s3';
+import { env } from '@/lib/env';
 
-const region = process.env.R2_REGION || 'auto';
-const endpoint = process.env.R2_ENDPOINT;
-const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+const { R2_REGION, R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } = env;
 
-if (!endpoint || !accessKeyId || !secretAccessKey) {
-  console.warn('R2 configuration is missing. Storage operations will fail.');
+const isConfigMissing = !R2_ENDPOINT || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY;
+
+if (isConfigMissing && env.NEXT_PUBLIC_APP_ENV !== 'development') {
+  console.warn(
+    '[R2Client] R2 configuration is missing in non-development environment. Storage operations will fail.',
+  );
 }
 
 export const r2Client = new S3Client({
-  region,
-  endpoint: endpoint || 'https://placeholder.r2.cloudflarestorage.com',
+  region: R2_REGION,
+  endpoint: R2_ENDPOINT || 'https://placeholder.r2.cloudflarestorage.com',
   credentials: {
-    accessKeyId: accessKeyId || '',
-    secretAccessKey: secretAccessKey || '',
+    accessKeyId: R2_ACCESS_KEY_ID || '',
+    secretAccessKey: R2_SECRET_ACCESS_KEY || '',
   },
 });

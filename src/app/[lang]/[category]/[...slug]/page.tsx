@@ -148,7 +148,7 @@ export default async function ContentDetailPage({ params }: Props) {
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, category, slug } = await params;
-  const slugStr = Array.isArray(slug) ? slug[slug.length - 1] : slug;
+  const slugStr = Array.isArray(slug) ? slug.join('/') : slug;
 
   const useCase = new GetArticleBySlugUseCase(articleRepository);
   const article = await useCase.execute(lang, category, slugStr);

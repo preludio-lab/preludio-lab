@@ -1,28 +1,20 @@
 import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
+import matter from 'gray-matter';
 import { r2Client } from '../storage/r2.client';
 import {
   IArticleContentDataSource,
   ContentNotFoundError,
   ContentFetchError,
 } from './interfaces/article.content.ds.interface';
+import { env } from '@/lib/env';
+import { Logger } from '@/shared/logging/logger';
+import { preprocessMdx } from './mdx.preprocessor';
 
 export class R2ArticleContentDataSource implements IArticleContentDataSource {
   private readonly bucketName: string;
 
-  constructor() {
-    const bucket = process.env.R2_BUCKET_NAME;
-    // note: 本番以外では .env が読み込まれていない場合があるため、デフォルト値は危険だが一旦許容するか、あるいはDIで注入するのが本来は望ましい。
-    // 今回はレビュー指摘に従い、環境変数の存在をチェックするが、既存の動作（デフォルト値）を維持するかどうか検討。
-    // レビューでは「環境変数の存在を強制する方が安全」とあるため、強制する方向で実装。
-    // ただし、もしこれで動かなくなる環境がある場合は修正必要。
-    if (!bucket) {
-      // 開発の便宜上、フォールバックを残すか、厳密にするか。
-      // エンタープライズ品質としては厳密にするのが正解。
-      // throw new Error('Environment variable R2_BUCKET_NAME is not set.');
-      // いったん元の挙動(デフォルト値)は廃止し、厳密にチェックする。
-    }
-
-    this.bucketName = bucket || 'preludiolab-storage'; // 安全策として一旦元のデフォルトも残すが、基本はenvを見る
+  constructor(private readonly logger: Logger) {
+    this.bucketName = env.R2_BUCKET_NAME || 'preludiolab-storage';
   }
 
   /**
@@ -34,10 +26,28 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
       throw new ContentNotFoundError('Empty path provided');
     }
 
+    // Path transformation:
+    // Input (Logical): {lang}/{category}/{slug}.mdx
+    // Output (Physical): private/articles/{category}/{slug}/mdx/{lang}.mdx
+
+    let key = path;
+    const parts = path.split('/');
+    // Check if it looks like a logical path (at least 3 segments: lang, category, slug...) and ends with .mdx
+    if (parts.length >= 3 && path.endsWith('.mdx')) {
+      const lang = parts[0];
+      const category = parts[1];
+      const slugWithExt = parts.slice(2).join('/');
+      const slug = slugWithExt.replace(/\.mdx$/, '');
+
+      // Construct new R2 key
+      key = `private/articles/${category}/${slug}/mdx/${lang}.mdx`;
+      this.logger.debug(`Mapped logical path ${path} to R2 key ${key}`);
+    }
+
     try {
       const command = new GetObjectCommand({
         Bucket: this.bucketName,
-        Key: path,
+        Key: key,
       });
 
       const response = await r2Client.send(command);
@@ -47,7 +57,11 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
       }
 
       // AWS SDK V3 stream to string
-      return await response.Body.transformToString();
+      const rawContent = await response.Body.transformToString();
+
+      // Frontmatterをパースして、コンテンツ部分のみを返す
+      const { content } = matter(rawContent);
+      return preprocessMdx(content);
     } catch (error: unknown) {
       // AWS SDKのエラー識別
       const isNoSuchKey =
@@ -58,10 +72,14 @@ export class R2ArticleContentDataSource implements IArticleContentDataSource {
           (error as { name: string }).name === 'NoSuchKey');
 
       if (isNoSuchKey) {
+        this.logger.warn(`Content not found in R2: ${path}`, { bucket: this.bucketName, path });
         throw new ContentNotFoundError(path);
       }
 
-      console.error(`[R2ArticleContentDataSource] Failed to fetch content from R2: ${path}`, error);
+      this.logger.error(`Failed to fetch content from R2: ${path}`, error as Error, {
+        bucket: this.bucketName,
+        path,
+      });
       throw new ContentFetchError(`Failed to fetch content from R2: ${path}`, error);
     }
   }
