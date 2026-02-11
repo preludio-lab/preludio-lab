@@ -12,12 +12,87 @@ export const env = createEnv({
       .enum([NODE_ENV.DEVELOPMENT, NODE_ENV.STAGING, NODE_ENV.PRODUCTION])
       .default(NODE_ENV.DEVELOPMENT),
     // Database (Turso)
-    TURSO_DATABASE_URL: z.string().url().optional(),
-    TURSO_AUTH_TOKEN: z.string().optional(),
+    TURSO_DATABASE_URL: z
+      .string()
+      .url()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'TURSO_DATABASE_URL is required in production/staging' },
+      ),
+    TURSO_AUTH_TOKEN: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'TURSO_AUTH_TOKEN is required in production/staging' },
+      ),
+
     // Storage (Cloudflare R2)
-    R2_ACCESS_KEY_ID: z.string().min(1).optional(),
-    R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
-    R2_ENDPOINT: z.string().url().optional(),
+    R2_ACCESS_KEY_ID: z
+      .string()
+      .min(1)
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_ACCESS_KEY_ID is required in production/staging' },
+      ),
+    R2_SECRET_ACCESS_KEY: z
+      .string()
+      .min(1)
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_SECRET_ACCESS_KEY is required in production/staging' },
+      ),
+    R2_ENDPOINT: z
+      .string()
+      .url()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_ENDPOINT is required in production/staging' },
+      ),
     R2_REGION: z.string().default('auto'),
     R2_BUCKET_NAME: z.string().min(1).default('preludiolab-storage'),
   },
