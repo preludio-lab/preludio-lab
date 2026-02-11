@@ -201,6 +201,64 @@
 
 ---
 
+### 6.2 Defensive CSS
+
+- コンテンツが空の場合や、極端に長い文字列が入った場合でもレイアウトが崩れないよう、`min-height` や `text-overflow: ellipsis` を適切に設定すること。
+
+---
+
+## 7. コンポーネント設計 (Component Architecture)
+
+### 7.1. ディレクトリ構造
+
+Atomic Design をベースにしつつ、Next.js の App Router との親和性を考慮したディレクトリ構造を採用します。
+
+```
+src/
+├── components/
+│   ├── ui/           # Atoms / Molecules (汎用UIパーツ)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   └── ...
+│   ├── domain/       # Organisms (ドメイン知識を持つコンポーネント)
+│   │   ├── article/
+│   │   │   ├── ArticleBody.tsx
+│   │   │   └── TOC.tsx
+│   │   └── score/
+│   │       └── ScoreRenderer.tsx
+│   └── layout/       # Templates (レイアウト枠)
+│       ├── Header.tsx
+│       └── Sidebar.tsx
+```
+
+### 7.2. コンポーネント仕様
+
+#### `ScoreRenderer`
+
+- **Props:** `abc: string` (ABC記法の楽譜データ)
+- **Role:** クライアントサイドでのSVG楽譜描画。
+- **Library:** `abcjs` を使用。
+- **Styling:** `ui-design.md` のカラーパレット（`text-primary`, `border-border`）に準拠したCSSクラスを適用し、ダークモードに対応させる。
+
+#### `AudioPlayer`
+
+- **Props:** `videoId: string`, `startTime: number`, `endTime: number`
+- **Role:** YouTube IFrame API のラッパー。
+- **State:** 再生位置（currentTime）をGlobal State (Zustand) で管理し、楽譜のハイライトと同期させる。
+
+#### `ArticleBody`
+
+- **Props:** `content: MDXRemoteSerializeResult`
+- **Role:** MDXのレンダリングコンテナ。
+- **Typography:** `prose` (Tailwind Typography) をベースに、フォントサイズや行間を `ui-design.md` の規定に合わせてカスタマイズする。
+
+### 7.3. UIライブラリ選定
+
+- **Tailwind CSS:** スタイリングの基盤。
+- **Radix UI:** アクセシビリティ（a11y）を確保したヘッドレスUIコンポーネントとして採用（Dialog, Popover, Slider等）。
+- **Lucide React:** アイコンセット。
+- **Shadcn UI:** 上記を組み合わせたコンポーネント集として、`src/components/ui` のベースに使用（Copy & Pasteベースでカスタマイズ）。
+
 ## 9. Defensive Design for i18n (多言語対応のための防御的設計)
 
 言語によってテキストの長さは大きく異なる（日本語は短く、ドイツ語やフランス語は長くなる傾向がある）。レイアウト崩れを防ぐため、以下のルールを適用する。
