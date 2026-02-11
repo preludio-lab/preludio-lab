@@ -214,20 +214,13 @@ Status: `[/]` 進行中
     - [x] GitHub Actions ワークフローの実装 (`.github/workflows/dast-scan.yml`)
   - [x] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）
 
-- [x] **6.2 パフォーマンス耐久テストと最適化の極致 (Performance & Asset Optimization)**
+- [x] **6.2 パフォーマンス基盤と最適化 (Performance & Asset Optimization)**
   - [x] **[基盤]** **Cloudflare Images / R2** の導入。画像アセットの管理・配信を統合。 (Done with Custom Domain `cdn.preludiolab.com`)
   - [x] **[実装]** `next/image` と Cloudflare を連携させた、デバイス・通信環境別の画像最適化・キャッシュ戦略の実装 (Done via `cloudflare.image.loader.ts`)
   - [ ] **[計測]** Vercel Speed Insights / Lighthouse による Core Web Vitals (LCP, CLS, TBT) の定量的モニタリング
-  - [ ] **[負荷テスト]** **k6** 等を用いた、同時アクセス時のAPI応答性能およびDB負荷の検証
-  - [ ] **[最適化]** 1万記事規模を見据えた ISR (Incremental Static Regeneration) と エッジキャッシュ戦略の最終調整
-  - [ ] **[ボトルネック解消]** スロークエリの特定とDBインデックスの最適化
   - [ ] **[チューニング]** Vercel Edge Runtime / Cache Control ヘッダーの最終最適化
 
-- [ ] **6.3 オフライン体験とグローバル基盤の強化 (PWA & Global Infrastructure)**
-  - [ ] **[実装]** **PWA (Progressive Web App)** 対応。モバイルホーム画面への追加とオフラインキャッシュ（楽譜・音源）の検討。
-  - [ ] **[最適化]** **Edge Config & SWR** パターンの適用による、グローバル規模での低遅延アクセス（瞬時の没入体験）の実現。
-
-- [/] **6.4 E2Eテストの導入と実装 (Playwright)**
+- [/] **6.3 E2Eテストの導入と実装 (Playwright)**
   - [x] **[準備]** Playwrightの導入と初期設定（Mobile/PCブラウザ等）
   - [x] **[インフラ]** Vercel Preview環境を自動検知してテストを実行するGitHub Actionsの構築
     - [x] PR/Push時にデプロイ完了を待機し、動的なPreview URLに対してテストを実行するロジックの実装
@@ -342,6 +335,13 @@ Status: `[/]` 進行中
   - [ ] **[アニメーション]** **Framer Motion** を用いた、ページ遷移や譜例表示時の滑らかなマイクロインタラクションの実装
   - [ ] **[デザイン]** デザインシステムの再定義。没入感を最大化するタイポグラフィ、カラーパレット、余白の「清廉化」
   - [ ] **[没入感]** 音源再生とUIアニメーション（波形、プログレスバー等）のさらなる統合
+
+- [ ] **8.7 パフォーマンス耐久テストと更なる最適化 (Advanced Performance & PWA)**
+  - [ ] **[負荷テスト]** **k6** 等を用いた、同時アクセス時のAPI応答性能およびDB負荷の検証 (Moved from 6.2)
+  - [ ] **[最適化]** 1万記事規模を見据えた ISR (Incremental Static Regeneration) と エッジキャッシュ戦略の最終調整 (Moved from 6.2)
+  - [ ] **[ボトルネック解消]** スロークエリの特定とDBインデックスの最適化 (Moved from 6.2)
+  - [ ] **[実装]** **PWA (Progressive Web App)** 対応。モバイルホーム画面への追加とオフラインキャッシュ（楽譜・音源）の検討。(Moved from 6.3)
+  - [ ] **[最適化]** **Edge Config & SWR** パターンの適用による、グローバル規模での低遅延アクセス（瞬時の没入体験）の実現。(Moved from 6.3)
 
 ## Phase 9: Pre-Launch Marketing & Growth Foundation (Acquisition - Pre)
 
