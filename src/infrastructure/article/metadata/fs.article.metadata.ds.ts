@@ -6,17 +6,10 @@ import {
   ArticleMetadata,
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
-import {
-  Article,
-  ArticleContent,
-  ArticleId,
-  ContentStructure,
-  ContentSection,
-} from '@/domain/article/article';
-import { ArticleStatus, ArticleControl } from '@/domain/article/article.control';
-import { AppLocale } from '@/domain/i18n/locale';
+import { ContentStructure, ContentSection } from '@/domain/article/article';
+import { ArticleStatus } from '@/domain/article/article.control';
 import { logger } from '@/infrastructure/logging';
-import { IArticleMetadataDataSource } from './article.metadata.ds.interface';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds.interface';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 /**
@@ -45,11 +38,11 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
   /**
    * IDと言語コードを指定して記事のメタデータを取得します。
    */
-  async findById(id: string, lang: string): Promise<Article | undefined> {
+  async findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined> {
     const all = await this.findAllContexts();
     const match = all.find((c) => c.id === id && c.lang === lang);
     if (!match) return undefined;
-    return this.toDomain(match);
+    return this.toRow(match);
   }
 
   /**
@@ -59,7 +52,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     slug: string,
     lang: string,
     category?: ArticleCategory,
-  ): Promise<Article | undefined> {
+  ): Promise<ArticleMetadataRow | undefined> {
     const contexts = await this.findAllContexts();
 
     const match = contexts.find((c) => {
@@ -69,14 +62,14 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       return isSlugMatch && isLangMatch && isCategoryMatch;
     });
 
-    return match ? this.toDomain(match) : undefined;
+    return match ? this.toRow(match) : undefined;
   }
 
   /**
    * 指定された検索条件に基づいて記事メタデータの一覧を取得します。
    */
   async findMany(criteria: ArticleSearchCriteria): Promise<{
-    items: Article[];
+    rows: ArticleMetadataRow[];
     totalCount: number;
   }> {
     const contexts = await this.findAllContexts();
@@ -107,7 +100,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     const pagedCandidates = candidates.slice(offset, offset + limit);
 
     return {
-      items: pagedCandidates.map((c) => this.toDomain(c)),
+      rows: pagedCandidates.map((c) => this.toRow(c)),
       totalCount,
     };
   }
@@ -287,34 +280,57 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
   }
 
   /**
-   * FsArticleContextをArticleドメインオブジェクトに変換します。
+   * FsArticleContextをArticleMetadataRow（DB互換形式）に変換します。
    */
-  private toDomain(context: FsArticleContext): Article {
-    const control: ArticleControl = {
-      id: context.id as ArticleId,
-      lang: context.lang as AppLocale,
-      status: context.status,
-      createdAt: context.createdAt,
-      updatedAt: context.updatedAt,
+  private toRow(context: FsArticleContext): ArticleMetadataRow {
+    const article = {
+      id: context.id,
+      workId: null,
+      slug: context.slug,
+      category: context.category,
+      isFeatured: context.metadata.isFeatured,
+      readingTimeSeconds: context.metadata.readingTimeSeconds,
+      thumbnailPath: context.metadata.thumbnail || null,
+      createdAt: context.createdAt.toISOString(),
+      updatedAt: context.updatedAt.toISOString(),
     };
 
-    const content = new ArticleContent({
-      body: null,
-      structure: context.contentStructure,
-    });
-
-    return new Article({
-      control,
+    const translation = {
+      id: `${context.id}-${context.lang}`,
+      articleId: context.id,
+      lang: context.lang,
+      status: context.status,
+      title: context.metadata.title,
+      displayTitle: context.metadata.displayTitle,
+      catchcopy: context.metadata.catchcopy || null,
+      excerpt: context.metadata.excerpt || null,
+      publishedAt: context.metadata.publishedAt?.toISOString() || null,
+      isFeatured: context.metadata.isFeatured,
+      mdxPath: null, // Generated in DB, but required in type
+      slSlug: context.slug,
+      slCategory: context.category,
+      slComposerName: context.metadata.composerName || null,
+      slWorkCatalogueId: context.metadata.workCatalogueId || null,
+      slWorkNicknames: [],
+      slGenre: [],
+      slInstrumentations: context.metadata.instrumentations || [],
+      slEra: context.metadata.era || null,
+      slNationality: context.metadata.nationality || null,
+      slKey: context.metadata.key || null,
+      slPerformanceDifficulty: context.metadata.performanceDifficulty || null,
+      slImpressionDimensions: null,
+      slSeriesAssignments: [],
       metadata: context.metadata,
-      content,
-      context: {
-        seriesAssignments: [],
-        relatedArticles: [],
-        sourceAttributions: [],
-        monetizationElements: [],
-      },
-      engagement: undefined,
-    });
+      contentStructure: context.contentStructure,
+      contentEmbedding: null,
+      createdAt: context.createdAt.toISOString(),
+      updatedAt: context.updatedAt.toISOString(),
+    };
+
+    return {
+      articles: article,
+      article_translations: translation,
+    };
   }
 
   /**

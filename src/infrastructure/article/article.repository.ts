@@ -2,20 +2,24 @@ import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/artic
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { Article, ArticleContent } from '@/domain/article/article';
 import { PagedResponse } from '@/domain/shared/pagination';
-import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
+import {
+  IArticleMetadataDataSource,
+  ArticleMetadataRow,
+} from './metadata/article.metadata.ds.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
 import { ArticlePathStrategy } from './content/article.path.strategy';
 import { preprocessMdx } from './content/mdx.preprocessor';
+import { TursoArticleMapper } from './metadata/turso.article.mapper';
 
 /**
  * ArticleRepository の実装クラス。
  * BasePayloadRepository を拡張し、メタデータとコンテンツの統合管理を行います。
  */
 export class ArticleRepositoryImpl
-  extends BasePayloadRepository<Article, Article, IArticleMetadataDataSource>
+  extends BasePayloadRepository<Article, ArticleMetadataRow, IArticleMetadataDataSource>
   implements ArticleRepository
 {
   constructor(
@@ -53,7 +57,18 @@ export class ArticleRepositoryImpl
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
       // 1. メタデータDSから記事を取得 (一覧取得ではパフォーマンスのためコンテンツ取得はスキップ)
-      const { items, totalCount } = await this.metadataDS.findMany(criteria);
+      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
+
+      const items = rows
+        .map((row) => {
+          try {
+            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+          } catch (e) {
+            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
+            return null;
+          }
+        })
+        .filter((item): item is Article => item !== null);
 
       return {
         items,
@@ -67,26 +82,33 @@ export class ArticleRepositoryImpl
     }
   }
 
-  async save(_: Article): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async save(_article: Article): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
-  async delete(_: string): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async delete(_id: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
   // --- Implementation of BasePayloadRepository ---
 
-  protected resolveStorageKey(article: Article): string | null {
+  protected resolveStorageKey(row: ArticleMetadataRow): string | null {
+    // 一時的にArticleドメインオブジェクトに変換してパス解決を行う
+    const article = TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
     return this.pathStrategy.resolvePath(article);
   }
 
-  protected reconstituteWithPayload(article: Article, payload: string | null): Article {
+  protected reconstituteWithPayload(row: ArticleMetadataRow, payload: string | null): Article {
+    // 1. 基本的なドメインオブジェクトを再構成
+    const article = TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+
     if (!payload) {
-      return article; // Already has null body
+      return article;
     }
 
-    // MDXコンテンツを処理
+    // 2. ペイロード（MDX）がある場合は処理して適用
     const processedContent = preprocessMdx(payload);
 
     return new Article({
@@ -99,5 +121,9 @@ export class ArticleRepositoryImpl
       context: article.context,
       engagement: article.engagement,
     });
+  }
+
+  protected reconstitute(row: ArticleMetadataRow): Article {
+    return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
   }
 }

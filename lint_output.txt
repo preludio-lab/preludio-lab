@@ -1,0 +1,29 @@
+
+> temp-app@0.1.0 lint
+> eslint . --ext .tsx,.ts
+
+
+/Users/tetsu/src/preludio-lab/preludio-lab-refactor-article-infrastructure/src/infrastructure/article/article.repository.test.ts
+  63:10  error    Unexpected any. Specify a different type                @typescript-eslint/no-explicit-any
+  66:9   warning  'createMockArticle' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/tetsu/src/preludio-lab/preludio-lab-refactor-article-infrastructure/src/infrastructure/article/article.repository.ts
+  85:14  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+  89:16  warning  '_' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/tetsu/src/preludio-lab/preludio-lab-refactor-article-infrastructure/src/infrastructure/article/metadata/fs.article.metadata.ds.ts
+  10:3   warning  'Article' is defined but never used         @typescript-eslint/no-unused-vars
+  11:3   warning  'ArticleContent' is defined but never used  @typescript-eslint/no-unused-vars
+  12:3   warning  'ArticleId' is defined but never used       @typescript-eslint/no-unused-vars
+  16:25  warning  'ArticleControl' is defined but never used  @typescript-eslint/no-unused-vars
+  17:10  warning  'AppLocale' is defined but never used       @typescript-eslint/no-unused-vars
+
+/Users/tetsu/src/preludio-lab/preludio-lab-refactor-article-infrastructure/src/infrastructure/article/metadata/turso.article.metadata.ds.test.ts
+  5:10  warning  'TursoArticleMapper' is defined but never used  @typescript-eslint/no-unused-vars
+  6:10  warning  'Article' is defined but never used             @typescript-eslint/no-unused-vars
+
+/Users/tetsu/src/preludio-lab/preludio-lab-refactor-article-infrastructure/src/infrastructure/article/metadata/turso.article.metadata.ds.ts
+  10:10  warning  'Article' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 12 problems (1 error, 11 warnings)
+

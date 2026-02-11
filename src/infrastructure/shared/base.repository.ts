@@ -30,6 +30,7 @@ export abstract class BaseMetadataRepository<TEntity, TMetadata, TMetadataDataSo
     contextId: string,
   ): Promise<TEntity | null> {
     const metadata = await fetcher(this.metadataDS);
+    // メタデータ（DB等）が見つからない場合は警告をログ出力し、nullを返す
     if (!metadata) {
       this.logger.warn(`Metadata not found for: ${contextId}`, { contextId });
       return null;
@@ -75,6 +76,7 @@ export abstract class BasePayloadRepository<
     contextId: string,
   ): Promise<TEntity | null> {
     const metadata = await fetcher(this.metadataDS);
+    // メタデータが見つからない場合は早期リターン
     if (!metadata) {
       this.logger.warn(`Metadata not found for: ${contextId}`, { contextId });
       return null;
@@ -83,6 +85,7 @@ export abstract class BasePayloadRepository<
     let payload: string | null = null;
     const storageKey = this.resolveStorageKey(metadata);
 
+    // ストレージキーが解決できた場合のみ、外部ストレージからペイロード（本文等）を取得する
     if (storageKey) {
       try {
         payload = await this.storage.get(storageKey);

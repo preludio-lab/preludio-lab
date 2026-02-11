@@ -7,10 +7,8 @@ import { ArticleSearchCriteria, ArticleKeywordScope } from '@/domain/article/art
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { Article } from '@/domain/article/article';
 
-import { IArticleMetadataDataSource } from './article.metadata.ds.interface';
-import { TursoArticleMapper } from './turso.article.mapper';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds.interface';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}
@@ -18,7 +16,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   /**
    * IDと言語コードを指定して記事のメタデータを取得します。
    */
-  async findById(id: string, lang: string): Promise<Article | undefined> {
+  async findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined> {
     try {
       const result = await db
         .select()
@@ -27,10 +25,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
         .limit(1);
 
-      const row = result[0];
-      if (!row) return undefined;
-
-      return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+      return result[0];
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findById error', error as Error, {
         id,
@@ -52,7 +47,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
     slug: string,
     lang: string,
     category?: ArticleCategory,
-  ): Promise<Article | undefined> {
+  ): Promise<ArticleMetadataRow | undefined> {
     try {
       const filters = [eq(articles.slug, slug), eq(articleTranslations.lang, lang)];
 
@@ -67,10 +62,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(...filters))
         .limit(1);
 
-      const row = result[0];
-      if (!row) return undefined;
-
-      return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+      return result[0];
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findBySlug error', error as Error, {
         slug,
@@ -91,7 +83,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    */
   async findMany(
     criteria: ArticleSearchCriteria,
-  ): Promise<{ items: Article[]; totalCount: number }> {
+  ): Promise<{ rows: ArticleMetadataRow[]; totalCount: number }> {
     try {
       const { filter, sort, pagination } = criteria;
       const filters = [];
@@ -163,19 +155,8 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
-      const items = rows
-        .map((row) => {
-          try {
-            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
-          } catch (e) {
-            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
-            return null;
-          }
-        })
-        .filter((item): item is Article => item !== null);
-
       return {
-        items,
+        rows,
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {

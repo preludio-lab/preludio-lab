@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArticleRepositoryImpl } from './article.repository';
-import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
-import { ArticleCategory, ArticleMetadata } from '@/domain/article/article.metadata';
-import { Article, ArticleContent, ArticleId } from '@/domain/article/article';
-import { ArticleStatus } from '@/domain/article/article.control';
+import {
+  IArticleMetadataDataSource,
+  ArticleMetadataRow,
+} from './metadata/article.metadata.ds.interface';
+import { ArticleCategory } from '@/domain/article/article.metadata';
 import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage, ObjectNotFoundError } from '../storage/storage.interface';
@@ -31,38 +32,36 @@ describe('ArticleRepositoryImpl', () => {
 
   const pathStrategy = new ArticlePathStrategy();
 
-  const createMockArticle = (id: string, slug: string, lang: AppLocale) => {
-    return new Article({
-      control: {
-        id: id as ArticleId,
-        lang,
-        status: ArticleStatus.PUBLISHED,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      metadata: {
-        title: 'Title',
-        displayTitle: 'Display Title',
+  const createMockRow = (id: string, slug: string, lang: AppLocale) => {
+    return {
+      articles: {
+        id,
         slug,
         category: ArticleCategory.WORKS,
-        composerName: 'Composer',
-        tags: [],
-        thumbnail: 'thumb.jpg',
-        publishedAt: new Date(),
         isFeatured: false,
         readingTimeSeconds: 60,
-      } as ArticleMetadata,
-      content: new ArticleContent({
-        body: null,
-        structure: [{ id: 'intro', heading: 'Introduction', level: 2 }],
-      }),
-      context: {
-        seriesAssignments: [],
-        relatedArticles: [],
-        sourceAttributions: [],
-        monetizationElements: [],
+        thumbnailPath: 'thumb.jpg',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        workId: null,
       },
-    });
+      article_translations: {
+        id: `${id}-${lang}`,
+        articleId: id,
+        lang,
+        status: 'published',
+        title: 'Title',
+        displayTitle: 'Display Title',
+        publishedAt: new Date().toISOString(),
+        isFeatured: false,
+        slSlug: slug,
+        slCategory: ArticleCategory.WORKS,
+        metadata: {},
+        contentStructure: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    } as unknown as ArticleMetadataRow;
   };
 
   beforeEach(() => {
@@ -77,8 +76,8 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockArticle = createMockArticle('1', 'test-slug', 'en');
-      mockMetadataDS.findById.mockResolvedValue(mockArticle);
+      const mockRow = createMockRow('1', 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
       mockStorage.get.mockResolvedValue('# Hello');
 
       const result = await repo.findById('1', 'en');
@@ -99,8 +98,8 @@ describe('ArticleRepositoryImpl', () => {
     });
 
     it('should return Article even if content is missing (e.g. 404 in storage)', async () => {
-      const mockArticle = createMockArticle('1', 'test-slug', 'en');
-      mockMetadataDS.findById.mockResolvedValue(mockArticle);
+      const mockRow = createMockRow('1', 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
       mockStorage.get.mockRejectedValue(new ObjectNotFoundError('key'));
 
       const result = await repo.findById('1', 'en');
@@ -112,8 +111,8 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findBySlug', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockArticle = createMockArticle('1', 'test-slug', 'en');
-      mockMetadataDS.findBySlug.mockResolvedValue(mockArticle);
+      const mockRow = createMockRow('1', 'test-slug', 'en');
+      mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
       mockStorage.get.mockResolvedValue('# Hello');
 
       const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'test-slug');
@@ -131,9 +130,9 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findMany', () => {
     it('should return articles with null content', async () => {
-      const mockArticle = createMockArticle('1', 'test-slug', 'en');
+      const mockRow = createMockRow('1', 'test-slug', 'en');
       mockMetadataDS.findMany.mockResolvedValue({
-        items: [mockArticle],
+        rows: [mockRow],
         totalCount: 1,
       });
 

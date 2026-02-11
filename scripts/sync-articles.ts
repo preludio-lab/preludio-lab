@@ -4,7 +4,7 @@ dotenv.config({ path: '.env.local' });
 async function syncArticles() {
   // 動的インポートを使用して、dotenv.config() の後に読み込まれるようにする
   const { FsArticleMetadataDataSource } =
-    await import('@/infrastructure/article/fs.article.metadata.ds');
+    await import('@/infrastructure/article/metadata/fs.article.metadata.ds');
   const { db } = await import('@/infrastructure/database/turso.client');
   const { articles, articleTranslations } = await import('@/infrastructure/database/schema');
   const { eq, and } = await import('drizzle-orm');

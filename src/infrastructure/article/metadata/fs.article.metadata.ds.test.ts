@@ -73,13 +73,13 @@ slug: ${slug}
       const result = await dataSource.findBySlug(slug, lang, category);
 
       expect(result).not.toBeUndefined();
-      expect(result?.metadata.slug).toBe(slug);
-      expect(result?.metadata.category).toBe(category);
-      expect(result?.metadata.title).toBe('Test Title');
-      expect(result?.control.lang).toBe(lang);
-      expect(result?.control.status).toBe(ArticleStatus.PUBLISHED);
+      expect(result?.articles.slug).toBe(slug);
+      expect(result?.articles.category).toBe(category);
+      expect(result?.article_translations.title).toBe('Test Title');
+      expect(result?.article_translations.lang).toBe(lang);
+      expect(result?.article_translations.status).toBe(ArticleStatus.PUBLISHED);
 
-      expect(result?.content.structure).toHaveLength(1);
+      expect(result?.article_translations.contentStructure).toHaveLength(1);
     });
 
     it('should return undefined when file does not exist', async () => {
@@ -127,10 +127,10 @@ slug: test-article
         pagination: { limit: 10, offset: 0 },
       });
 
-      expect(result.items).toHaveLength(1);
+      expect(result.rows).toHaveLength(1);
       expect(result.totalCount).toBe(1);
-      expect(result.items[0].metadata.slug).toBe('test-article');
-      expect(result.items[0].metadata.title).toBe('List Item');
+      expect(result.rows[0].articles.slug).toBe('test-article');
+      expect(result.rows[0].article_translations.title).toBe('List Item');
     });
 
     it('should return empty list if root dir does not exist', async () => {
@@ -139,7 +139,7 @@ slug: test-article
         filter: { lang: 'en' },
         pagination: { limit: 10, offset: 0 },
       });
-      expect(result.items).toEqual([]);
+      expect(result.rows).toEqual([]);
       expect(result.totalCount).toBe(0);
     });
   });

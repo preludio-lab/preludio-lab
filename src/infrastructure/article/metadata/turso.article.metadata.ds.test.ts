@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { TursoArticleMetadataDataSource } from './turso.article.metadata.ds';
 import { db } from '../../database/turso.client';
 import { Logger } from '@/shared/logging/logger';
-import { TursoArticleMapper } from './turso.article.mapper';
-import { Article } from '@/domain/article/article';
 
 // Mock DB
 vi.mock('../../database/turso.client', () => ({
@@ -48,24 +46,17 @@ describe('TursoArticleMetadataDataSource', () => {
   });
 
   describe('findById', () => {
-    it('should return Article if found', async () => {
+    it('should return raw data if found', async () => {
       const mockRawData = {
         articles: { id: '123' },
         article_translations: { lang: 'ja' },
       };
-      const mockArticle = { control: { id: '123' } } as Article;
 
       mockLimit.mockResolvedValue([mockRawData]);
-      vi.mocked(TursoArticleMapper.toDomain).mockReturnValue(mockArticle);
 
       const result = await dataSource.findById('123', 'ja');
 
-      expect(result).toBe(mockArticle);
-      expect(TursoArticleMapper.toDomain).toHaveBeenCalledWith(
-        mockRawData.articles,
-        mockRawData.article_translations,
-        null,
-      );
+      expect(result).toEqual(mockRawData);
     });
 
     it('should return undefined if not found', async () => {
@@ -76,18 +67,13 @@ describe('TursoArticleMetadataDataSource', () => {
   });
 
   describe('findMany', () => {
-    it('should return articles and totalCount', async () => {
+    it('should return raw rows and totalCount', async () => {
       const mockRows = [
         { articles: { id: '1' }, article_translations: { lang: 'en' } },
         { articles: { id: '2' }, article_translations: { lang: 'en' } },
       ];
-      const mockArticle1 = { control: { id: '1' } } as Article;
-      const mockArticle2 = { control: { id: '2' } } as Article;
 
       mockOffset.mockResolvedValue(mockRows);
-      vi.mocked(TursoArticleMapper.toDomain)
-        .mockReturnValueOnce(mockArticle1)
-        .mockReturnValueOnce(mockArticle2);
 
       const thenableWhereResult = {
         limit: mockLimit,
@@ -102,8 +88,8 @@ describe('TursoArticleMetadataDataSource', () => {
         pagination: { limit: 2, offset: 0 },
       });
 
-      expect(result.items).toHaveLength(2);
-      expect(result.items[0]).toBe(mockArticle1);
+      expect(result.rows).toHaveLength(2);
+      expect(result.rows[0].articles.id).toBe('1');
       expect(result.totalCount).toBe(10);
     });
   });
