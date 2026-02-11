@@ -17,7 +17,7 @@ Status: `[/]` 進行中
   - [x] **ルーティング設計:** `app/[lang]/` 配下のURL構造とページ遷移の定義
   - [x] **記事データ設計:** MDX Frontmatterのスキーマ定義 (Title, Composer, Difficulty, Tags...)
   - [x] **コンポーネント設計:** UIパーツ（Atoms/Molecules）と機能コンポーネント（Organisms）のリストアップ
-  - [x] **デザイン仕様策定:** `docs/05_design/ui-design.md` (Tokens, Changeability) の作成
+  - [x] **デザイン仕様策定:** `docs/05_design/04_ui_ux/ui-design.md` (Tokens, Changeability) の作成
   - [x] **エージェント設計:** AIエージェント（Musicologist, Translator, _Designer_）の出力フォーマットとインターフェース定義
 
 ## Phase 2: 環境構築 (Environment Setup)
@@ -172,7 +172,7 @@ Status: `[/]` 進行中
     - [x] Drizzle ORM スキーマ定義 (`src/infrastructure/database/schema`)
     - [x] 全ドメイン（Articles, Works, Composers, Scores, Recordings）のテーブル作成 (`drizzle-kit push`)
   - [x] **[基盤]** Cloudflare R2 バケット作成
-    - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/storage-design.md`)
+    - [x] R2利用仕様の策定とドキュメント化 (`docs/05_design/02_database/storage-design.md`)
     - [x] バケット `preludiolab-storage` の作成とアクセス権限設定
     - [x] CDN Proxy Worker (`cdn-proxy`) の実装と配備準備
     - [x] **[検証]** ユーザーによる実機再生確認 (最小構成にて成功)
@@ -209,7 +209,7 @@ Status: `[/]` 進行中
   - [x] **[SCA]** **GitHub Dependabot** による依存関係の脆弱性自動検知とPR作成の有効化
   - [x] **[DAST]** **OWASP ZAP (GitHub Action)** による動的診断環境の構築
     - [x] Vercel Preview URLに対して自動実行するスキャンシナリオの実装
-    - [x] セキュリティテスト設計書の作成 (`docs/05_design/security_test_design.md`)
+    - [x] セキュリティテスト設計書の作成 (`docs/05_design/01_overall/security-test-design.md`)
     - [x] ZAP設定ファイルの作成 (`.zap/zap-rules.conf`)
     - [x] GitHub Actions ワークフローの実装 (`.github/workflows/dast-scan.yml`)
   - [x] **[秘密情報]** **Secret Scanning** の有効化（APIキー等の誤コミット防止）

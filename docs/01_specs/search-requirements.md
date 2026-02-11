@@ -44,7 +44,7 @@
 ## 2. Implementation Strategy (実装戦略)
 
 「読み取りアクセス（検索・一覧表示）の頻度が、書き込み（更新）の頻度よりも圧倒的に高い」という特性に基づき、**Read-Optimized** 戦略を採用します。
-※ 具体的な物理設計（Zero-JOIN、カラム定義など）は `docs/05_design/database-schema.md` で定義します。
+※ 具体的な物理設計（Zero-JOIN、カラム定義など）は `docs/05_design/02_database/database-schema.md` で定義します。
 
 | Cluster (Priority) | Need                  | Key Attributes                      |
 | :----------------- | :-------------------- | :---------------------------------- |
