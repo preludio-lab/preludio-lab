@@ -855,7 +855,7 @@ Turso (libSQL) 自体には行単位セキュリティ (RLS) がないため、*
 
 ### 8.1 Lifecycle
 
-1.  **Draft:** `docs/05_design/database-schema.md` (本ドキュメント) を正本とします。
+1.  **Draft:** `docs/05_design/02_database/database-schema.md` (本ドキュメント) を正本とします。
 2.  **Generate:** Drizzle ORM の `drizzle-kit generate` によるマイグレーション管理。
 3.  **Apply:** `turso db shell` または Drizzle Kit による反映。
 
