@@ -27,8 +27,8 @@ importers:
         specifier: ^0.13.10
         version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
       abcjs:
-        specifier: ^6.5.2
-        version: 6.6.0
+        specifier: ^6.6.1
+        version: 6.6.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -2514,6 +2514,9 @@ packages:
   '@types/node@25.1.0':
     resolution: {integrity: sha512-t7frlewr6+cbx+9Ohpl0NOTKXZNV9xHRmNOvql47BFJKcEG1CxtxlPEEe+gR9uhVWM4DwhnvTF110mIL4yP9RA==}
 
+  '@types/node@25.2.3':
+    resolution: {integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==}
+
   '@types/p-limit@2.2.0':
     resolution: {integrity: sha512-fGFbybl1r0oE9mqgfc2EHHUin9ZL5rbQIexWI6jYRU1ADVn4I3LHzT+g/kpPpZsfp8PB94CQ655pfAjNF8LP6A==}
     deprecated: This is a stub types definition. p-limit provides its own type definitions, so you do not need this installed.
@@ -2794,8 +2797,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  abcjs@6.6.0:
-    resolution: {integrity: sha512-lYS+qwOOxFcFY5ZjNmS1l4RT6BxGd2juBOzLD5/PfLZ+jd0zz29CMI/SwxCWb0+cdKjTBc/EHO43lUGB93FaAw==}
+  abcjs@6.6.1:
+    resolution: {integrity: sha512-DM7nJcUXCJRVESk9HghI1/RdO8kJqWgqOj2f7p+rZ9AMa4XdlkXLPLRCQbwMEj8VwEG0DvhHIs0pd8RMAIqqzg==}
 
   acorn-import-attributes@1.9.5:
     resolution: {integrity: sha512-n02Vykv5uA3eHGM/Z2dQrcD56kL8TyDb2p1+0P83PClMnC/nc+anbQRhIOWnSq4Ke/KvDPrY3C9hDtC/A3eHnQ==}
@@ -3334,6 +3337,10 @@ packages:
 
   enhanced-resolve@5.18.4:
     resolution: {integrity: sha512-LgQMM4WXU3QI+SYgEc2liRgznaD5ojbmY3sb8LxyguVkIg5FxdpTkvk72te2R38/TGKxH634oLxXRGY6d7AP+Q==}
+    engines: {node: '>=10.13.0'}
+
+  enhanced-resolve@5.19.0:
+    resolution: {integrity: sha512-phv3E1Xl4tQOShqSte26C7Fl84EwUdZsyOuSSk9qtAGyyQs2s3jJzComh+Abf4g187lUUAvH+H26omrqia2aGg==}
     engines: {node: '>=10.13.0'}
 
   entities@6.0.1:
@@ -8224,6 +8231,10 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/node@25.2.3':
+    dependencies:
+      undici-types: 7.16.0
+
   '@types/p-limit@2.2.0':
     dependencies:
       p-limit: 7.3.0
@@ -8550,7 +8561,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  abcjs@6.6.0: {}
+  abcjs@6.6.1: {}
 
   acorn-import-attributes@1.9.5(acorn@8.15.0):
     dependencies:
@@ -8990,6 +9001,11 @@ snapshots:
       once: 1.4.0
 
   enhanced-resolve@5.18.4:
+    dependencies:
+      graceful-fs: 4.2.11
+      tapable: 2.3.0
+
+  enhanced-resolve@5.19.0:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.3.0
@@ -9978,7 +9994,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 25.1.0
+      '@types/node': 25.2.3
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -11802,7 +11818,7 @@ snapshots:
       acorn-import-phases: 1.0.4(acorn@8.15.0)
       browserslist: 4.28.1
       chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.4
+      enhanced-resolve: 5.19.0
       es-module-lexer: 2.0.0
       eslint-scope: 5.1.1
       events: 3.3.0
