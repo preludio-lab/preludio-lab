@@ -60,7 +60,7 @@ export abstract class BasePayloadRepository<
 > extends BaseMetadataRepository<TEntity, TMetadata, TMetadataDataSource> {
   constructor(
     metadataDS: TMetadataDataSource,
-    protected readonly storage: IObjectStorage,
+    protected readonly payloadDS: IObjectStorage,
     logger: Logger,
   ) {
     super(metadataDS, logger);
@@ -85,10 +85,10 @@ export abstract class BasePayloadRepository<
     let payload: string | null = null;
     const storageKey = this.resolveStorageKey(metadata);
 
-    // ストレージキーが解決できた場合のみ、外部ストレージからペイロード（本文等）を取得する
+    // ストレージキーが解決できた場合のみ、外部データソース（ペイロード）から本文等を取得する
     if (storageKey) {
       try {
-        payload = await this.storage.get(storageKey);
+        payload = await this.payloadDS.get(storageKey);
       } catch (err) {
         if (err instanceof ObjectNotFoundError) {
           this.logger.warn(`Payload not found for key: ${storageKey}`, { contextId });

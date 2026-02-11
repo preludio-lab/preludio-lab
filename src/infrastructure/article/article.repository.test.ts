@@ -19,7 +19,7 @@ describe('ArticleRepositoryImpl', () => {
     findMany: vi.fn(),
   };
 
-  const mockStorage = {
+  const mockPayloadDS = {
     get: vi.fn(),
   };
 
@@ -67,7 +67,7 @@ describe('ArticleRepositoryImpl', () => {
   beforeEach(() => {
     repo = new ArticleRepositoryImpl(
       mockMetadataDS as unknown as IArticleMetadataDataSource,
-      mockStorage as unknown as IObjectStorage,
+      mockPayloadDS as unknown as IObjectStorage,
       pathStrategy,
       mockLogger as unknown as Logger,
     );
@@ -78,7 +78,7 @@ describe('ArticleRepositoryImpl', () => {
     it('should return Article when metadata and content are found', async () => {
       const mockRow = createMockRow('1', 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
-      mockStorage.get.mockResolvedValue('# Hello');
+      mockPayloadDS.get.mockResolvedValue('# Hello');
 
       const result = await repo.findById('1', 'en');
 
@@ -86,7 +86,7 @@ describe('ArticleRepositoryImpl', () => {
       expect(result?.control.id).toBe('1');
       expect(result?.content.body).toBe('# Hello');
       expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
-      expect(mockStorage.get).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
+      expect(mockPayloadDS.get).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
 
     it('should return null if metadata not found', async () => {
@@ -100,7 +100,7 @@ describe('ArticleRepositoryImpl', () => {
     it('should return Article even if content is missing (e.g. 404 in storage)', async () => {
       const mockRow = createMockRow('1', 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
-      mockStorage.get.mockRejectedValue(new ObjectNotFoundError('key'));
+      mockPayloadDS.get.mockRejectedValue(new ObjectNotFoundError('key'));
 
       const result = await repo.findById('1', 'en');
       expect(result).not.toBeNull();
@@ -113,7 +113,7 @@ describe('ArticleRepositoryImpl', () => {
     it('should return Article when metadata and content are found', async () => {
       const mockRow = createMockRow('1', 'test-slug', 'en');
       mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
-      mockStorage.get.mockResolvedValue('# Hello');
+      mockPayloadDS.get.mockResolvedValue('# Hello');
 
       const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'test-slug');
 
@@ -145,7 +145,7 @@ describe('ArticleRepositoryImpl', () => {
       expect(result.items[0].content.body).toBeNull();
       expect(result.totalCount).toBe(1);
       expect(mockMetadataDS.findMany).toHaveBeenCalled();
-      expect(mockStorage.get).not.toHaveBeenCalled(); // Storage should NOT be called for list
+      expect(mockPayloadDS.get).not.toHaveBeenCalled(); // Storage should NOT be called for list
     });
   });
 });
