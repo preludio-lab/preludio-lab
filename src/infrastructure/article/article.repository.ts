@@ -5,17 +5,17 @@ import { PagedResponse } from '@/domain/shared/pagination';
 import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { BaseRepository } from '../shared/base.repository';
+import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
 import { ArticlePathStrategy } from './content/article.path.strategy';
 import { preprocessMdx } from './content/mdx.preprocessor';
 
 /**
  * ArticleRepository の実装クラス。
- * BaseRepository を拡張し、メタデータとコンテンツの統合管理を行います。
+ * BasePayloadRepository を拡張し、メタデータとコンテンツの統合管理を行います。
  */
 export class ArticleRepositoryImpl
-  extends BaseRepository<Article, Article, IArticleMetadataDataSource>
+  extends BasePayloadRepository<Article, Article, IArticleMetadataDataSource>
   implements ArticleRepository
 {
   constructor(
@@ -53,7 +53,7 @@ export class ArticleRepositoryImpl
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
       // 1. メタデータDSから記事を取得 (一覧取得ではパフォーマンスのためコンテンツ取得はスキップ)
-      const { items, totalCount } = await this.dataSource.findMany(criteria);
+      const { items, totalCount } = await this.metadataDS.findMany(criteria);
 
       return {
         items,
@@ -75,13 +75,13 @@ export class ArticleRepositoryImpl
     throw new Error('Method not implemented.');
   }
 
-  // --- Implementation of BaseRepository ---
+  // --- Implementation of BasePayloadRepository ---
 
   protected resolveStorageKey(article: Article): string | null {
     return this.pathStrategy.resolvePath(article);
   }
 
-  protected reconstitute(article: Article, payload: string | null): Article {
+  protected reconstituteWithPayload(article: Article, payload: string | null): Article {
     if (!payload) {
       return article; // Already has null body
     }
