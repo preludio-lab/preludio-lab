@@ -102,10 +102,14 @@ export abstract class BaseMetadataRepository<
    * エンティティを保存（永続化）します。
    *
    * @param entity 保存対象のドメインエンティティ
+   * @param saver DataSource を用いた具体的な保存ロジック
    */
-  protected async _save(entity: TEntity): Promise<void> {
+  protected async _save(
+    entity: TEntity,
+    saver: (ds: TMetadataDataSource, row: TMetadata) => Promise<void>,
+  ): Promise<void> {
     const row = this.mapToPersistence(entity);
-    await this.persistMetadata(row);
+    await saver(this.metadataDS, row);
     this.logger.info(`Metadata saved successfully`, { entity: String(entity) });
   }
 
@@ -113,9 +117,13 @@ export abstract class BaseMetadataRepository<
    * エンティティを削除します。
    *
    * @param id 削除対象の外部一意識別子（ID）
+   * @param deleter DataSource を用いた具体的な削除ロジック
    */
-  protected async _delete(id: string): Promise<void> {
-    await this.deleteMetadata(id);
+  protected async _delete(
+    id: string,
+    deleter: (ds: TMetadataDataSource) => Promise<void>,
+  ): Promise<void> {
+    await deleter(this.metadataDS);
     this.logger.info(`Metadata deleted successfully`, { id });
   }
 
@@ -134,20 +142,6 @@ export abstract class BaseMetadataRepository<
    * @returns 永続化層のデータ構造（メタデータ行）
    */
   protected abstract mapToPersistence(entity: TEntity): TMetadata;
-
-  /**
-   * メタデータをデータソースに永続化します。
-   *
-   * @param row 永続化対象のメタデータ行
-   */
-  protected abstract persistMetadata(row: TMetadata): Promise<void>;
-
-  /**
-   * メタデータをデータソースから削除します。
-   *
-   * @param id 削除対象の識別子
-   */
-  protected abstract deleteMetadata(id: string): Promise<void>;
 }
 
 // -------------------------------------------------------------------------
@@ -223,10 +217,14 @@ export abstract class BasePayloadRepository<
    * メタデータとペイロードの両方を保存します。
    *
    * @param entity 保存対象のドメインエンティティ
+   * @param saver DataSource を用いた具体的な保存ロジック
    */
-  protected override async _save(entity: TEntity): Promise<void> {
+  protected override async _save(
+    entity: TEntity,
+    saver: (ds: TMetadataDataSource, row: TMetadata) => Promise<void>,
+  ): Promise<void> {
     // 1. メタデータの保存 (BaseMetadataRepository._save を利用)
-    await super._save(entity);
+    await super._save(entity, saver);
 
     // 2. ペイロードの保存
     const metadata = this.mapToPersistence(entity);
@@ -244,23 +242,29 @@ export abstract class BasePayloadRepository<
    * メタデータとペイロードの両方を削除します。
    *
    * @param id 削除対象の識別子（ID）
+   * @param deleter DataSource を用いた具体的な削除ロジック
+   * @param metadataFetcher サイドエフェクト（ストレージ削除）のためにメタデータを取得するロジック
    */
-  protected override async _delete(id: string): Promise<void> {
-    // 記事IDからメタデータを取得してストレージキーを特定する必要がある場合がある
-    // ここでは簡易的に ID からキーが導出できるか、または削除対象の特定を子クラスに任せる
+  protected override async _delete(
+    id: string,
+    deleter: (ds: TMetadataDataSource) => Promise<void>,
+    metadataFetcher?: (ds: TMetadataDataSource) => Promise<TMetadata | undefined>,
+  ): Promise<void> {
     // 削除対象のメタデータを特定し、それに関連付けられたペイロードも削除します
-    const metadata = await this.getMetadataById(id);
-    if (metadata) {
-      const storageKey = this.resolveStorageKey(metadata);
-      // ストレージキーが特定できた場合のみペイロードの削除を試みます
-      if (storageKey) {
-        await this.deletePayload(storageKey);
-        this.logger.info(`Payload deleted successfully: ${storageKey}`, { storageKey });
+    if (metadataFetcher) {
+      const metadata = await metadataFetcher(this.metadataDS);
+      if (metadata) {
+        const storageKey = this.resolveStorageKey(metadata);
+        // ストレージキーが特定できた場合のみペイロードの削除を試みます
+        if (storageKey) {
+          await this.deletePayload(storageKey);
+          this.logger.info(`Payload deleted successfully: ${storageKey}`, { storageKey });
+        }
       }
     }
 
     // メタデータの削除 (BaseMetadataRepository._delete を利用)
-    await super._delete(id);
+    await super._delete(id, deleter);
   }
 
   /**
@@ -302,14 +306,6 @@ export abstract class BasePayloadRepository<
    * @param key ストレージキー
    */
   protected abstract deletePayload(key: string): Promise<void>;
-
-  /**
-   * 削除前にメタデータを取得するためのメソッド。
-   *
-   * @param id 取得対象の識別子
-   * @returns 取得されたメタデータ。見つからない場合は null。
-   */
-  protected abstract getMetadataById(id: string): Promise<TMetadata | null>;
 
   protected reconstitute(metadata: TMetadata): TEntity {
     return this.reconstituteWithPayload(metadata, null);

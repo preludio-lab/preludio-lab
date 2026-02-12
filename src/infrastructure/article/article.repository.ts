@@ -80,7 +80,7 @@ export class ArticleRepositoryImpl
 
   async save(article: Article): Promise<void> {
     try {
-      await this._save(article);
+      await this._save(article, (ds, row) => ds.save(row));
     } catch (err) {
       this.logger.error(`Save failed: ${article.id}`, err as Error, { id: article.id });
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
@@ -89,7 +89,11 @@ export class ArticleRepositoryImpl
 
   async delete(id: string): Promise<void> {
     try {
-      await this._delete(id);
+      await this._delete(
+        id,
+        (ds) => ds.delete(id),
+        (ds) => ds.findById(id, 'ja'), // 削除前の情報特定に使用（言語によらず同一パスが解決される）
+      );
     } catch (err) {
       this.logger.error(`Delete failed: ${id}`, err as Error, { id });
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
@@ -99,10 +103,10 @@ export class ArticleRepositoryImpl
   // --- Implementation of Abstract Methods ---
 
   /**
-   * メタデータ行から、対応するコンテンツのストレージキー（R2パス）を解決します。
+   * メタデータに基づいてペイロードのストレージキー（パス）を解決します。
    */
-  protected resolveStorageKey(row: ArticleMetadataRow): string | null {
-    const article = this._mapToDomain(row);
+  protected resolveStorageKey(metadata: ArticleMetadataRow): string | null {
+    const article = this._mapToDomain(metadata);
     return this.pathStrategy.resolvePath(article);
   }
 
