@@ -10,6 +10,8 @@ import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage, ObjectNotFoundError } from '../storage/storage.interface';
 import { ArticlePathStrategy } from './content/article.path.strategy';
 
+import { TursoArticleMapper } from './metadata/turso.article.mapper';
+
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
 
@@ -17,10 +19,14 @@ describe('ArticleRepositoryImpl', () => {
     findBySlug: vi.fn(),
     findById: vi.fn(),
     findMany: vi.fn(),
+    save: vi.fn(),
+    delete: vi.fn(),
   };
 
   const mockPayloadDS = {
     get: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
   };
 
   const mockLogger = {
@@ -56,7 +62,15 @@ describe('ArticleRepositoryImpl', () => {
         isFeatured: false,
         slSlug: slug,
         slCategory: ArticleCategory.WORKS,
-        metadata: {},
+        metadata: {
+          title: 'Title',
+          displayTitle: 'Display Title',
+          composerName: 'Test Composer',
+          slug: slug,
+          category: ArticleCategory.WORKS,
+          thumbnail: 'thumb.jpg',
+          tags: [],
+        },
         contentStructure: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -69,6 +83,8 @@ describe('ArticleRepositoryImpl', () => {
       mockMetadataDS as unknown as IArticleMetadataDataSource,
       mockPayloadDS as unknown as IObjectStorage,
       pathStrategy,
+      (row) => TursoArticleMapper.toDomain(row.articles, row.article_translations),
+      TursoArticleMapper.toPersistence,
       mockLogger as unknown as Logger,
     );
     vi.clearAllMocks();
@@ -146,6 +162,34 @@ describe('ArticleRepositoryImpl', () => {
       expect(result.totalCount).toBe(1);
       expect(mockMetadataDS.findMany).toHaveBeenCalled();
       expect(mockPayloadDS.get).not.toHaveBeenCalled(); // Storage should NOT be called for list
+    });
+  });
+
+  describe('save', () => {
+    it('should call metadataDS.save and payloadDS.put', async () => {
+      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const article = TursoArticleMapper.toDomain(
+        mockRow.articles,
+        mockRow.article_translations,
+        '# Body',
+      );
+
+      await repo.save(article);
+
+      expect(mockMetadataDS.save).toHaveBeenCalled();
+      expect(mockPayloadDS.put).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx', '# Body');
+    });
+  });
+
+  describe('delete', () => {
+    it('should call metadataDS.delete and payloadDS.delete', async () => {
+      const mockRow = createMockRow('1', 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
+
+      await repo.delete('1');
+
+      expect(mockMetadataDS.delete).toHaveBeenCalledWith('1');
+      expect(mockPayloadDS.delete).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
   });
 });

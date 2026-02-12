@@ -25,7 +25,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
         .limit(1);
 
-      return result[0];
+      return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findById error', error as Error, {
         id,
@@ -62,7 +62,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(...filters))
         .limit(1);
 
-      return result[0];
+      return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findBySlug error', error as Error, {
         slug,
@@ -156,7 +156,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
       return {
-        rows,
+        rows: rows as ArticleMetadataRow[],
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {
@@ -170,5 +170,22 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         error,
       );
     }
+  }
+
+  /**
+   * メタデータを保存します。
+   */
+  async save(_row: ArticleMetadataRow): Promise<void> {
+    // アーキテクチャ構成を優先し、現在はスキャフォールディング（実体は後ほど実装）
+    this.logger.info(`TursoArticleMetadataDataSource.save called for ID: ${_row.articles.id}`);
+    // TODO: Perform db.insert().onConflictUpdate() or equivalent
+  }
+
+  /**
+   * メタデータを削除します。
+   */
+  async delete(id: string): Promise<void> {
+    this.logger.info(`TursoArticleMetadataDataSource.delete called for ID: ${id}`);
+    // TODO: Perform db.delete().where(eq(articles.id, id))
   }
 }

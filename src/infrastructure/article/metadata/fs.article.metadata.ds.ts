@@ -105,6 +105,22 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
   }
 
+  /**
+   * メタデータを保存します (FS版は現状読み取り専用のため、ログ出力のみ)。
+   */
+  async save(_row: ArticleMetadataRow): Promise<void> {
+    logger.info(
+      `FsArticleMetadataDataSource.save called for ID: ${_row.articles.id} (not implemented for FS)`,
+    );
+  }
+
+  /**
+   * メタデータを削除します (FS版は現状読み取り専用のため、ログ出力のみ)。
+   */
+  async delete(id: string): Promise<void> {
+    logger.info(`FsArticleMetadataDataSource.delete called for ID: ${id} (not implemented for FS)`);
+  }
+
   // --- ヘルパーメソッド ---
 
   /**
@@ -322,7 +338,6 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       slSeriesAssignments: [],
       metadata: context.metadata,
       contentStructure: context.contentStructure,
-      contentEmbedding: null,
       createdAt: context.createdAt.toISOString(),
       updatedAt: context.updatedAt.toISOString(),
     };

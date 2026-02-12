@@ -4,11 +4,7 @@ import { AppError } from '@/domain/shared/app-error'; // Add import
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { articles, articleTranslations } from '@/infrastructure/database/schema';
-import { InferSelectModel } from 'drizzle-orm';
-
-type ArticleRow = InferSelectModel<typeof articles>;
-type TranslationRow = InferSelectModel<typeof articleTranslations>;
+import { ArticleRow, TranslationRow } from './article.metadata.ds.interface';
 
 describe('TursoArticleMapper', () => {
   it('should map database rows to Article domain object correctly', () => {
@@ -32,7 +28,7 @@ describe('TursoArticleMapper', () => {
       updatedAt: '2023-01-03T00:00:00Z',
       isFeatured: true, // articleRow を上書きする
       slSlug: 'my-localized-slug',
-      slCategory: 'theory',
+      slCategory: ArticleCategory.THEORY,
       slComposerName: 'J.S. Bach',
       metadata: {
         // Validation check: tags exist
@@ -82,7 +78,7 @@ describe('TursoArticleMapper', () => {
     const mockArticleRow = {
       id: 'article-456',
       slug: 'default-article',
-      category: 'invalid-cat', // Invalid
+      category: 'invalid-cat' as ArticleCategory, // Invalid
       isFeatured: false,
       readingTimeSeconds: 0,
       createdAt: '2023-01-01T00:00:00Z',

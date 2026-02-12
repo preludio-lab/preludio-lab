@@ -7,6 +7,7 @@ import { logger } from '@/infrastructure/logging';
 import { R2StorageService } from '../storage/r2.storage';
 import { FileSystemStorageService } from '../storage/fs.storage';
 import { ArticlePathStrategy } from './content/article.path.strategy';
+import { TursoArticleMapper } from './metadata/turso.article.mapper';
 
 export interface ArticleRepositoryConfig {
   isProductionLike: boolean;
@@ -41,7 +42,14 @@ export class ArticleRepositoryFactory {
 
     const pathStrategy = new ArticlePathStrategy();
 
-    this.instance = new ArticleRepositoryImpl(metadataDS, storage, pathStrategy, logger);
+    this.instance = new ArticleRepositoryImpl(
+      metadataDS,
+      storage,
+      pathStrategy,
+      (row) => TursoArticleMapper.toDomain(row.articles, row.article_translations),
+      TursoArticleMapper.toPersistence,
+      logger,
+    );
 
     return this.instance;
   }

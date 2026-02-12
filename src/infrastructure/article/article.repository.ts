@@ -12,20 +12,29 @@ import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
 import { ArticlePathStrategy } from './content/article.path.strategy';
 import { preprocessMdx } from './content/mdx.preprocessor';
-import { TursoArticleMapper } from './metadata/turso.article.mapper';
 
 /**
  * ArticleRepository の実装クラス。
  * BasePayloadRepository を拡張し、メタデータとコンテンツの統合管理を行います。
+ * Tursoなどの具体的なDB知識は、注入される DataSource と Mapper関数によって抽象化されています。
  */
 export class ArticleRepositoryImpl
-  extends BasePayloadRepository<Article, ArticleMetadataRow, IArticleMetadataDataSource>
+  extends BasePayloadRepository<
+    Article,
+    ArticleMetadataRow,
+    IArticleMetadataDataSource,
+    ArticleSearchCriteria
+  >
   implements ArticleRepository
 {
   constructor(
     metadataDS: IArticleMetadataDataSource,
     payloadDS: IObjectStorage,
     private readonly pathStrategy: ArticlePathStrategy,
+    /** ドメインエンティティへの変換関数 (再構成) */
+    private readonly _mapToDomain: (row: ArticleMetadataRow) => Article,
+    /** 永続化用データへの変換関数 */
+    private readonly _mapToPersistence: (entity: Article) => ArticleMetadataRow,
     logger: Logger,
   ) {
     super(metadataDS, payloadDS, logger);
@@ -33,15 +42,10 @@ export class ArticleRepositoryImpl
 
   /**
    * IDと言語を指定して記事を取得します。
-   * メタデータ（DB）とペイロード（ストレージのMDX）を組み合わせて再構成します。
-   *
-   * @param id 記事ID
-   * @param lang 言語コード
-   * @returns 記事エンティティ（見つからない場合はnull）
    */
   async findById(id: string, lang: string): Promise<Article | null> {
     try {
-      return await this.findOne((ds: IArticleMetadataDataSource) => ds.findById(id, lang), id);
+      return await this.findOne((ds) => ds.findById(id, lang), id);
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindById failed: ${id}`, err as Error, { id, lang });
@@ -51,19 +55,10 @@ export class ArticleRepositoryImpl
 
   /**
    * 言語、カテゴリー、スラグを指定して記事を取得します。
-   * メタデータ（DB）とペイロード（ストレージのMDX）を組み合わせて再構成します。
-   *
-   * @param lang 言語コード
-   * @param category 記事カテゴリー
-   * @param slug スラグ
-   * @returns 記事エンティティ（見つからない場合はnull）
    */
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
-      return await this.findOne(
-        (ds: IArticleMetadataDataSource) => ds.findBySlug(slug, lang, category),
-        slug,
-      );
+      return await this.findOne((ds) => ds.findBySlug(slug, lang, category), slug);
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindBySlug failed: ${slug}`, err as Error, { slug, lang, category });
@@ -73,63 +68,23 @@ export class ArticleRepositoryImpl
 
   /**
    * 検索条件に基づいて記事一覧を取得します。
-   * パフォーマンスのため、一覧表示ではストレージからのコンテンツ取得は行わずメタデータのみを返します。
-   *
-   * @param criteria 検索・絞り込み条件
-   * @returns ページネーションされた記事一覧
    */
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
-      // 1. メタデータDSから記事を取得 (一覧取得ではパフォーマンスのためコンテンツ取得はスキップ)
-      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
-
-      const items = rows
-        .map((row) => {
-          try {
-            return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
-          } catch (e) {
-            this.logger.error(`Mapping failed for article in list: ${row.articles.id}`, e as Error);
-            return null;
-          }
-        })
-        .filter((item): item is Article => item !== null);
-
-      return {
-        items,
-        totalCount,
-        hasNextPage:
-          (criteria.pagination.offset || 0) + (criteria.pagination.limit || 20) < totalCount,
-      };
+      return await this.performFindMany((ds, crit) => ds.findMany(crit), criteria);
     } catch (err) {
       this.logger.error('FindMany failed', err as Error);
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  /**
-   * 記事を保存します（未実装）。
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async save(_article: Article): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  /**
-   * 記事を削除します（未実装）。
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async delete(_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  // --- Implementation of BasePayloadRepository ---
+  // --- Implementation of Abstract Methods ---
 
   /**
    * メタデータ行から、対応するコンテンツのストレージキー（R2パス）を解決します。
    */
   protected resolveStorageKey(row: ArticleMetadataRow): string | null {
-    // 一時的にArticleドメインオブジェクトに変換してパス解決を行う
-    const article = TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+    const article = this._mapToDomain(row);
     return this.pathStrategy.resolvePath(article);
   }
 
@@ -138,21 +93,19 @@ export class ArticleRepositoryImpl
    * Articleドメインエンティティを再構成します。
    */
   protected reconstituteWithPayload(row: ArticleMetadataRow, payload: string | null): Article {
-    // 1. 基本的なドメインオブジェクトを再構成
-    const article = TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+    const article = this._mapToDomain(row);
 
     if (!payload) {
       return article;
     }
 
-    // 2. ペイロード（MDX）がある場合は処理して適用
-    const processedContent = preprocessMdx(payload);
+    const processedBody = preprocessMdx(payload);
 
     return new Article({
       control: article.control,
       metadata: article.metadata,
       content: new ArticleContent({
-        body: processedContent,
+        body: processedBody,
         structure: article.content.structure,
       }),
       context: article.context,
@@ -161,10 +114,61 @@ export class ArticleRepositoryImpl
   }
 
   /**
-   * メタデータのみから記事ドメインエンティティを再構成します。
-   * 主に一覧表示など、本文を必要としない場合に使用されます。
+   * メタデータのみから再構成します (findMany用)。
    */
-  protected reconstitute(row: ArticleMetadataRow): Article {
-    return TursoArticleMapper.toDomain(row.articles, row.article_translations, null);
+  protected override reconstitute(row: ArticleMetadataRow): Article {
+    return this._mapToDomain(row);
+  }
+
+  /**
+   * ドメインエンティティから永続化用データに変換します。
+   */
+  protected mapToPersistence(entity: Article): ArticleMetadataRow {
+    return this._mapToPersistence(entity);
+  }
+
+  /**
+   * メタデータをDBに保存します。
+   */
+  protected async persistMetadata(row: ArticleMetadataRow): Promise<void> {
+    await this.metadataDS.save(row);
+  }
+
+  /**
+   * メタデータをDBから削除します。
+   */
+  protected async deleteMetadata(id: string): Promise<void> {
+    await this.metadataDS.delete(id);
+  }
+
+  /**
+   * エンティティからコンテンツ（本文）を抽出します。
+   */
+  protected extractPayload(entity: Article): string | null {
+    return entity.content.body;
+  }
+
+  /**
+   * コンテンツをストレージに保存します。
+   */
+  protected async persistPayload(key: string, content: string): Promise<void> {
+    await this.payloadDS.put(key, content);
+  }
+
+  /**
+   * コンテンツをストレージから削除します。
+   */
+  protected async deletePayload(key: string): Promise<void> {
+    await this.payloadDS.delete(key);
+  }
+
+  /**
+   * IDからメタデータを取得します（削除前のキー特定用）。
+   */
+  protected async getMetadataById(id: string): Promise<ArticleMetadataRow | null> {
+    // Note: 言語が特定できないため、最新の全言語のいずれかを取得、あるいは特定ロジックが必要。
+    // ここでは簡易的に ID 指定で検索（DataSource側の実装に依存）
+    const row = await this.metadataDS.findById(id, 'ja'); // デフォルト等の扱い
+    return row ?? null;
   }
 }

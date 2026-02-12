@@ -4,10 +4,18 @@
 export interface IObjectStorage {
   /**
    * キーを指定してオブジェクトのコンテンツを取得します。
-   * @param key ストレージ内のオブジェクトを一意に識別するキー
-   * @returns オブジェクトのコンテンツ（通常は文字列）、見つからない場合は null
    */
   get(key: string): Promise<string | null>;
+
+  /**
+   * キーを指定してコンテンツを保存します。
+   */
+  put(key: string, content: string): Promise<void>;
+
+  /**
+   * キーを指定してオブジェクトを削除します。
+   */
+  delete(key: string): Promise<void>;
 }
 
 export class StorageError extends Error {

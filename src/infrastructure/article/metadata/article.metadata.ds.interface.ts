@@ -1,10 +1,49 @@
 import { ArticleCategory } from '@/domain/article/article.metadata';
+import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
-import { InferSelectModel } from 'drizzle-orm';
-import { articles, articleTranslations } from '../../database/schema/articles';
 
-export type ArticleRow = InferSelectModel<typeof articles>;
-export type TranslationRow = InferSelectModel<typeof articleTranslations>;
+export interface ArticleRow {
+  id: string;
+  workId: string | null;
+  slug: string;
+  category: ArticleCategory;
+  isFeatured: boolean;
+  readingTimeSeconds: number;
+  thumbnailPath: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TranslationRow {
+  id: string;
+  articleId: string;
+  lang: string;
+  status: ArticleStatus;
+  title: string;
+  displayTitle: string;
+  catchcopy: string | null;
+  excerpt: string | null;
+  publishedAt: string | null;
+  isFeatured: boolean;
+  mdxPath?: string | null;
+  slSlug: string;
+  slCategory: ArticleCategory;
+  slComposerName: string | null;
+  slWorkCatalogueId: string | null;
+  slWorkNicknames: string[] | null;
+  slGenre: string[] | null;
+  slInstrumentations: string[] | null;
+  slEra: string | null;
+  slNationality: string | null;
+  slKey: string | null;
+  slPerformanceDifficulty: number | null;
+  slImpressionDimensions: unknown;
+  slSeriesAssignments: unknown;
+  metadata: unknown;
+  contentStructure: unknown;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface ArticleMetadataRow {
   articles: ArticleRow;
@@ -33,4 +72,14 @@ export interface IArticleMetadataDataSource {
     rows: ArticleMetadataRow[];
     totalCount: number;
   }>;
+
+  /**
+   * メタデータを保存します。
+   */
+  save(row: ArticleMetadataRow): Promise<void>;
+
+  /**
+   * メタデータを削除します。
+   */
+  delete(id: string): Promise<void>;
 }

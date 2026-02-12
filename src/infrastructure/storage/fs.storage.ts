@@ -36,4 +36,37 @@ export class FileSystemStorageService implements IObjectStorage {
       throw new StorageError(`Failed to read file from disk: ${key}`, error);
     }
   }
+
+  /**
+   * 指定されたキーにコンテンツを書き込みます。
+   */
+  async put(key: string, content: string): Promise<void> {
+    try {
+      const resolvedPath = path.isAbsolute(key) ? key : path.join(this.baseDir, key);
+      const parentDir = path.dirname(resolvedPath);
+
+      if (!fs.existsSync(parentDir)) {
+        fs.mkdirSync(parentDir, { recursive: true });
+      }
+
+      fs.writeFileSync(resolvedPath, content, 'utf8');
+    } catch (error: unknown) {
+      throw new StorageError(`Failed to write file to disk: ${key}`, error);
+    }
+  }
+
+  /**
+   * 指定されたキーのファイルを削除します。
+   */
+  async delete(key: string): Promise<void> {
+    try {
+      const resolvedPath = path.isAbsolute(key) ? key : path.join(this.baseDir, key);
+
+      if (fs.existsSync(resolvedPath)) {
+        fs.unlinkSync(resolvedPath);
+      }
+    } catch (error: unknown) {
+      throw new StorageError(`Failed to delete file from disk: ${key}`, error);
+    }
+  }
 }

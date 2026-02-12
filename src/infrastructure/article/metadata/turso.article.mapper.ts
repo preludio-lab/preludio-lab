@@ -7,37 +7,27 @@ import {
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
 import { ArticleContent } from '@/domain/article/article.content';
-import { articles, articleTranslations } from '@/infrastructure/database/schema';
-import { InferSelectModel } from 'drizzle-orm';
-
 import { AppError } from '@/domain/shared/app-error';
-
-// Drizzle Result Type
-type ArticleRow = InferSelectModel<typeof articles>;
-type TranslationRow = InferSelectModel<typeof articleTranslations>;
+import { ArticleMetadataRow, ArticleRow, TranslationRow } from './article.metadata.ds.interface';
 
 // Zod Schema for Metadata JSON Validation
-// JSONカラムの中身を検証するためのスキーマ (防腐層)
-// ドメイン層のスキーマを流用し、JSONには全フィールドが含まれない可能性があるため partial() を適用
 const MetadataSchema = ArticleMetadataSchema.partial().passthrough();
 
 export class TursoArticleMapper {
+  /**
+   * DB行データ（プレーンなインターフェース）からドメインエンティティに変換します。
+   */
   static toDomain(
     articleRow: ArticleRow,
     translationRow: TranslationRow,
-    mdxContent?: string | null, // 一覧表示などではOptional
+    mdxContent?: string | null,
   ): Article {
-    // 1. 言語の検証
-    // 簡易的なチェック。厳密には AppLocales 定数などと比較すべき
     const lang = translationRow.lang as AppLocale;
-    // 必要であればここで isValidLocale(lang) のようなチェックを行う
 
-    // 2. メタデータのパースと検証 (validation)
     const rawMetadata = translationRow.metadata || {};
     const parsedMetadataResult = MetadataSchema.safeParse(rawMetadata);
 
     if (!parsedMetadataResult.success) {
-      // エンタープライズ品質: データの不整合を許容せずエラーにする
       throw new AppError(
         `Invalid metadata structure for article: ${articleRow.id}`,
         'INTERNAL_SERVER_ERROR',
@@ -47,8 +37,6 @@ export class TursoArticleMapper {
     }
     const safeBaseMetadata = parsedMetadataResult.data;
 
-    // 3. 制御情報とステータスの安全性確認
-    // DBの値がDomainのEnumに存在するかチェック
     const rawStatus = translationRow.status;
     const status = rawStatus as ArticleStatus;
     if (!Object.values(ArticleStatus).includes(status)) {
@@ -63,13 +51,7 @@ export class TursoArticleMapper {
       updatedAt: new Date(translationRow.updatedAt),
     };
 
-    // 4. カテゴリとスラッグの解決
-    // スナップショット (sl_) -> マスタへのフォールバック
     const categoryName = translationRow.slCategory || articleRow.category;
-
-    // カテゴリの安全性確認
-    // カテゴリが不正な場合、エラーにするかデフォルト('WORK'等)にするか。
-    // ここではデータ不整合として検知するためにエラーログに近い挙動を想定しつつ、安全に倒す
     const category = categoryName as ArticleCategory;
     if (!Object.values(ArticleCategory).includes(category)) {
       throw new AppError(
@@ -81,12 +63,8 @@ export class TursoArticleMapper {
 
     const slug = translationRow.slSlug || articleRow.slug;
 
-    // 5. メタデータの組み立て
     const metadata: ArticleMetadata = {
-      // JSON由来のデータ
       ...safeBaseMetadata,
-
-      // DBカラム由来のデータ (優先/上書き)
       slug: slug,
       category: category,
       title: translationRow.title,
@@ -94,27 +72,19 @@ export class TursoArticleMapper {
       isFeatured: articleRow.isFeatured || translationRow.isFeatured || false,
       displayTitle: translationRow.displayTitle,
       readingTimeSeconds: articleRow.readingTimeSeconds,
-
-      // スナップショット / JSONの値 (必須フィールドへのフォールバックあり)
       composerName: translationRow.slComposerName || safeBaseMetadata.composerName || '',
       thumbnail: articleRow.thumbnailPath || safeBaseMetadata.thumbnail || undefined,
-      // タグは既に上でマップされているが、デフォルト値を設定
       tags: safeBaseMetadata.tags || [],
     };
 
-    // 6. コンテンツ
-    // contentStructureの型安全性を少し向上
     const rawStructure = translationRow.contentStructure;
     const structure = Array.isArray(rawStructure) ? rawStructure : [];
 
-    // 重要: ArticleContentドメインモデルが body: string | null を許容している前提
-    // クラスインスタンスを生成
     const content = new ArticleContent({
       body: mdxContent ?? null,
       structure: structure,
     });
 
-    // 7. Context
     const context = {
       seriesAssignments: translationRow.slSeriesAssignments || [],
       relatedArticles: [],
@@ -122,15 +92,60 @@ export class TursoArticleMapper {
       monetizationElements: [],
     };
 
-    // 8. Engagement
-    const engagement = undefined;
-
     return new Article({
       control,
       metadata,
       content,
       context,
-      engagement,
     });
+  }
+
+  /**
+   * ドメインエンティティからDB行データ（プレーンなインターフェース）に変換します。
+   */
+  static toPersistence(article: Article): ArticleMetadataRow {
+    const articles: ArticleRow = {
+      id: article.id,
+      workId: null, // 必要に応じて拡張
+      slug: article.slug,
+      category: article.category,
+      isFeatured: article.isFeatured,
+      readingTimeSeconds: article.metadata.readingTimeSeconds || 0,
+      thumbnailPath: article.metadata.thumbnail || null,
+      createdAt: article.control.createdAt.toISOString(),
+      updatedAt: article.control.updatedAt.toISOString(),
+    };
+
+    const article_translations: TranslationRow = {
+      id: `${article.id}_${article.lang}`, // 仮の合成ID
+      articleId: article.id,
+      lang: article.lang,
+      status: article.status,
+      title: article.title,
+      displayTitle: article.metadata.displayTitle || article.title,
+      catchcopy: article.metadata.catchcopy || null,
+      excerpt: article.metadata.excerpt || null,
+      publishedAt: article.metadata.publishedAt?.toISOString() || null,
+      isFeatured: article.isFeatured,
+      slSlug: article.slug,
+      slCategory: article.category,
+      slComposerName: article.metadata.composerName || null,
+      slWorkCatalogueId: null,
+      slWorkNicknames: [],
+      slGenre: [],
+      slInstrumentations: [],
+      slEra: null,
+      slNationality: null,
+      slKey: null,
+      slPerformanceDifficulty: null,
+      slImpressionDimensions: {},
+      slSeriesAssignments: article.context.seriesAssignments,
+      metadata: article.metadata,
+      contentStructure: article.content.structure,
+      createdAt: article.control.createdAt.toISOString(),
+      updatedAt: article.control.updatedAt.toISOString(),
+    };
+
+    return { articles, article_translations };
   }
 }

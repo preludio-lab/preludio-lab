@@ -1,4 +1,9 @@
-import { GetObjectCommand, NoSuchKey } from '@aws-sdk/client-s3';
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  NoSuchKey,
+} from '@aws-sdk/client-s3';
 import { r2Client } from './r2.client';
 import { IObjectStorage, ObjectNotFoundError, StorageError } from './storage.interface';
 import { env } from '@/lib/env';
@@ -52,6 +57,44 @@ export class R2StorageService implements IObjectStorage {
       }
 
       throw new StorageError(`Failed to fetch object from R2: ${key}`, error);
+    }
+  }
+
+  /**
+   * コンテンツを保存します。
+   */
+  async put(key: string, content: string): Promise<void> {
+    const fullKey = this.keyPrefix ? `${this.keyPrefix}${key}` : key;
+
+    try {
+      const command = new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: fullKey,
+        Body: content,
+        ContentType: 'text/markdown', // 本文は通常 MDX/Markdown
+      });
+
+      await r2Client.send(command);
+    } catch (error: unknown) {
+      throw new StorageError(`Failed to upload object to R2: ${key}`, error);
+    }
+  }
+
+  /**
+   * オブジェクトを削除します。
+   */
+  async delete(key: string): Promise<void> {
+    const fullKey = this.keyPrefix ? `${this.keyPrefix}${key}` : key;
+
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: this.bucketName,
+        Key: fullKey,
+      });
+
+      await r2Client.send(command);
+    } catch (error: unknown) {
+      throw new StorageError(`Failed to delete object from R2: ${key}`, error);
     }
   }
 }
