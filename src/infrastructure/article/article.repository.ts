@@ -95,6 +95,8 @@ export class ArticleRepositoryImpl
   protected reconstituteWithPayload(row: ArticleMetadataRow, payload: string | null): Article {
     const article = this._mapToDomain(row);
 
+    // ストレージから取得したペイロード（MDX本文）が存在しない場合は、
+    // コンテンツ本文が空の状態（メタデータのみ）のドメインエンティティを返します。
     if (!payload) {
       return article;
     }

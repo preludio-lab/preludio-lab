@@ -34,6 +34,7 @@ export abstract class BaseMetadataRepository<
     contextId: string,
   ): Promise<TEntity | null> {
     const metadata = await fetcher(this.metadataDS);
+    // メタデータが見つからない場合は警告をログ出力して null を返します
     if (!metadata) {
       this.logger.warn(`Metadata not found for: ${contextId}`, { contextId });
       return null;
@@ -52,8 +53,10 @@ export abstract class BaseMetadataRepository<
     ) => Promise<{ rows: TMetadata[]; totalCount: number }>,
     criteria: TCriteria,
   ): Promise<PagedResponse<TEntity>> {
+    // データソースから検索条件に合致するメタデータと総件数を取得します
     const { rows, totalCount } = await fetcher(this.metadataDS, criteria);
 
+    // 取得した各全メタデータ（行）をドメインエンティティに変換（再構成）します
     const items = rows
       .map((row) => {
         try {
@@ -65,6 +68,7 @@ export abstract class BaseMetadataRepository<
       })
       .filter((item): item is TEntity => item !== null);
 
+    // ページネーション情報を付与してレスポンスを返します
     const { limit, offset } = criteria.pagination;
 
     return {
@@ -139,6 +143,7 @@ export abstract class BasePayloadRepository<
     contextId: string,
   ): Promise<TEntity | null> {
     const metadata = await fetcher(this.metadataDS);
+    // メタデータが見つからない場合は警告をログ出力して null を返します
     if (!metadata) {
       this.logger.warn(`Metadata not found for: ${contextId}`, { contextId });
       return null;
@@ -147,10 +152,12 @@ export abstract class BasePayloadRepository<
     let payload: string | null = null;
     const storageKey = this.resolveStorageKey(metadata);
 
+    // ストレージキーが解決できた場合のみ、ペイロード（本文等）を取得します
     if (storageKey) {
       try {
         payload = await this.payloadDS.get(storageKey);
       } catch (err) {
+        // ペイロードが見つからない（404）場合は警告ログに留め、処理は継続します
         if (err instanceof ObjectNotFoundError) {
           this.logger.warn(`Payload not found for key: ${storageKey}`, { contextId });
         } else {
@@ -177,6 +184,7 @@ export abstract class BasePayloadRepository<
     const storageKey = this.resolveStorageKey(metadata);
     const payload = this.extractPayload(entity);
 
+    // ストレージ上の保存先キーとペイロードの中身の両方が存在する場合にのみ、パブリッシュ（保存）を実行します
     if (storageKey && payload !== null) {
       await this.persistPayload(storageKey, payload);
     }
@@ -188,9 +196,11 @@ export abstract class BasePayloadRepository<
   public override async delete(id: string): Promise<void> {
     // 記事IDからメタデータを取得してストレージキーを特定する必要がある場合がある
     // ここでは簡易的に ID からキーが導出できるか、または削除対象の特定を子クラスに任せる
+    // 削除対象のメタデータを特定し、それに関連付けられたペイロードも削除します
     const metadata = await this.getMetadataById(id);
     if (metadata) {
       const storageKey = this.resolveStorageKey(metadata);
+      // ストレージキーが特定できた場合のみペイロードの削除を試みます
       if (storageKey) {
         await this.deletePayload(storageKey);
       }

@@ -60,16 +60,16 @@ async function syncArticles() {
       });
 
       if (!existingTrans) {
-        // Remove id form translation row if it conflicts or auto-generated?
-        // Usually translation ID is composite or unique string.
-        // FsArticleMetadataDS generates ID: `${context.id}-${context.lang}`
-        await db.insert(articleTranslations).values(translationData);
+        // IDは FsArticleMetadataDS が生成したものを使用
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await db.insert(articleTranslations).values(translationData as any);
         logger.info(`Inserted translation: ${translation.lang}`);
       } else {
         // Update
         await db
           .update(articleTranslations)
-          .set(translationData)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .set(translationData as any)
           .where(
             and(
               eq(articleTranslations.articleId, article.id),

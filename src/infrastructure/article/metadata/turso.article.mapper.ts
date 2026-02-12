@@ -77,16 +77,15 @@ export class TursoArticleMapper {
       tags: safeBaseMetadata.tags || [],
     };
 
-    const rawStructure = translationRow.contentStructure;
-    const structure = Array.isArray(rawStructure) ? rawStructure : [];
-
     const content = new ArticleContent({
       body: mdxContent ?? null,
-      structure: structure,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      structure: (translationRow.contentStructure as any) || [],
     });
 
     const context = {
-      seriesAssignments: translationRow.slSeriesAssignments || [],
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      seriesAssignments: (translationRow.slSeriesAssignments as any) || [],
       relatedArticles: [],
       sourceAttributions: [],
       monetizationElements: [],
