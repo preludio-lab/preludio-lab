@@ -103,7 +103,7 @@ export abstract class BaseMetadataRepository<
    *
    * @param entity 保存対象のドメインエンティティ
    */
-  public async save(entity: TEntity): Promise<void> {
+  protected async _save(entity: TEntity): Promise<void> {
     const row = this.mapToPersistence(entity);
     await this.persistMetadata(row);
     this.logger.info(`Metadata saved successfully`, { entity: String(entity) });
@@ -114,7 +114,7 @@ export abstract class BaseMetadataRepository<
    *
    * @param id 削除対象の外部一意識別子（ID）
    */
-  public async delete(id: string): Promise<void> {
+  protected async _delete(id: string): Promise<void> {
     await this.deleteMetadata(id);
     this.logger.info(`Metadata deleted successfully`, { id });
   }
@@ -224,9 +224,9 @@ export abstract class BasePayloadRepository<
    *
    * @param entity 保存対象のドメインエンティティ
    */
-  public override async save(entity: TEntity): Promise<void> {
-    // 1. メタデータの保存 (BaseMetadataRepository.save を利用)
-    await super.save(entity);
+  protected override async _save(entity: TEntity): Promise<void> {
+    // 1. メタデータの保存 (BaseMetadataRepository._save を利用)
+    await super._save(entity);
 
     // 2. ペイロードの保存
     const metadata = this.mapToPersistence(entity);
@@ -245,7 +245,7 @@ export abstract class BasePayloadRepository<
    *
    * @param id 削除対象の識別子（ID）
    */
-  public override async delete(id: string): Promise<void> {
+  protected override async _delete(id: string): Promise<void> {
     // 記事IDからメタデータを取得してストレージキーを特定する必要がある場合がある
     // ここでは簡易的に ID からキーが導出できるか、または削除対象の特定を子クラスに任せる
     // 削除対象のメタデータを特定し、それに関連付けられたペイロードも削除します
@@ -259,8 +259,8 @@ export abstract class BasePayloadRepository<
       }
     }
 
-    // メタデータの削除
-    await super.delete(id);
+    // メタデータの削除 (BaseMetadataRepository._delete を利用)
+    await super._delete(id);
   }
 
   /**

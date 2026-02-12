@@ -78,6 +78,24 @@ export class ArticleRepositoryImpl
     }
   }
 
+  async save(article: Article): Promise<void> {
+    try {
+      await this._save(article);
+    } catch (err) {
+      this.logger.error(`Save failed: ${article.id}`, err as Error, { id: article.id });
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    try {
+      await this._delete(id);
+    } catch (err) {
+      this.logger.error(`Delete failed: ${id}`, err as Error, { id });
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
   // --- Implementation of Abstract Methods ---
 
   /**
