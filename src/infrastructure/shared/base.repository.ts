@@ -108,7 +108,7 @@ export abstract class BaseMetadataRepository<
     entity: TEntity,
     saver: (ds: TMetadataDataSource, row: TMetadata) => Promise<void>,
   ): Promise<void> {
-    const row = this.mapToPersistence(entity);
+    const row = this.toPersistence(entity);
     await saver(this.metadataDS, row);
     this.logger.info(`Metadata saved successfully`, { entity: String(entity) });
   }
@@ -136,12 +136,12 @@ export abstract class BaseMetadataRepository<
   protected abstract reconstitute(metadata: TMetadata): TEntity;
 
   /**
-   * ドメインエンティティから永続化用のメタデータに変換します。
+   * ドメインエンティティを永続化層のデータ構造にマッピング（変換）します。
    *
    * @param entity ドメインエンティティ
    * @returns 永続化層のデータ構造（メタデータ行）
    */
-  protected abstract mapToPersistence(entity: TEntity): TMetadata;
+  protected abstract toPersistence(entity: TEntity): TMetadata;
 }
 
 // -------------------------------------------------------------------------
@@ -227,7 +227,7 @@ export abstract class BasePayloadRepository<
     await super._save(entity, saver);
 
     // 2. ペイロードの保存
-    const metadata = this.mapToPersistence(entity);
+    const metadata = this.toPersistence(entity);
     const storageKey = this.resolveStorageKey(metadata);
     const payload = this.extractPayload(entity);
 

@@ -145,10 +145,10 @@ export class ArticleRepositoryImpl
   }
 
   /**
-   * ドメインエンティティから永続化用データに変換します。
+   * ドメインエンティティを永続化用データ（行）に変換します。
    */
-  protected mapToPersistence(entity: Article): ArticleMetadataRow {
-    return this._mapToPersistence(entity);
+  protected toPersistence(article: Article): ArticleMetadataRow {
+    return this._mapToPersistence(article);
   }
 
   /**
