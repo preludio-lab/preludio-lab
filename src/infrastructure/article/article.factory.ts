@@ -8,10 +8,9 @@ import { R2StorageService } from '../storage/r2.storage';
 import { FileSystemStorageService } from '../storage/fs.storage';
 import { ArticlePathStrategy } from './content/article.path.strategy';
 import { TursoArticleMapper } from './metadata/turso.article.mapper';
-
-export interface ArticleRepositoryConfig {
-  isProductionLike: boolean;
-}
+import { InfrastructureConfig } from '../shared/config';
+import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
+import { IObjectStorage } from '../storage/storage.interface';
 
 export class ArticleRepositoryFactory {
   private static instance: ArticleRepository;
@@ -21,24 +20,28 @@ export class ArticleRepositoryFactory {
    * インスタンスが既に存在する場合は、既存のものを返します。
    * そうでない場合は、提供された設定に基づいて新しいインスタンスを作成します。
    *
-   * @param config 使用するデータソースを決定する設定オブジェクト
+   * @param config 使用するデータソース構成
    */
-  static getInstance(config: ArticleRepositoryConfig): ArticleRepository {
+  static create(config: InfrastructureConfig): ArticleRepository {
     if (this.instance) {
       return this.instance;
     }
 
-    const { isProductionLike } = config;
+    logger.info(
+      `Initializing ArticleRepository (Metadata: ${config.metadata}, Payload: ${config.payload})`,
+    );
 
-    logger.info(`Initializing ArticleRepository (ProductionLike: ${isProductionLike})`);
+    // 1. Metadata DataSource の選択
+    const metadataDS: IArticleMetadataDataSource =
+      config.metadata === 'turso'
+        ? new TursoArticleMetadataDataSource(logger)
+        : new FsArticleMetadataDataSource();
 
-    const metadataDS = isProductionLike
-      ? new TursoArticleMetadataDataSource(logger)
-      : new FsArticleMetadataDataSource();
-
-    const storage = isProductionLike
-      ? new R2StorageService(undefined, 'private/articles/')
-      : new FileSystemStorageService(path.join(process.cwd(), 'article'));
+    // 2. Payload (Storage) の選択
+    const storage: IObjectStorage =
+      config.payload === 'r2'
+        ? new R2StorageService(undefined, 'private/articles/')
+        : new FileSystemStorageService(path.join(process.cwd(), 'article'));
 
     const pathStrategy = new ArticlePathStrategy();
 
@@ -52,5 +55,15 @@ export class ArticleRepositoryFactory {
     );
 
     return this.instance;
+  }
+
+  /**
+   * @deprecated 使用を取りやめ、create() を使用してください。
+   */
+  static getInstance(config: { isProductionLike: boolean }): ArticleRepository {
+    return this.create({
+      metadata: config.isProductionLike ? 'turso' : 'fs',
+      payload: config.isProductionLike ? 'r2' : 'fs',
+    });
   }
 }
