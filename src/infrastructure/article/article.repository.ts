@@ -45,7 +45,7 @@ export class ArticleRepositoryImpl
    */
   async findById(id: string, lang: string): Promise<Article | null> {
     try {
-      return await this.findOne((ds) => ds.findById(id, lang), id);
+      return this._findOne(id, (ds) => ds.findById(id, lang));
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindById failed: ${id}`, err as Error, { id, lang });
@@ -58,7 +58,7 @@ export class ArticleRepositoryImpl
    */
   async findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null> {
     try {
-      return await this.findOne((ds) => ds.findBySlug(slug, lang, category), slug);
+      return this._findOne(slug, (ds) => ds.findBySlug(slug, lang, category));
     } catch (err) {
       if (err instanceof AppError) throw err;
       this.logger.error(`FindBySlug failed: ${slug}`, err as Error, { slug, lang, category });
@@ -71,7 +71,7 @@ export class ArticleRepositoryImpl
    */
   async findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>> {
     try {
-      return await this.performFindMany((ds, crit) => ds.findMany(crit), criteria);
+      return await this._findMany(criteria, (ds) => ds.findMany(criteria));
     } catch (err) {
       this.logger.error('FindMany failed', err as Error);
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
