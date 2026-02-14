@@ -142,7 +142,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
   /**
    * 指定されたIDの作品を削除します。
    */
-  async delete(id: string, ctx?: TransactionContext): Promise<void> {
+  async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     const db = getDb(ctx);
     await db.delete(schema.works).where(eq(schema.works.id, id));
   }
@@ -257,7 +257,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
   /**
    * IDでWorkPartを削除します。
    */
-  async deletePart(partId: string, ctx?: TransactionContext): Promise<void> {
+  async deletePartById(partId: string, ctx?: TransactionContext): Promise<void> {
     const db = getDb(ctx);
     await db.delete(schema.workParts).where(eq(schema.workParts.id, partId));
   }

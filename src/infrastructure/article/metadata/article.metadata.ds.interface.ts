@@ -79,7 +79,19 @@ export interface IArticleMetadataDataSource {
   save(row: ArticleMetadataRow): Promise<void>;
 
   /**
-   * メタデータを削除します。
+   * 特定の言語の翻訳レコードを削除します。
    */
-  delete(id: string): Promise<void>;
+  deleteTranslation(id: string, lang: string): Promise<void>;
+
+  /**
+   * 指定された ID に紐づく翻訳レコードの総数を取得します。
+   */
+  countTranslations(id: string): Promise<number>;
+
+  /**
+   * 指定された ID に紐づく全ての翻訳メタデータを取得します（全言語）。
+   */
+  findAllTranslations(id: string): Promise<ArticleMetadataRow[]>;
+
+  deleteAll(id: string): Promise<void>;
 }

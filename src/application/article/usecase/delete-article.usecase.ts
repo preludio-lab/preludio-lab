@@ -8,6 +8,6 @@ export class DeleteArticleUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(id: string): Promise<void> {
-    await this.articleRepository.delete(id);
+    await this.articleRepository.deleteMaster(id);
   }
 }

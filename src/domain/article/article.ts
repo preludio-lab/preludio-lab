@@ -9,17 +9,15 @@ export type { ArticleControl, ArticleEngagement, ArticleContext, ArticleId };
 export { ArticleContent };
 
 /**
- * Article Entity
- * 記事のドメインエンティティ (Aggregate Root / Coordinator)
- * 各モジュール（Control, Metadata, Content, Engagement, Context）を束ね、整合性を管理する。
+ * Article Summary Entity
+ * 記事のサマリーエンティティ。一覧表示やメタデータのみが必要な用途で使用。
+ * content を含まず、軽量。
  */
-export class Article {
+export class ArticleSummary {
   /** 制御情報 */
   readonly control: ArticleControl;
   /** 探索用メタデータ (作曲家、ジャンル、試聴情報等を含む) */
   readonly metadata: ArticleMetadata;
-  /** コンテンツ実体 */
-  readonly content: ArticleContent;
   /** エンゲージメント */
   readonly engagement: ArticleEngagement;
   /** 外部文脈 */
@@ -28,13 +26,11 @@ export class Article {
   constructor(props: {
     control: ArticleControl;
     metadata: ArticleMetadata;
-    content: ArticleContent;
     engagement?: ArticleEngagement;
     context?: ArticleContext;
   }) {
     this.control = props.control;
     this.metadata = props.metadata;
-    this.content = props.content;
     this.engagement = props.engagement ?? { metrics: INITIAL_ENGAGEMENT_METRICS };
     this.context = props.context ?? {
       seriesAssignments: [],
@@ -87,6 +83,33 @@ export class Article {
     const hasReachedDate = this.metadata.publishedAt ? this.metadata.publishedAt <= now : false;
 
     return isStatusPublished && hasReachedDate;
+  }
+}
+
+/**
+ * Article Entity
+ * 記事のドメインエンティティ (Aggregate Root / Coordinator)
+ * ArticleSummary を拡張し、本文 (Content) を追加したもの。
+ * 各モジュール（Control, Metadata, Content, Engagement, Context）を束ね、整合性を管理する。
+ */
+export class Article extends ArticleSummary {
+  /** コンテンツ実体 */
+  readonly content: ArticleContent;
+
+  constructor(props: {
+    control: ArticleControl;
+    metadata: ArticleMetadata;
+    content: ArticleContent;
+    engagement?: ArticleEngagement;
+    context?: ArticleContext;
+  }) {
+    super({
+      control: props.control,
+      metadata: props.metadata,
+      engagement: props.engagement,
+      context: props.context,
+    });
+    this.content = props.content;
   }
 
   /**

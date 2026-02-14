@@ -182,10 +182,101 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * メタデータを削除します。
+   * 特定の言語の翻訳レコードを削除します。
    */
-  async delete(id: string): Promise<void> {
-    this.logger.info(`TursoArticleMetadataDataSource.delete called for ID: ${id}`);
-    // TODO: Perform db.delete().where(eq(articles.id, id))
+  async deleteTranslation(id: string, lang: string): Promise<void> {
+    try {
+      await db
+        .delete(articleTranslations)
+        .where(and(eq(articleTranslations.articleId, id), eq(articleTranslations.lang, lang)));
+      this.logger.info(`Deleted translation for article: ${id} [${lang}]`);
+    } catch (error) {
+      this.logger.error('TursoArticleMetadataDataSource.deleteTranslation error', error as Error, {
+        id,
+        lang,
+      });
+      throw new AppError(
+        'Failed to delete article translation',
+        'INFRASTRUCTURE_ERROR',
+        500,
+        error,
+      );
+    }
+  }
+
+  /**
+   * 指定された ID に紐づく翻訳レコードの総数を取得します。
+   */
+  async countTranslations(id: string): Promise<number> {
+    try {
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(articleTranslations)
+        .where(eq(articleTranslations.articleId, id));
+
+      return Number(result[0]?.count || 0);
+    } catch (error) {
+      this.logger.error('TursoArticleMetadataDataSource.countTranslations error', error as Error, {
+        id,
+      });
+      throw new AppError(
+        'Failed to count article translations',
+        'INFRASTRUCTURE_ERROR',
+        500,
+        error,
+      );
+    }
+  }
+
+  /**
+   * 指定された ID に紐づく全ての翻訳メタデータを取得します（全言語）。
+   */
+  async findAllTranslations(id: string): Promise<ArticleMetadataRow[]> {
+    try {
+      const result = await db
+        .select()
+        .from(articles)
+        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+        .where(eq(articles.id, id));
+
+      return result as ArticleMetadataRow[];
+    } catch (error) {
+      this.logger.error(
+        'TursoArticleMetadataDataSource.findAllTranslations error',
+        error as Error,
+        {
+          id,
+        },
+      );
+      throw new AppError(
+        'Failed to find all article translations',
+        'INFRASTRUCTURE_ERROR',
+        500,
+        error,
+      );
+    }
+  }
+
+  /**
+   * 指定された ID の Master レコードと全ての翻訳レコードを削除します。
+   */
+  async deleteAll(id: string): Promise<void> {
+    try {
+      // 外部キー制約（ON DELETE CASCADE）が設定されている場合は articles を消すだけで良いが、
+      // 念のため明示的に両方消すか、トランザクションで囲む。
+      await db.transaction(async (tx) => {
+        await tx.delete(articleTranslations).where(eq(articleTranslations.articleId, id));
+        await tx.delete(articles).where(eq(articles.id, id));
+      });
+      this.logger.info(`Permanently deleted article and all translations: ${id}`);
+    } catch (error) {
+      this.logger.error('TursoArticleMetadataDataSource.deleteAll error', error as Error, { id });
+      throw new AppError(
+        'Failed to delete article master and translations',
+        'INFRASTRUCTURE_ERROR',
+        500,
+        error,
+      );
+    }
   }
 }

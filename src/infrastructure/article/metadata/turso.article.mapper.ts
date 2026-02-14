@@ -1,5 +1,5 @@
 import { AppLocale } from '@/domain/i18n/locale';
-import { Article, ArticleId } from '@/domain/article/article';
+import { Article, ArticleId, ArticleSummary } from '@/domain/article/article';
 import { ArticleStatus, ArticleControl } from '@/domain/article/article.control';
 import {
   ArticleCategory,
@@ -22,6 +22,28 @@ export class TursoArticleMapper {
     translationRow: TranslationRow,
     mdxContent?: string | null,
   ): Article {
+    const summary = this.toSummary(articleRow, translationRow);
+
+    const content = new ArticleContent({
+      body: mdxContent ?? null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      structure: (translationRow.contentStructure as any) || [],
+    });
+
+    return new Article({
+      control: summary.control,
+      metadata: summary.metadata,
+      content,
+      engagement: summary.engagement,
+      context: summary.context,
+    });
+  }
+
+  /**
+   * DB行データからサマリーエンティティに変換します。
+   * ペイロード（MDX）を含まないため高速です。
+   */
+  static toSummary(articleRow: ArticleRow, translationRow: TranslationRow): ArticleSummary {
     const lang = translationRow.lang as AppLocale;
 
     const rawMetadata = translationRow.metadata || {};
@@ -57,7 +79,7 @@ export class TursoArticleMapper {
       throw new AppError(
         `Invalid category detected: ${categoryName}`,
         'INTERNAL_SERVER_ERROR',
-        500,
+        600,
       );
     }
 
@@ -77,12 +99,6 @@ export class TursoArticleMapper {
       tags: safeBaseMetadata.tags || [],
     };
 
-    const content = new ArticleContent({
-      body: mdxContent ?? null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      structure: (translationRow.contentStructure as any) || [],
-    });
-
     const context = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       seriesAssignments: (translationRow.slSeriesAssignments as any) || [],
@@ -91,10 +107,9 @@ export class TursoArticleMapper {
       monetizationElements: [],
     };
 
-    return new Article({
+    return new ArticleSummary({
       control,
       metadata,
-      content,
       context,
     });
   }
@@ -102,7 +117,7 @@ export class TursoArticleMapper {
   /**
    * ドメインエンティティからDB行データ（プレーンなインターフェース）に変換します。
    */
-  static toPersistence(article: Article): ArticleMetadataRow {
+  static toPersistence(article: Article | ArticleSummary): ArticleMetadataRow {
     const articles: ArticleRow = {
       id: article.id,
       workId: null, // 必要に応じて拡張
@@ -114,6 +129,8 @@ export class TursoArticleMapper {
       createdAt: article.control.createdAt.toISOString(),
       updatedAt: article.control.updatedAt.toISOString(),
     };
+
+    const isFullArticle = article instanceof Article;
 
     const article_translations: TranslationRow = {
       id: `${article.id}_${article.lang}`, // 仮の合成ID
@@ -140,7 +157,7 @@ export class TursoArticleMapper {
       slImpressionDimensions: {},
       slSeriesAssignments: article.context.seriesAssignments,
       metadata: article.metadata,
-      contentStructure: article.content.structure,
+      contentStructure: isFullArticle ? article.content.structure : [],
       createdAt: article.control.createdAt.toISOString(),
       updatedAt: article.control.updatedAt.toISOString(),
     };

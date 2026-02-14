@@ -1,4 +1,4 @@
-import { Article } from './article';
+import { Article, ArticleSummary } from './article';
 import { ArticleStatus } from './article.control';
 import { ArticleCategory } from './article.metadata';
 import { ArticleSortOption, SortDirection } from './article.constants';
@@ -66,23 +66,46 @@ export interface ArticleSearchCriteria {
  */
 export interface ArticleRepository {
   /**
-   * Find a single article by Slug
+   * スラグを指定して記事（フル）を取得します
    */
   findBySlug(lang: string, category: ArticleCategory, slug: string): Promise<Article | null>;
 
   /**
-   * Find a single article by ID
+   * IDを指定して記事（フル）を取得します
    */
   findById(id: string, lang: string): Promise<Article | null>;
 
   /**
-   * Find articles matching criteria
+   * スラグを指定して記事サマリーを取得します
    */
-  findMany(criteria: ArticleSearchCriteria): Promise<PagedResponse<Article>>;
+  findSummaryBySlug(
+    lang: string,
+    category: ArticleCategory,
+    slug: string,
+  ): Promise<ArticleSummary | null>;
 
   /**
-   * Management Methods (CUD)
+   * IDを指定して記事サマリーを取得します
+   */
+  findSummaryById(id: string, lang: string): Promise<ArticleSummary | null>;
+
+  /**
+   * 条件に基づいて記事の一覧（サマリー）を検索します
+   */
+  search(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleSummary>>;
+
+  /**
+   * 記事を保存します
    */
   save(article: Article): Promise<void>;
-  delete(id: string): Promise<void>;
+
+  /**
+   * 特定の言語版の記事を削除します
+   */
+  deleteById(id: string, lang: string): Promise<void>;
+
+  /**
+   * 記事そのもの（全言語版を含む）を完全に削除します
+   */
+  deleteMaster(id: string): Promise<void>;
 }

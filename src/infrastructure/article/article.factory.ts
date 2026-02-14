@@ -50,6 +50,7 @@ export class ArticleRepositoryFactory {
       storage,
       pathStrategy,
       (row) => TursoArticleMapper.toDomain(row.articles, row.article_translations),
+      (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
       TursoArticleMapper.toPersistence,
       logger,
     );

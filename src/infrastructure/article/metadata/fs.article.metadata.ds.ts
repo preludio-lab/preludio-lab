@@ -115,10 +115,33 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
   }
 
   /**
-   * メタデータを削除します (FS版は現状読み取り専用のため、ログ出力のみ)。
+   * 特定の言語の翻訳レコードを削除します。
    */
-  async delete(id: string): Promise<void> {
-    logger.info(`FsArticleMetadataDataSource.delete called for ID: ${id} (not implemented for FS)`);
+  async deleteTranslation(id: string, lang: string): Promise<void> {
+    logger.info(`FsArticleMetadataDataSource.deleteTranslation called for ID: ${id} [${lang}]`);
+  }
+
+  /**
+   * 指定された ID に紐づく翻訳レコードの総数を取得します。
+   */
+  async countTranslations(id: string): Promise<number> {
+    const all = await this.findAllContexts();
+    return all.filter((c) => c.id === id).length;
+  }
+
+  /**
+   * 指定された ID に紐づく全ての翻訳メタデータを取得します（全言語）。
+   */
+  async findAllTranslations(id: string): Promise<ArticleMetadataRow[]> {
+    const all = await this.findAllContexts();
+    return all.filter((c) => c.id === id).map((c) => this.toRow(c));
+  }
+
+  /**
+   * 指定された ID の Master レコードと全ての翻訳レコードを削除します。
+   */
+  async deleteAll(id: string): Promise<void> {
+    logger.info(`FsArticleMetadataDataSource.deleteAll called for ID: ${id}`);
   }
 
   // --- ヘルパーメソッド ---
