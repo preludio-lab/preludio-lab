@@ -100,6 +100,10 @@ export class ArticleContentMapper {
   /**
    * 記事のMDXコンテンツの論理ストレージパスを解決します。
    *
+   * 解決ロジック:
+   * URL構造が `/[lang]/[category]/[slug]` であるのに対し、
+   * ストレージパスは `[category]/[slug]/mdx/[lang].mdx` として構成されます。
+   *
    * @param article メタデータと制御情報を含む記事ドメインオブジェクト
    * @returns ストレージ用の論理パスキー
    */
