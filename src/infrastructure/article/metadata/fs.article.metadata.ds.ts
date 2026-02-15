@@ -9,7 +9,12 @@ import {
 import { ContentStructure, ContentSection } from '@/domain/article/article';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { logger } from '@/infrastructure/logging';
-import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds.interface';
+import {
+  IArticleMetadataDataSource,
+  ArticleMetadataRow,
+  ArticleMasterRow,
+  ArticleRow,
+} from './article.metadata.ds.interface';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 /**
@@ -322,7 +327,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
    * FsArticleContextをArticleMetadataRow（DB互換形式）に変換します。
    */
   private toRow(context: FsArticleContext): ArticleMetadataRow {
-    const article = {
+    const master: ArticleMasterRow = {
       id: context.id,
       workId: null,
       slug: context.slug,
@@ -334,7 +339,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
       updatedAt: context.updatedAt.toISOString(),
     };
 
-    const translation = {
+    const article: ArticleRow = {
       id: `${context.id}-${context.lang}`,
       articleId: context.id,
       lang: context.lang,
@@ -366,8 +371,8 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
     };
 
     return {
-      articles: article,
-      article_translations: translation,
+      articles: master,
+      article_translations: article,
     };
   }
 

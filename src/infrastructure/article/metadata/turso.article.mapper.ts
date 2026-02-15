@@ -12,7 +12,7 @@ import {
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
 import { AppError } from '@/domain/shared/app-error';
-import { ArticleMetadataRow, ArticleRow, TranslationRow } from './article.metadata.ds.interface';
+import { ArticleMetadataRow, ArticleMasterRow, ArticleRow } from './article.metadata.ds.interface';
 
 /**
  * メタデータJSONのバリデーション用スキーマ。
@@ -28,21 +28,21 @@ export class TursoArticleMapper {
   /**
    * DBの行データ（記事基本情報と翻訳データ）からサマリーエンティティに変換します。
    *
-   * @param articleRow - 記事の基本属性を含む行データ
-   * @param translationRow - 言語固有の翻訳データを含む行データ
+   * @param masterRow - 記事の基本属性を含む行データ (ArticleMasterRow)
+   * @param articleRow - 言語固有の翻訳データを含む行データ (ArticleRow)
    * @returns 再構築された ArticleSummary ドメインエンティティ
    * @throws {AppError} バリデーションエラーや不正なステータス・カテゴリが検出された場合
    */
-  static toSummary(articleRow: ArticleRow, translationRow: TranslationRow): ArticleSummary {
-    const lang = translationRow.lang as AppLocale;
+  static toSummary(masterRow: ArticleMasterRow, articleRow: ArticleRow): ArticleSummary {
+    const lang = articleRow.lang as AppLocale;
 
     // 1. メタデータJSONの解析とバリデーション
-    const rawMetadata = translationRow.metadata || {};
+    const rawMetadata = articleRow.metadata || {};
     const parsedMetadataResult = MetadataSchema.safeParse(rawMetadata);
 
     if (!parsedMetadataResult.success) {
       throw new AppError(
-        `Invalid metadata structure for article: ${articleRow.id}`,
+        `Invalid metadata structure for article: ${masterRow.id}`,
         'INTERNAL_SERVER_ERROR',
         500,
         parsedMetadataResult.error,
@@ -51,7 +51,7 @@ export class TursoArticleMapper {
     const safeBaseMetadata = parsedMetadataResult.data;
 
     // 2. 記事ステータスの検証
-    const rawStatus = translationRow.status;
+    const rawStatus = articleRow.status;
     const status = rawStatus as ArticleStatus;
     if (!Object.values(ArticleStatus).includes(status)) {
       throw new AppError(`Invalid status detected: ${rawStatus}`, 'INTERNAL_SERVER_ERROR', 500);
@@ -60,17 +60,17 @@ export class TursoArticleMapper {
     // 3. 制御情報 (ArticleControl) の構築
     const control: ArticleControl = {
       // 言語版ごとに固有のID (Translation UUID) をエンティティの主識別子とする
-      id: translationRow.id as ArticleId,
+      id: articleRow.id as ArticleId,
       // 共通のマスターID (Article UUID) を保持
-      masterId: articleRow.id as ArticleMasterId,
+      masterId: masterRow.id as ArticleMasterId,
       lang: lang,
       status: status,
-      createdAt: new Date(articleRow.createdAt),
-      updatedAt: new Date(translationRow.updatedAt),
+      createdAt: new Date(masterRow.createdAt),
+      updatedAt: new Date(articleRow.updatedAt),
     };
 
     // 4. カテゴリとスラッグの解決 (翻訳層でのオーバーライドを優先)
-    const categoryName = translationRow.slCategory || articleRow.category;
+    const categoryName = articleRow.slCategory || masterRow.category;
     const category = categoryName as ArticleCategory;
     if (!Object.values(ArticleCategory).includes(category)) {
       throw new AppError(
@@ -80,27 +80,27 @@ export class TursoArticleMapper {
       );
     }
 
-    const slug = translationRow.slSlug || articleRow.slug;
+    const slug = articleRow.slSlug || masterRow.slug;
 
     // 5. メタデータ (ArticleMetadata) の構築
     const metadata: ArticleMetadata = {
       ...safeBaseMetadata,
       slug: slug,
       category: category,
-      title: translationRow.title,
-      publishedAt: translationRow.publishedAt ? new Date(translationRow.publishedAt) : null,
-      isFeatured: articleRow.isFeatured || translationRow.isFeatured || false,
-      displayTitle: translationRow.displayTitle,
-      readingTimeSeconds: articleRow.readingTimeSeconds,
-      composerName: translationRow.slComposerName || safeBaseMetadata.composerName || '',
-      thumbnail: articleRow.thumbnailPath || safeBaseMetadata.thumbnail || undefined,
+      title: articleRow.title,
+      publishedAt: articleRow.publishedAt ? new Date(articleRow.publishedAt) : null,
+      isFeatured: masterRow.isFeatured || articleRow.isFeatured || false,
+      displayTitle: articleRow.displayTitle,
+      readingTimeSeconds: masterRow.readingTimeSeconds,
+      composerName: articleRow.slComposerName || safeBaseMetadata.composerName || '',
+      thumbnail: masterRow.thumbnailPath || safeBaseMetadata.thumbnail || undefined,
       tags: safeBaseMetadata.tags || [],
     };
 
     // 6. コンテキスト情報 (Context) の構築
     const context = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      seriesAssignments: (translationRow.slSeriesAssignments as any) || [],
+      seriesAssignments: (articleRow.slSeriesAssignments as any) || [],
       relatedArticles: [],
       sourceAttributions: [],
       monetizationElements: [],
@@ -122,7 +122,7 @@ export class TursoArticleMapper {
    */
   static toPersistence(article: Article | ArticleSummary): ArticleMetadataRow {
     // 記事基本情報テーブル用のデータ (Master)
-    const articles: ArticleRow = {
+    const articles: ArticleMasterRow = {
       id: article.masterId,
       workId: null, // 必要に応じて拡張（特定の楽曲解説記事など）
       slug: article.slug,
@@ -135,7 +135,7 @@ export class TursoArticleMapper {
     };
 
     // 翻訳データテーブル用のデータ (Translation)
-    const article_translations: TranslationRow = {
+    const article_translations: ArticleRow = {
       id: article.id,
       articleId: article.masterId,
       lang: article.lang,

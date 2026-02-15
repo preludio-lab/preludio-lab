@@ -2,7 +2,11 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus, ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
-export interface ArticleRow {
+/**
+ * Article Master Row
+ * 全言語共通のマスターメタデータを保持する行 (articlesテーブルに対応)
+ */
+export interface ArticleMasterRow {
   id: string; // Master UUID
   workId: string | null;
   slug: string;
@@ -14,7 +18,12 @@ export interface ArticleRow {
   updatedAt: string;
 }
 
-export interface TranslationRow {
+/**
+ * Article Row
+ * 特定の言語版（翻訳版）のエンティティデータを保持する行 (article_translationsテーブルに対応)
+ * ドメイン層の Article エンティティと1対1で対応します。
+ */
+export interface ArticleRow {
   id: string; // Translation UUID
   articleId: string; // Master UUID
   lang: string;
@@ -46,8 +55,8 @@ export interface TranslationRow {
 }
 
 export interface ArticleMetadataRow {
-  articles: ArticleRow;
-  article_translations: TranslationRow;
+  articles: ArticleMasterRow;
+  article_translations: ArticleRow;
 }
 
 export interface IArticleMetadataDataSource {

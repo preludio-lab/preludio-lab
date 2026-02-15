@@ -4,7 +4,7 @@ import { AppError } from '@/domain/shared/app-error';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { ArticleRow, TranslationRow } from './article.metadata.ds.interface';
+import { ArticleMasterRow, ArticleRow } from './article.metadata.ds.interface';
 import { ArticleSummary } from '@/domain/article/article';
 
 describe('TursoArticleMapper', () => {
@@ -12,8 +12,8 @@ describe('TursoArticleMapper', () => {
   const TRANSLATION_ID = '018f1a2b-3c4d-7001-8000-deadbeef0002';
 
   it('should map database rows to ArticleSummary domain object correctly', () => {
-    // モックデータ
-    const mockArticleRow = {
+    // モックデータ (Master)
+    const mockMasterRow = {
       id: MASTER_ID,
       slug: 'my-article',
       category: ArticleCategory.WORKS,
@@ -23,7 +23,8 @@ describe('TursoArticleMapper', () => {
       createdAt: '2023-01-01T00:00:00Z',
     };
 
-    const mockTranslationRow = {
+    // モックデータ (Article/Translation)
+    const mockArticleRow = {
       id: TRANSLATION_ID,
       articleId: MASTER_ID,
       lang: 'en',
@@ -32,7 +33,7 @@ describe('TursoArticleMapper', () => {
       displayTitle: 'Display Title',
       publishedAt: '2023-01-02T00:00:00Z',
       updatedAt: '2023-01-03T00:00:00Z',
-      isFeatured: true, // articleRow を上書きする
+      isFeatured: true, // masterRow を上書きする
       slSlug: 'my-localized-slug',
       slCategory: ArticleCategory.THEORY,
       slComposerName: 'J.S. Bach',
@@ -45,8 +46,8 @@ describe('TursoArticleMapper', () => {
 
     // 実行
     const summary = TursoArticleMapper.toSummary(
+      mockMasterRow as unknown as ArticleMasterRow,
       mockArticleRow as unknown as ArticleRow,
-      mockTranslationRow as unknown as TranslationRow,
     );
 
     // アサーション
@@ -70,7 +71,7 @@ describe('TursoArticleMapper', () => {
   });
 
   it('should throw AppError given invalid category', () => {
-    const mockArticleRow = {
+    const mockMasterRow = {
       id: MASTER_ID,
       slug: 'default-article',
       category: 'invalid-cat' as ArticleCategory,
@@ -79,7 +80,7 @@ describe('TursoArticleMapper', () => {
       createdAt: '2023-01-01T00:00:00Z',
     };
 
-    const mockTranslationRow = {
+    const mockArticleRow = {
       id: TRANSLATION_ID,
       articleId: MASTER_ID,
       lang: 'ja',
@@ -94,8 +95,8 @@ describe('TursoArticleMapper', () => {
 
     expect(() =>
       TursoArticleMapper.toSummary(
+        mockMasterRow as unknown as ArticleMasterRow,
         mockArticleRow as unknown as ArticleRow,
-        mockTranslationRow as unknown as TranslationRow,
       ),
     ).toThrowError(AppError);
   });
