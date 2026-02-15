@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { TursoArticleMapper } from './turso.article.mapper';
-import { AppError } from '@/domain/shared/app-error'; // Add import
+import { AppError } from '@/domain/shared/app-error';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleRow, TranslationRow } from './article.metadata.ds.interface';
+import { ArticleSummary } from '@/domain/article/article';
 
 describe('TursoArticleMapper', () => {
-  it('should map database rows to Article domain object correctly', () => {
+  it('should map database rows to ArticleSummary domain object correctly', () => {
     // モックデータ
     const mockArticleRow = {
       id: 'article-123',
@@ -15,6 +16,7 @@ describe('TursoArticleMapper', () => {
       category: ArticleCategory.WORKS,
       isFeatured: false,
       readingTimeSeconds: 120,
+      thumbnailPath: 'thumb.jpg',
       createdAt: '2023-01-01T00:00:00Z',
     };
 
@@ -31,54 +33,42 @@ describe('TursoArticleMapper', () => {
       slCategory: ArticleCategory.THEORY,
       slComposerName: 'J.S. Bach',
       metadata: {
-        // Validation check: tags exist
         tags: ['music', 'bach'],
       },
-      contentStructure: [{ type: 'paragraph', content: 'intro' }],
+      contentStructure: [],
       slSeriesAssignments: [{ seriesId: 's1' }],
     };
 
-    const mdxContent = '# MDX Content';
-
     // 実行
-    const article = TursoArticleMapper.toAggregate(
+    const summary = TursoArticleMapper.toSummary(
       mockArticleRow as unknown as ArticleRow,
       mockTranslationRow as unknown as TranslationRow,
-      mdxContent,
     );
 
     // アサーション
+    expect(summary).toBeInstanceOf(ArticleSummary);
     // Control
-    expect(article.control.id).toBe('article-123');
-    expect(article.control.lang).toBe(AppLocale.EN);
-    expect(article.control.status).toBe(ArticleStatus.PUBLISHED);
-    expect(article.control.createdAt).toEqual(new Date('2023-01-01T00:00:00Z'));
-    expect(article.control.updatedAt).toEqual(new Date('2023-01-03T00:00:00Z'));
+    expect(summary.control.id).toBe('article-123');
+    expect(summary.control.lang).toBe(AppLocale.EN);
+    expect(summary.control.status).toBe(ArticleStatus.PUBLISHED);
 
     // Metadata
-    expect(article.metadata.slug).toBe('my-localized-slug'); // Localized slug preferred
-    expect(article.metadata.title).toBe('My Article Title');
-    expect(article.metadata.displayTitle).toBe('Display Title');
-    expect(article.metadata.category).toBe(ArticleCategory.THEORY);
-    expect(article.metadata.composerName).toBe('J.S. Bach');
-    expect(article.metadata.tags).toEqual(['music', 'bach']);
-    expect(article.metadata.readingTimeSeconds).toBe(120);
-    expect(article.metadata.publishedAt).toEqual(new Date('2023-01-02T00:00:00Z'));
-    expect(article.metadata.isFeatured).toBe(true);
-
-    // Content
-    expect(article.content.body).toBe(mdxContent);
-    expect(article.content.structure).toEqual([{ type: 'paragraph', content: 'intro' }]);
+    expect(summary.metadata.slug).toBe('my-localized-slug');
+    expect(summary.metadata.title).toBe('My Article Title');
+    expect(summary.metadata.category).toBe(ArticleCategory.THEORY);
+    expect(summary.metadata.composerName).toBe('J.S. Bach');
+    expect(summary.metadata.tags).toEqual(['music', 'bach']);
+    expect(summary.metadata.thumbnail).toBe('thumb.jpg');
 
     // Context
-    expect(article.context.seriesAssignments).toEqual([{ seriesId: 's1' }]);
+    expect(summary.context.seriesAssignments).toEqual([{ seriesId: 's1' }]);
   });
 
   it('should throw AppError given invalid category', () => {
     const mockArticleRow = {
       id: 'article-456',
       slug: 'default-article',
-      category: 'invalid-cat' as ArticleCategory, // Invalid
+      category: 'invalid-cat' as ArticleCategory,
       isFeatured: false,
       readingTimeSeconds: 0,
       createdAt: '2023-01-01T00:00:00Z',
@@ -97,42 +87,10 @@ describe('TursoArticleMapper', () => {
     };
 
     expect(() =>
-      TursoArticleMapper.toAggregate(
+      TursoArticleMapper.toSummary(
         mockArticleRow as unknown as ArticleRow,
         mockTranslationRow as unknown as TranslationRow,
-        '',
       ),
     ).toThrowError(AppError);
-  });
-  it('should map undefined content to null body', () => {
-    const mockArticleRow = {
-      id: 'article-789',
-      slug: 'no-content-article',
-      category: ArticleCategory.WORKS,
-      isFeatured: false,
-      readingTimeSeconds: 0,
-      createdAt: '2023-01-01T00:00:00Z',
-    };
-
-    const mockTranslationRow = {
-      articleId: 'article-789',
-      lang: 'en',
-      status: ArticleStatus.PUBLISHED,
-      title: 'No Content Title',
-      displayTitle: 'Display',
-      updatedAt: '2023-01-01T00:00:00Z',
-      metadata: {},
-      contentStructure: [],
-      slSeriesAssignments: [],
-    };
-
-    const article = TursoArticleMapper.toAggregate(
-      mockArticleRow as unknown as ArticleRow,
-      mockTranslationRow as unknown as TranslationRow,
-      undefined, // undefined passed
-    );
-
-    expect(article.content.body).toBeNull();
-    expect(article.metadata.slug).toBe('no-content-article');
   });
 });

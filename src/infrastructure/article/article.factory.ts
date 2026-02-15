@@ -46,7 +46,6 @@ export class ArticleRepositoryFactory {
       metadataDS,
       storage,
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
-      (row) => TursoArticleMapper.toAggregate(row.articles, row.article_translations),
       TursoArticleMapper.toPersistence,
       logger,
     );

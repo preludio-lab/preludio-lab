@@ -15,31 +15,6 @@ const MetadataSchema = ArticleMetadataSchema.partial().passthrough();
 
 export class TursoArticleMapper {
   /**
-   * DB行データ（プレーンなインターフェース）からドメインエンティティに変換します。
-   */
-  static toAggregate(
-    articleRow: ArticleRow,
-    translationRow: TranslationRow,
-    mdxContent?: string | null,
-  ): Article {
-    const summary = this.toSummary(articleRow, translationRow);
-
-    const content = new ArticleContent({
-      body: mdxContent ?? null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      structure: (translationRow.contentStructure as any) || [],
-    });
-
-    return new Article({
-      control: summary.control,
-      metadata: summary.metadata,
-      content,
-      engagement: summary.engagement,
-      context: summary.context,
-    });
-  }
-
-  /**
    * DB行データからサマリーエンティティに変換します。
    * ペイロード（MDX）を含まないため高速です。
    */
@@ -157,7 +132,8 @@ export class TursoArticleMapper {
       slImpressionDimensions: {},
       slSeriesAssignments: article.context.seriesAssignments,
       metadata: article.metadata,
-      contentStructure: isFullArticle ? article.content.structure : [],
+      // 目次構造は常にMDXから動的に生成するため、DBには最小限のプレースホルダのみ保持する
+      contentStructure: [],
       createdAt: article.control.createdAt.toISOString(),
       updatedAt: article.control.updatedAt.toISOString(),
     };

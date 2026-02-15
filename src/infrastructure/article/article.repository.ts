@@ -42,7 +42,6 @@ export class ArticleRepositoryImpl
     metadataDS: IArticleMetadataDataSource,
     payloadDS: IObjectStorage,
     private readonly _reconstituteMetadata: (row: ArticleMetadataRow) => ArticleSummary,
-    private readonly _reconstituteAggregate: (row: ArticleMetadataRow) => Article,
     private readonly _toPersistenceMetadata: (
       entity: Article | ArticleSummary,
     ) => ArticleMetadataRow,
