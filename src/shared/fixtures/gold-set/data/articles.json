@@ -1,0 +1,40 @@
+[
+  {
+    "id": "01947470-0000-7000-8000-000000000003",
+    "workId": "01947470-0000-7000-8000-000000000002",
+    "slug": "johann-sebastian-bach/wtc-1/1-prelude",
+    "category": "works",
+    "isFeatured": true,
+    "readingTimeSeconds": 300,
+    "translations": [
+      {
+        "lang": "ja",
+        "title": "プレリュード ハ長調",
+        "displayTitle": "プレリュード ハ長調 BWV 846",
+        "status": "published",
+        "publishedAt": "2024-01-01T00:00:00Z",
+        "isFeatured": true,
+        "slSlug": "1-prelude",
+        "slCategory": "works",
+        "mdxPath": "ja/works/1-prelude",
+        "playback": {
+          "audioSrc": "https://www.youtube.com/watch?v=PCicM6i59_I"
+        }
+      },
+      {
+        "lang": "en",
+        "title": "Prelude in C Major",
+        "displayTitle": "Prelude in C Major BWV 846",
+        "status": "published",
+        "publishedAt": "2024-01-01T00:00:00Z",
+        "isFeatured": true,
+        "slSlug": "1-prelude",
+        "slCategory": "works",
+        "mdxPath": "en/works/1-prelude",
+        "playback": {
+          "audioSrc": "https://www.youtube.com/watch?v=PCicM6i59_I"
+        }
+      }
+    ]
+  }
+]

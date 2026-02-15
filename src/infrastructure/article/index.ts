@@ -9,7 +9,9 @@ import { APP_ENV } from '@/lib/constants';
  * 実行環境に応じて、ローカルファイルシステムまたは R2/Turso を切り替えます。
  */
 const isProductionLike =
-  env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION || env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING;
+  env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+  env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING ||
+  (env.NEXT_PUBLIC_APP_ENV as string) === 'test';
 
 export const articleRepository: ArticleRepository = ArticleRepositoryFactory.getInstance({
   isProductionLike,

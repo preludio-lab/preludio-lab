@@ -1,0 +1,26 @@
+[
+  {
+    "id": "01947470-0000-7000-8000-000000000001",
+    "slug": "johann-sebastian-bach",
+    "era": "baroque",
+    "birthDate": "1685-03-31",
+    "deathDate": "1750-07-28",
+    "nationalityCode": "DE",
+    "representativeInstruments": ["organ", "harpsichord"],
+    "representativeGenres": ["cantata", "fugue"],
+    "translations": [
+      {
+        "lang": "ja",
+        "fullName": "ヨハン・セバスチャン・バッハ",
+        "displayName": "J.S.バッハ",
+        "shortName": "バッハ"
+      },
+      {
+        "lang": "en",
+        "fullName": "Johann Sebastian Bach",
+        "displayName": "J.S. Bach",
+        "shortName": "Bach"
+      }
+    ]
+  }
+]
