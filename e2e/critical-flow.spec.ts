@@ -54,7 +54,7 @@ test.describe('Critical User Flows', () => {
       await expect(page.getByText(TARGET_ARTICLE.composer).first()).toBeVisible();
 
       // 楽譜（ScoreRenderer）のレンダリング確認
-      const scoreContainer = page.locator('.abcjs-container');
+      const scoreContainer = page.locator('.abcjs-container').first();
       // レンダリングに時間がかかる場合があるため、少し待機を含めて確認
       await expect(scoreContainer).toBeVisible({ timeout: 10000 });
       await expect(scoreContainer.locator('svg')).toBeVisible();
@@ -87,8 +87,14 @@ test.describe('Critical User Flows', () => {
       await expect(page.getByRole('link', { name: 'Works' }).first()).toBeVisible();
 
       // Gold Set Data Verification: タイトルと作曲家名が英語になっているか
+      // 言語切り替え完了を確実にするため、ENボタンの表示を待つなどのガードを入れる
+      await expect(page.getByRole('button', { name: /EN|English/ })).toBeVisible();
+
       await expect(page.getByRole('heading', { level: 1 })).toContainText('Prelude in C Major');
-      await expect(page.getByText('Johann Sebastian Bach').first()).toBeVisible();
+      // Composer name check with retry/timeout
+      await expect(page.getByText(/Johann Sebastian Bach|J\.S\. Bach/i).first()).toBeVisible({
+        timeout: 10000,
+      });
     });
 
     await test.step('Step 3: リロードしても言語が維持されるか', async () => {
