@@ -41,7 +41,7 @@ describe('TursoArticleMapper', () => {
     const mdxContent = '# MDX Content';
 
     // 実行
-    const article = TursoArticleMapper.toDomain(
+    const article = TursoArticleMapper.toAggregate(
       mockArticleRow as unknown as ArticleRow,
       mockTranslationRow as unknown as TranslationRow,
       mdxContent,
@@ -97,7 +97,7 @@ describe('TursoArticleMapper', () => {
     };
 
     expect(() =>
-      TursoArticleMapper.toDomain(
+      TursoArticleMapper.toAggregate(
         mockArticleRow as unknown as ArticleRow,
         mockTranslationRow as unknown as TranslationRow,
         '',
@@ -126,7 +126,7 @@ describe('TursoArticleMapper', () => {
       slSeriesAssignments: [],
     };
 
-    const article = TursoArticleMapper.toDomain(
+    const article = TursoArticleMapper.toAggregate(
       mockArticleRow as unknown as ArticleRow,
       mockTranslationRow as unknown as TranslationRow,
       undefined, // undefined passed

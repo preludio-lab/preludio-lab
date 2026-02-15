@@ -17,7 +17,7 @@ export class TursoArticleMapper {
   /**
    * DB行データ（プレーンなインターフェース）からドメインエンティティに変換します。
    */
-  static toDomain(
+  static toAggregate(
     articleRow: ArticleRow,
     translationRow: TranslationRow,
     mdxContent?: string | null,

@@ -7,17 +7,16 @@ import { PagedResponse } from '@/domain/shared/pagination';
 // -------------------------------------------------------------------------
 
 /**
- * メタデータ（DB等）のみからドメインエンティティを再構成する基底リポジトリクラス。
- * Storage（ペイロード）には依存しません。
+ * メタデータ（DBなど）のみを扱うリポジトリの基底クラス。
  *
- * @template TEntity ドメインエンティティの型
- * @template TMetadata メタデータの型（DataSourceから取得される型）
- * @template TMetadataDataSource メタデータを取得するためのDataSourceの型
+ * @template TBase メタデータから再構築されるドメインエンティティまたはサマリーの型
+ * @template TMetadataRow データソースからの生のメタデータ行の型
+ * @template TMetadataDataSource メタデータのデータソース型
  * @template TCriteria 検索条件の型
  */
 export abstract class BaseMetadataRepository<
-  TEntity,
-  TMetadata,
+  TBase,
+  TMetadataRow,
   TMetadataDataSource,
   TCriteria extends { pagination: { limit: number; offset: number } },
 > {
@@ -27,22 +26,22 @@ export abstract class BaseMetadataRepository<
   ) {}
 
   /**
-   * 提供されたフェッチャーを用いて DataSource からメタデータを取得し、ドメインエンティティとして再構成します。
+   * 提供されたフェッチャーを使用して単一のエンティティを取得し、再構築します。
    *
-   * 【処理フロー】
-   * 1. 取得: DataSource から生のデータ（TMetadata）を取得
-   * 2. 検証: データ不在時は警告ログを記録し null を返却
-   * 3. 変換: 取得したデータを reconstitute によりドメインエンティティへ変換（再構成）して返却
-   * @param identity 探索対象を特定するための識別子（IDやスラグなど、主にログ出力に使用）
-   * @param fetcher DataSource を用いた具体的な探索ロジック
-   * @returns 再構成されたドメインエンティティ。見つからない場合は null を返却します。
+   * 処理フロー:
+   * 1. fetcher を実行して生のメタデータ (TMetadataRow) を取得
+   * 2. メタデータが存在しない場合は警告をログ出力し、null を返す
+   * 3. 抽象メソッド reconstituteMetadata を呼び出し、メタデータをドメイン型 (TBase) に変換して返す
+   *
+   * @param identity - エンティティを識別するための識別子（ログ出力用）
+   * @param fetcher - データソースからメタデータを取得する関数
+   * @returns 再構築されたエンティティ、または存在しない場合は null
    */
   protected async _findOne(
     identity: string,
-    fetcher: (ds: TMetadataDataSource) => Promise<TMetadata | undefined>,
-  ): Promise<TEntity | null> {
+    fetcher: (ds: TMetadataDataSource) => Promise<TMetadataRow | undefined>,
+  ): Promise<TBase | null> {
     const metadata = await fetcher(this.metadataDS);
-    // メタデータが見つからない場合は警告をログ出力して null を返します
     if (!metadata) {
       this.logger.warn(`Metadata not found for identity: ${identity}`, { identity });
       return null;
@@ -50,45 +49,43 @@ export abstract class BaseMetadataRepository<
 
     this.logger.debug(`Metadata found for identity: ${identity}`, { identity });
 
-    return this.reconstitute(metadata);
+    return this.reconstituteMetadata(metadata);
   }
 
   /**
-   * 検索条件に基づき、DataSource から複数件のメタデータを取得し、ドメインエンティティの一覧として返却します。
+   * 検索条件に基づいて複数のエンティティを取得します。
    *
-   * 【処理フロー】
-   * 1. DataSource から条件に合致するメタデータ行（rows）と総件数（totalCount）を取得
-   * 2. 各行をドメインエンティティへ変換（変換失敗時は該当行をログ出力して除外）
-   * 3. ページネーション情報を付与した PagedResponse 形式でパッキングして返却
+   * 処理フロー:
+   * 1. fetcher を実行してメタデータの配列と総件数を取得
+   * 2. 各行に対して reconstituteMetadata を実行し、ドメイン型に変換
+   *    - 変換に失敗した行はログ出力してスキップ
+   * 3. ページング情報とあわせて PagedResponse 形式で返す
    *
-   * @param criteria 検索条件およびページネーション情報
-   * @param fetcher DataSource を用いた具体的な一覧取得ロジック
-   * @returns 変換済みのエンティティ一覧とページネーション情報を含むレスポンス
+   * @param criteria - 検索条件（ページング情報を含む）
+   * @param fetcher - データソースから複数のメタデータを取得する関数
+   * @returns ページングされたエンティティのリスト
    */
   protected async _findMany(
     criteria: TCriteria,
-    fetcher: (ds: TMetadataDataSource) => Promise<{ rows: TMetadata[]; totalCount: number }>,
-  ): Promise<PagedResponse<TEntity>> {
-    // データソースから検索条件に合致するメタデータと総件数を取得します
+    fetcher: (ds: TMetadataDataSource) => Promise<{ rows: TMetadataRow[]; totalCount: number }>,
+  ): Promise<PagedResponse<TBase>> {
     const { rows, totalCount } = await fetcher(this.metadataDS);
 
     this.logger.debug(`Found ${rows.length} metadata rows (Total: ${totalCount})`, {
       criteria,
     });
 
-    // 取得した各全メタデータ（行）をドメインエンティティに変換（再構成）します
     const items = rows
       .map((row) => {
         try {
-          return this.reconstitute(row);
+          return this.reconstituteMetadata(row);
         } catch (e) {
           this.logger.error('Reconstitution failed in findMany', e as Error);
           return null;
         }
       })
-      .filter((item): item is TEntity => item !== null);
+      .filter((item): item is TBase => item !== null);
 
-    // ページネーション情報を付与してレスポンスを返します
     const { limit, offset } = criteria.pagination;
 
     return {
@@ -99,25 +96,34 @@ export abstract class BaseMetadataRepository<
   }
 
   /**
-   * エンティティを保存（永続化）します。
+   * エンティティ（メタデータのみ）を保存します。
    *
-   * @param entity 保存対象のドメインエンティティ
-   * @param saver DataSource を用いた具体的な保存ロジック
+   * 処理フロー:
+   * 1. 抽象メソッド toPersistenceMetadata を呼び出し、エンティティを永続化形式に変換
+   * 2. saver コールバックを実行して保存処理を委譲
+   * 3. 完了をログ出力
+   *
+   * @param entity - 保存対象のドメインエンティティ
+   * @param saver - メタデータをデータソースに保存する関数
    */
   protected async _save(
-    entity: TEntity,
-    saver: (ds: TMetadataDataSource, row: TMetadata) => Promise<void>,
+    entity: TBase,
+    saver: (ds: TMetadataDataSource, row: TMetadataRow) => Promise<void>,
   ): Promise<void> {
-    const row = this.toPersistence(entity);
+    const row = this.toPersistenceMetadata(entity);
     await saver(this.metadataDS, row);
     this.logger.info(`Metadata saved successfully`, { entity: String(entity) });
   }
 
   /**
-   * エンティティを削除します。
+   * ID を指定してエンティティを削除します。
    *
-   * @param id 削除対象の外部一意識別子（ID）
-   * @param deleter DataSource を用いた具体的な削除ロジック
+   * 処理フロー:
+   * 1. deleter コールバックを実行してメタデータの物理・論理削除を委譲
+   * 2. 完了をログ出力
+   *
+   * @param id - 削除対象の ID
+   * @param deleter - データソースからメタデータを削除する関数
    */
   protected async _delete(
     id: string,
@@ -128,20 +134,20 @@ export abstract class BaseMetadataRepository<
   }
 
   /**
-   * メタデータのみからドメインエンティティを再構成します。
+   * 生のメタデータからドメインエンティティ/サマリーを再構築します。
    *
-   * @param metadata DataSource から取得された生のメタデータ
-   * @returns 再構成されたドメインエンティティ
+   * @param metadata - データソースから取得した生のメタデータ
+   * @returns 再構築されたドメインオブジェクト
    */
-  protected abstract reconstitute(metadata: TMetadata): TEntity;
+  protected abstract reconstituteMetadata(metadata: TMetadataRow): TBase;
 
   /**
-   * ドメインエンティティを永続化層のデータ構造にマッピング（変換）します。
+   * ドメインエンティティ/サマリーを永続化形式にマッピングします。
    *
-   * @param entity ドメインエンティティ
-   * @returns 永続化層のデータ構造（メタデータ行）
+   * @param entity - ドメインオブジェクト
+   * @returns 永続化用のデータ形式
    */
-  protected abstract toPersistence(entity: TEntity): TMetadata;
+  protected abstract toPersistenceMetadata(entity: TBase): TMetadataRow;
 }
 
 // -------------------------------------------------------------------------
@@ -149,14 +155,21 @@ export abstract class BaseMetadataRepository<
 // -------------------------------------------------------------------------
 
 /**
- * メタデータ（DB等）とペイロード（ストレージ等）を組み合わせてドメインエンティティを再構成する基底リポジトリクラス。
+ * メタデータとペイロード（オブジェクトストレージ）の両方を扱うリポジトリの基底クラス。
+ *
+ * @template TAggregate 完全なドメインエンティティ（アグリゲートルート）
+ * @template TBase ドメインの基本/サマリー型（メタデータのみから再構築される型）
+ * @template TMetadataRow 生のメタデータ行の型
+ * @template TMetadataDataSource メタデータのデータソース型
+ * @template TCriteria 検索条件の型
  */
 export abstract class BasePayloadRepository<
-  TEntity,
-  TMetadata,
+  TAggregate extends TBase,
+  TBase,
+  TMetadataRow,
   TMetadataDataSource,
   TCriteria extends { pagination: { limit: number; offset: number } },
-> extends BaseMetadataRepository<TEntity, TMetadata, TMetadataDataSource, TCriteria> {
+> extends BaseMetadataRepository<TBase, TMetadataRow, TMetadataDataSource, TCriteria> {
   constructor(
     metadataDS: TMetadataDataSource,
     protected readonly payloadDS: IObjectStorage,
@@ -166,37 +179,37 @@ export abstract class BasePayloadRepository<
   }
 
   /**
-   * メタデータとペイロード（本文等）の両方を個別のデータソースから取得・統合し、
-   * 一つの完全なドメインエンティティとして再構成します。
+   * メタデータとペイロードをマージして単一のアグリゲートを再構築します。
    *
-   * 【処理フロー】
-   * 1. メタデータ取得: 基底クラスの仕組みを用いてメタデータを取得（不在時は早期リターン）
-   * 2. ペイロード取得: メタデータから特定したパスを用いてストレージから実体データを取得
-   * 3. 統合再構成: 両者を組み合わせ、完全な状態のドメインエンティティを生成して返却
+   * 処理フロー:
+   * 1. メタデータ (MetadataRow) を取得
+   * 2. メタデータから基本サマリー (TBase) を再構築
+   * 3. メタデータからストレージキーを解決
+   * 4. ストレージキーが存在する場合、オブジェクトストレージからペイロード (MDX 等) を取得
+   * 5. サマリーとペイロードを結合して完全なアグリゲート (TAggregate) を構築して返す
    *
-   * @param identity 探索対象を特定するための識別子（IDやスラグなど、主にログ出力に使用）
-   * @param fetcher DataSource を用いた具体的な探索ロジック
-   * @returns ペイロードと統合された完全なドメインエンティティ。見つからない場合は null を返却します。
+   * @param identity - 取得対象の識別子
+   * @param fetcher - メタデータを取得する関数
+   * @returns 再構築されたアグリゲート、または存在しない場合は null
    */
   protected override async _findOne(
     identity: string,
-    fetcher: (ds: TMetadataDataSource) => Promise<TMetadata | undefined>,
-  ): Promise<TEntity | null> {
-    const metadata = await fetcher(this.metadataDS);
-    // メタデータが見つからない場合は警告をログ出力して null を返します
-    if (!metadata) {
+    fetcher: (ds: TMetadataDataSource) => Promise<TMetadataRow | undefined>,
+  ): Promise<TAggregate | null> {
+    const metadataRow = await fetcher(this.metadataDS);
+    if (!metadataRow) {
       this.logger.warn(`Metadata not found for identity: ${identity}`, { identity });
       return null;
     }
-    let payload: string | null = null;
-    const storageKey = this.resolveStorageKey(metadata);
 
-    // ストレージキーが解決できた場合のみ、ペイロード（本文等）を取得します
+    const base = this.reconstituteMetadata(metadataRow);
+    let payload: string | null = null;
+    const storageKey = this.resolveStorageKey(base);
+
     if (storageKey) {
       try {
         payload = await this.payloadDS.get(storageKey);
       } catch (err) {
-        // ペイロードが見つからない（404）場合は警告ログに留め、処理は継続します
         if (err instanceof ObjectNotFoundError) {
           this.logger.warn(`Payload not found for key: ${storageKey}`, { identity });
         } else {
@@ -206,108 +219,167 @@ export abstract class BasePayloadRepository<
           throw err;
         }
       }
+    } else {
+      this.logger.warn(
+        `No storage key resolved for identity: ${identity}. Skipping payload fetch.`,
+      );
     }
 
-    this.logger.debug(`Metadata and payload found for identity: ${identity}`, { identity });
+    this.logger.debug(`Metadata and payload processed for identity: ${identity}`, { identity });
 
-    return this.reconstituteWithPayload(metadata, payload);
+    return this.reconstituteAggregate(base, payload);
   }
 
   /**
    * メタデータとペイロードの両方を保存します。
+   * 通常、フルアグリゲートを保存する際に使用します。
    *
-   * @param entity 保存対象のドメインエンティティ
-   * @param saver DataSource を用いた具体的な保存ロジック
+   * 処理フロー:
+   * 1. エンティティからメタデータ (row) とペイロードを準備
+   * 2. ペイロード保存 (R2) (**DB保存より先に実行**)
+   *    - 失敗時は例外をスローし、DB保存を行わない
+   * 3. メタデータ保存 (DB)
+   *    - 失敗時は R2 からの**削除（ロールバック）**を試みる (Best-Effort)
+   *
+   * @param entity - 保存対象のアグリゲート
+   * @param saver - メタデータを保存する関数
    */
   protected override async _save(
-    entity: TEntity,
-    saver: (ds: TMetadataDataSource, row: TMetadata) => Promise<void>,
+    entity: TAggregate,
+    saver: (ds: TMetadataDataSource, row: TMetadataRow) => Promise<void>,
   ): Promise<void> {
-    // 1. メタデータの保存 (BaseMetadataRepository._save を利用)
-    await super._save(entity, saver);
+    // 1. Prepare Data
+    const row = this.toPersistenceMetadata(entity);
+    const storageKey = this.resolveStorageKey(entity);
+    const payload = this.toPersistencePayload(entity);
 
-    // 2. ペイロードの保存
-    const metadata = this.toPersistence(entity);
-    const storageKey = this.resolveStorageKey(metadata);
-    const payload = this.extractPayload(entity);
-
-    // ストレージ上の保存先キーとペイロードの中身の両方が存在する場合にのみ、パブリッシュ（保存）を実行します
+    // 2. Save Payload FIRST (Storage First Strategy)
     if (storageKey && payload !== null) {
+      // If this fails, we just throw. DB is not touched yet.
       await this.persistPayload(storageKey, payload);
       this.logger.info(`Payload saved successfully: ${storageKey}`, { storageKey });
+    } else if (payload !== null) {
+      this.logger.warn(
+        `Payload exists but storage key could not be resolved. Skipping payload persistence.`,
+        { identity: String(entity) },
+      );
+    }
+
+    // 3. Save Metadata (DB)
+    try {
+      await saver(this.metadataDS, row);
+    } catch (dbErr) {
+      // DB Save Failed. We must try to ROLLBACK the payload (Best-Effort).
+      if (storageKey && payload !== null) {
+        this.logger.warn(`DB save failed. Attempting to rollback payload (delete): ${storageKey}`, {
+          storageKey,
+        });
+        try {
+          await this.deletePayload(storageKey);
+          this.logger.info(`Payload rollback successful: ${storageKey}`, { storageKey });
+        } catch (rollbackErr) {
+          // Double Fault. Log as WARN and ignore.
+          this.logger.warn(`Payload rollback failed. Orphaned file may exist: ${storageKey}`, {
+            error: rollbackErr,
+            storageKey,
+          });
+        }
+      }
+      throw dbErr; // Re-throw the original DB error
     }
   }
 
   /**
    * メタデータとペイロードの両方を削除します。
    *
-   * @param id 削除対象の識別子（ID）
-   * @param deleter DataSource を用いた具体的な削除ロジック
-   * @param metadataFetcher サイドエフェクト（ストレージ削除）のためにメタデータを取得するロジック
+   * 処理フロー:
+   * 1. (オプション) メタデータをフェッチしてストレージキーを特定
+   * 2. ストレージキーが存在する場合、オブジェクトストレージからペイロードを削除 (**DB削除より先に実行**)
+   *    - 削除に失敗した場合、エラーをスローして DB 削除を中断（不整合防止）
+   * 3. deleter を通じてメタデータを削除
+   *
+   * @param id - 削除対象の ID
+   * @param deleter - メタデータを削除する関数
+   * @param metadataFetcher - (オプション) ペイロードを特定するためにメタデータを取得する関数
    */
   protected override async _delete(
     id: string,
     deleter: (ds: TMetadataDataSource) => Promise<void>,
-    metadataFetcher?: (ds: TMetadataDataSource) => Promise<TMetadata | undefined>,
+    metadataFetcher?: (ds: TMetadataDataSource) => Promise<TMetadataRow | undefined>,
   ): Promise<void> {
-    // 削除対象のメタデータを特定し、それに関連付けられたペイロードも削除します
+    // 1. Resolve Storage Key & Delete Payload FIRST (to ensure consistency)
     if (metadataFetcher) {
-      const metadata = await metadataFetcher(this.metadataDS);
-      if (metadata) {
-        const storageKey = this.resolveStorageKey(metadata);
-        // ストレージキーが特定できた場合のみペイロードの削除を試みます
+      const metadataRow = await metadataFetcher(this.metadataDS);
+      if (metadataRow) {
+        const base = this.reconstituteMetadata(metadataRow);
+        const storageKey = this.resolveStorageKey(base);
         if (storageKey) {
-          await this.deletePayload(storageKey);
-          this.logger.info(`Payload deleted successfully: ${storageKey}`, { storageKey });
+          try {
+            await this.deletePayload(storageKey);
+            this.logger.info(`Payload deleted successfully: ${storageKey}`, { storageKey });
+          } catch (err) {
+            // If payload deletion fails (e.g., network error), we MUST abort to prevent inconsistency.
+            // Exception: ObjectNotFoundError (already deleted) is fine.
+            if (err instanceof ObjectNotFoundError) {
+              this.logger.warn(`Payload not found (already deleted?): ${storageKey}`, {
+                storageKey,
+              });
+            } else {
+              this.logger.error(
+                `Failed to delete payload. Aborting DB deletion to maintain consistency. Key: ${storageKey}`,
+                err as Error,
+                { id, storageKey },
+              );
+              throw err;
+            }
+          }
+        } else {
+          this.logger.warn(`No storage key resolved for ID: ${id}. Skipping payload deletion.`);
         }
       }
     }
 
-    // メタデータの削除 (BaseMetadataRepository._delete を利用)
+    // 2. Delete Metadata (Only if payload deletion succeeded)
     await super._delete(id, deleter);
   }
 
   /**
-   * メタデータに基づいてペイロードのストレージキー（パス）を解決します。
+   * メタデータ行からストレージキーを解決します。
    *
-   * @param metadata DataSource から取得されたメタデータ
-   * @returns ストレージキー（パス）。ペイロードが存在しない場合は null。
+   * @param metadata - 保存または取得したメタデータ行
+   * @returns オブジェクトストレージのキー、解決できない場合は null
    */
-  protected abstract resolveStorageKey(metadata: TMetadata): string | null;
+  protected abstract resolveStorageKey(entity: TBase): string | null;
 
   /**
-   * メタデータとペイロードを組み合わせてドメインエンティティとして再構成します。
+   * ベースサマリーとオプションのペイロードから完全なアグリゲートを再構築します。
    *
-   * @param metadata メタデータ
-   * @param payload ストレージから取得されたペイロードのコンテンツ（存在しない場合はnull）
-   * @returns 統合・再構成されたドメインエンティティ
+   * @param base - メタデータから再構築された基本オブジェクト/サマリー
+   * @param payload - ストレージから取得したペイロード文字列
+   * @returns 完全なアグリゲートオブジェクト
    */
-  protected abstract reconstituteWithPayload(metadata: TMetadata, payload: string | null): TEntity;
+  protected abstract reconstituteAggregate(base: TBase, payload: string | null): TAggregate;
 
   /**
-   * エンティティからペイロード（本文等）を抽出します。
+   * アグリゲートから永続化用のペイロード（MDX等）を抽出・変換します。
    *
-   * @param entity ドメインエンティティ
-   * @returns 抽出されたペイロードの文字列。存在しない場合は null。
+   * @param entity - アグリゲートオブジェクト
+   * @returns 永続化するペイロード文字列、保存対象がない場合は null
    */
-  protected abstract extractPayload(entity: TEntity): string | null;
+  protected abstract toPersistencePayload(entity: TAggregate): string | null;
 
   /**
-   * ペイロードをストレージに永続化します。
+   * ペイロード文字列を永続化します。
    *
-   * @param key ストレージキー
-   * @param content 保存するコンテンツ
+   * @param key - ストレージキー
+   * @param content - 保存するペイロード内容
    */
   protected abstract persistPayload(key: string, content: string): Promise<void>;
 
   /**
-   * ペイロードをストレージから削除します。
+   * ペイロードを削除します。
    *
-   * @param key ストレージキー
+   * @param key - 削除対象のストレージキー
    */
   protected abstract deletePayload(key: string): Promise<void>;
-
-  protected reconstitute(metadata: TMetadata): TEntity {
-    return this.reconstituteWithPayload(metadata, null);
-  }
 }

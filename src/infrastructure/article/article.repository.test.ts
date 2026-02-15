@@ -86,8 +86,8 @@ describe('ArticleRepositoryImpl', () => {
       mockMetadataDS as unknown as IArticleMetadataDataSource,
       mockPayloadDS as unknown as IObjectStorage,
       pathStrategy,
-      (row) => TursoArticleMapper.toDomain(row.articles, row.article_translations),
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
+      (row) => TursoArticleMapper.toAggregate(row.articles, row.article_translations),
       TursoArticleMapper.toPersistence,
       mockLogger as unknown as Logger,
     );

@@ -1,4 +1,4 @@
-import { Article } from '@/domain/article/article';
+import { Article, ArticleSummary } from '@/domain/article/article';
 
 /**
  * 記事コンテンツの論理ストレージパスを解決するための戦略クラス。
@@ -12,7 +12,7 @@ export class ArticlePathStrategy {
    * @param article メタデータと制御情報を含む記事ドメインオブジェクト
    * @returns ストレージ用の論理パスキー
    */
-  resolvePath(article: Article): string {
+  resolvePath(article: Article | ArticleSummary): string {
     const { category, slug } = article.metadata;
     const { lang } = article.control;
 
