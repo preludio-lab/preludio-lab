@@ -43,11 +43,20 @@ export class ArticleContentMapper {
     while ((match = headingRegex.exec(mdx)) !== null) {
       const level = match[1].length;
       const heading = match[2].trim();
-      // ID生成ロジック (簡易版: 特殊文字削除と小文字化)
-      const id = heading
+
+      // ID生成ロジック (日本語などの多言語対応)
+      let id = heading
         .toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
+        .trim()
+        .replace(/\s+/g, '-') // スペースをハイフンに
+        .replace(/[^\p{L}\p{N}-]/gu, '') // Unicode文字・数字・ハイフン以外を削除
+        .replace(/-+/g, '-') // 連続するハイフンをまとめる
+        .replace(/^-+|-+$/g, ''); // 前後のハイフンを削除
+
+      // 全て削られた場合（記号のみの見出しなど）のフォールバック
+      if (!id) {
+        id = `section-${sections.length + 1}`;
+      }
 
       sections.push({
         id,

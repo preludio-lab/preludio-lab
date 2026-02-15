@@ -25,6 +25,24 @@ describe('ArticleContentMapper', () => {
       expect(result.structure[2]).toEqual({ id: 'deep-c', heading: 'Deep C', level: 4 });
     });
 
+    it('should handle Japanese headings and provide valid IDs', () => {
+      const rawMdx = '## 楽曲の概要\n### 音楽的な特徴！\n#### 1. イントロダクション';
+      const result = ArticleContentMapper.toDomain(rawMdx);
+
+      expect(result.structure).toHaveLength(3);
+      expect(result.structure[0].id).toBe('楽曲の概要');
+      expect(result.structure[1].id).toBe('音楽的な特徴');
+      expect(result.structure[2].id).toBe('1-イントロダクション');
+    });
+
+    it('should use fallback ID when heading is composed of only special characters', () => {
+      const rawMdx = '## ！！！';
+      const result = ArticleContentMapper.toDomain(rawMdx);
+
+      expect(result.structure).toHaveLength(1);
+      expect(result.structure[0].id).toBe('section-1');
+    });
+
     it('should handle null raw MDX', () => {
       const result = ArticleContentMapper.toDomain(null);
 
