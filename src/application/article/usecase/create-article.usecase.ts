@@ -2,7 +2,7 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 import { Article, ArticleId } from '@/domain/article/article';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
-import { ArticleStatus } from '@/domain/article/article.control';
+import { ArticleStatus, ArticleMasterId } from '@/domain/article/article.control';
 
 import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
@@ -43,7 +43,7 @@ export class CreateArticleUseCase {
     const article = new Article({
       control: {
         id: generateId<'Article'>(),
-        masterId: generateId<'Article'>(),
+        masterId: generateId<'ArticleMaster'>(),
         lang: command.lang as AppLocale,
         status: ArticleStatus.DRAFT,
         createdAt: new Date(),

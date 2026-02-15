@@ -1,6 +1,11 @@
 import { AppLocale } from '@/domain/i18n/locale';
-import { Article, ArticleId, ArticleSummary } from '@/domain/article/article';
-import { ArticleStatus, ArticleControl } from '@/domain/article/article.control';
+import { Article, ArticleSummary } from '@/domain/article/article';
+import {
+  ArticleStatus,
+  ArticleControl,
+  ArticleId,
+  ArticleMasterId,
+} from '@/domain/article/article.control';
 import {
   ArticleCategory,
   ArticleMetadata,
@@ -57,7 +62,7 @@ export class TursoArticleMapper {
       // 言語版ごとに固有のID (Translation UUID) をエンティティの主識別子とする
       id: translationRow.id as ArticleId,
       // 共通のマスターID (Article UUID) を保持
-      masterId: articleRow.id as ArticleId,
+      masterId: articleRow.id as ArticleMasterId,
       lang: lang,
       status: status,
       createdAt: new Date(articleRow.createdAt),

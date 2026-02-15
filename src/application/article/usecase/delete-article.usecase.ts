@@ -1,3 +1,4 @@
+import { ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleRepository } from '@/domain/article/article.repository';
 
 /**
@@ -7,7 +8,7 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 export class DeleteArticleUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(id: ArticleMasterId): Promise<void> {
     await this.articleRepository.deleteMaster(id);
   }
 }

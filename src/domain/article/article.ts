@@ -1,11 +1,11 @@
 import { ArticleMetadata } from './article.metadata';
-import { ArticleStatus, ArticleControl, ArticleId } from './article.control';
+import { ArticleStatus, ArticleControl, ArticleId, ArticleMasterId } from './article.control';
 import { ArticleContent, ContentSection, ContentStructure } from './article.content';
 import { ArticleEngagement, INITIAL_ENGAGEMENT_METRICS } from './article.engagement';
 import { ArticleContext, SeriesAssignment, RelatedArticle } from './article.context';
 
 export type { ContentSection, ContentStructure, SeriesAssignment, RelatedArticle };
-export type { ArticleControl, ArticleEngagement, ArticleContext, ArticleId };
+export type { ArticleControl, ArticleEngagement, ArticleContext, ArticleId, ArticleMasterId };
 export { ArticleContent };
 
 /**

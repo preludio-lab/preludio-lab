@@ -1,3 +1,4 @@
+import { ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { Logger } from '@/shared/logging/logger';
 
@@ -11,7 +12,7 @@ export class IncrementViewCountUseCase {
     private readonly logger: Logger,
   ) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(id: ArticleMasterId): Promise<void> {
     // In FS Implementation:
     // We do not persist view counts to MDX files to avoid frequent IO writes.
     // This serves as a placeholder for Future DB implementation.

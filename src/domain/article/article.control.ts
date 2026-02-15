@@ -3,9 +3,14 @@ import { AppLocale } from '../i18n/locale';
 import { Id } from '@/shared/id';
 
 /**
- * Article Entity ID
+ * Article Entity ID (言語版固有のID)
  */
 export type ArticleId = Id<'Article'>;
+
+/**
+ * Article Master ID (全言語版で共通のマスターID)
+ */
+export type ArticleMasterId = Id<'ArticleMaster'>;
 
 /**
  * Article Status
@@ -46,5 +51,5 @@ export const ArticleControlSchema = z.object({
 
 export type ArticleControl = Omit<z.infer<typeof ArticleControlSchema>, 'id' | 'masterId'> & {
   id: ArticleId;
-  masterId: ArticleId;
+  masterId: ArticleMasterId;
 };

@@ -1,5 +1,5 @@
 import { Article, ArticleSummary } from './article';
-import { ArticleStatus } from './article.control';
+import { ArticleStatus, ArticleMasterId } from './article.control';
 import { ArticleCategory } from './article.metadata';
 import { ArticleSortOption, SortDirection } from './article.constants';
 import { PagedResponse } from '../shared/pagination';
@@ -73,7 +73,7 @@ export interface ArticleRepository {
   /**
    * IDを指定して記事（フル）を取得します
    */
-  findById(id: string, lang: string): Promise<Article | null>;
+  findById(id: ArticleMasterId, lang: string): Promise<Article | null>;
 
   /**
    * スラグを指定して記事サマリーを取得します
@@ -87,7 +87,7 @@ export interface ArticleRepository {
   /**
    * IDを指定して記事サマリーを取得します
    */
-  findSummaryById(id: string, lang: string): Promise<ArticleSummary | null>;
+  findSummaryById(id: ArticleMasterId, lang: string): Promise<ArticleSummary | null>;
 
   /**
    * 条件に基づいて記事の一覧（サマリー）を検索します
@@ -102,10 +102,10 @@ export interface ArticleRepository {
   /**
    * 特定の言語版の記事を削除します
    */
-  deleteById(id: string, lang: string): Promise<void>;
+  deleteById(id: ArticleMasterId, lang: string): Promise<void>;
 
   /**
    * 記事そのもの（全言語版を含む）を完全に削除します
    */
-  deleteMaster(id: string): Promise<void>;
+  deleteMaster(id: ArticleMasterId): Promise<void>;
 }

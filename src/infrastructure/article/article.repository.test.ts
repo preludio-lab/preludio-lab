@@ -4,6 +4,7 @@ import {
   IArticleMetadataDataSource,
   ArticleMetadataRow,
 } from './metadata/article.metadata.ds.interface';
+import { ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
@@ -13,7 +14,7 @@ import { TursoArticleMapper } from './metadata/turso.article.mapper';
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
 
-  const MASTER_UUID = '018f1a2b-3c4d-7000-8000-deadbeef0001';
+  const MASTER_UUID = '018f1a2b-3c4d-7000-8000-deadbeef0001' as ArticleMasterId;
   const EN_TRANS_UUID = '018f1a2b-3c4d-7001-8000-deadbeef0002';
   const JA_TRANS_UUID = '018f1a2b-3c4d-7002-8000-deadbeef0003';
 

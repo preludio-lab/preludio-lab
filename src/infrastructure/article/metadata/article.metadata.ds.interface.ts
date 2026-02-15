@@ -1,9 +1,9 @@
 import { ArticleCategory } from '@/domain/article/article.metadata';
-import { ArticleStatus } from '@/domain/article/article.control';
+import { ArticleStatus, ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 export interface ArticleRow {
-  id: string;
+  id: string; // Master UUID
   workId: string | null;
   slug: string;
   category: ArticleCategory;
@@ -15,8 +15,8 @@ export interface ArticleRow {
 }
 
 export interface TranslationRow {
-  id: string;
-  articleId: string;
+  id: string; // Translation UUID
+  articleId: string; // Master UUID
   lang: string;
   status: ArticleStatus;
   title: string;
@@ -54,7 +54,7 @@ export interface IArticleMetadataDataSource {
   /**
    * IDと言語コードを指定して記事のメタデータを取得します。
    */
-  findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined>;
+  findById(id: ArticleMasterId, lang: string): Promise<ArticleMetadataRow | undefined>;
 
   /**
    * スラッグと言語コードを指定して記事のメタデータを取得します。
@@ -81,17 +81,17 @@ export interface IArticleMetadataDataSource {
   /**
    * 特定の言語の翻訳レコードを削除します。
    */
-  deleteTranslation(id: string, lang: string): Promise<void>;
+  deleteTranslation(id: ArticleMasterId, lang: string): Promise<void>;
 
   /**
    * 指定された ID に紐づく翻訳レコードの総数を取得します。
    */
-  countTranslations(id: string): Promise<number>;
+  countTranslations(id: ArticleMasterId): Promise<number>;
 
   /**
    * 指定された ID に紐づく全ての翻訳メタデータを取得します（全言語）。
    */
-  findAllTranslations(id: string): Promise<ArticleMetadataRow[]>;
+  findAllTranslations(id: ArticleMasterId): Promise<ArticleMetadataRow[]>;
 
-  deleteAll(id: string): Promise<void>;
+  deleteAll(id: ArticleMasterId): Promise<void>;
 }

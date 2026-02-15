@@ -1,6 +1,7 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { Article, ArticleContent, ArticleSummary } from '@/domain/article/article';
+import { ArticleMasterId } from '@/domain/article/article.control';
 import { PagedResponse } from '@/domain/shared/pagination';
 import {
   IArticleMetadataDataSource,
@@ -58,7 +59,7 @@ export class ArticleRepositoryImpl
    * @param lang - 言語コード
    * @returns 再構築された Article または null
    */
-  async findById(id: string, lang: string): Promise<Article | null> {
+  async findById(id: ArticleMasterId, lang: string): Promise<Article | null> {
     try {
       return await this._findOne(id, (ds) => ds.findById(id, lang));
     } catch (err) {
@@ -94,7 +95,7 @@ export class ArticleRepositoryImpl
    * @param lang - 言語コード
    * @returns 再構築された ArticleSummary または null
    */
-  async findSummaryById(id: string, lang: string): Promise<ArticleSummary | null> {
+  async findSummaryById(id: ArticleMasterId, lang: string): Promise<ArticleSummary | null> {
     try {
       const row = await this.metadataDS.findById(id, lang);
       return row ? this.reconstituteMetadata(row) : null;
@@ -188,7 +189,7 @@ export class ArticleRepositoryImpl
    * @param id - 記事ID
    * @param lang - 削除対象の言語コード
    */
-  async deleteById(id: string, lang: string): Promise<void> {
+  async deleteById(id: ArticleMasterId, lang: string): Promise<void> {
     try {
       await this._delete(
         id,
@@ -219,7 +220,7 @@ export class ArticleRepositoryImpl
    *
    * @param id - 記事ID
    */
-  async deleteMaster(id: string): Promise<void> {
+  async deleteMaster(id: ArticleMasterId): Promise<void> {
     try {
       // 1. 全言語の翻訳メタデータを取得してストレージキーを特定
       const translations = await this.metadataDS.findAllTranslations(id);
