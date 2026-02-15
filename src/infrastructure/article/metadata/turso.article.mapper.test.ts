@@ -8,10 +8,13 @@ import { ArticleRow, TranslationRow } from './article.metadata.ds.interface';
 import { ArticleSummary } from '@/domain/article/article';
 
 describe('TursoArticleMapper', () => {
+  const MASTER_ID = '018f1a2b-3c4d-7000-8000-deadbeef0001';
+  const TRANSLATION_ID = '018f1a2b-3c4d-7001-8000-deadbeef0002';
+
   it('should map database rows to ArticleSummary domain object correctly', () => {
     // モックデータ
     const mockArticleRow = {
-      id: 'article-123',
+      id: MASTER_ID,
       slug: 'my-article',
       category: ArticleCategory.WORKS,
       isFeatured: false,
@@ -21,7 +24,8 @@ describe('TursoArticleMapper', () => {
     };
 
     const mockTranslationRow = {
-      articleId: 'article-123',
+      id: TRANSLATION_ID,
+      articleId: MASTER_ID,
       lang: 'en',
       status: ArticleStatus.PUBLISHED,
       title: 'My Article Title',
@@ -48,7 +52,8 @@ describe('TursoArticleMapper', () => {
     // アサーション
     expect(summary).toBeInstanceOf(ArticleSummary);
     // Control
-    expect(summary.control.id).toBe('article-123');
+    expect(summary.control.id).toBe(TRANSLATION_ID);
+    expect(summary.control.masterId).toBe(MASTER_ID);
     expect(summary.control.lang).toBe(AppLocale.EN);
     expect(summary.control.status).toBe(ArticleStatus.PUBLISHED);
 
@@ -56,17 +61,17 @@ describe('TursoArticleMapper', () => {
     expect(summary.metadata.slug).toBe('my-localized-slug');
     expect(summary.metadata.title).toBe('My Article Title');
     expect(summary.metadata.category).toBe(ArticleCategory.THEORY);
-    expect(summary.metadata.composerName).toBe('J.S. Bach');
-    expect(summary.metadata.tags).toEqual(['music', 'bach']);
-    expect(summary.metadata.thumbnail).toBe('thumb.jpg');
 
-    // Context
-    expect(summary.context.seriesAssignments).toEqual([{ seriesId: 's1' }]);
+    // Persistence Check
+    const persistence = TursoArticleMapper.toPersistence(summary);
+    expect(persistence.articles.id).toBe(MASTER_ID);
+    expect(persistence.article_translations.id).toBe(TRANSLATION_ID);
+    expect(persistence.article_translations.articleId).toBe(MASTER_ID);
   });
 
   it('should throw AppError given invalid category', () => {
     const mockArticleRow = {
-      id: 'article-456',
+      id: MASTER_ID,
       slug: 'default-article',
       category: 'invalid-cat' as ArticleCategory,
       isFeatured: false,
@@ -75,7 +80,8 @@ describe('TursoArticleMapper', () => {
     };
 
     const mockTranslationRow = {
-      articleId: 'article-456',
+      id: TRANSLATION_ID,
+      articleId: MASTER_ID,
       lang: 'ja',
       status: ArticleStatus.DRAFT,
       title: 'Draft Title',

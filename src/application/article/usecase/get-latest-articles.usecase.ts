@@ -42,6 +42,7 @@ export class GetLatestArticlesUseCase {
   private toDto(summary: ArticleSummary): ArticleCardDto {
     return {
       id: summary.control.id,
+      masterId: summary.control.masterId,
       lang: summary.control.lang,
       slug: summary.metadata.slug,
       category: summary.metadata.category,

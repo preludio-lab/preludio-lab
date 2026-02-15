@@ -45,6 +45,9 @@ export class ArticleSummary {
   get id() {
     return this.control.id;
   }
+  get masterId() {
+    return this.control.masterId;
+  }
   get lang() {
     return this.control.lang;
   }

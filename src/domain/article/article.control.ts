@@ -30,8 +30,10 @@ export type ArticleStatus = (typeof ArticleStatus)[keyof typeof ArticleStatus];
  * glossary: ArticleControl に対応
  */
 export const ArticleControlSchema = z.object({
-  /** 記事のユニークID (システム内部用) (UUID v7推奨) */
+  /** 記事のユニークID (特定の言語版を一意に識別) (UUID v7) */
   id: z.string().uuid(),
+  /** マスター記事ID (全言語版で共有されるアイデンティティ) (UUID v7推奨) */
+  masterId: z.string().uuid(),
   /** 言語コード */
   lang: z.string().min(1).max(10) as z.ZodType<AppLocale>, // Assuming AppLocale is a string-based type
   /** 公開・管理状態 */
@@ -42,6 +44,7 @@ export const ArticleControlSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
-export type ArticleControl = Omit<z.infer<typeof ArticleControlSchema>, 'id'> & {
+export type ArticleControl = Omit<z.infer<typeof ArticleControlSchema>, 'id' | 'masterId'> & {
   id: ArticleId;
+  masterId: ArticleId;
 };

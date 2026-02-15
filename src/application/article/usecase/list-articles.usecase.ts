@@ -24,6 +24,7 @@ export class ListArticlesUseCase {
     return {
       // Control Info (flattened)
       id: summary.control.id,
+      masterId: summary.control.masterId,
       lang: summary.control.lang,
       status: summary.control.status,
 

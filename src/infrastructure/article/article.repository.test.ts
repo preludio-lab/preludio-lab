@@ -8,11 +8,14 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage } from '../storage/storage.interface';
-
 import { TursoArticleMapper } from './metadata/turso.article.mapper';
 
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
+
+  const MASTER_UUID = '018f1a2b-3c4d-7000-8000-deadbeef0001';
+  const EN_TRANS_UUID = '018f1a2b-3c4d-7001-8000-deadbeef0002';
+  const JA_TRANS_UUID = '018f1a2b-3c4d-7002-8000-deadbeef0003';
 
   const mockMetadataDS = {
     findBySlug: vi.fn(),
@@ -38,10 +41,10 @@ describe('ArticleRepositoryImpl', () => {
     error: vi.fn(),
   };
 
-  const createMockRow = (id: string, slug: string, lang: AppLocale) => {
+  const createMockRow = (masterId: string, transId: string, slug: string, lang: AppLocale) => {
     return {
       articles: {
-        id,
+        id: masterId,
         slug,
         category: ArticleCategory.WORKS,
         isFeatured: false,
@@ -52,8 +55,8 @@ describe('ArticleRepositoryImpl', () => {
         workId: null,
       },
       article_translations: {
-        id: `${id}-${lang}`,
-        articleId: id,
+        id: transId,
+        articleId: masterId,
         lang,
         status: 'published',
         title: 'Title',
@@ -91,44 +94,46 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
       mockPayloadDS.get.mockResolvedValue('# Hello');
 
-      const result = await repo.findById('1', 'en');
+      const result = await repo.findById(MASTER_UUID, 'en');
 
       expect(result).not.toBeNull();
-      expect(result?.control.id).toBe('1');
+      expect(result?.control.id).toBe(EN_TRANS_UUID); // ID should be translation UUID
+      expect(result?.control.masterId).toBe(MASTER_UUID);
       expect(result?.content.body).toBe('# Hello');
-      expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
+      expect(mockMetadataDS.findById).toHaveBeenCalledWith(MASTER_UUID, 'en');
       expect(mockPayloadDS.get).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
 
     it('should return null if metadata not found', async () => {
       mockMetadataDS.findById.mockResolvedValue(null);
 
-      const result = await repo.findById('999', 'en');
+      const result = await repo.findById(MASTER_UUID, 'en');
       expect(result).toBeNull();
     });
   });
 
   describe('findSummaryById', () => {
     it('should return ArticleSummary without content fetch', async () => {
-      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
 
-      const result = await repo.findSummaryById('1', 'en');
+      const result = await repo.findSummaryById(MASTER_UUID, 'en');
 
       expect(result).not.toBeNull();
-      expect(result?.id).toBe('1');
-      expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
+      expect(result?.id).toBe(EN_TRANS_UUID);
+      expect(result?.masterId).toBe(MASTER_UUID);
+      expect(mockMetadataDS.findById).toHaveBeenCalledWith(MASTER_UUID, 'en');
       expect(mockPayloadDS.get).not.toHaveBeenCalled();
     });
   });
 
   describe('search', () => {
     it('should return article summaries', async () => {
-      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findMany.mockResolvedValue({
         rows: [mockRow],
         totalCount: 1,
@@ -141,6 +146,8 @@ describe('ArticleRepositoryImpl', () => {
 
       expect(result.items).toHaveLength(1);
       expect(result.totalCount).toBe(1);
+      expect(result.items[0].id).toBe(EN_TRANS_UUID);
+      expect(result.items[0].masterId).toBe(MASTER_UUID);
       expect(mockMetadataDS.findMany).toHaveBeenCalled();
       expect(mockPayloadDS.get).not.toHaveBeenCalled();
     });
@@ -148,39 +155,39 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('deleteById', () => {
     it('should delete translation and also master if it was the last one', async () => {
-      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
       mockMetadataDS.countTranslations.mockResolvedValue(0); // 削除後に0件
 
-      await repo.deleteById('1', 'en');
+      await repo.deleteById(MASTER_UUID, 'en');
 
-      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith('1', 'en');
-      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith('1');
+      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith(MASTER_UUID, 'en');
+      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith(MASTER_UUID);
       expect(mockPayloadDS.delete).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
 
     it('should not delete master if other translations exist', async () => {
-      const mockRow = createMockRow('1', 'test-slug', 'en');
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
       mockMetadataDS.countTranslations.mockResolvedValue(1); // 削除後にまだ1件ある
 
-      await repo.deleteById('1', 'en');
+      await repo.deleteById(MASTER_UUID, 'en');
 
-      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith('1', 'en');
+      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith(MASTER_UUID, 'en');
       expect(mockMetadataDS.deleteAll).not.toHaveBeenCalled();
     });
   });
 
   describe('deleteMaster', () => {
     it('should delete all translations and their storage files', async () => {
-      const mockRowEn = createMockRow('1', 'slug', 'en');
-      const mockRowJa = createMockRow('1', 'slug', 'ja');
+      const mockRowEn = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'slug', 'en');
+      const mockRowJa = createMockRow(MASTER_UUID, JA_TRANS_UUID, 'slug', 'ja');
       mockMetadataDS.findAllTranslations.mockResolvedValue([mockRowEn, mockRowJa]);
 
-      await repo.deleteMaster('1');
+      await repo.deleteMaster(MASTER_UUID);
 
       expect(mockPayloadDS.delete).toHaveBeenCalledTimes(2);
-      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith('1');
+      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith(MASTER_UUID);
     });
   });
 });

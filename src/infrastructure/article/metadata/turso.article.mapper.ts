@@ -54,7 +54,10 @@ export class TursoArticleMapper {
 
     // 3. 制御情報 (ArticleControl) の構築
     const control: ArticleControl = {
-      id: articleRow.id as ArticleId,
+      // 言語版ごとに固有のID (Translation UUID) をエンティティの主識別子とする
+      id: translationRow.id as ArticleId,
+      // 共通のマスターID (Article UUID) を保持
+      masterId: articleRow.id as ArticleId,
       lang: lang,
       status: status,
       createdAt: new Date(articleRow.createdAt),
@@ -113,9 +116,9 @@ export class TursoArticleMapper {
    * @returns 永続化用のデータ行セット
    */
   static toPersistence(article: Article | ArticleSummary): ArticleMetadataRow {
-    // 記事基本情報テーブル用のデータ
+    // 記事基本情報テーブル用のデータ (Master)
     const articles: ArticleRow = {
-      id: article.id,
+      id: article.masterId,
       workId: null, // 必要に応じて拡張（特定の楽曲解説記事など）
       slug: article.slug,
       category: article.category,
@@ -126,10 +129,10 @@ export class TursoArticleMapper {
       updatedAt: article.control.updatedAt.toISOString(),
     };
 
-    // 翻訳データテーブル用のデータ
+    // 翻訳データテーブル用のデータ (Translation)
     const article_translations: TranslationRow = {
-      id: `${article.id}_${article.lang}`, // 合成ID
-      articleId: article.id,
+      id: article.id,
+      articleId: article.masterId,
       lang: article.lang,
       status: article.status,
       title: article.title,

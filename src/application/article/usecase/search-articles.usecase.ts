@@ -31,6 +31,7 @@ export class SearchArticlesUseCase {
       article: {
         // Control Info
         id: summary.control.id,
+        masterId: summary.control.masterId,
         lang: summary.control.lang,
         status: summary.control.status,
 

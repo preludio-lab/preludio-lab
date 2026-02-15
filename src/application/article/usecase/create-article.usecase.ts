@@ -7,6 +7,7 @@ import { ArticleStatus } from '@/domain/article/article.control';
 import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
 import { ArticleContent } from '@/domain/article/article.content';
+import { generateId } from '@/shared/id';
 
 /**
  * CreateArticleUseCase
@@ -41,7 +42,8 @@ export class CreateArticleUseCase {
 
     const article = new Article({
       control: {
-        id: command.slug as ArticleId, // ID generation strategy (use slug for FS)
+        id: generateId<'Article'>(),
+        masterId: generateId<'Article'>(),
         lang: command.lang as AppLocale,
         status: ArticleStatus.DRAFT,
         createdAt: new Date(),
