@@ -39,7 +39,11 @@ export async function ArticleFeaturedFeature({ contents }: ArticleFeaturedFeatur
   return (
     <section className="w-full bg-gray-100 py-20">
       <div className="container mx-auto px-4">
-        <FadeInHeading className="mb-12 text-center text-3xl font-bold text-preludio-black">
+        <FadeInHeading
+          className="mb-12 text-center text-3xl font-bold text-preludio-black"
+          priority={true}
+          data-testid="featured-heading"
+        >
           {t('featured.title')}
         </FadeInHeading>
 

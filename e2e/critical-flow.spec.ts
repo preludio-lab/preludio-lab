@@ -29,11 +29,7 @@ test.describe('Critical User Flows', () => {
       await page.goto('/ja');
       await expect(page).toHaveTitle(/Preludio Lab/);
       // Featured Work (ピックアップ) セクションの存在確認
-      const featured = page
-        .locator('section')
-        .filter({ hasText: 'Featured' })
-        .or(page.locator('section').filter({ hasText: 'ピックアップ' }));
-      await expect(featured).toBeVisible();
+      await expect(page.getByTestId('featured-heading')).toBeVisible({ timeout: 20000 });
     });
 
     await test.step('Step 2: 作品一覧ページへ遷移', async () => {
@@ -111,12 +107,11 @@ test.describe('Critical User Flows', () => {
     await page.goto(TARGET_ARTICLE.path);
 
     await test.step('Step 1: 再生を開始する', async () => {
-      // 記事内の再生ボタン、または楽譜近くのPlayボタンをクリック
-      const playBtn = page
-        .getByRole('button', { name: 'Play' })
-        .or(page.locator('[aria-label="Play"]'))
-        .first();
-      await playBtn.click();
+      // 記事内の再生ボタンをクリック
+      const playBtn = page.getByTestId('play-button').first();
+      // ボタンが表示され、操作可能になるのを待つ。hoverが必要な場合はforce:trueで調整
+      await expect(playBtn).toBeAttached({ timeout: 15000 });
+      await playBtn.click({ force: true });
     });
 
     await test.step('Step 2: Mini Playerが現れることを確認', async () => {

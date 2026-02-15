@@ -40,7 +40,7 @@ export default defineConfig({
         command: 'npx next dev --webpack',
         timeout: 120000,
         url: 'http://localhost:3000',
-        reuseExistingServer: false, // Ensure fresh server for env vars to take effect
+        reuseExistingServer: true, // Allow using manually started server for local debugging
         env: {
           SKIP_ENV_VALIDATION: 'true',
           NEXT_PUBLIC_CDN_BASE_URL: 'http://localhost:3000',
