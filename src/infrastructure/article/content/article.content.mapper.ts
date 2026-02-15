@@ -37,7 +37,8 @@ export class ArticleContentMapper {
    */
   private static parseStructure(mdx: string): ContentStructure {
     const headingRegex = /^(#{2,6})\s+(.+)$/gm;
-    const sections: ContentSection[] = [];
+    const rootSections: ContentSection[] = [];
+    const stack: ContentSection[] = [];
     let match;
 
     while ((match = headingRegex.exec(mdx)) !== null) {
@@ -48,25 +49,42 @@ export class ArticleContentMapper {
       let id = heading
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, '-') // スペースをハイフンに
-        .replace(/[^\p{L}\p{N}-]/gu, '') // Unicode文字・数字・ハイフン以外を削除
-        .replace(/-+/g, '-') // 連続するハイフンをまとめる
-        .replace(/^-+|-+$/g, ''); // 前後のハイフンを削除
+        .replace(/\s+/g, '-')
+        .replace(/[^\p{L}\p{N}-]/gu, '')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '');
 
-      // 全て削られた場合（記号のみの見出しなど）のフォールバック
       if (!id) {
-        id = `section-${sections.length + 1}`;
+        id = `section-${rootSections.length + stack.length + 1}`;
       }
 
-      sections.push({
+      const newSection: ContentSection = {
         id,
         heading,
         level,
-      });
+        children: [],
+      };
+
+      // 適切な親を見つける（現在の見出しよりレベルが低い＝数値が小さいアイテムをスタックに残す）
+      while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+        stack.pop();
+      }
+
+      if (stack.length === 0) {
+        // 親がいない場合はルートに追加
+        rootSections.push(newSection);
+      } else {
+        // スタックのトップにあるセクションの子として追加
+        const parent = stack[stack.length - 1];
+        parent.children = parent.children || [];
+        parent.children.push(newSection);
+      }
+
+      // 自身をスタックに追加して、次の見出しの親候補にする
+      stack.push(newSection);
     }
 
-    // フラットなリストを暫定的に返却
-    return sections;
+    return rootSections;
   }
 
   /**
