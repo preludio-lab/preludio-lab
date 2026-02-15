@@ -5,7 +5,6 @@ import {
   ContentSection,
   ContentStructure,
 } from '@/domain/article/article';
-import { preprocessMdx } from './mdx.preprocessor';
 
 /**
  * 記事コンテンツ（MDX）の変換を担うマッパー
@@ -21,7 +20,7 @@ export class ArticleContentMapper {
    * @param structure - (オプション) 目次構造。省略された場合はMDXから解析します。
    */
   static toDomain(rawMdx: string | null, structure?: ContentStructure): ArticleContent {
-    const body = rawMdx ? preprocessMdx(rawMdx) : null;
+    const body = rawMdx;
     const resolvedStructure = structure || (rawMdx ? this.parseStructure(rawMdx) : []);
 
     return new ArticleContent({

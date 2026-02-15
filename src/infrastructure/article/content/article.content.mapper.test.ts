@@ -12,8 +12,7 @@ describe('ArticleContentMapper', () => {
 
       expect(result).toBeInstanceOf(ArticleContent);
       expect(result.structure).toEqual(mockStructure);
-      // Verify preprocessing logic ( @[...] -> <MusicalExample ... /> )
-      expect(result.body).toContain('<MusicalExample src="path/to/image.svg" />');
+      expect(result.body).toBe(rawMdx);
     });
 
     it('should dynamically generate structure from MDX if structure is omitted', () => {
