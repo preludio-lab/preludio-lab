@@ -49,10 +49,10 @@ export class ArticleContentMapper {
       let id = heading
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\p{L}\p{N}-]/gu, '')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '');
+        .replace(/\s+/g, '-') // スペースをハイフンに置換
+        .replace(/[^\p{L}\p{N}-]/gu, '') // Unicode文字（文字・数字）とハイフン以外を削除
+        .replace(/-+/g, '-') // 連続するハイフンを1つにまとめる
+        .replace(/^-+|-+$/g, ''); // 行頭・行末のハイフンを削除
 
       if (!id) {
         id = `section-${rootSections.length + stack.length + 1}`;
