@@ -5,6 +5,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 describe('ArticleSearchResultItemDtoSchema', () => {
   const validMetadata = {
     id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3',
+    masterId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a2',
     slug: 'beethoven-symphony-5',
     lang: 'ja',
     status: 'published',
@@ -16,6 +17,9 @@ describe('ArticleSearchResultItemDtoSchema', () => {
     composerName: 'Ludwig van Beethoven',
     readingTimeSeconds: 300,
     viewCount: 100,
+    auditionCount: 50,
+    resonanceCount: 30,
+    shareCount: 10,
     // Add fields required by ArticleCardDto/Summary which might be part of SearchResultItem
     thumbnail: 'https://example.com/thumb.jpg',
     workTitle: 'Symphony No. 5',
