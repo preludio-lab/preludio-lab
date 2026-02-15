@@ -1,4 +1,4 @@
-import { ArticleContent, ContentStructure } from '@/domain/article/article';
+import { ArticleContent, ContentSection, ContentStructure } from '@/domain/article/article';
 import { preprocessMdx } from './mdx.preprocessor';
 
 /**
@@ -12,14 +12,47 @@ export class ArticleContentMapper {
    * MDX文字列と構造データからドメインエンティティを生成します。
    *
    * @param rawMdx - ストレージから取得したMDX生データ
-   * @param structure - メタデータとして保存されている目次構造
+   * @param structure - (オプション) 目次構造。省略された場合はMDXから解析します。
    */
-  static toDomain(rawMdx: string | null, structure: ContentStructure): ArticleContent {
+  static toDomain(rawMdx: string | null, structure?: ContentStructure): ArticleContent {
     const body = rawMdx ? preprocessMdx(rawMdx) : null;
+    const resolvedStructure = structure || (rawMdx ? this.parseStructure(rawMdx) : []);
+
     return new ArticleContent({
       body: body,
-      structure: structure,
+      structure: resolvedStructure,
     });
+  }
+
+  /**
+   * MDX文字列を解析して見出し構造（H2〜H6）を抽出します。
+   *
+   * @param mdx - 解析対象のMDX文字列
+   * @returns 抽出された目次構造
+   */
+  private static parseStructure(mdx: string): ContentStructure {
+    const headingRegex = /^(#{2,6})\s+(.+)$/gm;
+    const sections: ContentSection[] = [];
+    let match;
+
+    while ((match = headingRegex.exec(mdx)) !== null) {
+      const level = match[1].length;
+      const heading = match[2].trim();
+      // ID生成ロジック (簡易版: 特殊文字削除と小文字化)
+      const id = heading
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+
+      sections.push({
+        id,
+        heading,
+        level,
+      });
+    }
+
+    // フラットなリストを暫定的に返却
+    return sections;
   }
 
   /**
