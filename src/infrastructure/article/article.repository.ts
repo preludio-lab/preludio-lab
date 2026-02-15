@@ -11,7 +11,7 @@ import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
 import { ArticlePathStrategy } from './content/article.path.strategy';
-import { preprocessMdx } from './content/mdx.preprocessor';
+import { ArticleContentMapper } from './content/article.content.mapper';
 
 /**
  * ArticleRepository の実装クラス。
@@ -266,13 +266,14 @@ export class ArticleRepositoryImpl
    * @returns 完全な Article エンティティ
    */
   protected reconstituteAggregate(base: ArticleSummary, payload: string | null): Article {
+    // Note: base is loosely typed here. In runtime, we expect some way to get structure
+    // or we default to empty.
+    const structure = (base as unknown as Article).content?.structure || { sections: [] };
+
     return new Article({
       control: base.control,
       metadata: base.metadata,
-      content: new ArticleContent({
-        body: payload ? preprocessMdx(payload) : '',
-        structure: (base as unknown as Article).content?.structure || { sections: [] },
-      }),
+      content: ArticleContentMapper.toDomain(payload, structure),
       context: base.context,
       engagement: base.engagement,
     });
@@ -305,7 +306,7 @@ export class ArticleRepositoryImpl
    * @returns MDX 文字列、または保存対象がない場合は null
    */
   protected toPersistencePayload(entity: Article): string | null {
-    return entity.content.body;
+    return ArticleContentMapper.toPersistence(entity.content);
   }
 
   /**

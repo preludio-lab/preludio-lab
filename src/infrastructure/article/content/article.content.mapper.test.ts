@@ -1,0 +1,49 @@
+import { describe, it, expect } from 'vitest';
+import { ArticleContentMapper } from './article.content.mapper';
+import { ArticleContent, ContentStructure } from '@/domain/article/article';
+
+describe('ArticleContentMapper', () => {
+  const mockStructure: ContentStructure = [{ id: 'section-1', heading: 'Section 1', level: 2 }];
+
+  describe('toDomain', () => {
+    it('should create ArticleContent from raw MDX and structure', () => {
+      const rawMdx = '# Hello\n@[path/to/image.svg]';
+      const result = ArticleContentMapper.toDomain(rawMdx, mockStructure);
+
+      expect(result).toBeInstanceOf(ArticleContent);
+      expect(result.structure).toEqual(mockStructure);
+      // Verify preprocessing logic ( @[...] -> <MusicalExample ... /> )
+      expect(result.body).toContain('<MusicalExample src="path/to/image.svg" />');
+    });
+
+    it('should handle null raw MDX', () => {
+      const result = ArticleContentMapper.toDomain(null, mockStructure);
+
+      expect(result).toBeInstanceOf(ArticleContent);
+      expect(result.body).toBeNull();
+      expect(result.structure).toEqual(mockStructure);
+    });
+  });
+
+  describe('toPersistence', () => {
+    it('should extract body from ArticleContent', () => {
+      const content = new ArticleContent({
+        body: 'some content',
+        structure: mockStructure,
+      });
+
+      const result = ArticleContentMapper.toPersistence(content);
+      expect(result).toBe('some content');
+    });
+
+    it('should return null if body is null', () => {
+      const content = new ArticleContent({
+        body: null,
+        structure: mockStructure,
+      });
+
+      const result = ArticleContentMapper.toPersistence(content);
+      expect(result).toBeNull();
+    });
+  });
+});
