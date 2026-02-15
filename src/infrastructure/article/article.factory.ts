@@ -6,7 +6,6 @@ import { TursoArticleMetadataDataSource } from './metadata/turso.article.metadat
 import { logger } from '@/infrastructure/logging';
 import { R2StorageService } from '../storage/r2.storage';
 import { FileSystemStorageService } from '../storage/fs.storage';
-import { ArticlePathStrategy } from './content/article.path.strategy';
 import { TursoArticleMapper } from './metadata/turso.article.mapper';
 import { InfrastructureConfig } from '../shared/config';
 import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
@@ -43,12 +42,9 @@ export class ArticleRepositoryFactory {
         ? new R2StorageService(undefined, 'private/articles/')
         : new FileSystemStorageService(path.join(process.cwd(), 'article'));
 
-    const pathStrategy = new ArticlePathStrategy();
-
     this.instance = new ArticleRepositoryImpl(
       metadataDS,
       storage,
-      pathStrategy,
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
       (row) => TursoArticleMapper.toAggregate(row.articles, row.article_translations),
       TursoArticleMapper.toPersistence,

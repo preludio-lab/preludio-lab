@@ -8,7 +8,6 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage } from '../storage/storage.interface';
-import { ArticlePathStrategy } from './content/article.path.strategy';
 
 import { TursoArticleMapper } from './metadata/turso.article.mapper';
 
@@ -38,8 +37,6 @@ describe('ArticleRepositoryImpl', () => {
     warn: vi.fn(),
     error: vi.fn(),
   };
-
-  const pathStrategy = new ArticlePathStrategy();
 
   const createMockRow = (id: string, slug: string, lang: AppLocale) => {
     return {
@@ -85,7 +82,6 @@ describe('ArticleRepositoryImpl', () => {
     repo = new ArticleRepositoryImpl(
       mockMetadataDS as unknown as IArticleMetadataDataSource,
       mockPayloadDS as unknown as IObjectStorage,
-      pathStrategy,
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
       (row) => TursoArticleMapper.toAggregate(row.articles, row.article_translations),
       TursoArticleMapper.toPersistence,

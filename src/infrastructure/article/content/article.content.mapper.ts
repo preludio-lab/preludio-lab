@@ -1,4 +1,10 @@
-import { ArticleContent, ContentSection, ContentStructure } from '@/domain/article/article';
+import {
+  Article,
+  ArticleContent,
+  ArticleSummary,
+  ContentSection,
+  ContentStructure,
+} from '@/domain/article/article';
 import { preprocessMdx } from './mdx.preprocessor';
 
 /**
@@ -63,5 +69,18 @@ export class ArticleContentMapper {
    */
   static toPersistence(content: ArticleContent): string | null {
     return content.body;
+  }
+
+  /**
+   * 記事のMDXコンテンツの論理ストレージパスを解決します。
+   *
+   * @param article メタデータと制御情報を含む記事ドメインオブジェクト
+   * @returns ストレージ用の論理パスキー
+   */
+  static resolvePath(article: Article | ArticleSummary): string {
+    const { category, slug } = article.metadata;
+    const { lang } = article.control;
+
+    return `${category}/${slug}/mdx/${lang}.mdx`;
   }
 }

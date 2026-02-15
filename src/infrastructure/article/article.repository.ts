@@ -10,7 +10,6 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
-import { ArticlePathStrategy } from './content/article.path.strategy';
 import { ArticleContentMapper } from './content/article.content.mapper';
 
 /**
@@ -42,7 +41,6 @@ export class ArticleRepositoryImpl
   constructor(
     metadataDS: IArticleMetadataDataSource,
     payloadDS: IObjectStorage,
-    private readonly pathStrategy: ArticlePathStrategy,
     private readonly _reconstituteMetadata: (row: ArticleMetadataRow) => ArticleSummary,
     private readonly _reconstituteAggregate: (row: ArticleMetadataRow) => Article,
     private readonly _toPersistenceMetadata: (
@@ -255,7 +253,7 @@ export class ArticleRepositoryImpl
    */
   protected resolveStorageKey(summary: ArticleSummary): string | null {
     // パス解決のためにサマリーを直接利用
-    return this.pathStrategy.resolvePath(summary);
+    return ArticleContentMapper.resolvePath(summary);
   }
 
   /**
