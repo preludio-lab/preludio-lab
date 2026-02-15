@@ -36,7 +36,7 @@ test.describe('Critical User Flows', () => {
       // ナビゲーションからWorksへ
       await page
         .getByRole('link', { name: 'Works' })
-        .or(page.getByRole('link', { name: '楽曲一覧' }))
+        .or(page.getByRole('link', { name: '作品一覧' }))
         .first()
         .click();
       await expect(page).toHaveURL(/\/ja\/works/);
