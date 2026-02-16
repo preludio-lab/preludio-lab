@@ -1,6 +1,6 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
 import { ArticleCategory } from '@/domain/article/article.metadata';
-import { Article, ArticleContent, ArticleSummary } from '@/domain/article/article';
+import { Article, ArticleSummary } from '@/domain/article/article';
 import { ArticleMasterId } from '@/domain/article/article.control';
 import { PagedResponse } from '@/domain/shared/pagination';
 import { IArticleMetadataDataSource, ArticleMetadataRow } from './metadata/article.metadata.ds';

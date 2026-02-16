@@ -1,8 +1,8 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { Article, ArticleId } from '@/domain/article/article';
+import { Article } from '@/domain/article/article';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
-import { ArticleStatus, ArticleMasterId } from '@/domain/article/article.control';
+import { ArticleStatus } from '@/domain/article/article.control';
 
 import { CreateArticleCommand } from '../command/create-article.command';
 import { INITIAL_ENGAGEMENT_METRICS } from '@/domain/article/article.engagement';
