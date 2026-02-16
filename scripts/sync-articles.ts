@@ -10,6 +10,9 @@ async function syncArticles() {
   const { eq, and } = await import('drizzle-orm');
   const { logger } = await import('@/infrastructure/logging');
   const { ArticleSortOption, SortDirection } = await import('@/domain/article/article.constants');
+  // 型定義のみインポート (動的インポートできないためトップレベルでインポートするか、型アサーションで対応)
+  // ここではスクリプトなので簡便のため型アサーション用の型を定義、またはモジュールから型を取得
+  type ArticleSearchCriteria = import('@/domain/article/article.repository').ArticleSearchCriteria;
 
   logger.info('Starting article sync...');
 
@@ -19,12 +22,15 @@ async function syncArticles() {
   // Get all articles (setting high limit)
   // Casting to bypass "lang required" check in repo interface,
   // as FsArticleMetadataDataSource implementation allows empty lang to return all.
-  const result = await fsSource.search({
+  // Casting to bypass "lang required" check in repo interface for FsSource
+  const searchCriteria: ArticleSearchCriteria = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filter: {} as any,
+    filter: {} as any, // FsMetadataDataSource allows empty filter to list all
     pagination: { limit: 1000, offset: 0 },
     sort: { field: ArticleSortOption.PUBLISHED_AT, direction: SortDirection.DESC },
-  });
+  };
+
+  const result = await fsSource.search(searchCriteria);
 
   logger.info(`Found ${result.totalCount} articles in file system.`);
 
@@ -34,6 +40,7 @@ async function syncArticles() {
       const translation = row.article_translations;
 
       // Remove generated columns from payload
+      // mdxPath is generatedAlwaysAs, so it must not be included in the insert/update payload.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { mdxPath, ...translationData } = translation;
 
