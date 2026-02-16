@@ -1,10 +1,6 @@
-import {
-  Article,
-  ArticleContent,
-  ArticleSummary,
-  ContentSection,
-  ContentStructure,
-} from '@/domain/article/article';
+import { ArticleContent, ContentSection, ContentStructure } from '@/domain/article/article';
+import matter from 'gray-matter';
+import { logger } from '@/infrastructure/logging';
 
 /**
  * 記事コンテンツ（MDX）の変換を担うマッパー
@@ -18,10 +14,53 @@ export class ArticleContentMapper {
    *
    * @param rawMdx - ストレージから取得したMDX生データ
    * @param structure - (オプション) 目次構造。省略された場合はMDXから解析します。
+   * @param slug - (オプション) 記事のスラッグ。ログ出力やエラー特定に使用します。
    */
-  static toDomain(rawMdx: string | null, structure?: ContentStructure): ArticleContent {
-    const body = rawMdx;
-    const resolvedStructure = structure || (rawMdx ? this.parseStructure(rawMdx) : []);
+  static toDomain(
+    rawMdx: string | null,
+    structure?: ContentStructure,
+    slug?: string,
+  ): ArticleContent {
+    let body = rawMdx;
+
+    if (rawMdx) {
+      try {
+        // 正常系: gray-matter でパースして本文のみ抽出
+        const parsed = matter(rawMdx);
+        body = parsed.content;
+      } catch (error) {
+        // 異常系: パース失敗時のフォールバック処理
+        logger.error(
+          `[ArticleContentMapper] Failed to parse MDX frontmatter for article: ${slug || 'unknown'}`,
+          error as Error,
+        );
+
+        // Fallback Level 1: 正規表現による除去試行
+        // 先頭の空白・改行を許容し、最短マッチでフロントマターを特定
+        const match = rawMdx.match(/^\s*---[\r\n]+([\s\S]*?)[\r\n]+---/);
+        if (match) {
+          logger.warn(
+            `[ArticleContentMapper] Recovered from gray-matter failure using Regex for article: ${slug || 'unknown'}`,
+          );
+          body = rawMdx.replace(match[0], '').trim();
+        } else {
+          // Fallback Level 2: 正規表現でも除去できない場合
+          if (rawMdx.trim().startsWith('---')) {
+            // コンテンツが '---' で始まっているのにパースできない -> フロントマター破損と判断
+            // ユーザーへのメタデータ漏洩を防ぐため、空文字を返す (Fail-safe)
+            logger.error(
+              `[ArticleContentMapper] Frontmatter corrupted and unrecoverable. hiding content for safety. Article: ${slug || 'unknown'}`,
+            );
+            body = '';
+          } else {
+            // '---' で始まっていない -> 通常のMarkdownと判断し、原文を返す
+            body = rawMdx;
+          }
+        }
+      }
+    }
+
+    const resolvedStructure = structure || (body ? this.parseStructure(body) : []);
 
     return new ArticleContent({
       body: body,

@@ -8,7 +8,7 @@ describe('ArticleContentMapper', () => {
   describe('toDomain', () => {
     it('should create ArticleContent from raw MDX and structure', () => {
       const rawMdx = '# Hello\n@[path/to/image.svg]';
-      const result = ArticleContentMapper.toDomain(rawMdx, mockStructure);
+      const result = ArticleContentMapper.toDomain(rawMdx, mockStructure, 'test-slug');
 
       expect(result).toBeInstanceOf(ArticleContent);
       expect(result.structure).toEqual(mockStructure);
@@ -17,7 +17,7 @@ describe('ArticleContentMapper', () => {
 
     it('should dynamically generate hierarchical structure from MDX if structure is omitted', () => {
       const rawMdx = '## Section A\n### Subset B\n#### Deep C\n## Section D';
-      const result = ArticleContentMapper.toDomain(rawMdx);
+      const result = ArticleContentMapper.toDomain(rawMdx, undefined, 'test-slug-hierarchical');
 
       expect(result.structure).toHaveLength(2); // A and D
       expect(result.structure[0].id).toBe('section-a');
@@ -31,7 +31,7 @@ describe('ArticleContentMapper', () => {
 
     it('should handle Japanese headings and provide hierarchical IDs', () => {
       const rawMdx = '## 楽曲の概要\n### 音楽的な特徴！\n#### 1. イントロダクション\n## 結論';
-      const result = ArticleContentMapper.toDomain(rawMdx);
+      const result = ArticleContentMapper.toDomain(rawMdx, undefined, 'test-slug-japanese');
 
       expect(result.structure).toHaveLength(2);
       expect(result.structure[0].id).toBe('楽曲の概要');
@@ -42,14 +42,14 @@ describe('ArticleContentMapper', () => {
 
     it('should use fallback ID when heading is composed of only special characters', () => {
       const rawMdx = '## ！！！';
-      const result = ArticleContentMapper.toDomain(rawMdx);
+      const result = ArticleContentMapper.toDomain(rawMdx, undefined, 'test-slug-special');
 
       expect(result.structure).toHaveLength(1);
       expect(result.structure[0].id).toBe('section-1');
     });
 
     it('should handle null raw MDX', () => {
-      const result = ArticleContentMapper.toDomain(null);
+      const result = ArticleContentMapper.toDomain(null, undefined, 'test-slug');
 
       expect(result).toBeInstanceOf(ArticleContent);
       expect(result.body).toBeNull();

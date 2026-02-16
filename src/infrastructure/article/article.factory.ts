@@ -68,7 +68,7 @@ export class ArticleRepositoryFactory {
           metadata: summary.metadata,
           engagement: summary.engagement,
           context: summary.context,
-          content: ArticleContentMapper.toDomain(payload),
+          content: ArticleContentMapper.toDomain(payload, undefined, summary.metadata.slug),
         });
       },
       // Persistence Metadata 変換 (Entity -> Row)
