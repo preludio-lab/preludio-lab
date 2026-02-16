@@ -96,21 +96,4 @@ export class ArticleContentMapper {
   static toPersistence(content: ArticleContent): string | null {
     return content.body;
   }
-
-  /**
-   * 記事のMDXコンテンツの論理ストレージパスを解決します。
-   *
-   * 解決ロジック:
-   * URL構造が `/[lang]/[category]/[slug]` であるのに対し、
-   * ストレージパスは `[category]/[slug]/mdx/[lang].mdx` として構成されます。
-   *
-   * @param article メタデータと制御情報を含む記事ドメインオブジェクト
-   * @returns ストレージ用の論理パスキー
-   */
-  static resolvePath(article: Article | ArticleSummary): string {
-    const { category, slug } = article.metadata;
-    const { lang } = article.control;
-
-    return `${category}/${slug}/mdx/${lang}.mdx`;
-  }
 }

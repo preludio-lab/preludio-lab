@@ -17,7 +17,8 @@ export interface IArticlePathStrategy {
  * 標準的な記事コンテンツのパス解決戦略。
  * 開発環境やファイルシステムベースの管理に適した階層構造を提供します。
  *
- * パス形式: `[category]/[slug]/mdx/[lang].mdx`
+ * ストレージ形式 (Storage): `[category]/[slug]/mdx/[lang].mdx`
+ * URL形式 (Public): `[lang]/[category]/[slug]`
  */
 export class ArticlePathStrategy implements IArticlePathStrategy {
   /**
