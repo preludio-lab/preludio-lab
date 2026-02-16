@@ -148,7 +148,7 @@ export class ArticleRepositoryImpl
    */
   async search(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleSummary>> {
     try {
-      const { rows, totalCount } = await this.metadataDS.findMany(criteria);
+      const { rows, totalCount } = await this.metadataDS.search(criteria);
       return {
         items: rows.map((row) => this.reconstituteMetadata(row)),
         totalCount: totalCount,

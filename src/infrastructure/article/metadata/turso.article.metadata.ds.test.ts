@@ -66,7 +66,7 @@ describe('TursoArticleMetadataDataSource', () => {
     });
   });
 
-  describe('findMany', () => {
+  describe('search', () => {
     it('should return raw rows and totalCount', async () => {
       const mockRows = [
         { articles: { id: '1' }, article_translations: { lang: 'en' } },
@@ -83,7 +83,7 @@ describe('TursoArticleMetadataDataSource', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mockWhere.mockReturnValue(thenableWhereResult as any);
 
-      const result = await dataSource.findMany({
+      const result = await dataSource.search({
         filter: { lang: 'en' },
         pagination: { limit: 2, offset: 0 },
       });

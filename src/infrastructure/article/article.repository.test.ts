@@ -21,7 +21,7 @@ describe('ArticleRepositoryImpl', () => {
   const mockMetadataDS = {
     findBySlug: vi.fn(),
     findById: vi.fn(),
-    findMany: vi.fn(),
+    search: vi.fn(),
     save: vi.fn(),
     deleteTranslation: vi.fn(),
     countTranslations: vi.fn(),
@@ -146,7 +146,7 @@ describe('ArticleRepositoryImpl', () => {
   describe('search', () => {
     it('should return article summaries', async () => {
       const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
-      mockMetadataDS.findMany.mockResolvedValue({
+      mockMetadataDS.search.mockResolvedValue({
         rows: [mockRow],
         totalCount: 1,
       });
@@ -160,7 +160,7 @@ describe('ArticleRepositoryImpl', () => {
       expect(result.totalCount).toBe(1);
       expect(result.items[0].id).toBe(EN_TRANS_UUID);
       expect(result.items[0].masterId).toBe(MASTER_UUID);
-      expect(mockMetadataDS.findMany).toHaveBeenCalled();
+      expect(mockMetadataDS.search).toHaveBeenCalled();
       expect(mockPayloadDS.get).not.toHaveBeenCalled();
     });
   });

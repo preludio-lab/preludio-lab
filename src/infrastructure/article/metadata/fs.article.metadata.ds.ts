@@ -73,7 +73,7 @@ export class FsArticleMetadataDataSource implements IArticleMetadataDataSource {
   /**
    * 指定された検索条件に基づいて記事メタデータの一覧を取得します。
    */
-  async findMany(criteria: ArticleSearchCriteria): Promise<{
+  async search(criteria: ArticleSearchCriteria): Promise<{
     rows: ArticleMetadataRow[];
     totalCount: number;
   }> {

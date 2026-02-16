@@ -147,7 +147,7 @@ export interface IArticleMetadataDataSource {
    * @param criteria - 検索クエリ条件
    * @returns ページングされた結果セットと総件数
    */
-  findMany(criteria: ArticleSearchCriteria): Promise<{
+  search(criteria: ArticleSearchCriteria): Promise<{
     rows: ArticleMetadataRow[];
     totalCount: number;
   }>;

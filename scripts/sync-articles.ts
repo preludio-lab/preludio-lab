@@ -19,7 +19,7 @@ async function syncArticles() {
   // Get all articles (setting high limit)
   // Casting to bypass "lang required" check in repo interface,
   // as FsArticleMetadataDataSource implementation allows empty lang to return all.
-  const result = await fsSource.findMany({
+  const result = await fsSource.search({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filter: {} as any,
     pagination: { limit: 1000, offset: 0 },

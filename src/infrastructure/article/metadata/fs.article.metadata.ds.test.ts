@@ -89,7 +89,7 @@ slug: ${slug}
     });
   });
 
-  describe('findMany', () => {
+  describe('search', () => {
     it('should return items and totalCount', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
 
@@ -122,7 +122,7 @@ slug: test-article
 ---
 `);
 
-      const result = await dataSource.findMany({
+      const result = await dataSource.search({
         filter: { lang: 'en' },
         pagination: { limit: 10, offset: 0 },
       });
@@ -135,7 +135,7 @@ slug: test-article
 
     it('should return empty list if root dir does not exist', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
-      const result = await dataSource.findMany({
+      const result = await dataSource.search({
         filter: { lang: 'en' },
         pagination: { limit: 10, offset: 0 },
       });

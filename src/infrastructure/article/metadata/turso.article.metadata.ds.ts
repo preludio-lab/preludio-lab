@@ -118,7 +118,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    * @param criteria - 検索とページネーションの条件
    * @returns 取得された行の一覧と、フィルタ条件に合致する総件数 (totalCount)
    */
-  async findMany(
+  async search(
     criteria: ArticleSearchCriteria,
   ): Promise<{ rows: ArticleMetadataRow[]; totalCount: number }> {
     try {
@@ -206,7 +206,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {
-      this.logger.error('TursoArticleMetadataDataSource.findMany error', error as Error, {
+      this.logger.error('TursoArticleMetadataDataSource.search error', error as Error, {
         criteria,
       });
       throw new AppError(
