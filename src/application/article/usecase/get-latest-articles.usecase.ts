@@ -2,7 +2,7 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { Article } from '@/domain/article/article';
+import { ArticleSummary } from '@/domain/article/article';
 
 export interface GetLatestArticlesInput {
   lang: string;
@@ -21,7 +21,7 @@ export class GetLatestArticlesUseCase {
   async execute(input: GetLatestArticlesInput): Promise<ArticleCardDto[]> {
     const { lang, limit = 10, offset = 0 } = input;
 
-    const response = await this.articleRepository.findMany({
+    const response = await this.articleRepository.search({
       filter: {
         lang,
         status: [ArticleStatus.PUBLISHED],
@@ -36,29 +36,30 @@ export class GetLatestArticlesUseCase {
       },
     });
 
-    return response.items.map((article) => this.toDto(article));
+    return response.items.map((summary) => this.toDto(summary));
   }
 
-  private toDto(article: Article): ArticleCardDto {
+  private toDto(summary: ArticleSummary): ArticleCardDto {
     return {
-      id: article.control.id,
-      lang: article.control.lang,
-      slug: article.metadata.slug,
-      category: article.metadata.category,
-      title: article.metadata.title,
-      displayTitle: article.metadata.displayTitle,
-      composerName: article.metadata.composerName,
-      workTitle: article.metadata.workTitle,
-      excerpt: article.metadata.excerpt,
-      thumbnail: article.metadata.thumbnail,
-      readingTimeSeconds: article.metadata.readingTimeSeconds,
-      publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
-      viewCount: article.engagement.metrics.viewCount,
-      likeCount: article.engagement.metrics.likeCount,
-      tags: article.metadata.tags,
-      readingLevel: article.metadata.readingLevel,
-      performanceDifficulty: article.metadata.performanceDifficulty,
-      playback: article.metadata.playback,
+      id: summary.control.id,
+      masterId: summary.control.masterId,
+      lang: summary.control.lang,
+      slug: summary.metadata.slug,
+      category: summary.metadata.category,
+      title: summary.metadata.title,
+      displayTitle: summary.metadata.displayTitle,
+      composerName: summary.metadata.composerName,
+      workTitle: summary.metadata.workTitle,
+      excerpt: summary.metadata.excerpt,
+      thumbnail: summary.metadata.thumbnail,
+      readingTimeSeconds: summary.metadata.readingTimeSeconds,
+      publishedAt: summary.metadata.publishedAt ? summary.metadata.publishedAt.toISOString() : null,
+      viewCount: summary.engagement.metrics.viewCount,
+      likeCount: summary.engagement.metrics.likeCount,
+      tags: summary.metadata.tags,
+      readingLevel: summary.metadata.readingLevel,
+      performanceDifficulty: summary.metadata.performanceDifficulty,
+      playback: summary.metadata.playback,
     };
   }
 }

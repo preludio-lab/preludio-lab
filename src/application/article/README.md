@@ -62,4 +62,4 @@ Article（記事）ドメインのアプリケーション層の実装詳細お�
 ## Architecture Note
 
 - DTO は `Clean Architecture` の方針に従い、Domain 層の `ArticleSchema` (Zod) をベースに、用途に合わせて `pick`/`extend` して定義されています。
-- 詳細は `docs/05_design/` 配下のアーキテクチャ設計書を参照してください。
+- 詳細は `docs/05_design/01_overall/` 配下のアーキテクチャ設計書を参照してください。

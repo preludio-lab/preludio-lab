@@ -30,6 +30,7 @@ export class GetArticleBySlugUseCase {
     return {
       control: {
         id: article.control.id,
+        masterId: article.control.masterId,
         lang: article.control.lang as AppLocale,
         status: article.control.status,
         createdAt: article.control.createdAt,

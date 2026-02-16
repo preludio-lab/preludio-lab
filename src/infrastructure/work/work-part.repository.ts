@@ -61,15 +61,14 @@ export class WorkPartRepositoryImpl implements WorkPartRepository {
   /**
    * 指定されたIDのWorkPart（楽章）を削除します。
    */
-  async delete(id: string, ctx?: TransactionContext): Promise<void> {
+  async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.workDS.deletePart(id, ctx);
+      await this.workDS.deletePartById(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
-
   async deleteByWorkId(workId: string, ctx?: TransactionContext): Promise<void> {
     try {
       await this.workDS.deletePartsByWorkId(workId, ctx);

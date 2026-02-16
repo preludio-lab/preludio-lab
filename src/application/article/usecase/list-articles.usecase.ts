@@ -1,7 +1,7 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
 import { ArticleListItemDto } from '@/application/article/dto/article-list.dto';
 import { PagedResponse } from '@/domain/shared/pagination';
-import { Article } from '@/domain/article/article';
+import { ArticleSummary } from '@/domain/article/article';
 
 /**
  * ListArticlesUseCase
@@ -11,32 +11,33 @@ export class ListArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(criteria: ArticleSearchCriteria): Promise<PagedResponse<ArticleListItemDto>> {
-    const response = await this.articleRepository.findMany(criteria);
+    const response = await this.articleRepository.search(criteria);
 
     return {
-      items: response.items.map((article) => this.toDto(article)),
+      items: response.items.map((summary) => this.toDto(summary)),
       totalCount: response.totalCount,
       hasNextPage: response.hasNextPage,
     };
   }
 
-  private toDto(article: Article): ArticleListItemDto {
+  private toDto(summary: ArticleSummary): ArticleListItemDto {
     return {
       // Control Info (flattened)
-      id: article.control.id,
-      lang: article.control.lang,
-      status: article.control.status,
+      id: summary.control.id,
+      masterId: summary.control.masterId,
+      lang: summary.control.lang,
+      status: summary.control.status,
 
       // Metadata Info (flattened)
-      ...article.metadata,
-      publishedAt: article.metadata.publishedAt ? article.metadata.publishedAt.toISOString() : null,
+      ...summary.metadata,
+      publishedAt: summary.metadata.publishedAt ? summary.metadata.publishedAt.toISOString() : null,
 
       // Engagement Summary
-      viewCount: article.engagement.metrics.viewCount,
-      auditionCount: article.engagement.metrics.auditionCount,
-      likeCount: article.engagement.metrics.likeCount,
-      resonanceCount: article.engagement.metrics.resonanceCount,
-      shareCount: article.engagement.metrics.shareCount,
+      viewCount: summary.engagement.metrics.viewCount,
+      auditionCount: summary.engagement.metrics.auditionCount,
+      likeCount: summary.engagement.metrics.likeCount,
+      resonanceCount: summary.engagement.metrics.resonanceCount,
+      shareCount: summary.engagement.metrics.shareCount,
     };
   }
 }

@@ -1,22 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArticleRepositoryImpl } from './article.repository';
-import { IArticleMetadataDataSource } from './interfaces/article.metadata.ds.interface';
-import { IArticleContentDataSource } from './interfaces/article.content.ds.interface';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './metadata/article.metadata.ds';
+import { ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleCategory } from '@/domain/article/article.metadata';
+import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
-import { articles, articleTranslations } from '../database/schema/articles';
+import { IObjectStorage } from '../storage/storage.interface';
+import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
+import { ArticlePathStrategy } from './content/article.path.strategy';
+import { Article } from '@/domain/article/article';
+import { ArticleContentMapper } from './content/article.content.mapper';
 
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
 
+  const MASTER_UUID = '018f1a2b-3c4d-7000-8000-deadbeef0001' as ArticleMasterId;
+  const EN_TRANS_UUID = '018f1a2b-3c4d-7001-8000-deadbeef0002';
+  const JA_TRANS_UUID = '018f1a2b-3c4d-7002-8000-deadbeef0003';
+
   const mockMetadataDS = {
     findBySlug: vi.fn(),
     findById: vi.fn(),
-    findMany: vi.fn(),
+    search: vi.fn(),
+    save: vi.fn(),
+    deleteTranslation: vi.fn(),
+    countTranslations: vi.fn(),
+    findAllTranslations: vi.fn(),
+    deleteAll: vi.fn(),
   };
 
-  const mockContentDS = {
-    getContent: vi.fn(),
+  const mockPayloadDS = {
+    get: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
   };
 
   const mockLogger = {
@@ -26,10 +42,63 @@ describe('ArticleRepositoryImpl', () => {
     error: vi.fn(),
   };
 
+  const createMockRow = (masterId: string, transId: string, slug: string, lang: AppLocale) => {
+    return {
+      articles: {
+        id: masterId,
+        slug,
+        category: ArticleCategory.WORKS,
+        isFeatured: false,
+        readingTimeSeconds: 60,
+        thumbnailPath: 'thumb.jpg',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        workId: null,
+      },
+      article_translations: {
+        id: transId,
+        articleId: masterId,
+        lang,
+        status: 'published',
+        title: 'Title',
+        displayTitle: 'Display Title',
+        publishedAt: new Date().toISOString(),
+        isFeatured: false,
+        slSlug: slug,
+        slCategory: ArticleCategory.WORKS,
+        metadata: {
+          title: 'Title',
+          displayTitle: 'Display Title',
+          composerName: 'Test Composer',
+          slug: slug,
+          category: ArticleCategory.WORKS,
+          thumbnail: 'thumb.jpg',
+          tags: [],
+        },
+        contentStructure: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    } as unknown as ArticleMetadataRow;
+  };
+
   beforeEach(() => {
     repo = new ArticleRepositoryImpl(
       mockMetadataDS as unknown as IArticleMetadataDataSource,
-      mockContentDS as unknown as IArticleContentDataSource,
+      mockPayloadDS as unknown as IObjectStorage,
+      new ArticlePathStrategy(),
+      (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
+      (summary, payload) => {
+        return new Article({
+          control: summary.control,
+          metadata: summary.metadata,
+          engagement: summary.engagement,
+          context: summary.context,
+          content: ArticleContentMapper.toDomain(payload),
+        });
+      },
+      TursoArticleMapper.toPersistence,
+      (article) => ArticleContentMapper.toPersistence(article.content),
       mockLogger as unknown as Logger,
     );
     vi.clearAllMocks();
@@ -37,151 +106,100 @@ describe('ArticleRepositoryImpl', () => {
 
   describe('findById', () => {
     it('should return Article when metadata and content are found', async () => {
-      const mockRow = {
-        articles: { id: '1', slug: 'slug', category: 'works', createdAt: '2023-01-01' },
-        article_translations: {
-          articleId: '1',
-          lang: 'en',
-          status: 'published',
-          title: 'Title',
-          displayTitle: 'Display Title',
-          updatedAt: '2023-01-01',
-          slSlug: 'slug',
-          slComposerName: 'Composer',
-          metadata: { category: 'works', tags: [] },
-          mdxPath: 'en/works/slug',
-          contentStructure: [], // Provided by DS now
-        },
-      };
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
       mockMetadataDS.findById.mockResolvedValue(mockRow);
-      mockContentDS.getContent.mockResolvedValue('# Hello');
+      mockPayloadDS.get.mockResolvedValue('# Hello');
 
-      const result = await repo.findById('1', 'en');
+      const result = await repo.findById(MASTER_UUID, 'en');
 
       expect(result).not.toBeNull();
-      expect(result?.control.id).toBe('1');
-      expect(mockMetadataDS.findById).toHaveBeenCalledWith('1', 'en');
+      expect(result?.control.id).toBe(EN_TRANS_UUID); // ID should be translation UUID
+      expect(result?.control.masterId).toBe(MASTER_UUID);
+      expect(result?.content.body).toBe('# Hello');
+      expect(mockMetadataDS.findById).toHaveBeenCalledWith(MASTER_UUID, 'en');
+      expect(mockPayloadDS.get).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
     });
 
     it('should return null if metadata not found', async () => {
       mockMetadataDS.findById.mockResolvedValue(null);
 
-      const result = await repo.findById('999', 'en');
+      const result = await repo.findById(MASTER_UUID, 'en');
       expect(result).toBeNull();
     });
   });
 
-  describe('findBySlug', () => {
-    it('should return Article when metadata and content are found', async () => {
-      const mockRow = {
-        articles: {
-          id: '1',
-          slug: 'slug',
-          category: 'works',
-          isFeatured: false,
-          createdAt: '2023-01-01',
-        },
-        article_translations: {
-          articleId: '1',
-          lang: 'en',
-          status: 'published',
-          title: 'Title',
-          displayTitle: 'Display Title',
-          updatedAt: '2023-01-01',
-          slSlug: 'slug',
-          slComposerName: 'Composer',
-          metadata: { category: 'works', tags: [] },
-          mdxPath: 'en/works/slug',
-          contentStructure: [{ id: 'intro', heading: 'Introduction', level: 2 }],
-        },
-      };
-      mockMetadataDS.findBySlug.mockResolvedValue(mockRow);
-      mockContentDS.getContent.mockResolvedValue('# Hello');
+  describe('findSummaryById', () => {
+    it('should return ArticleSummary without content fetch', async () => {
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
 
-      const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
+      const result = await repo.findSummaryById(MASTER_UUID, 'en');
 
       expect(result).not.toBeNull();
-      expect(result?.metadata.title).toBe('Title');
-      expect(result?.content.body).toBe('# Hello');
-      expect(result?.content.structure).toHaveLength(1); // Mapped from metadata
-      expect(result?.content.structure[0].heading).toBe('Introduction');
-
-      expect(mockMetadataDS.findBySlug).toHaveBeenCalledWith('slug', 'en', ArticleCategory.WORKS);
-      expect(mockContentDS.getContent).toHaveBeenCalledWith('en/works/slug.mdx');
-    });
-
-    it('should return null if metadata not found', async () => {
-      mockMetadataDS.findBySlug.mockResolvedValue(null);
-
-      const result = await repo.findBySlug('en', ArticleCategory.WORKS, 'slug');
-
-      expect(result).toBeNull();
-      expect(mockLogger.warn).toHaveBeenCalled();
-      expect(mockContentDS.getContent).not.toHaveBeenCalled();
+      expect(result?.id).toBe(EN_TRANS_UUID);
+      expect(result?.masterId).toBe(MASTER_UUID);
+      expect(mockMetadataDS.findById).toHaveBeenCalledWith(MASTER_UUID, 'en');
+      expect(mockPayloadDS.get).not.toHaveBeenCalled();
     });
   });
 
-  describe('findMany', () => {
-    it('should return articles with null content', async () => {
-      vi.mocked(mockMetadataDS.findMany).mockResolvedValue({
-        rows: [
-          {
-            articles: {
-              id: '1',
-              slug: 'slug1',
-              category: 'works',
-              isFeatured: false,
-              readingTimeSeconds: 60,
-              thumbnailPath: null,
-              createdAt: '2023-01-01',
-              updatedAt: '2023-01-01',
-              workId: null,
-            } as typeof articles.$inferSelect,
-            article_translations: {
-              id: '1',
-              articleId: '1',
-              title: 'Title 1',
-              displayTitle: 'Title 1',
-              lang: 'en',
-              status: 'published',
-              metadata: { category: 'works' },
-              slSlug: 'slug1',
-              slCategory: 'works',
-              updatedAt: '2023-01-01',
-              slComposerName: 'Composer',
-              publishedAt: '2023-01-01',
-              catchcopy: null,
-              excerpt: null,
-              isFeatured: false,
-              mdxPath: 'en/works/slug1',
-              slEra: null,
-              slGenre: [],
-              slImpressionDimensions: null,
-              slInstrumentations: [],
-              slKey: null,
-              slNationality: null,
-              slPerformanceDifficulty: null,
-              slSeriesAssignments: [],
-              slWorkCatalogueId: null,
-              slWorkNicknames: [],
-              contentEmbedding: null,
-              contentStructure: {},
-              createdAt: '2023-01-01',
-            } as unknown as typeof articleTranslations.$inferSelect,
-          },
-        ],
+  describe('search', () => {
+    it('should return article summaries', async () => {
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
+      mockMetadataDS.search.mockResolvedValue({
+        rows: [mockRow],
         totalCount: 1,
       });
 
-      const result = await repo.findMany({
+      const result = await repo.search({
         filter: { lang: 'en' },
         pagination: { limit: 10, offset: 0 },
       });
 
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].content.body).toBeNull();
       expect(result.totalCount).toBe(1);
-      expect(mockMetadataDS.findMany).toHaveBeenCalled();
+      expect(result.items[0].id).toBe(EN_TRANS_UUID);
+      expect(result.items[0].masterId).toBe(MASTER_UUID);
+      expect(mockMetadataDS.search).toHaveBeenCalled();
+      expect(mockPayloadDS.get).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteById', () => {
+    it('should delete translation and also master if it was the last one', async () => {
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
+      mockMetadataDS.countTranslations.mockResolvedValue(0); // 削除後に0件
+
+      await repo.deleteById(MASTER_UUID, 'en');
+
+      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith(MASTER_UUID, 'en');
+      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith(MASTER_UUID);
+      expect(mockPayloadDS.delete).toHaveBeenCalledWith('works/test-slug/mdx/en.mdx');
+    });
+
+    it('should not delete master if other translations exist', async () => {
+      const mockRow = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'test-slug', 'en');
+      mockMetadataDS.findById.mockResolvedValue(mockRow);
+      mockMetadataDS.countTranslations.mockResolvedValue(1); // 削除後にまだ1件ある
+
+      await repo.deleteById(MASTER_UUID, 'en');
+
+      expect(mockMetadataDS.deleteTranslation).toHaveBeenCalledWith(MASTER_UUID, 'en');
+      expect(mockMetadataDS.deleteAll).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteMaster', () => {
+    it('should delete all translations and their storage files', async () => {
+      const mockRowEn = createMockRow(MASTER_UUID, EN_TRANS_UUID, 'slug', 'en');
+      const mockRowJa = createMockRow(MASTER_UUID, JA_TRANS_UUID, 'slug', 'ja');
+      mockMetadataDS.findAllTranslations.mockResolvedValue([mockRowEn, mockRowJa]);
+
+      await repo.deleteMaster(MASTER_UUID);
+
+      expect(mockPayloadDS.delete).toHaveBeenCalledTimes(2);
+      expect(mockMetadataDS.deleteAll).toHaveBeenCalledWith(MASTER_UUID);
     });
   });
 });

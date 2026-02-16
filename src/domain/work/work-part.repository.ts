@@ -39,7 +39,7 @@ export interface WorkPartRepository {
    * @param id 楽章ID
    * @param ctx トランザクションコンテキスト（オプション）
    */
-  delete(id: string, ctx?: TransactionContext): Promise<void>;
+  deleteById(id: string, ctx?: TransactionContext): Promise<void>;
 
   /**
    * 特定の作品に属する全楽章を削除
