@@ -229,8 +229,8 @@ Status: `[/]` 進行中
 
 ## Phase 7: AIエージェント開発 ("Brain") & コンテンツ量産
 
-- [ ] **7.1 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
-  - [ ] **[設計]** AIエージェントワークフロー設計
+- [/] **7.1 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
+  - [x] **[設計]** AIエージェントワークフロー設計 (Ref: `docs/05_design/data-workflow-architecture.md`, `ai-agent-strategy.md`)
   - [ ] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
   - [ ] **[実装]** 作曲家データ作成ワークフロー (Json -> Turso)
   - [ ] **[実装]** 作品データ作成ワークフロー (Json -> Turso)
