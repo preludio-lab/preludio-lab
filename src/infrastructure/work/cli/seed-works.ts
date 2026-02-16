@@ -5,7 +5,7 @@ import {
   readJsonFile,
   getLogger,
 } from '@/infrastructure/shared/cli/seeder-utils';
-import { TursoTransactionManager } from '@/infrastructure/shared/turso.transaction-manager';
+import { TursoTransactionManager } from '@/infrastructure/database/turso.transaction-manager';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { TursoWorkDataSource } from '@/infrastructure/work/turso.work.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';

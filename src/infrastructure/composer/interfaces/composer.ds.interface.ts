@@ -29,5 +29,5 @@ export interface IComposerDataSource {
   /**
    * Delete composer by ID
    */
-  delete(id: string, ctx?: TransactionContext): Promise<void>;
+  deleteById(id: string, ctx?: TransactionContext): Promise<void>;
 }

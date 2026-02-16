@@ -4,12 +4,15 @@ dotenv.config({ path: '.env.local' });
 async function syncArticles() {
   // 動的インポートを使用して、dotenv.config() の後に読み込まれるようにする
   const { FsArticleMetadataDataSource } =
-    await import('@/infrastructure/article/fs.article.metadata.ds');
+    await import('@/infrastructure/article/metadata/fs.article.metadata.ds');
   const { db } = await import('@/infrastructure/database/turso.client');
   const { articles, articleTranslations } = await import('@/infrastructure/database/schema');
   const { eq, and } = await import('drizzle-orm');
   const { logger } = await import('@/infrastructure/logging');
   const { ArticleSortOption, SortDirection } = await import('@/domain/article/article.constants');
+  // 型定義のみインポート (動的インポートできないためトップレベルでインポートするか、型アサーションで対応)
+  // ここではスクリプトなので簡便のため型アサーション用の型を定義、またはモジュールから型を取得
+  type ArticleSearchCriteria = import('@/domain/article/article.repository').ArticleSearchCriteria;
 
   logger.info('Starting article sync...');
 
@@ -19,12 +22,15 @@ async function syncArticles() {
   // Get all articles (setting high limit)
   // Casting to bypass "lang required" check in repo interface,
   // as FsArticleMetadataDataSource implementation allows empty lang to return all.
-  const result = await fsSource.findMany({
+  // Casting to bypass "lang required" check in repo interface for FsSource
+  const searchCriteria: ArticleSearchCriteria = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filter: {} as any,
+    filter: {} as any, // FsMetadataDataSource allows empty filter to list all
     pagination: { limit: 1000, offset: 0 },
     sort: { field: ArticleSortOption.PUBLISHED_AT, direction: SortDirection.DESC },
-  });
+  };
+
+  const result = await fsSource.search(searchCriteria);
 
   logger.info(`Found ${result.totalCount} articles in file system.`);
 
@@ -34,6 +40,7 @@ async function syncArticles() {
       const translation = row.article_translations;
 
       // Remove generated columns from payload
+      // mdxPath is generatedAlwaysAs, so it must not be included in the insert/update payload.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { mdxPath, ...translationData } = translation;
 
@@ -60,16 +67,16 @@ async function syncArticles() {
       });
 
       if (!existingTrans) {
-        // Remove id form translation row if it conflicts or auto-generated?
-        // Usually translation ID is composite or unique string.
-        // FsArticleMetadataDS generates ID: `${context.id}-${context.lang}`
-        await db.insert(articleTranslations).values(translationData);
+        // IDは FsArticleMetadataDS が生成したものを使用
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await db.insert(articleTranslations).values(translationData as any);
         logger.info(`Inserted translation: ${translation.lang}`);
       } else {
         // Update
         await db
           .update(articleTranslations)
-          .set(translationData)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .set(translationData as any)
           .where(
             and(
               eq(articleTranslations.articleId, article.id),

@@ -51,9 +51,9 @@ export interface ComposerRepository {
   save(composer: Composer, ctx?: TransactionContext): Promise<void>;
 
   /**
-   * 削除
+   * IDによる削除
    * @param id 作曲家ID
    * @param ctx トランザクションコンテキスト（オプション）
    */
-  delete(id: string, ctx?: TransactionContext): Promise<void>;
+  deleteById(id: string, ctx?: TransactionContext): Promise<void>;
 }

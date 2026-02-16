@@ -1,9 +1,9 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleMetadata } from '@/domain/article/article.metadata';
-import { ArticleStatus } from '@/domain/article/article.control';
+import { ArticleStatus, ArticleMasterId } from '@/domain/article/article.control';
 
 export interface UpdateArticleCommand {
-  id: string; // Slug or ID
+  id: ArticleMasterId; // Master ID
   lang: string;
   content?: string;
   status?: ArticleStatus;

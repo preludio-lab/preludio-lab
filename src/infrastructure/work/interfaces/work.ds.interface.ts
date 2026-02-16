@@ -44,7 +44,7 @@ export interface IWorkDataSource {
   /**
    * Delete Work
    */
-  delete(id: string, ctx?: TransactionContext): Promise<void>;
+  deleteById(id: string, ctx?: TransactionContext): Promise<void>;
 
   // --- Part Operations ---
 
@@ -71,5 +71,5 @@ export interface IWorkDataSource {
   /**
    * Delete a single Work Part by ID
    */
-  deletePart(partId: string, ctx?: TransactionContext): Promise<void>;
+  deletePartById(partId: string, ctx?: TransactionContext): Promise<void>;
 }

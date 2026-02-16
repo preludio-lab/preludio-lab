@@ -95,6 +95,10 @@ export const env = createEnv({
       ),
     R2_REGION: z.string().default('auto'),
     R2_BUCKET_NAME: z.string().min(1).default('preludiolab-storage'),
+
+    // Infrastructure Configuration
+    INFRA_METADATA_SOURCE: z.enum(['turso', 'fs', 'mock']).optional(),
+    INFRA_PAYLOAD_SOURCE: z.enum(['r2', 'fs', 'mock']).optional(),
   },
 
   /**
@@ -124,6 +128,8 @@ export const env = createEnv({
     R2_ENDPOINT: process.env.R2_ENDPOINT,
     R2_REGION: process.env.R2_REGION,
     R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+    INFRA_METADATA_SOURCE: process.env.INFRA_METADATA_SOURCE,
+    INFRA_PAYLOAD_SOURCE: process.env.INFRA_PAYLOAD_SOURCE,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,

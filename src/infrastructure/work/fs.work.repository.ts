@@ -64,13 +64,12 @@ export class FsWorkRepository implements WorkRepository {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteById(id: string): Promise<void> {
     const filePath = path.join(this.dataDirectory, `${id}.json`);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
   }
-
   private async getAllWorks(): Promise<Work[]> {
     const files = fs.readdirSync(this.dataDirectory).filter((f) => f.endsWith('.json'));
     const works: Work[] = [];

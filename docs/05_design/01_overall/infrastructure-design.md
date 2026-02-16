@@ -14,6 +14,32 @@
 | **Development**    | **Local PC**<br>`localhost:3000`           | **Turso (Dev)**<br>_Local or Remote_                  | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **Local** | **Local**      | **Local PC**<br>_手動実行_           | 機能開発、単体テスト。 |
 | **Staging**        | **Vercel Preview**<br>`git-branch-url`     | **Turso (Staging)**<br>_Cloud Staging or Shared Prod_ | **Supabase (Staging)**<br>_Cloud Staging or Shared Prod_ | **R2**    | **Cloudflare** | **GitHub Actions**<br>_PR_           | ステージング相当。     |
 | **Production**     | **Vercel Production**<br>`preludiolab.com` | **Turso (Production)**<br>_本番データ_                | **Supabase (Production)**<br>_本番データ_                | **R2**    | **Cloudflare** | **GitHub Actions**<br>_Schedule/API_ | 本番稼働環境。         |
+| **Test**           | **Jest / Vitest**                          | **Mock / SQLite**                                     | **Mock**                                                 | **Mock**  | **N/A**        | **Local / CI**                       | 単体・統合テスト。     |
+
+### 1.1 インフラストラクチャ構成 (Infrastructure Configuration)
+
+開発の柔軟性と堅牢性を両立するため、メタデータ（DB）とペイロード（ストレージ）のプロバイダーを実装単位で選択できる「Configパターン」を採用しています。
+
+#### 構成タイプ (Provider Types)
+
+- **Metadata Source**: Turso (Remote), FileSystem (Local), Mock
+- **Payload Source**: R2 (Remote), FileSystem (Local), Mock
+
+#### 決定ロジックと優先順位 (Precedence Logic)
+
+システムの起動時に以下の優先順位でプロバイダーが決定されます：
+
+1.  **最高優先 (Manual Override)**: 環境変数 `INFRA_METADATA_SOURCE` または `INFRA_PAYLOAD_SOURCE` が設定されている場合、その値を採用します。
+2.  **デフォルト (Default)**: 全ての環境（Development含む）で、デフォルトは **Cloud (Turso / R2)** に接続します。
+    - 開発中に一時的にローカルファイルを使いたい場合のみ、`.env.local` で `fs` を指定します。
+3.  **テスト (Test Overrides)**: テストコード内では、Configオブジェクトを明示的に注入することで、任意にプロバイダー（Mock等）を切り替え可能です。
+
+#### 活用例
+
+- **ハイブリッド開発**: 「DBは最新の本番・ステージングデータを見たいが、記事本文(MDX)だけは手元のエディタで編集中のものを使いたい」場合。
+  - 設定: `INFRA_PAYLOAD_SOURCE=fs`
+
+---
 
 > [!IMPORTANT]
 > **Administrative Boundary & Domain Transfer**:

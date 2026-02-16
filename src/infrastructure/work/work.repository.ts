@@ -77,9 +77,9 @@ export class WorkRepositoryImpl implements WorkRepository {
     }
   }
 
-  async delete(id: string, ctx?: TransactionContext): Promise<void> {
+  async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.workDS.delete(id, ctx);
+      await this.workDS.deleteById(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
