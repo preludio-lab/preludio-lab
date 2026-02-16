@@ -4,7 +4,7 @@ import {
   ArticleSearchResultItemDto,
 } from '@/application/article/dto/article-search.dto';
 
-import { Article } from '@/domain/article/article';
+import { ArticleSummary } from '@/domain/article/article';
 
 /**
  * SearchArticlesUseCase
@@ -14,9 +14,9 @@ export class SearchArticlesUseCase {
   constructor(private readonly articleRepository: ArticleRepository) {}
 
   async execute(criteria: ArticleSearchCriteria): Promise<ArticleSearchResultListDto> {
-    const pagedArticles = await this.articleRepository.findMany(criteria);
+    const pagedArticles = await this.articleRepository.search(criteria);
 
-    const items = pagedArticles.items.map(this.toSearchResultItemDto);
+    const items = pagedArticles.items.map((summary) => this.toSearchResultItemDto(summary));
 
     return {
       items,
@@ -26,26 +26,27 @@ export class SearchArticlesUseCase {
     };
   }
 
-  private toSearchResultItemDto(article: Article): ArticleSearchResultItemDto {
+  private toSearchResultItemDto(summary: ArticleSummary): ArticleSearchResultItemDto {
     return {
       article: {
         // Control Info
-        id: article.control.id,
-        lang: article.control.lang,
-        status: article.control.status,
+        id: summary.control.id,
+        masterId: summary.control.masterId,
+        lang: summary.control.lang,
+        status: summary.control.status,
 
         // Metadata Info
-        ...article.metadata,
-        publishedAt: article.metadata.publishedAt
-          ? article.metadata.publishedAt.toISOString()
+        ...summary.metadata,
+        publishedAt: summary.metadata.publishedAt
+          ? summary.metadata.publishedAt.toISOString()
           : null,
 
         // Engagement Summary
-        viewCount: article.engagement.metrics.viewCount,
-        auditionCount: article.engagement.metrics.auditionCount,
-        likeCount: article.engagement.metrics.likeCount,
-        resonanceCount: article.engagement.metrics.resonanceCount,
-        shareCount: article.engagement.metrics.shareCount,
+        viewCount: summary.engagement.metrics.viewCount,
+        auditionCount: summary.engagement.metrics.auditionCount,
+        likeCount: summary.engagement.metrics.likeCount,
+        resonanceCount: summary.engagement.metrics.resonanceCount,
+        shareCount: summary.engagement.metrics.shareCount,
       },
       search: {
         // Mock score, assuming strict order from repository

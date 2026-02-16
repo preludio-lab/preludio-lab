@@ -54,5 +54,5 @@ export interface WorkRepository {
    * @param id 作品ID
    * @param ctx トランザクションコンテキスト（オプション）
    */
-  delete(id: string, ctx?: TransactionContext): Promise<void>;
+  deleteById(id: string, ctx?: TransactionContext): Promise<void>;
 }

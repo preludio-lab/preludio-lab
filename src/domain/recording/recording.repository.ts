@@ -22,7 +22,7 @@ export interface RecordingRepository {
   save(recording: Recording): Promise<void>;
 
   /**
-   * Delete
+   * Delete by ID
    */
-  delete(id: string): Promise<void>;
+  deleteById(id: string): Promise<void>;
 }

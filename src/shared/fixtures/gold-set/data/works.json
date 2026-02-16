@@ -1,0 +1,26 @@
+[
+  {
+    "id": "01947470-0000-7000-8000-000000000002",
+    "composerId": "01947470-0000-7000-8000-000000000001",
+    "slug": "wtc-1",
+    "categories": ["keyboard"],
+    "translations": [
+      {
+        "lang": "ja",
+        "title": "平均律クラヴィーア曲集 第1巻",
+        "titlePrefix": "",
+        "titleContent": "平均律クラヴィーア曲集 第1巻",
+        "titleNickname": "",
+        "description": "J.S.バッハによる鍵盤楽器のための作品集。24のすべての調によるプレリュードとフーガが含まれる。"
+      },
+      {
+        "lang": "en",
+        "title": "The Well-Tempered Clavier, Book I",
+        "titlePrefix": "",
+        "titleContent": "The Well-Tempered Clavier, Book I",
+        "titleNickname": "",
+        "description": "A collection of two sets of preludes and fugues in all 24 major and minor keys for keyboard."
+      }
+    ]
+  }
+]

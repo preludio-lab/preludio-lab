@@ -18,7 +18,7 @@ export interface PlayerRepository {
   save(player: Player): Promise<void>;
 
   /**
-   * 削除
+   * IDによる削除
    */
-  delete(id: string): Promise<void>;
+  deleteById(id: string): Promise<void>;
 }

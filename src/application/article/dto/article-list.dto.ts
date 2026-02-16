@@ -23,6 +23,7 @@ export type ArticleListItemDto = z.infer<typeof ArticleListItemDtoSchema>;
  */
 export const ArticleCardDtoSchema = ArticleListItemDtoSchema.pick({
   id: true,
+  masterId: true,
   lang: true,
   slug: true,
   category: true,

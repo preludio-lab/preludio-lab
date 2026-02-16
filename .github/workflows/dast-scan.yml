@@ -23,7 +23,7 @@ jobs:
         run: chmod -R 777 ${{ github.workspace }}
 
       - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.14.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           # Vercelから通知されたデプロイURLをターゲットとして使用
           target: ${{ github.event.deployment_status.target_url }}

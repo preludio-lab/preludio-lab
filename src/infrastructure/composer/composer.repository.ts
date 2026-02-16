@@ -50,9 +50,9 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     }
   }
 
-  async delete(id: string, ctx?: TransactionContext): Promise<void> {
+  async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     try {
-      await this.ds.delete(id, ctx);
+      await this.ds.deleteById(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);

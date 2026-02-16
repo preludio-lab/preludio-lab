@@ -55,17 +55,16 @@ export class FsWorkPartRepository implements WorkPartRepository {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async deleteById(id: string): Promise<void> {
     const filePath = path.join(this.dataDirectory, `${id}.json`);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
   }
-
   async deleteByWorkId(workId: string): Promise<void> {
     const parts = await this.findByWorkId(workId);
     for (const part of parts) {
-      await this.delete(part.id);
+      await this.deleteById(part.id);
     }
   }
 
