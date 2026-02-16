@@ -37,7 +37,7 @@
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
-    "framer-motion": "^12.29.2",
+    "framer-motion": "^12.34.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "import-in-the-middle": "^2.0.6",
