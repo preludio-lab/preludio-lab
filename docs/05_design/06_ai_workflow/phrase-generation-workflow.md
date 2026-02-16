@@ -1,6 +1,6 @@
-# AI譜例生成ワークフロー (AI Musical Example Generation Workflow)
+# AIフレーズ生成ワークフロー (AI Phrase Generation Workflow)
 
-PreludioLabの根幹である「譜例と音源を活用した没入感」を実現するための、信頼性が高くスケーラブルな譜例生成ワークフローです。
+PreludioLabの根幹である「フレーズと音源を活用した没入感」を実現するための、信頼性が高くスケーラブルなフレーズ生成ワークフローです。
 
 ## 基本方針
 
@@ -39,7 +39,7 @@ PreludioLabの根幹である「譜例と音源を活用した没入感」を実
 
 取得したMusicXMLから必要な箇所を切り出し、Web表示用に加工します。
 
-- **ツール**: `tools/musical-example-generator` (TypeScript: `verovio`, `fast-xml-parser`)
+- **ツール**: `tools/phrase-generator` (TypeScript: `verovio`, `fast-xml-parser`)
 - **プロセス**:
   1.  **Trimming**: 定義された小節範囲（例: 1-4小節）を TypeScript で XML 操作を行い、部分的なMusicXMLを生成。
   2.  **Cleaning**: 表示に不要な要素（非表示のパート、過剰なメタデータ）を削除。
@@ -62,7 +62,7 @@ PreludioLabの根幹である「譜例と音源を活用した没入感」を実
 
 ## 5. 実装ディレクトリ構成
 
-`tools/musical-example-generator` に TypeScript ベースのツール群を配置します。
+`tools/phrase-generator` に TypeScript ベースのツール群を配置します。
 
 - `package.json`: `verovio`, `fast-xml-parser`, `zod`
 - `src/index.ts`: ワークフロー実行スクリプト

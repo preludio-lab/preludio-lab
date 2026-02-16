@@ -2,11 +2,11 @@
 
 import { useId } from 'react';
 import { NotationFormat } from '@/domain/score/score';
-import { MusicalExample } from '@/domain/score/musical-example';
+import { Phrase } from '@/domain/score/phrase';
 import { useScoreRenderer } from './useScoreRenderer';
 
 interface ScoreProps {
-  score: MusicalExample | { data: string; format: NotationFormat };
+  score: Phrase | { data: string; format: NotationFormat };
   className?: string; // 外部からのスタイリングを許可
 }
 

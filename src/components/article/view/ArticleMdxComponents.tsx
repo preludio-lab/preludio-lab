@@ -86,18 +86,10 @@ export const createArticleMdxComponents = (
     return <pre {...props} />;
   },
   ScoreRenderer: ScoreRenderer,
-  MusicalExample: ({
-    src,
-    description,
-    id,
-  }: {
-    src?: string;
-    description?: string;
-    id?: string;
-  }) => {
+  Phrase: ({ src, description, id }: { src?: string; description?: string; id?: string }) => {
     // Determine path based on infrastructure design:
     // Articles: public/articles/{slug}/images/
-    // Works: public/works/{composer}/{work}/musical-examples/
+    // Works: public/works/{composer}/{work}/phrases/
 
     let imagePath = '';
 
@@ -131,7 +123,7 @@ export const createArticleMdxComponents = (
         <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden p-4">
           <Image
             src={imagePath}
-            alt={description || id || 'Musical Example'}
+            alt={description || id || 'Phrase'}
             width={0}
             height={0}
             sizes="100vw"

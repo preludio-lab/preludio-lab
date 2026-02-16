@@ -106,7 +106,7 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
 
 ### 4.1 Cloudflare CDN (Public Assets: Image & Audio)
 
-静的アセット（画像、音源、譜例）の配信を担当します。
+静的アセット（画像、音源、フレーズ）の配信を担当します。
 
 #### Architecture
 
@@ -168,7 +168,7 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
 - **Region:** `auto` (Global)
 - **Path structure:**
   - `public/works/{composer}/{work}/audio/` (音源)
-  - `public/works/{composer}/{work}/musical-examples/` (譜例)
+  - `public/works/{composer}/{work}/phrases/` (フレーズ)
   - `public/articles/{slug}/images/` (記事内画像)
   - `private/` (Next.js アプリケーションからのみSDK経由でアクセスするMDX本文など)
 

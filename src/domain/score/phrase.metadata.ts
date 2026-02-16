@@ -5,7 +5,7 @@ import { createSlugSchema } from '../shared/common.metadata';
 
 /**
  * 楽譜データ（記法）フォーマットの定義
- * 譜例のレンダリングに使用される技術的な形式を表す。
+ * フレーズのレンダリングに使用される技術的な形式を表す。
  */
 export const NotationFormat = {
   /** ABC notation: テキストベースの楽譜表記法。軽量で動的な描画に適している */
@@ -31,9 +31,9 @@ export const MeasureRangeSchema = z.object({
 export type MeasureRange = z.infer<typeof MeasureRangeSchema>;
 
 /**
- * MusicalExampleMetadata の Zod スキーマ
+ * PhraseMetadata の Zod スキーマ
  */
-export const MusicalExampleMetadataSchema = z.object({
+export const PhraseMetadataSchema = z.object({
   /** 対象楽曲ID */
   workId: z.string().uuid(),
   /** 出典エディションID (任意) */
@@ -52,11 +52,11 @@ export const MusicalExampleMetadataSchema = z.object({
   caption: createMultilingualStringSchema({ max: 30 }).optional(),
 });
 
-export type MusicalExampleMetadata = z.infer<typeof MusicalExampleMetadataSchema>;
+export type PhraseMetadata = z.infer<typeof PhraseMetadataSchema>;
 
 /**
- * MusicalExampleMetadata の生成
+ * PhraseMetadata の生成
  */
-export const createMusicalExampleMetadata = (params: unknown): MusicalExampleMetadata => {
-  return MusicalExampleMetadataSchema.parse(params);
+export const createPhraseMetadata = (params: unknown): PhraseMetadata => {
+  return PhraseMetadataSchema.parse(params);
 };

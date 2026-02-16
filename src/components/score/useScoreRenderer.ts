@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NotationFormat } from '@/domain/score/score';
-import { MusicalExample } from '@/domain/score/musical-example';
+import { Phrase } from '@/domain/score/phrase';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
 
@@ -9,7 +9,7 @@ import { handleClientError } from '@/lib/client-error';
  * スコアレンダリングロジックを扱うカスタムフックです。
  * レンダラーのライフサイクルとDOM要素を管理します。
  */
-export function useScoreRenderer(score: MusicalExample | { data: string; format: NotationFormat }) {
+export function useScoreRenderer(score: Phrase | { data: string; format: NotationFormat }) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   // 依存性の注入 (簡易版)
@@ -23,7 +23,7 @@ export function useScoreRenderer(score: MusicalExample | { data: string; format:
     const renderScore = async () => {
       if (!elementRef.current || !score) return;
 
-      // MusicalExample の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
+      // Phrase の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
       // ※ 現状は notationPath に生データが入っている前提、または別途フェッチが必要な設計への布石
       const data =
         'metadata' in score && 'notationPath' in score.metadata

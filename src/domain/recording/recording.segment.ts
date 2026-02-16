@@ -3,7 +3,7 @@ import { z } from 'zod';
 /**
  * Recording Segment
  * 録音ソースの一部を取り出した（トリミングした）区間。
- * 譜例（MusicalExample）やハイライト再生、イントロ再生などで使用される汎用的な値オブジェクト。
+ * フレーズ（Phrase）やハイライト再生、イントロ再生などで使用される汎用的な値オブジェクト。
  */
 export const RecordingSegmentSchema = z.object({
   /** 録音ソースID (Reference to RecordingSource.id) */
