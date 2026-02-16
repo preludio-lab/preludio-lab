@@ -64,9 +64,9 @@ erDiagram
     Works ||--o{ ScoreWorks : "contained in"
     Scores ||--o{ ScoreWorks : "contains"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
-    Works ||--o{ MusicalExamples : "has musical excerpts"
-    MusicalExamples }o--|| Scores : "references edition from"
-    MusicalExamples }o..|| RecordingSources : "has playback samples"
+    Works ||--o{ Phrases : "has musical phrases"
+    Phrases }o--|| Scores : "references edition from"
+    Phrases }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
 
@@ -76,7 +76,7 @@ erDiagram
     Works ||--o{ WorkParts : "consists of"
     Works ||--|{ WorkTranslations : "has localized"
     WorkParts ||--|{ WorkPartTranslations : "has localized"
-    WorkParts ||--o{ MusicalExamples : "has musical excerpts"
+    WorkParts ||--o{ Phrases : "has musical phrases"
     WorkParts ||--o{ Recordings : "has recordings"
     Tags ||--|{ TagTranslations : "has localized"
     MediaAssets
@@ -435,32 +435,33 @@ sequenceDiagram
 | `idx_score_works_lookup` | `(score_id, work_id)` | **UNIQUE** | 重複防止                   |
 | `idx_score_works_work`   | `(work_id)`           | B-Tree     | 楽曲から対応する楽譜を検索 |
 
-### 4.4 `musical_examples` (Excerpt Component)
+### 4.4 `phrases` (Musical Phrase Component)
 
-記事内で解説のために使用される「譜例」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
+記事内で解説のために使用される「フレーズ」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
 
-| Column               | Type   | Default | NOT NULL | CHECK                                  | Description                                                 |
-| :------------------- | :----- | :------ | :------- | :------------------------------------- | :---------------------------------------------------------- |
-| **`id`**             | `text` | -       | YES      | -                                      | **PK**. UUID v7                                             |
-| **`work_id`**        | `text` | -       | YES      | -                                      | **FK to `works.id`**                                        |
-| **`work_part_id`**   | `text` | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有の譜例、NULLは全体)      |
-| **`score_id`**       | `text` | -       | NO       | -                                      | **FK to `scores.id`** (出典。指定なしは自作/不明)           |
-| `slug`               | `text` | -       | YES      | -                                      | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)           |
-| `format`             | `text` | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式                                                  |
-| `data_storage_path`  | `text` | -       | YES      | -                                      | **[R2]** 譜面データパス                                     |
-| `measure_range`      | `text` | -       | NO       | -                                      | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
-| `recording_segments` | `text` | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
-| `created_at`         | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
-| `updated_at`         | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
+| Column               | Type      | Default | NOT NULL | CHECK                                  | Description                                                 |
+| :------------------- | :-------- | :------ | :------- | :------------------------------------- | :---------------------------------------------------------- |
+| **`id`**             | `text`    | -       | YES      | -                                      | **PK**. UUID v7                                             |
+| **`work_id`**        | `text`    | -       | YES      | -                                      | **FK to `works.id`**                                        |
+| **`work_part_id`**   | `text`    | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有のフレーズ、NULLは全体)  |
+| **`score_id`**       | `text`    | -       | NO       | -                                      | **FK to `scores.id`** (出典。指定なしは自作/不明)           |
+| `slug`               | `text`    | -       | YES      | -                                      | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)           |
+| `format`             | `text`    | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式                                                  |
+| `data_storage_path`  | `text`    | -       | YES      | -                                      | **[R2]** 譜面データパス                                     |
+| `measure_range`      | `text`    | -       | NO       | -                                      | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
+| `recording_segments` | `text`    | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
+| `favorites_count`    | `integer` | `0`     | YES      | `favorites_count >= 0`                 | **[Engagement]** お気に入り数                               |
+| `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
+| `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
 
-#### 4.3.1 Indexes (Musical Examples)
+#### 4.3.1 Indexes (Phrases)
 
-| Index Name             | Columns           | Type       | Usage                            |
-| :--------------------- | :---------------- | :--------- | :------------------------------- |
-| `idx_mus_ex_work_id`   | `(work_id)`       | B-Tree     | 楽曲単位での譜例取得             |
-| `idx_mus_ex_work_part` | `(work_part_id)`  | B-Tree     | 楽章単位での譜例取得             |
-| `idx_mus_ex_slug`      | `(work_id, slug)` | **UNIQUE** | 楽曲内の一意スラグ取得           |
-| `idx_mus_ex_score_id`  | `(score_id)`      | B-Tree     | 出典（エディション）からの逆引き |
+| Index Name          | Columns           | Type       | Usage                            |
+| :------------------ | :---------------- | :--------- | :------------------------------- |
+| `idx_phr_work_id`   | `(work_id)`       | B-Tree     | 楽曲単位でのフレーズ取得         |
+| `idx_phr_work_part` | `(work_part_id)`  | B-Tree     | 楽章単位でのフレーズ取得         |
+| `idx_phr_slug`      | `(work_id, slug)` | **UNIQUE** | 楽曲内の一意スラグ取得           |
+| `idx_phr_score_id`  | `(score_id)`      | B-Tree     | 出典（エディション）からの逆引き |
 
 #### 4.3.2 JSON Type Definitions
 
@@ -475,6 +476,8 @@ type MeasureRange = {
 ```
 
 ##### 4.3.2.2 `recording_segments`
+
+| `favorites_count` | `integer` | `0` | YES | `favorites_count >= 0` | **[Engagement]** お気に入り数 |
 
 ```typescript
 type RecordingSegment = {

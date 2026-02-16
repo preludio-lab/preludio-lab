@@ -12,7 +12,7 @@ R2上のディレクトリ区分と、それぞれの配信・キャッシュを
 
 | Source Directory | Delivery / Cache Layer  | Content Type      | Description                                                                                                                       |
 | :--------------- | :---------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| **`R2/public`**  | **Cloudflare CDN**      | **Static Assets** | 画像、譜例、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。                   |
+| **`R2/public`**  | **Cloudflare CDN**      | **Static Assets** | 画像、フレーズ、無料音源など。<br>Cloudflare Worker経由でR2から直接配信され、Cloudflareエッジでキャッシュされます。               |
 | **`R2/private`** | **Vercel Edge Network** | **MDX**           | MDX原稿など。<br>Next.js (Vercel) が内部的に取得・レンダリングし、生成成果物（HTML/JSON）としてVercelエッジでキャッシュされます。 |
 
 ### Data Flow Strategy
@@ -63,7 +63,7 @@ preludio-storage/
 │   │       ├── audio/              # 音源
 │   │       │   ├── full.mp3
 │   │       │   └── ...
-│   │       └── musical-examples/   # 譜例SVG
+│   │       └── phrases/   # フレーズSVG
 │   │           ├── ex1.svg
 │   │           └── ...
 │   ├── articles/           # ドメイン: 記事 (編集リソース)
@@ -114,7 +114,7 @@ Cloudflare Workerにて以下の高度な制御を行います。
 2.  **Audio Range Requests:**
     - ブラウザのシークバー対応のため、`Range` ヘッダーを透過的に処理し、部分コンテンツ（206 Partial Content）を返却する（`worktop` 等のライブラリや標準APIを活用）。
 3.  **Content-Type Enforcement:**
-    - `musical-examples/*.svg` に対しては `Content-Type: image/svg+xml` を強制し、インライン表示トラブルを防ぐ。
+    - `phrases/*.svg` に対しては `Content-Type: image/svg+xml` を強制し、インライン表示トラブルを防ぐ。
 4.  **Security Headers:**
     - 以下のヘッダーを付与し、セキュリティを強化する。
       - `X-Content-Type-Options: nosniff`

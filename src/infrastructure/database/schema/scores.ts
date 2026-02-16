@@ -1,9 +1,9 @@
-import { sqliteTable, text, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { works, workParts } from './works';
 import type { MonetizationElement } from '@/domain/monetization/monetization';
 import type { RecordingSegment } from '@/domain/recording/recording.segment';
-import type { MeasureRange } from '@/domain/score/musical-example.metadata';
+import type { MeasureRange } from '@/domain/score/phrase.metadata';
 
 // --- Scores Table ---
 export const scores = sqliteTable(
@@ -76,9 +76,9 @@ export const scoreWorks = sqliteTable(
   }),
 );
 
-// --- Musical Examples Table ---
-export const musicalExamples = sqliteTable(
-  'musical_examples',
+// --- Phrases Table ---
+export const phrases = sqliteTable(
+  'phrases',
   {
     id: text('id').primaryKey(), // UUID v7
     workId: text('work_id')
@@ -98,6 +98,8 @@ export const musicalExamples = sqliteTable(
       .notNull()
       .$type<RecordingSegment[]>(),
 
+    favoritesCount: integer('favorites_count').default(0).notNull(),
+
     createdAt: text('created_at')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -106,9 +108,9 @@ export const musicalExamples = sqliteTable(
       .notNull(),
   },
   (table) => ({
-    workIdx: index('idx_mus_ex_work_id').on(table.workId),
-    partIdx: index('idx_mus_ex_work_part').on(table.workPartId),
-    scoreIdx: index('idx_mus_ex_score_id').on(table.scoreId),
-    slugIdx: uniqueIndex('idx_mus_ex_slug').on(table.workId, table.slug),
+    workIdx: index('idx_phrase_work_id').on(table.workId),
+    partIdx: index('idx_phrase_work_part').on(table.workPartId),
+    scoreIdx: index('idx_phrase_score_id').on(table.scoreId),
+    slugIdx: uniqueIndex('idx_phrase_slug').on(table.workId, table.slug),
   }),
 );

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { NotationFormat } from '@/domain/score/score';
-import { MusicalExample } from '@/domain/score/musical-example';
+import { Phrase } from '@/domain/score/phrase';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
 
 /**
- * useScoreRenderer
- * スコアレンダリングロジックを扱うカスタムフックです。
+ * usePhraseRenderer
+ * フレーズレンダリングロジックを扱うカスタムフックです。
  * レンダラーのライフサイクルとDOM要素を管理します。
  */
-export function useScoreRenderer(score: MusicalExample | { data: string; format: NotationFormat }) {
+export function usePhraseRenderer(phrase: Phrase | { data: string; format: NotationFormat }) {
   const elementRef = useRef<HTMLDivElement>(null);
 
   // 依存性の注入 (簡易版)
@@ -20,43 +20,43 @@ export function useScoreRenderer(score: MusicalExample | { data: string; format:
   useEffect(() => {
     let isMounted = true;
 
-    const renderScore = async () => {
-      if (!elementRef.current || !score) return;
+    const renderPhrase = async () => {
+      if (!elementRef.current || !phrase) return;
 
-      // MusicalExample の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
+      // Phrase の場合は metadata.notationPath を、それ以外の場合は直接 dataプロパティを見る
       // ※ 現状は notationPath に生データが入っている前提、または別途フェッチが必要な設計への布石
       const data =
-        'metadata' in score && 'notationPath' in score.metadata
-          ? score.metadata.notationPath
-          : (score as { data: string }).data;
+        'metadata' in phrase && 'notationPath' in phrase.metadata
+          ? phrase.metadata.notationPath
+          : (phrase as { data: string }).data;
       const format =
-        'metadata' in score && 'format' in score.metadata
-          ? score.metadata.format
-          : (score as { format: NotationFormat }).format;
+        'metadata' in phrase && 'format' in phrase.metadata
+          ? phrase.metadata.format
+          : (phrase as { format: NotationFormat }).format;
 
       try {
         if (process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: レンダリングを開始しました', { format });
+          console.debug('usePhraseRenderer: レンダリングを開始しました', { format });
         }
 
         await renderer.render(data, elementRef.current, format);
 
         if (isMounted && process.env.NODE_ENV === 'development') {
-          console.debug('useScoreRenderer: レンダリングが完了しました');
+          console.debug('usePhraseRenderer: レンダリングが完了しました');
         }
       } catch (error) {
         if (isMounted) {
-          handleClientError(error, 'スコアのレンダリングに失敗しました');
+          handleClientError(error, 'フレーズのレンダリングに失敗しました');
         }
       }
     };
 
-    renderScore();
+    renderPhrase();
 
     return () => {
       isMounted = false;
     };
-  }, [score, renderer]);
+  }, [phrase, renderer]);
 
   return { elementRef };
 }
