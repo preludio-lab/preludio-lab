@@ -2,16 +2,25 @@
 
 import { m } from 'framer-motion';
 
-interface FadeInHeadingProps {
+interface FadeInHeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: React.ReactNode;
   className?: string;
   priority?: boolean;
 }
 
-export function FadeInHeading({ children, className, priority = false }: FadeInHeadingProps) {
+export function FadeInHeading({
+  children,
+  className,
+  priority = false,
+  ...props
+}: FadeInHeadingProps) {
   if (priority) {
     // LCP Optimization: Render standard h2 without animation for critical headings
-    return <h2 className={className}>{children}</h2>;
+    return (
+      <h2 className={className} {...props}>
+        {children}
+      </h2>
+    );
   }
 
   return (
@@ -21,6 +30,8 @@ export function FadeInHeading({ children, className, priority = false }: FadeInH
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...(props as any)}
     >
       {children}
     </m.h2>
