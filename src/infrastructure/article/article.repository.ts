@@ -8,7 +8,7 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
-import { IArticlePathStrategy } from './article.path.strategy';
+import { IArticlePathStrategy } from './content/article.path.strategy';
 
 /**
  * ArticleRepository の実装クラス。

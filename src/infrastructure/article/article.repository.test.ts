@@ -7,7 +7,7 @@ import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage } from '../storage/storage.interface';
 import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
-import { ArticlePathStrategy } from './article.path.strategy';
+import { ArticlePathStrategy } from './content/article.path.strategy';
 import { Article } from '@/domain/article/article';
 import { ArticleContentMapper } from './content/article.content.mapper';
 
