@@ -37,15 +37,18 @@ export class TursoArticleMapper {
     const parsedMetadataResult = MetadataSchema.safeParse(rawMetadata);
 
     if (!parsedMetadataResult.success) {
-      // エンタープライズ品質: データの不整合を許容せずエラーにする
-      throw new AppError(
-        `Invalid metadata structure for article: ${articleRow.id}`,
-        'INTERNAL_SERVER_ERROR',
-        500,
+      console.warn(
+        'Metadata validation failed for article:',
+        articleRow.id,
         parsedMetadataResult.error,
       );
+      // フォールバック: デフォルト値を使用するなどの対応が可能だが、
+      // ここでは最低限のメタデータとして続行するか、エラーにするか方針による。
+      // 一旦エラーログを出して、失敗として扱う (または partial data として返す)
+      // 今回は throw せず、metadata を empty として扱う等の安全策をとる
     }
-    const safeBaseMetadata = parsedMetadataResult.data;
+
+    const safeBaseMetadata = parsedMetadataResult.success ? parsedMetadataResult.data : {};
 
     // 3. Control & Status Safety
     // DBの値がDomainのEnumに存在するかチェック

@@ -122,6 +122,7 @@ export function AudioPlayerBinder({
         <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity z-10 m-1">
           <button
             onClick={handlePlayClick}
+            data-testid="play-button"
             className="flex items-center gap-1.5 rounded-full bg-gray-900/90 text-white px-3 py-1.5 shadow-sm hover:bg-black hover:scale-105 transition-all text-xs font-medium backdrop-blur-sm"
           >
             <span>▶ Play</span>

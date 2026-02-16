@@ -25,4 +25,6 @@ const client = createClient({
   authToken: TURSO_AUTH_TOKEN,
 });
 
+console.log('[DEBUG] Turso Client URL:', TURSO_DATABASE_URL || 'file:local.db');
+
 export const db = drizzle(client, { schema });
