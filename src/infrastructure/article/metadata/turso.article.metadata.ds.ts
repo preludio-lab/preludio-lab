@@ -28,7 +28,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
         .limit(1);
 
-      return result[0];
+      return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findById error', error as Error, {
         id,
@@ -76,7 +76,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .where(and(...filters))
         .limit(1);
 
-      return result[0];
+      return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findBySlug error', error as Error, {
         slug,
@@ -173,7 +173,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
       return {
-        rows: rows,
+        rows: rows as ArticleMetadataRow[],
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {
@@ -263,7 +263,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
         .where(eq(articles.id, id));
 
-      return result;
+      return result as ArticleMetadataRow[];
     } catch (error) {
       this.logger.error(
         'TursoArticleMetadataDataSource.findAllTranslations error',
