@@ -10,11 +10,21 @@ import { AppError } from '@/domain/shared/app-error';
 
 import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds';
 
+/**
+ * Turso (SQLite/libSQL) をバックエンドとした記事メタデータのデータソース実装。
+ *
+ * Drizzle ORM を使用して、マスターテーブル (articles) と
+ * 翻訳テーブル (article_translations) の結合（JOIN）や検索を処理します。
+ */
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}
 
   /**
-   * IDと言語コードを指定して記事のメタデータを取得します。
+   * マスターIDと言語コードを指定して記事のメタデータを1件取得します。
+   * マスターレコードと該当言語の翻訳レコードを内部結合（INNER JOIN）して返します。
+   *
+   * @param id - 記事マスターID (UUID)
+   * @param lang - 取得対象の言語コード
    */
   async findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined> {
     try {
@@ -44,7 +54,16 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * スラッグと言語コードを指定して記事のメタデータを取得します。
+   * スラッグと言語コードを指定して記事のメタデータを1件取得します。
+   *
+   * 【スラッグ解決の優先順位】
+   * 1. 翻訳テーブル側の `slSlug` (ローカライズされたスラッグ) が一致する場合を最優先します。
+   * 2. `slSlug` が NULL の場合のみ、マスターテーブル側の `slug` との一致をチェックします。
+   * これにより、言語ごとのカスタムURLと、デフォルトURLの両方をサポートします。
+   *
+   * @param slug - 検索対象のスラッグ (パスの構成要素)
+   * @param lang - 言語コード
+   * @param category - (オプション) カテゴリによる追加絞り込み
    */
   async findBySlug(
     slug: string,
@@ -93,7 +112,11 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * 指定された検索条件に基づいて記事メタデータの一覧を取得します。
+   * 検索条件に基づいて記事メタデータの一覧を表示用（サマリー形式）に取得します。
+   * キーワード検索、ステータス、カテゴリ、おすすめ（Featured）などのフィルタを処理します。
+   *
+   * @param criteria - 検索とページネーションの条件
+   * @returns 取得された行の一覧と、フィルタ条件に合致する総件数 (totalCount)
    */
   async findMany(
     criteria: ArticleSearchCriteria,
@@ -102,11 +125,13 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const { filter, sort, pagination } = criteria;
       const filters = [];
 
+      // 1. 基本フィルタ (言語、ステータス)
       filters.push(eq(articleTranslations.lang, filter.lang));
 
       const targetStatuses = filter.status?.length ? filter.status : [ArticleStatus.PUBLISHED];
       filters.push(inArray(articleTranslations.status, targetStatuses));
 
+      // 2. 追加属性フィルタ
       if (filter.category) {
         filters.push(eq(articles.category, filter.category));
       }
@@ -115,6 +140,8 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         filters.push(eq(articleTranslations.isFeatured, filter.isFeatured));
       }
 
+      // 3. キーワード検索ロジック
+      // 指定されたスコープ（タイトルのみ、サマリーのみ、または両方）に基づいて LIKE 検索を構成します。
       if (filter.keyword) {
         const pattern = `%${filter.keyword}%`;
         const scope = filter.keywordScope || ArticleKeywordScope.ALL;
@@ -140,6 +167,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         }
       }
 
+      // 4. ソート設定
       const sortMapping: Partial<Record<ArticleSortOption, AnyColumn>> = {
         [ArticleSortOption.TITLE]: articleTranslations.displayTitle,
         [ArticleSortOption.PERFORMANCE_DIFFICULTY]: articleTranslations.slPerformanceDifficulty,
@@ -152,6 +180,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const direction = sort?.direction === SortDirection.ASC ? asc : desc;
       const orderByClause = direction(targetColumn);
 
+      // 5. データ取得とカウントの並列実行
       const rowsPromise = db
         .select({
           articles: articles,
@@ -190,7 +219,13 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * メタデータを保存します。
+   * 記事メタデータ（マスターおよび該当言語の翻訳）を保存します。
+   * 現在はアーキテクチャ定義のみで、実体は後ほど実装予定です。
+   *
+   * 【実装上の注意】
+   * 特定の言語の翻訳のみを保存する場合、マスターテーブル (articles) のデータ
+   * （スラッグ、サムネイル、作成日時など）を誤って破壊（初期値で上書き）しないように、
+   * `onConflictDoUpdate` 等を用いて更新対象を限定する必要があります。
    */
   async save(_row: ArticleMetadataRow): Promise<void> {
     // アーキテクチャ構成を優先し、現在はスキャフォールディング（実体は後ほど実装）
@@ -204,6 +239,9 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
 
   /**
    * 特定の言語の翻訳レコードを削除します。
+   *
+   * @param id - 親となるマスターID
+   * @param lang - 削除対象の言語
    */
   async deleteTranslation(id: string, lang: string): Promise<void> {
     try {
@@ -226,7 +264,10 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * 指定された ID に紐づく翻訳レコードの総数を取得します。
+   * 指定されたマスターIDに紐付けられている全言語の翻訳レコード総数を返します。
+   * 全言語の翻訳が削除された際にマスターを削除するかどうかの判定に使用されます。
+   *
+   * @param id - 調査対象のマスターID
    */
   async countTranslations(id: string): Promise<number> {
     try {
@@ -250,7 +291,10 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * 指定された ID に紐づく全ての翻訳メタデータを取得します（全言語）。
+   * 指定されたマスターIDに関連する全言語のメタデータを一括取得します。
+   * 記事の「全言語での管理状態」を把握するために使用されます。
+   *
+   * @param id - マスターID
    */
   async findAllTranslations(id: string): Promise<ArticleMetadataRow[]> {
     try {
@@ -282,12 +326,15 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   }
 
   /**
-   * 指定された ID の Master レコードと全ての翻訳レコードを削除します。
+   * 指定されたマスターIDに紐づく全てのデータ（マスターおよび全言語の翻訳）を
+   * トランザクションを用いて物理削除します。
+   *
+   * @param id - 削除対象のマスターID
    */
   async deleteAll(id: string): Promise<void> {
     try {
       // 外部キー制約（ON DELETE CASCADE）が設定されている場合は articles を消すだけで良いが、
-      // 念のため明示的に両方消すか、トランザクションで囲む。
+      // 念のため明示的に両方消す。
       await db.transaction(async (tx) => {
         await tx.delete(articleTranslations).where(eq(articleTranslations.articleId, id));
         await tx.delete(articles).where(eq(articles.id, id));
