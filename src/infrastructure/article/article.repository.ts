@@ -3,10 +3,7 @@ import { ArticleCategory } from '@/domain/article/article.metadata';
 import { Article, ArticleContent, ArticleSummary } from '@/domain/article/article';
 import { ArticleMasterId } from '@/domain/article/article.control';
 import { PagedResponse } from '@/domain/shared/pagination';
-import {
-  IArticleMetadataDataSource,
-  ArticleMetadataRow,
-} from './metadata/article.metadata.ds.interface';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './metadata/article.metadata.ds';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';

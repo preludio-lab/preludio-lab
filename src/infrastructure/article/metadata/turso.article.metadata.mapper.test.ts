@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { TursoArticleMapper } from './turso.article.mapper';
+import { TursoArticleMapper } from './turso.article.metadata.mapper';
 import { AppError } from '@/domain/shared/app-error';
 import { AppLocale } from '@/domain/i18n/locale';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { ArticleMasterRow, ArticleRow } from './article.metadata.ds.interface';
+import { ArticleMasterRow, ArticleRow } from './article.metadata.ds';
 import { ArticleSummary } from '@/domain/article/article';
 
 describe('TursoArticleMapper', () => {

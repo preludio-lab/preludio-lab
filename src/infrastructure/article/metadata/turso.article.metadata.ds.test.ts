@@ -11,7 +11,7 @@ vi.mock('../../database/turso.client', () => ({
 }));
 
 // Mock Mapper
-vi.mock('./turso.article.mapper', () => ({
+vi.mock('./turso.article.metadata.mapper', () => ({
   TursoArticleMapper: {
     toDomain: vi.fn(),
   },

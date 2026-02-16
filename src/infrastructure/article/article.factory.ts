@@ -6,9 +6,9 @@ import { TursoArticleMetadataDataSource } from './metadata/turso.article.metadat
 import { logger } from '@/infrastructure/logging';
 import { R2StorageService } from '../storage/r2.storage';
 import { FileSystemStorageService } from '../storage/fs.storage';
-import { TursoArticleMapper } from './metadata/turso.article.mapper';
+import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
 import { InfrastructureConfig } from '../shared/config';
-import { IArticleMetadataDataSource } from './metadata/article.metadata.ds.interface';
+import { IArticleMetadataDataSource } from './metadata/article.metadata.ds';
 import { IObjectStorage } from '../storage/storage.interface';
 
 export class ArticleRepositoryFactory {

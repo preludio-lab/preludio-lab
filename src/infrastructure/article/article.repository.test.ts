@@ -1,15 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ArticleRepositoryImpl } from './article.repository';
-import {
-  IArticleMetadataDataSource,
-  ArticleMetadataRow,
-} from './metadata/article.metadata.ds.interface';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './metadata/article.metadata.ds';
 import { ArticleMasterId } from '@/domain/article/article.control';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage } from '../storage/storage.interface';
-import { TursoArticleMapper } from './metadata/turso.article.mapper';
+import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
 
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;

@@ -14,7 +14,7 @@ import {
   ArticleMetadataRow,
   ArticleMasterRow,
   ArticleRow,
-} from './article.metadata.ds.interface';
+} from './article.metadata.ds';
 import { ArticleSearchCriteria } from '@/domain/article/article.repository';
 
 /**

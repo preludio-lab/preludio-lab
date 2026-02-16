@@ -12,7 +12,7 @@ import {
   ArticleMetadataSchema,
 } from '@/domain/article/article.metadata';
 import { AppError } from '@/domain/shared/app-error';
-import { ArticleMetadataRow, ArticleMasterRow, ArticleRow } from './article.metadata.ds.interface';
+import { ArticleMetadataRow, ArticleMasterRow, ArticleRow } from './article.metadata.ds';
 
 /**
  * メタデータJSONのバリデーション用スキーマ。
@@ -106,10 +106,25 @@ export class TursoArticleMapper {
       monetizationElements: [],
     };
 
+    // 7. エンゲージメント情報 (Engagement) の構築
+    // 現在はゼロ値で初期化。将来的には別テーブルやRedisから取得する可能性がある。
+    const engagement = {
+      metrics: {
+        viewCount: 0,
+        likeCount: 0,
+        shareCount: 0,
+        commentCount: 0,
+        auditionCount: 0,
+        resonanceCount: 0,
+        totalTimeOnPageSeconds: 0,
+      },
+    };
+
     return new ArticleSummary({
       control,
       metadata,
       context,
+      engagement,
     });
   }
 
@@ -122,6 +137,9 @@ export class TursoArticleMapper {
    */
   static toPersistence(article: Article | ArticleSummary): ArticleMetadataRow {
     // 記事基本情報テーブル用のデータ (Master)
+    // [CAUTION] ここで生成される articles オブジェクトは、翻訳保存時にも生成されます。
+    // Repository 実装側では、翻訳のみの更新時に Master 側の意図しない上書き（slugやthumbnailPathなど）
+    // が発生しないよう、onConflictDoUpdate 等で更新対象カラムを制御する必要があります。
     const articles: ArticleMasterRow = {
       id: article.masterId,
       workId: null, // 必要に応じて拡張（特定の楽曲解説記事など）

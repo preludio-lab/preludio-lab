@@ -8,7 +8,7 @@ import { ArticleSortOption, SortDirection } from '@/domain/article/article.const
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 
-import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds.interface';
+import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds';
 
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
   constructor(private readonly logger: Logger) {}
@@ -19,13 +19,16 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   async findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined> {
     try {
       const result = await db
-        .select()
+        .select({
+          articles: articles,
+          article_translations: articleTranslations,
+        })
         .from(articles)
         .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
         .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
         .limit(1);
 
-      return result[0] as ArticleMetadataRow | undefined;
+      return result[0];
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findById error', error as Error, {
         id,
@@ -49,20 +52,31 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
     category?: ArticleCategory,
   ): Promise<ArticleMetadataRow | undefined> {
     try {
-      const filters = [eq(articles.slug, slug), eq(articleTranslations.lang, lang)];
+      // 検索ロジック:
+      // 1. 翻訳側のスラッグ (slSlug) が一致する
+      // 2. または、翻訳スラッグが未設定 (NULL) で、マスタースラッグ (articles.slug) が一致する (フォールバック)
+      const slugCondition = or(
+        eq(articleTranslations.slSlug, slug),
+        and(sql`${articleTranslations.slSlug} IS NULL`, eq(articles.slug, slug)),
+      );
+
+      const filters = [slugCondition, eq(articleTranslations.lang, lang)];
 
       if (category) {
         filters.push(eq(articles.category, category));
       }
 
       const result = await db
-        .select()
+        .select({
+          articles: articles,
+          article_translations: articleTranslations,
+        })
         .from(articles)
         .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
         .where(and(...filters))
         .limit(1);
 
-      return result[0] as ArticleMetadataRow | undefined;
+      return result[0];
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.findBySlug error', error as Error, {
         slug,
@@ -139,7 +153,10 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const orderByClause = direction(targetColumn);
 
       const rowsPromise = db
-        .select()
+        .select({
+          articles: articles,
+          article_translations: articleTranslations,
+        })
         .from(articles)
         .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
         .where(and(...filters))
@@ -156,7 +173,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
       return {
-        rows: rows as ArticleMetadataRow[],
+        rows: rows,
         totalCount: Number(countResult[0]?.count || 0),
       };
     } catch (error) {
@@ -178,7 +195,11 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   async save(_row: ArticleMetadataRow): Promise<void> {
     // アーキテクチャ構成を優先し、現在はスキャフォールディング（実体は後ほど実装）
     this.logger.info(`TursoArticleMetadataDataSource.save called for ID: ${_row.articles.id}`);
-    // TODO: Perform db.insert().onConflictUpdate() or equivalent
+    // TODO: Perform db.insert().onConflictDoUpdate() or equivalent
+    // [Implementation Note]
+    // Master data (articles table) should only be updated when specifically intended.
+    // Use onConflictDoUpdate to control which columns are updated to prevent overwriting
+    // master attributes (slug, thumbnail, etc.) when saving a translation.
   }
 
   /**
@@ -234,12 +255,15 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   async findAllTranslations(id: string): Promise<ArticleMetadataRow[]> {
     try {
       const result = await db
-        .select()
+        .select({
+          articles: articles,
+          article_translations: articleTranslations,
+        })
         .from(articles)
         .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
         .where(eq(articles.id, id));
 
-      return result as ArticleMetadataRow[];
+      return result;
     } catch (error) {
       this.logger.error(
         'TursoArticleMetadataDataSource.findAllTranslations error',
