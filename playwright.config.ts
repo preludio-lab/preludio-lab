@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
 
 /**
  * See https://playwright.dev/docs/test-configuration
@@ -30,12 +31,32 @@ export default defineConfig({
   },
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command:
-      'SKIP_ENV_VALIDATION=true NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321 NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy-key pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
+  globalSetup: './e2e/setup/global-setup.ts', // Use the new global setup for DB seeding
+
+  // Vercel Preview 等の外部 URL をテストする場合は、ローカルサーバーの起動をスキップする
+  webServer: process.env.PLAYWRIGHT_TEST_BASE_URL
+    ? undefined
+    : {
+        command: 'npx next dev --webpack',
+        timeout: 120000,
+        url: 'http://localhost:3000',
+        reuseExistingServer: true, // Allow using manually started server for local debugging
+        env: {
+          SKIP_ENV_VALIDATION: 'true',
+          NEXT_PUBLIC_CDN_BASE_URL: 'http://localhost:3000',
+          NEXT_PUBLIC_APP_ENV: 'test',
+          // Auth.js 起動用 (32文字以上の文字列)
+          AUTH_SECRET: 'dummy_secret_for_e2e_testing_purposes_only_32_chars',
+          // ダミーインフラ設定 - Local SQLite + Drizzle
+          TURSO_DATABASE_URL: `file://${path.join(process.cwd(), 'local-e2e.db')}`,
+          ARTICLE_METADATA_SOURCE: 'db', // Explicitly use DB for metadata
+          ARTICLE_CONTENT_SOURCE: 'r2', // Use R2 DS to trigger fallback to Gold Set on miss
+          // R2 Dummy (Not used if ARTICLE_CONTENT_SOURCE=fs/fallback hits)
+          R2_ENDPOINT: 'http://localhost:20000',
+          R2_ACCESS_KEY_ID: 'dummy-id',
+          R2_SECRET_ACCESS_KEY: 'dummy-secret',
+        },
+      },
 
   /* Configure projects for major browsers */
   projects: [

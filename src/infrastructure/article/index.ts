@@ -1,20 +1,11 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { ArticleRepositoryImpl } from './article.repository';
-import { FsArticleMetadataDataSource } from './fs.article.metadata.ds';
-import { FsArticleContentDataSource } from './fs.article.content.ds';
-
-import { logger } from '@/infrastructure/logging';
+import { ArticleRepositoryFactory } from './article.factory';
+import { infraConfig } from '../shared/config';
 
 /**
  * ArticleRepository の共有インスタンス (Singleton)
  *
- * 将来的にデータベース（Turso 等）へ移行する際は、ここでインスタンス化するクラス
- * を差し替えることで、アプリケーション全体の実装を透過的に切り替えることができます。
+ * インフラ構成 (infraConfig) に基づいて、ローカルファイルシステムまたは R2/Turso を切り替えます。
+ * デフォルトでは Cloud (R2/Turso) が使用されます。
  */
-const metadataDS = new FsArticleMetadataDataSource();
-const contentDS = new FsArticleContentDataSource();
-export const articleRepository: ArticleRepository = new ArticleRepositoryImpl(
-  metadataDS,
-  contentDS,
-  logger,
-);
+export const articleRepository: ArticleRepository = ArticleRepositoryFactory.create(infraConfig);

@@ -1,0 +1,22 @@
+{
+  "name": "phrase-generator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "verify": "tsx src/index.ts --url https://raw.githubusercontent.com/w3c/musicxml/master/samples/hello_world.musicxml --output data/verify.svg"
+  },
+  "dependencies": {
+    "axios": "^1.13.5",
+    "commander": "^14.0.3",
+    "fast-xml-parser": "^5.3.6",
+    "verovio": "^6.0.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

@@ -10,5 +10,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     exclude: ['**/node_modules/**', '**/dist/**', 'workers/**', 'e2e/**'],
+    env: {
+      SKIP_ENV_VALIDATION: 'true',
+      NEXT_PUBLIC_SUPABASE_URL: 'https://example.supabase.co',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'dummy-key',
+    },
   },
 });

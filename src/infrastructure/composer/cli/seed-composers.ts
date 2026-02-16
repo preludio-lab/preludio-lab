@@ -11,7 +11,7 @@ import { CreateComposerUseCase } from '@/application/composer/usecase/create-com
 import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
 import { ComposerMaster } from '@/application/composer/master/composer-master.schema';
 
-import { TursoTransactionManager } from '@/infrastructure/shared/turso.transaction-manager';
+import { TursoTransactionManager } from '@/infrastructure/database/turso.transaction-manager';
 
 /**
  * 作曲家マスタデータをデータベースに同期するスクリプト。

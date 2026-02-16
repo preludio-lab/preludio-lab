@@ -29,6 +29,7 @@ export type Article = z.infer<typeof ArticleSchema>;
  */
 export const ArticleSummarySchema = ArticleControlSchema.pick({
   id: true,
+  masterId: true,
   lang: true,
   status: true,
 })

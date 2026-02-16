@@ -2,7 +2,7 @@ import { relations } from 'drizzle-orm';
 import { articles, articleTranslations, series, seriesArticles } from './articles';
 import { composers, composerTranslations } from './composers';
 import { works, workTranslations, workParts, workPartTranslations } from './works';
-import { scores, scoreTranslations, scoreWorks, musicalExamples } from './scores';
+import { scores, scoreTranslations, scoreWorks, phrases } from './scores';
 import { recordings, recordingSources } from './recordings';
 import { tags, tagTranslations } from './common';
 
@@ -87,7 +87,7 @@ export const worksRelations = relations(works, ({ one, many }) => ({
   // 収録されている楽譜エディション (N:Nの中間テーブル)
   scoreWorks: many(scoreWorks),
   // この作品の譜例 (1:N)
-  musicalExamples: many(musicalExamples),
+  phrases: many(phrases),
   // この作品の録音 (1:N)
   recordings: many(recordings),
 }));
@@ -108,7 +108,7 @@ export const workPartsRelations = relations(workParts, ({ one, many }) => ({
   // 作品の翻訳データ (1:N)
   translations: many(workPartTranslations),
   // 特定の楽章に紐づく譜例 (1:N)
-  musicalExamples: many(musicalExamples),
+  phrases: many(phrases),
   // 特定の楽章に紐づく録音 (1:N)
   recordings: many(recordings),
 }));
@@ -127,7 +127,7 @@ export const scoresRelations = relations(scores, ({ many }) => ({
   // 収録作品マッピング (N:N)
   scoreWorks: many(scoreWorks),
   // この楽譜を出典とする譜例 (1:N)
-  musicalExamples: many(musicalExamples),
+  phrases: many(phrases),
 }));
 
 export const scoreTranslationsRelations = relations(scoreTranslations, ({ one }) => ({
@@ -150,20 +150,20 @@ export const scoreWorksRelations = relations(scoreWorks, ({ one }) => ({
   }),
 }));
 
-export const musicalExamplesRelations = relations(musicalExamples, ({ one }) => ({
+export const phrasesRelations = relations(phrases, ({ one }) => ({
   // どの作品の譜例か (N:1)
   work: one(works, {
-    fields: [musicalExamples.workId],
+    fields: [phrases.workId],
     references: [works.id],
   }),
   // どの楽章の譜例か (N:1, Optional)
   workPart: one(workParts, {
-    fields: [musicalExamples.workPartId],
+    fields: [phrases.workPartId],
     references: [workParts.id],
   }),
   // 出典元の楽譜エディション (N:1, Optional)
   score: one(scores, {
-    fields: [musicalExamples.scoreId],
+    fields: [phrases.scoreId],
     references: [scores.id],
   }),
 }));

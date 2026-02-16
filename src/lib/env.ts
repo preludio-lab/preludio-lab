@@ -11,6 +11,94 @@ export const env = createEnv({
     NODE_ENV: z
       .enum([NODE_ENV.DEVELOPMENT, NODE_ENV.STAGING, NODE_ENV.PRODUCTION])
       .default(NODE_ENV.DEVELOPMENT),
+    // Database (Turso)
+    TURSO_DATABASE_URL: z
+      .string()
+      .url()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'TURSO_DATABASE_URL is required in production/staging' },
+      ),
+    TURSO_AUTH_TOKEN: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'TURSO_AUTH_TOKEN is required in production/staging' },
+      ),
+
+    // Storage (Cloudflare R2)
+    R2_ACCESS_KEY_ID: z
+      .string()
+      .min(1)
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_ACCESS_KEY_ID is required in production/staging' },
+      ),
+    R2_SECRET_ACCESS_KEY: z
+      .string()
+      .min(1)
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_SECRET_ACCESS_KEY is required in production/staging' },
+      ),
+    R2_ENDPOINT: z
+      .string()
+      .url()
+      .optional()
+      .refine(
+        (val) => {
+          if (
+            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
+            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+          ) {
+            return !!val;
+          }
+          return true;
+        },
+        { message: 'R2_ENDPOINT is required in production/staging' },
+      ),
+    R2_REGION: z.string().default('auto'),
+    R2_BUCKET_NAME: z.string().min(1).default('preludiolab-storage'),
+
+    // Infrastructure Configuration
+    INFRA_METADATA_SOURCE: z.enum(['turso', 'fs', 'mock']).optional(),
+    INFRA_PAYLOAD_SOURCE: z.enum(['r2', 'fs', 'mock']).optional(),
   },
 
   /**
@@ -31,8 +119,17 @@ export const env = createEnv({
    * Next.js App Router / Pages Router 両対応のため、process.env を明示的に渡す
    */
   runtimeEnv: {
+    TURSO_DATABASE_URL: process.env.TURSO_DATABASE_URL,
+    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     NODE_ENV: process.env.NODE_ENV,
+    R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+    R2_ENDPOINT: process.env.R2_ENDPOINT,
+    R2_REGION: process.env.R2_REGION,
+    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+    INFRA_METADATA_SOURCE: process.env.INFRA_METADATA_SOURCE,
+    INFRA_PAYLOAD_SOURCE: process.env.INFRA_PAYLOAD_SOURCE,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV,

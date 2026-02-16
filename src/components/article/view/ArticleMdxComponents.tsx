@@ -1,18 +1,21 @@
 import { MdxLink } from '@/components/mdx/MdxLink';
-import ScoreRenderer from '@/components/score';
+import PhraseRenderer from '@/components/score';
 import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
 import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
 import { ComponentProps, isValidElement, ReactElement } from 'react';
 import Image from 'next/image';
 
+import { ArticleMetadata } from '@/domain/article/article.metadata';
+
 /**
  * createArticleMdxComponents
  * 記事詳細で使用するMDXコンポーネント定義を生成します。
- * 記事ごとの音源情報をフォールバックとして利用するため、関数形式にしています。
+ * 記事ごとの音源情報やパス情報を反映させるため、関数形式にしています。
  */
 export const createArticleMdxComponents = (
   audioMetadata?: Partial<PlayerFlatProperties> & Record<string, unknown>,
+  articleMetadata?: ArticleMetadata,
 ) => ({
   a: MdxLink,
   pre: (props: ComponentProps<'pre'>) => {
@@ -67,7 +70,7 @@ export const createArticleMdxComponents = (
       if (!mergedRequest.sourceId) {
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-            <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            <PhraseRenderer phrase={{ format: 'abc', data: abcContent }} />
           </div>
         );
       }
@@ -75,29 +78,43 @@ export const createArticleMdxComponents = (
       return (
         <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
           <AudioPlayerBinder source={abcContent} format="abc" playRequest={mergedRequest}>
-            <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            <PhraseRenderer phrase={{ format: 'abc', data: abcContent }} />
           </AudioPlayerBinder>
         </div>
       );
     }
     return <pre {...props} />;
   },
-  ScoreRenderer: ScoreRenderer,
-  MusicalExample: ({
-    src,
-    description,
-    id,
-  }: {
-    src?: string;
-    description?: string;
-    id?: string;
-  }) => {
-    // Determine path: prefer src, fallback to id-based convention
-    const imagePath = src
-      ? `/images/article/${src}`
-      : id
-        ? `/images/article/beethoven/${id}.svg`
-        : '';
+  PhraseRenderer: PhraseRenderer,
+  Phrase: ({ src, description, id }: { src?: string; description?: string; id?: string }) => {
+    // Determine path based on infrastructure design:
+    // Articles: public/articles/{slug}/images/
+    // Works: public/works/{composer}/{work}/phrases/
+
+    let imagePath = '';
+
+    if (articleMetadata?.slug) {
+      const cleanSrc = src?.startsWith('./') ? src.slice(2) : src;
+      const category = articleMetadata.category || 'works';
+
+      if (cleanSrc) {
+        if (cleanSrc.startsWith('images/')) {
+          imagePath = `/articles/${category}/${articleMetadata.slug}/${cleanSrc}`;
+        } else {
+          // If it contains a slash, it might be a legacy path (e.g. beethoven/score.svg)
+          // In the new structure, we colocate assets directly in the images/ folder.
+          const filename = cleanSrc.split('/').pop() || cleanSrc;
+          imagePath = `/articles/${category}/${articleMetadata.slug}/images/${filename}`;
+        }
+      } else if (id) {
+        imagePath = `/articles/${category}/${articleMetadata.slug}/images/${id}.svg`;
+      }
+    }
+
+    // Traditional/Legacy fallback
+    if (!imagePath) {
+      imagePath = src ? `/images/article/${src}` : id ? `/images/article/beethoven/${id}.svg` : '';
+    }
 
     if (!imagePath) return null;
 
@@ -106,11 +123,12 @@ export const createArticleMdxComponents = (
         <div className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden p-4">
           <Image
             src={imagePath}
-            alt={description || id || 'Musical Example'}
+            alt={description || id || 'Phrase'}
             width={0}
             height={0}
             sizes="100vw"
             className="w-full h-auto"
+            crossOrigin="anonymous"
           />
         </div>
         {description && (

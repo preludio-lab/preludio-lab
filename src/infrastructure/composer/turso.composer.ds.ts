@@ -74,7 +74,7 @@ export class TursoComposerDataSource implements IComposerDataSource {
     }
   }
 
-  async delete(id: string, ctx?: TransactionContext): Promise<void> {
+  async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     const db = getDb(ctx);
     await db.delete(schema.composers).where(eq(schema.composers.id, id));
   }
