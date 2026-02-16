@@ -1,5 +1,5 @@
 import { MdxLink } from '@/components/mdx/MdxLink';
-import ScoreRenderer from '@/components/score';
+import PhraseRenderer from '@/components/score';
 import { AudioPlayerBinder } from '@/components/player/AudioPlayerBinder';
 import { MediaMetadataService } from '@/infrastructure/player/media.metadata.service';
 import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
@@ -70,7 +70,7 @@ export const createArticleMdxComponents = (
       if (!mergedRequest.sourceId) {
         return (
           <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-            <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            <PhraseRenderer phrase={{ format: 'abc', data: abcContent }} />
           </div>
         );
       }
@@ -78,14 +78,14 @@ export const createArticleMdxComponents = (
       return (
         <div className="my-10 not-prose p-6 bg-neutral-100 rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
           <AudioPlayerBinder source={abcContent} format="abc" playRequest={mergedRequest}>
-            <ScoreRenderer score={{ format: 'abc', data: abcContent }} />
+            <PhraseRenderer phrase={{ format: 'abc', data: abcContent }} />
           </AudioPlayerBinder>
         </div>
       );
     }
     return <pre {...props} />;
   },
-  ScoreRenderer: ScoreRenderer,
+  PhraseRenderer: PhraseRenderer,
   Phrase: ({ src, description, id }: { src?: string; description?: string; id?: string }) => {
     // Determine path based on infrastructure design:
     // Articles: public/articles/{slug}/images/

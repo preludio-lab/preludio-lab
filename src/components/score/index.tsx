@@ -1,2 +1,2 @@
-export { ScoreRenderer as default } from './ScoreRenderer';
-export type { ScoreRendererProps } from './ScoreRenderer';
+export { PhraseRenderer as default } from './PhraseRenderer';
+export type { PhraseRendererProps } from './PhraseRenderer';

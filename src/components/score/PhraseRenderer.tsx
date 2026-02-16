@@ -5,7 +5,7 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { NotationFormat } from '@/domain/score/score';
 import { Phrase } from '@/domain/score/phrase';
 
-const ScoreView = dynamic(() => import('./Score').then((mod) => mod.Score), {
+const PhraseView = dynamic(() => import('./Phrase').then((mod) => mod.Phrase), {
   ssr: false,
   loading: () => (
     <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-100">
@@ -20,20 +20,20 @@ const ScoreView = dynamic(() => import('./Score').then((mod) => mod.Score), {
   ),
 });
 
-export interface ScoreRendererProps {
-  score: Phrase | { data: string; format: NotationFormat };
+export interface PhraseRendererProps {
+  phrase: Phrase | { data: string; format: NotationFormat };
   className?: string;
 }
 
 /**
- * ScoreRenderer
- * 純粋に楽譜をレンダリングするコンポーネントです。
- * 再生機能や他の外部ドメインには依存せず、Scoreドメインのデータのみを表示します。
+ * PhraseRenderer
+ * 純粋に楽譜(フレーズ)をレンダリングするコンポーネントです。
+ * 再生機能や他の外部ドメインには依存せず、Phraseドメインのデータのみを表示します。
  */
-export function ScoreRenderer({ score }: ScoreRendererProps) {
+export function PhraseRenderer({ phrase }: PhraseRendererProps) {
   return (
-    <div className="relative group score-wrapper mt-0">
-      <ScoreView score={score} />
+    <div className="relative group phrase-wrapper mt-0">
+      <PhraseView phrase={phrase} />
     </div>
   );
 }

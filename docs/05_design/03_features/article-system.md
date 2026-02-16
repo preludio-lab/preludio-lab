@@ -28,7 +28,7 @@ MDX (Markdown JSX) を採用することで、記事本文内にReactコンポ�
     - ビルド完了後、`postbuild` スクリプトがメタデータをSupabaseへ同期（予定）
 3.  **Run Time:**
     - ユーザーはCDNから静的HTML（キャッシュ）を取得。
-    - 楽譜はクライアントサイド (`ScoreRenderer`) でSVGとして描画。
+    - 楽譜はクライアントサイド (`PhraseRenderer`) でSVGとして描画。
     - 検索はSupabaseのRPCをコールし、高速なハイブリッド検索を実行。
 
 ## 3. URL設計とストレージ構造
@@ -112,7 +112,7 @@ performer: 'Lang Lang'
 
 ### 5.2 楽譜の埋め込み (ABC Notation)
 
-`abc` 言語を指定したコードブロックは、自動的に楽譜としてレンダリングされます (`ScoreRenderer`)。
+`abc` 言語を指定したコードブロックは、自動的に楽譜としてレンダリングされます (`PhraseRenderer`)。
 また、`videoId` が設定されている場合、楽譜上に「Play Audio」ボタンが表示されます。
 
 #### ディレクティブとメタデータ継承ルール
@@ -137,11 +137,11 @@ M:4/4
 
 ### 5.3 コンポーネントの使用
 
-MDX内では、Reactコンポーネントを直接使用することは（原則として）避ける。標準Markdown記法と、専用のレンダラー（ScoreRenderer等）を通じて機能を提供する。
+MDX内では、Reactコンポーネントを直接使用することは（原則として）避ける。標準Markdown記法と、専用のレンダラー（PhraseRenderer等）を通じて機能を提供する。
 
 ## 6. コアコンポーネント仕様
 
-### `ScoreRenderer` (Client)
+### `PhraseRenderer` (Client)
 
 - ABC記法テキストを受け取り、SVG楽譜をレンダリングします。
 - ` ```abc ` コードブロックが自動的にこのコンポーネントに置換されます。
