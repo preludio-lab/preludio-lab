@@ -7,6 +7,9 @@ import { AppLocale } from '@/domain/i18n/locale';
 import { Logger } from '@/shared/logging/logger';
 import { IObjectStorage } from '../storage/storage.interface';
 import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
+import { ArticlePathStrategy } from './article.path.strategy';
+import { Article } from '@/domain/article/article';
+import { ArticleContentMapper } from './content/article.content.mapper';
 
 describe('ArticleRepositoryImpl', () => {
   let repo: ArticleRepositoryImpl;
@@ -83,8 +86,19 @@ describe('ArticleRepositoryImpl', () => {
     repo = new ArticleRepositoryImpl(
       mockMetadataDS as unknown as IArticleMetadataDataSource,
       mockPayloadDS as unknown as IObjectStorage,
+      new ArticlePathStrategy(),
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
+      (summary, payload) => {
+        return new Article({
+          control: summary.control,
+          metadata: summary.metadata,
+          engagement: summary.engagement,
+          context: summary.context,
+          content: ArticleContentMapper.toDomain(payload),
+        });
+      },
       TursoArticleMapper.toPersistence,
+      (article) => ArticleContentMapper.toPersistence(article.content),
       mockLogger as unknown as Logger,
     );
     vi.clearAllMocks();

@@ -8,7 +8,7 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
-import { ArticleContentMapper } from './content/article.content.mapper';
+import { IArticlePathStrategy } from './article.path.strategy';
 
 /**
  * ArticleRepository の実装クラス。
@@ -39,10 +39,16 @@ export class ArticleRepositoryImpl
   constructor(
     metadataDS: IArticleMetadataDataSource,
     payloadDS: IObjectStorage,
+    private readonly pathStrategy: IArticlePathStrategy,
     private readonly _reconstituteMetadata: (row: ArticleMetadataRow) => ArticleSummary,
+    private readonly _reconstituteAggregate: (
+      base: ArticleSummary,
+      payload: string | null,
+    ) => Article,
     private readonly _toPersistenceMetadata: (
       entity: Article | ArticleSummary,
     ) => ArticleMetadataRow,
+    private readonly _toPersistencePayload: (entity: Article) => string | null,
     logger: Logger,
   ) {
     super(metadataDS, payloadDS, logger);
@@ -249,8 +255,7 @@ export class ArticleRepositoryImpl
    * @returns ストレージ上のパス（キー）、解決できない場合は null
    */
   protected resolveStorageKey(summary: ArticleSummary): string | null {
-    // パス解決のためにサマリーを直接利用
-    return ArticleContentMapper.resolvePath(summary);
+    return this.pathStrategy.resolvePath(summary);
   }
 
   /**
@@ -261,13 +266,7 @@ export class ArticleRepositoryImpl
    * @returns 完全な Article エンティティ
    */
   protected reconstituteAggregate(base: ArticleSummary, payload: string | null): Article {
-    return new Article({
-      control: base.control,
-      metadata: base.metadata,
-      content: ArticleContentMapper.toDomain(payload),
-      context: base.context,
-      engagement: base.engagement,
-    });
+    return this._reconstituteAggregate(base, payload);
   }
 
   /**
@@ -297,7 +296,7 @@ export class ArticleRepositoryImpl
    * @returns MDX 文字列、または保存対象がない場合は null
    */
   protected toPersistencePayload(entity: Article): string | null {
-    return ArticleContentMapper.toPersistence(entity.content);
+    return this._toPersistencePayload(entity);
   }
 
   /**

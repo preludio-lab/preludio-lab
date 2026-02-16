@@ -10,9 +10,19 @@ import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
 import { InfrastructureConfig } from '../shared/config';
 import { IArticleMetadataDataSource } from './metadata/article.metadata.ds';
 import { IObjectStorage } from '../storage/storage.interface';
+import { ArticlePathStrategy } from './article.path.strategy';
+import { Article } from '@/domain/article/article';
+import { ArticleContentMapper } from './content/article.content.mapper';
 
 export class ArticleRepositoryFactory {
-  private static instance: ArticleRepository;
+  private static instance: ArticleRepository | null = null;
+
+  /**
+   * テスト用にシングルトンインスタンスをリセットします。
+   */
+  static reset(): void {
+    this.instance = null;
+  }
 
   /**
    * ArticleRepository のシングルトンインスタンスを返します。
@@ -42,11 +52,29 @@ export class ArticleRepositoryFactory {
         ? new R2StorageService(undefined, 'private/articles/')
         : new FileSystemStorageService(path.join(process.cwd(), 'article'));
 
+    // 3. Path Strategy の初期化
+    const pathStrategy = new ArticlePathStrategy();
+
     this.instance = new ArticleRepositoryImpl(
       metadataDS,
       storage,
+      pathStrategy,
+      // Metadata 再構築 (Row -> Summary)
       (row) => TursoArticleMapper.toSummary(row.articles, row.article_translations),
+      // Aggregate 再構築 (Summary + Payload -> Article)
+      (summary, payload) => {
+        return new Article({
+          control: summary.control,
+          metadata: summary.metadata,
+          engagement: summary.engagement,
+          context: summary.context,
+          content: ArticleContentMapper.toDomain(payload),
+        });
+      },
+      // Persistence Metadata 変換 (Entity -> Row)
       TursoArticleMapper.toPersistence,
+      // Persistence Payload 変換 (Content -> String)
+      (article) => ArticleContentMapper.toPersistence(article.content),
       logger,
     );
 
