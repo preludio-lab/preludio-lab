@@ -24,10 +24,10 @@ export default auth((req) => {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
-      process.env.NODE_ENV === 'production' ? '' : "'unsafe-eval'"
+      process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''
     };
     style-src 'self' 'nonce-${nonce}' ${
-      process.env.NODE_ENV === 'production' ? '' : "'unsafe-inline'"
+      process.env.NODE_ENV === 'development' ? "'unsafe-inline'" : ''
     };
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
