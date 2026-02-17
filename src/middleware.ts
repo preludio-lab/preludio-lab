@@ -22,17 +22,20 @@ export default auth((req) => {
   const response = intlMiddleware(req as unknown as NextRequest);
 
   const nonce = crypto.randomUUID();
+  // SupabaseのURLを許可リストに追加（環境変数から取得できない場合はハードコードかドメイン指定）
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
       process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-eval'" : ''
     };
-    style-src 'self' 'nonce-${nonce}' ${
-      process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-inline'" : ''
+    style-src 'self' ${
+      // Dev環境では nonce を外して unsafe-inline のみを有効にする（重要）
+      process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-inline'" : `'nonce-${nonce}'`
     };
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
-    connect-src 'self' https://www.google-analytics.com;
+    connect-src 'self' https://www.google-analytics.com ${supabaseUrl} https://*.supabase.co;
     frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
     media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://cdn.preludiolab.com;
     worker-src 'self';
