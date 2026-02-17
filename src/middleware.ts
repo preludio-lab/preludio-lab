@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextRequest } from 'next/server';
 import { routing } from './shared/i18n/routing';
 import { auth } from '@/infrastructure/auth/auth';
+import { APP_ENV } from '@/lib/constants';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -24,10 +25,10 @@ export default auth((req) => {
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
-      process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''
+      process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-eval'" : ''
     };
     style-src 'self' 'nonce-${nonce}' ${
-      process.env.NODE_ENV === 'development' ? "'unsafe-inline'" : ''
+      process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-inline'" : ''
     };
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
