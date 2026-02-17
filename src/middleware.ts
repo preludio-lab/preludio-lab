@@ -26,7 +26,9 @@ export default auth((req) => {
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
       process.env.NODE_ENV === 'production' ? '' : "'unsafe-eval'"
     };
-    style-src 'self' 'nonce-${nonce}';
+    style-src 'self' 'nonce-${nonce}' ${
+      process.env.NODE_ENV === 'production' ? '' : "'unsafe-inline'"
+    };
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
     connect-src 'self' https://www.google-analytics.com;
