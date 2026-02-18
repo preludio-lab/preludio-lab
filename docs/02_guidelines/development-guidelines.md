@@ -322,6 +322,7 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
         // ... info, warn, error
       }
       ```
+
   - **Production:**
     - ビルド設定 (`next.config.ts`) にて `compiler.removeConsole` を有効化する。
     - **例外:** Sentry へのエラー通知を阻害しないよう、**`console.error` のみ削除対象から除外（exclude）する設定を必須とする**。
