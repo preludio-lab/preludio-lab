@@ -412,8 +412,9 @@ export default function SomeComponent() {
 ### 2.4. Documentation & Comments
 
 - **Documentation (JSDoc/TSDoc):**
-  - 公開関数（Exported Functions）や複雑なロジックには、必ず JSDoc/TSDoc形式でコメントを記述する。
-  - IDEのホバー情報として表示されることを意識する。
+  - 公開関数（Exported Functions）、クラス、インターフェース、および複雑なロジックには、必ず JSDoc/TSDoc形式 (`/** ... */`) でコメントを記述する。
+  - `@param`, `@returns`, `@throws` などのタグを活用し、型定義だけでなく「振る舞い」や「例外条件」を明記する。
+  - IDEのホバー情報として表示されることを意識し、簡潔かつ明確に記述する。
 - **Language:** コメントは原則として「日本語」で記述する。
 - **What vs Why:** 「コードが何をしているか（What）」はコード自体で語る。「なぜそうしたか（Why）」や「注意点」を書く。
 

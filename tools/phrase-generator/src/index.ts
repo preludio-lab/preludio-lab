@@ -9,7 +9,7 @@ import path from 'path';
 const program = new Command();
 
 program
-  .name('musical-example-generator')
+  .name('phrase-generator')
   .description('Generate sliced musical examples from MusicXML')
   .option('-f, --file <path>', 'Path to local MusicXML file')
   .option('-u, --url <url>', 'URL to fetch MusicXML from')

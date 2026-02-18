@@ -1,16 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "lib": ["ES2022"],
+    "lib": ["ESNext"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/core/*": ["src/core/*"],
+      "@/prompts/*": ["src/prompts/*"],
+      "@/tools/*": ["src/tools/*"],
+      "@/workflows/*": ["src/workflows/*"],
+      "@/infrastructure/*": ["src/infrastructure/*"],
+      "@/state/*": ["src/state/*"],
+
+      "@/domain/*": ["../src/domain/*"],
+      "@/shared/*": ["../src/shared/*"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "workspace"]
 }
