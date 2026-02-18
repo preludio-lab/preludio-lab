@@ -3,6 +3,7 @@ import { NotationFormat } from '@/domain/score/score';
 import { Phrase } from '@/domain/score/phrase';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
+import { NODE_ENV } from '@/lib/constants';
 
 /**
  * usePhraseRenderer
@@ -35,13 +36,13 @@ export function usePhraseRenderer(phrase: Phrase | { data: string; format: Notat
           : (phrase as { format: NotationFormat }).format;
 
       try {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
           console.debug('usePhraseRenderer: レンダリングを開始しました', { format });
         }
 
         await renderer.render(data, elementRef.current, format);
 
-        if (isMounted && process.env.NODE_ENV === 'development') {
+        if (isMounted && process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
           console.debug('usePhraseRenderer: レンダリングが完了しました');
         }
       } catch (error) {
