@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/nextjs';
 import toast from 'react-hot-toast';
+import { NODE_ENV } from './constants';
 
 /**
  * クライアント用エラーハンドラ。
@@ -18,7 +19,7 @@ export function handleClientError(
     tags: { context: context ?? 'unknown' },
   });
 
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
     console.error('[Client Error]', error, context ? `Context: ${context}` : '');
   }
   if (userNotificationMessage) toast.error(userNotificationMessage);
