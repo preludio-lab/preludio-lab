@@ -1,0 +1,23 @@
+{
+  "name": "@preludiolab/agents",
+  "version": "0.1.0",
+  "description": "AI Data Pipeline & Batch Processor (Agent Development Kit)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/workflows/index.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "consola": "^3.4.0",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.16",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.4"
+  }
+}
