@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
+import { NODE_ENV } from './constants';
 
 /**
  * アプリ全体で使用する例外ハンドラ。
@@ -16,7 +17,7 @@ export function handleError(error: unknown, context?: string): void {
 
   // 開発環境では console.error で詳細を出力
   // クライアント側は別ハンドラに委譲。サーバー側は PinoLogger を使用するのでここでは何もしない。
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
     console.error('[Server Error]', err);
   }
 }

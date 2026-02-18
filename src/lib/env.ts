@@ -19,8 +19,8 @@ export const env = createEnv({
       .refine(
         (val) => {
           if (
-            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
-            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING
           ) {
             return !!val;
           }
@@ -34,8 +34,8 @@ export const env = createEnv({
       .refine(
         (val) => {
           if (
-            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
-            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING
           ) {
             return !!val;
           }
@@ -52,8 +52,8 @@ export const env = createEnv({
       .refine(
         (val) => {
           if (
-            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
-            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING
           ) {
             return !!val;
           }
@@ -68,8 +68,8 @@ export const env = createEnv({
       .refine(
         (val) => {
           if (
-            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
-            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING
           ) {
             return !!val;
           }
@@ -84,8 +84,8 @@ export const env = createEnv({
       .refine(
         (val) => {
           if (
-            process.env.NEXT_PUBLIC_APP_ENV === 'production' ||
-            process.env.NEXT_PUBLIC_APP_ENV === 'staging'
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.PRODUCTION ||
+            process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.STAGING
           ) {
             return !!val;
           }

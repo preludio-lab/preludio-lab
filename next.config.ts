@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
+import { APP_ENV } from './src/lib/constants';
 
 const withNextIntl = createNextIntlPlugin('./src/shared/i18n/config.ts');
 
@@ -13,7 +14,7 @@ const BASE_URL =
 const nextConfig: NextConfig = {
   serverExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION,
   },
   webpack: (config, { dev }) => {
     // 本番ビルド時にコメントを削除 (DAST Alert: Information Disclosure - Suspicious Comments)
@@ -87,11 +88,13 @@ const nextConfig: NextConfig = {
           {
             key: 'Cross-Origin-Opener-Policy',
             value:
-              process.env.NODE_ENV === 'development' ? 'same-origin-allow-popups' : 'same-origin',
+              process.env.NODE_ENV === APP_ENV.DEVELOPMENT
+                ? 'same-origin-allow-popups'
+                : 'same-origin',
           },
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
+            value: process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? 'unsafe-none' : 'require-corp',
           },
           {
             key: 'Cross-Origin-Resource-Policy',
