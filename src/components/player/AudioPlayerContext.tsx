@@ -23,6 +23,9 @@ import {
   DisplayType,
 } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
+import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+
+const logger = new ConsoleLogger();
 
 export type PlayerModeType = PlayerMode;
 
@@ -210,6 +213,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   const playerRef = useRef<PlayerInstanceProxy | null>(null); // Holds the YouTube Player object
 
   const setPlayerInstance = useCallback((instance: PlayerInstanceProxy | null) => {
+    logger.debug('setPlayerInstance', { instance: instance ? 'ProxyObject' : 'null' });
     playerRef.current = instance;
   }, []);
 
@@ -251,13 +255,15 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     (source: PlayerSource, customDisplay?: Partial<PlayerDisplay>) => {
       const sourceValidation = PlayerSourceSchema.safeParse(source);
       if (!sourceValidation.success) {
-        console.error('[AudioPlayerContext] Source Validation Error:', sourceValidation.error);
+        logger.error('play: Invalid Source', undefined, { error: sourceValidation.error });
         handleClientError(
           new Error(`Invalid play request (source): ${sourceValidation.error.message}`),
           t('invalidRequest'),
         );
         return;
       }
+
+      logger.debug('play: Request received', { source });
 
       const validSource = sourceValidation.data;
 
@@ -301,7 +307,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
         const displayValidation = PlayerDisplaySchema.safeParse(newDisplay);
         if (!displayValidation.success) {
-          console.error('[AudioPlayerContext] Display Validation Error:', displayValidation.error);
+          logger.warn('play: Display Validation Error', { error: displayValidation.error });
           // Fallback to previous display if invalid, or just keep it
         }
 
@@ -313,6 +319,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           currentTime: isNewSource ? (validSource.startSeconds ?? 0) : prev.status.currentTime,
           mode: newMode,
         };
+
+        // State update logging
+        logger.debug('play: Updating state', {
+          isPlaying: true,
+          currentTime: isNewSource ? (validSource.startSeconds ?? 0) : prev.status.currentTime,
+          sourceId: validSource.sourceId,
+        });
 
         return {
           ...prev,
@@ -327,10 +340,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   );
 
   const pause = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      status: { ...prev.status, isPlaying: false },
-    }));
+    setState((prev) => {
+      logger.debug('pause', { wasPlaying: prev.status.isPlaying });
+      return {
+        ...prev,
+        status: { ...prev.status, isPlaying: false },
+      };
+    });
   }, []);
 
   const togglePlay = useCallback(() => {
@@ -342,11 +358,17 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
   const seekTo = useCallback((time: number) => {
     if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
+      logger.debug('seekTo', { time });
       playerRef.current.seekTo(time, true);
       setState((prev) => ({
         ...prev,
         status: { ...prev.status, currentTime: time },
       }));
+    } else {
+      logger.warn('seekTo: Player instance not ready or invalid', {
+        time,
+        hasInstance: !!playerRef.current,
+      });
     }
   }, []);
 

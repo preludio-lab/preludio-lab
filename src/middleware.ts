@@ -29,10 +29,7 @@ export default auth((req) => {
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${
       process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-eval'" : ''
     };
-    style-src 'self' ${
-      // Dev環境では nonce を外して unsafe-inline のみを有効にする（重要）
-      process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-inline'" : `'nonce-${nonce}'`
-    };
+    style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
     font-src 'self' data:;
     connect-src 'self' https://www.google-analytics.com ${supabaseUrl} https://*.supabase.co;

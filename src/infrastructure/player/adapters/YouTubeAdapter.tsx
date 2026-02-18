@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 import { AudioPlayerAdapterProps } from '@/components/player/AudioPlayerAdapter';
+import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+
+const logger = new ConsoleLogger();
 
 interface YouTubePlayer {
   loadVideoById: (options: { videoId: string; startSeconds?: number; endSeconds?: number }) => void;
@@ -75,7 +78,7 @@ export function YouTubeAdapter({
         console.debug('[YouTubeAdapter] 動画ロード開始:', options);
         target.loadVideoById(options);
       } catch (e) {
-        console.error('[YouTubeAdapter] 同期ロードエラー:', e);
+        logger.error('[YouTubeAdapter] 同期ロードエラー:', e as Error);
         onError(e);
       }
     },
@@ -95,6 +98,7 @@ export function YouTubeAdapter({
 
     if (isPlaying) {
       if (isNewRequest || currentVideoId !== src) {
+        logger.info('[YouTubeAdapter] Loading new video', { videoId: src, startTime });
         // 新しい動画をロード
         lastPlaybackIdRef.current = playbackId;
         const loadOpts: { videoId: string; startSeconds: number; endSeconds?: number } = {
@@ -107,6 +111,9 @@ export function YouTubeAdapter({
         // 既存の動画を再開
         const playerState = player.getPlayerState();
         if (playerState !== 1) {
+          logger.debug('[YouTubeAdapter] Starting playback (playVideo)', {
+            videoId: currentVideoId,
+          });
           // 再生中でなければ
           player.playVideo();
         }
@@ -115,6 +122,7 @@ export function YouTubeAdapter({
       const playerState = player.getPlayerState();
       if (playerState === 1) {
         // 再生中なら
+        logger.debug('[YouTubeAdapter] Pausing playback (pauseVideo)');
         player.pauseVideo();
       }
     }
@@ -127,6 +135,7 @@ export function YouTubeAdapter({
     if (seekTo !== undefined && seekTo !== null && seekTo !== lastSeekToRef.current) {
       lastSeekToRef.current = seekTo;
       if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
+        logger.debug('[YouTubeAdapter] create seekTo', { seekTo });
         playerRef.current.seekTo(seekTo, true);
       }
     }
@@ -217,7 +226,7 @@ export function YouTubeAdapter({
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const _onError = (event: any) => {
     // react-youtube は onError イベントオブジェクトを返すが、実際のエラーコードは event.data にある
-    console.error('[YouTubeAdapter] 内部エラーイベント:', event);
+    logger.error('[YouTubeAdapter] 内部エラーイベント:', undefined, { eventData: event.data });
     onError(event.data);
   };
 
