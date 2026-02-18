@@ -12,10 +12,9 @@ export class ConsoleLogger implements Logger {
 
   constructor() {
     // クライアントサイドでの環境判定
-    // next.config.ts での置換を期待して process.env.NODE_ENV を直接比較する実装にする場合もあるが、
-    // ここでは constants.ts の APP_ENV (実体は文字列) と比較する形をとる。
-    // クライアントサイドでは process.env.NODE_ENV は文字列に置換されるためこれで機能する。
-    this.isDevelopment = process.env.NODE_ENV === 'development';
+    // constants.ts の APP_ENV 定数を使用して環境を判定します。
+    // クライアントサイドでは process.env.NODE_ENV はビルド時に置換されます。
+    this.isDevelopment = process.env.NODE_ENV === APP_ENV.DEVELOPMENT;
   }
 
   debug(message: string, meta?: Record<string, unknown>) {

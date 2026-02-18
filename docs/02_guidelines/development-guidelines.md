@@ -308,6 +308,20 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
     - GitHub Actionsや開発用スクリプト (`agents/` 等) においては、可読性とシンプルさを優先し、`console.log` / `console.error` の使用を許可する。ただし、機密情報の出力は厳禁とする。
 - **Client-Side:**
   - **Development:** `console.log` / `console.error` を使用してデバッグを行う。
+    - **推奨:** 環境差異を吸収するため、以下のような `ConsoleLogger` クラス（または同様のラッパー）を実装し、製品コードには `console` を直接記述しないことを推奨する。
+
+      ```ts
+      import { APP_ENV } from '@/lib/constants';
+
+      export class ConsoleLogger implements Logger {
+        private isDevelopment = process.env.NODE_ENV === APP_ENV.DEVELOPMENT;
+
+        debug(message: string, meta?: any) {
+          if (this.isDevelopment) console.debug(message, meta);
+        }
+        // ... info, warn, error
+      }
+      ```
   - **Production:**
     - ビルド設定 (`next.config.ts`) にて `compiler.removeConsole` を有効化する。
     - **例外:** Sentry へのエラー通知を阻害しないよう、**`console.error` のみ削除対象から除外（exclude）する設定を必須とする**。
