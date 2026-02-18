@@ -84,21 +84,21 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
-          // Spectre対策: クロスオリジン分離を強化 (Dev環境では緩和)
+          // Spectre対策: クロスオリジン分離 (YouTube iframe, CDN画像, Vercel Toolbar と共存するため緩和)
+          // COOP: ポップアップ(OAuth等)を許可しつつ、基本的なプロセス分離を維持
           {
             key: 'Cross-Origin-Opener-Policy',
-            value:
-              process.env.NODE_ENV === APP_ENV.DEVELOPMENT
-                ? 'same-origin-allow-popups'
-                : 'same-origin',
+            value: 'same-origin-allow-popups',
           },
+          // COEP: 外部リソース(YouTube, CDN)がCORPヘッダーを返さないため unsafe-none を使用
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? 'unsafe-none' : 'require-corp',
+            value: 'unsafe-none',
           },
+          // CORP: CDN配信やSNS埋め込みを許可するため cross-origin を使用
           {
             key: 'Cross-Origin-Resource-Policy',
-            value: 'same-origin',
+            value: 'cross-origin',
           },
           // キャッシュ制御 (デフォルト): 動的コンテンツはキャッシュしない (DAST Alert: Non-Storable Content)
           {
