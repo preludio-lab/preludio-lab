@@ -2,6 +2,12 @@
   "name": "temp-app",
   "version": "0.1.0",
   "type": "module",
+  "pnpm": {
+    "overrides": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "private": true,
   "workspaces": [],
   "scripts": {

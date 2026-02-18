@@ -83,14 +83,15 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
-          // Spectre対策: クロスオリジン分離を強化
+          // Spectre対策: クロスオリジン分離を強化 (Dev環境では緩和)
           {
             key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
+            value:
+              process.env.NODE_ENV === 'development' ? 'same-origin-allow-popups' : 'same-origin',
           },
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
+            value: process.env.NODE_ENV === 'development' ? 'unsafe-none' : 'require-corp',
           },
           {
             key: 'Cross-Origin-Resource-Policy',
