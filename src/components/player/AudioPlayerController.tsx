@@ -5,6 +5,9 @@ import { useAudioPlayer } from './AudioPlayerContext';
 import { PlayerProvider } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
 import { AudioPlayerAdapter } from './AudioPlayerAdapter';
+import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+
+const logger = new ConsoleLogger();
 
 /**
  * [REQ-UI-GLOBAL-PLAYER] Audio Player Controller (Smart Container)
@@ -45,13 +48,14 @@ export default function AudioPlayerController() {
   const proxyInstance = React.useMemo(
     () => ({
       seekTo: (time: number) => {
-        console.debug('[AudioPlayerController] Contextからのシーク要求:', time);
+        logger.debug('Proxy: seekTo request from Context', { time });
         setSeekTrigger(time);
       },
-      setVolume: () => {
+      setVolume: (volume: number) => {
         // Contextの `setVolume` は状態更新とRef操作の両方を行う
         // ここではProps経由で音量が渡されるため、Ref操作はログ出力のみで実質無視しても問題ない場合が多いが、
         // 念のためログを残す
+        logger.debug('Proxy: setVolume request from Context', { volume });
       },
       // react-youtube の内部メソッドがContextから呼ばれる可能性があるため、
       // 必要なメソッドのみを安全に公開する
@@ -67,7 +71,7 @@ export default function AudioPlayerController() {
   const handleReady = useCallback(
     (duration: number) => {
       _onReady(duration);
-      console.log('[AudioPlayerController] Ready. Duration:', duration);
+      logger.info('Adapter onReady', { duration });
     },
     [_onReady],
   );
@@ -76,6 +80,7 @@ export default function AudioPlayerController() {
     (error: unknown) => {
       handleClientError(error, '音楽再生エラー');
       // 無限ループやUI不整合を防ぐため、Contextの再生状態を停止する
+      logger.error('Adapter onError', undefined, { error });
       _onStateChange(false);
     },
     [_onStateChange],
@@ -94,6 +99,7 @@ export default function AudioPlayerController() {
 
   const handleStateChange = useCallback(
     (playing: boolean) => {
+      logger.debug('Adapter onStateChange', { playing });
       _onStateChange(playing);
     },
     [_onStateChange],
