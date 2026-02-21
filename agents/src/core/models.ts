@@ -11,9 +11,9 @@
  */
 export const GeminiModels = {
   /** 高速・低コスト。ツール呼び出しやバッチ処理に最適 */
-  FLASH: 'gemini-3-flash',
+  FLASH: 'gemini-3-flash-preview',
   /** 高精度。複雑な推論や高品質な出力が必要な場面向け */
-  PRO: 'gemini-3-pro',
+  PRO: 'gemini-3.1-pro-preview',
 } as const;
 
 /**
