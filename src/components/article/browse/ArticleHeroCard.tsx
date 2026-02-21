@@ -54,7 +54,6 @@ export function ArticleHeroCard({
             priority
             sizes="(max-width: 896px) 100vw, 896px"
             className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            data-testid="hero-card-image"
           />
           {/* ホバー時のオーバーレイ */}
           <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
