@@ -14,6 +14,8 @@ export const GeminiModels = {
   FLASH: 'gemini-3-flash-preview',
   /** 高精度。複雑な推論や高品質な出力が必要な場面向け */
   PRO: 'gemini-3.1-pro-preview',
+  /** 画像生成・解析に特化したモデル */
+  IMAGE: 'gemini-3-pro-image-preview',
 } as const;
 
 /**
