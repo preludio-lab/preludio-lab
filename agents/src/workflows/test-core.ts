@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { BaseAgent, AgentConfig } from '../core/agent.js';
 import { AgentTool } from '../core/tool.js';
 import { ResilientFetcher } from '../core/fetcher.js';
+import { GeminiModels } from '../core/models.js';
 
 // === 1. ResilientFetcher のテスト用ツール ===
 const GithubUserSchema = z.object({
@@ -44,7 +45,7 @@ async function main() {
 
   const config: AgentConfig = {
     // Flashは高速で安価なため、ツール呼び出しテストに最適
-    modelName: 'gemini-3-flash',
+    modelName: GeminiModels.FLASH,
     systemInstruction:
       'あなたは優秀なアシスタントです。必要に応じてツールを利用して、ユーザーの質問に日本語で簡潔に答えてください。',
   };

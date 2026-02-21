@@ -13,13 +13,14 @@ import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { consola } from 'consola';
 import { AgentTool } from './tool.js';
+import { GeminiModelName } from './models.js';
 
 /**
  * エージェントの初期化設定を定義するインターフェース。
  */
 export interface AgentConfig {
-  /** モデル名 (例: 'gemini-3-flash' | 'gemini-3-pro' 等) */
-  modelName: string;
+  /** 使用する Gemini モデル名。`GeminiModels` 定数から選択します。 */
+  modelName: GeminiModelName;
   /** システムプロンプト（ペルソナやルールの定義） */
   systemInstruction?: string;
   /** Google Search を回答の裏付け（Grounding）として利用するかどうか */
