@@ -3,13 +3,19 @@ import {
   GenerativeModel,
   FunctionDeclaration,
   SchemaType,
+  Schema,
   Tool as GeminiTool,
+  ModelParams,
+  DynamicRetrievalMode,
 } from '@google/generative-ai';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { consola } from 'consola';
 import { AgentTool } from './tool.js';
 
+/**
+ * エージェントの初期化設定を定義するインターフェース。
+ */
 export interface AgentConfig {
   /** モデル名 (例: 'gemini-3-flash' | 'gemini-3-pro' 等) */
   modelName: string;
@@ -19,10 +25,21 @@ export interface AgentConfig {
   enableGrounding?: boolean;
 }
 
+/**
+ * Google Generative AI SDK (Gemini) をラップした基底エージェントクラス。
+ * プロジェクト全体で一貫した型安全な推論と、Function Calling（ツールの自律実行）を提供します。
+ */
 export class BaseAgent {
   private genAI: GoogleGenerativeAI;
   private model: GenerativeModel;
 
+  /**
+   * BaseAgent のインスタンスを生成します。
+   * 環境変数 `GEMINI_API_KEY` の設定が必須です。
+   *
+   * @param config エージェントのモデル名やシステムプロンプトを含む設定オブジェクト
+   * @throws {Error} `GEMINI_API_KEY` が環境変数に設定されていない場合
+   */
   constructor(config: AgentConfig) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -31,7 +48,7 @@ export class BaseAgent {
 
     this.genAI = new GoogleGenerativeAI(apiKey);
 
-    const modelConfig: Record<string, unknown> = {
+    const modelConfig: ModelParams = {
       model: config.modelName,
     };
 
@@ -45,7 +62,7 @@ export class BaseAgent {
         {
           googleSearchRetrieval: {
             dynamicRetrievalConfig: {
-              mode: 'MODE_DYNAMIC',
+              mode: DynamicRetrievalMode.MODE_DYNAMIC,
               dynamicThreshold: 0.3, // 一般的な推奨しきい値
             },
           },
@@ -53,13 +70,18 @@ export class BaseAgent {
       ];
     }
 
-    this.model = this.genAI.getGenerativeModel(modelConfig);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.model = this.genAI.getGenerativeModel(modelConfig as any);
   }
 
   /**
-   * 単純な構造化出力の生成 (JSON Mode)
+   * 単純な構造化出力 (JSON Mode) を生成します。
+   * ユーザーからのプロンプトに対し、指定された Zod スキーマに完全に合致する JSON オブジェクトを返します。
    *
-   * プロンプトを投げ、Zodスキーマに合致するJSONオブジェクトを生成して返します。
+   * @param prompt ユーザーからの指示（プロンプト）文字列
+   * @param schema 出力として期待するデータ構造を定義した Zod スキーマ
+   * @returns スキーマの検証を通過したパース済みのオブジェクト
+   * @throws {Error} Gemini のレスポンスが JSON として不正な場合、またはスキーマ検証に失敗した場合
    */
   async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> {
     const result = await this.model.generateContent({
@@ -81,9 +103,14 @@ export class BaseAgent {
   }
 
   /**
-   * ツールを使用した対話実行 (Function Calling)
+   * ツールを使用した対話実行 (Function Calling) を行います。
+   * エージェントに利用可能なツールの定義（OpenAPI スキーマ）を与え、
+   * LLM の推論によって自律的にツールを選択・実行・結果解析を繰り返しながら、最終的なテキスト回答を生成します。
    *
-   * エージェントに利用可能なツールを与え、必要に応じて自律的に呼び出させながら最終的な回答を生成します。
+   * @param prompt ユーザーからの初期指示（プロンプト）文字列
+   * @param tools このスレッド内でエージェントが利用できる `AgentTool` インターフェースを実装したツールの配列
+   * @returns ツール実行の結果を踏まえて生成された、エージェントからの最終的なテキスト回答
+   * @throws {Error} 存在しないツールが LLM から呼び出された場合
    */
   async runWithTools(prompt: string, tools: AgentTool<unknown, unknown>[]): Promise<string> {
     const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
@@ -98,7 +125,7 @@ export class BaseAgent {
         description: tool.description,
         parameters: {
           type: SchemaType.OBJECT,
-          properties: (jsonSchema.properties as Record<string, unknown>) || {},
+          properties: (jsonSchema.properties as { [k: string]: Schema }) || {},
           required: (jsonSchema.required as string[]) || [],
         },
       };
@@ -112,9 +139,11 @@ export class BaseAgent {
 
     const modelWithTools = this.genAI.getGenerativeModel({
       model: this.model.model,
-      systemInstruction: this.model.systemInstruction,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      systemInstruction: (this.model as any).systemInstruction,
       tools: toolsConfig,
-    });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
 
     const chat = modelWithTools.startChat();
     let result = await chat.sendMessage(prompt);
@@ -160,7 +189,8 @@ export class BaseAgent {
       }
 
       // ツールの実行結果をエージェントへ返却し、次の推論へつなげる
-      result = await chat.sendMessage(functionResponses);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      result = await chat.sendMessage(functionResponses as any);
       calls = result.response.functionCalls();
     }
 

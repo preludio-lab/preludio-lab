@@ -2,6 +2,9 @@ import axios, { AxiosInstance } from 'axios';
 import axiosRetry from 'axios-retry';
 import { consola } from 'consola';
 
+/**
+ * ResilientFetcher の初期化設定を定義するインターフェース。
+ */
 export interface FetcherConfig {
   /** ベースとなるURL (Optional) */
   baseURL?: string;
@@ -17,7 +20,8 @@ export interface FetcherConfig {
 }
 
 /**
- * 外部API通信を一元管理する耐障害性の高いHTTPクライアントラッパー
+ * 外部 API 通信を一元管理する、耐障害性の高い HTTP クライアントラッパー。
+ * 組み込みの自動リトライ機能 (429/5xx対策) と、ドメインごとのプロアクティブなレート制限（スロットリング）の責務を持ちます。
  */
 export class ResilientFetcher {
   private client: AxiosInstance;
@@ -26,6 +30,11 @@ export class ResilientFetcher {
   private minIntervalMs: number;
   private lastRequestTime = 0;
 
+  /**
+   * ResilientFetcher のインスタンスを生成します。
+   *
+   * @param config タイムアウト、リトライ回数、スロットリング（秒間リクエスト数）などの設定要件
+   */
   constructor(config: FetcherConfig = {}) {
     this.minIntervalMs = config.requestsPerSecond ? 1000 / config.requestsPerSecond : 0;
 
@@ -64,7 +73,10 @@ export class ResilientFetcher {
   }
 
   /**
-   * 必要なインターバルが経過するまでリクエストを待機（キューイング）させる
+   * 必要なインターバルが経過するまで現在のリクエストを待機（キューイング）させます。
+   * インターセプターを介して各リクエストの送信前に呼び出されます。
+   *
+   * @returns リクエストが許可されたタイミングで解決する Promise
    */
   private async throttle(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
@@ -73,6 +85,11 @@ export class ResilientFetcher {
     });
   }
 
+  /**
+   * 待機中のリクエストキューを逐次処理します。
+   * 最後にリクエストを送った時間と設定された `minIntervalMs` を比較し、
+   * 必要な時間が経過していれば次のリクエストを許可 (resolve) し、そうでなければ待機を続けます。
+   */
   private async processQueue() {
     if (this.isProcessingQueue) return;
     this.isProcessingQueue = true;
@@ -97,7 +114,10 @@ export class ResilientFetcher {
   }
 
   /**
-   * 設定済みのAxiosInstanceを取得します
+   * リトライやスロットリング設定が適用済みの Axios インスタンスを取得します。
+   * 実際に API リクエストを行う際は、この返り値のインスタンスを使用してください。
+   *
+   * @returns 構成済みの AxiosInstance オブジェクト
    */
   public getClient(): AxiosInstance {
     return this.client;
