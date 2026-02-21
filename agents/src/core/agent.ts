@@ -7,6 +7,7 @@ import {
   Tool as GeminiTool,
   ModelParams,
   DynamicRetrievalMode,
+  Part,
 } from '@google/generative-ai';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -70,8 +71,7 @@ export class BaseAgent {
       ];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.model = this.genAI.getGenerativeModel(modelConfig as any);
+    this.model = this.genAI.getGenerativeModel(modelConfig);
   }
 
   /**
@@ -139,11 +139,9 @@ export class BaseAgent {
 
     const modelWithTools = this.genAI.getGenerativeModel({
       model: this.model.model,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      systemInstruction: (this.model as any).systemInstruction,
+      systemInstruction: this.model.systemInstruction,
       tools: toolsConfig,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+    });
 
     const chat = modelWithTools.startChat();
     let result = await chat.sendMessage(prompt);
@@ -154,7 +152,7 @@ export class BaseAgent {
     let calls = result.response.functionCalls();
     while (calls && calls.length > 0 && stepCount < MAX_STEPS) {
       stepCount++;
-      const functionResponses = [];
+      const functionResponses: Part[] = [];
 
       for (const call of calls) {
         consola.info(`[BaseAgent] Function Call requested: ${call.name}`);
@@ -189,8 +187,7 @@ export class BaseAgent {
       }
 
       // ツールの実行結果をエージェントへ返却し、次の推論へつなげる
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      result = await chat.sendMessage(functionResponses as any);
+      result = await chat.sendMessage(functionResponses);
       calls = result.response.functionCalls();
     }
 
