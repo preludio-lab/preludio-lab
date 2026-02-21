@@ -1,5 +1,5 @@
 import { createConsola, ConsolaInstance, LogLevel } from 'consola';
-import { env } from '@/core/env';
+import { env } from '@/core/env.js';
 
 /**
  * 構造化ロガーインスタンス
