@@ -44,23 +44,30 @@ export function ArticleHeroCard({
       className="group mx-auto mb-12 max-w-4xl overflow-hidden rounded-[2.5rem] bg-paper-white border border-neutral-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] transition-[box-shadow,border-color] duration-300"
     >
       <Link href={`/${lang}/${category}/${slug}`} className="block h-full">
-        <div className="p-8 sm:p-12">
-          <div className="relative h-64 w-full sm:h-80 md:h-96 mb-8 overflow-hidden rounded-xl">
-            <Image
-              src={thumbnail || '/images/placeholders/article-placeholder.webp'}
-              alt={`${title} - ${composerName}`}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 896px"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute bottom-4 left-4">
-              <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm">
-                {categoryLabel || category.toUpperCase()}
-              </span>
-            </div>
+        {/* 画像エリア: カード全幅で表示し、overflow-hidden + rounded-[2.5rem] に追従 */}
+        {/* TODO(#147): Image Loader改修後、中間サイズバリアント（md: 1080w, lg: 1920w）が配信される */}
+        <div className="relative aspect-video w-full overflow-hidden">
+          <Image
+            src={thumbnail || '/images/placeholders/article-placeholder.webp'}
+            alt={`${title} - ${composerName}`}
+            fill
+            priority
+            sizes="(max-width: 896px) 100vw, 896px"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            data-testid="hero-card-image"
+          />
+          {/* ホバー時のオーバーレイ */}
+          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* バッジ周辺の限定Scrim: WCAG AA (4.5:1) を純白画像上でも確保 */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+          <div className="absolute bottom-4 left-6">
+            <span className="px-3 py-1.5 bg-white/95 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-primary rounded-full shadow-sm">
+              {categoryLabel || category.toUpperCase()}
+            </span>
           </div>
+        </div>
+        {/* テキストエリア: パディングはこちらのみに適用 */}
+        <div className="p-8 sm:p-12">
           <h3 className="mb-4 text-3xl font-bold text-gray-900 font-serif leading-tight transition-colors duration-300">
             {title}
           </h3>
