@@ -16,6 +16,8 @@ export const GeminiModels = {
   PRO: 'gemini-3.1-pro-preview',
   /** 画像生成・解析に特化したモデル */
   IMAGE: 'gemini-3-pro-image-preview',
+  /** 開発・テスト用の安定版モデル */
+  STABLE_FLASH: 'gemini-2.5-flash',
 } as const;
 
 /**

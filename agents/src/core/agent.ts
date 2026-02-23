@@ -14,6 +14,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { consola } from 'consola';
 import { AgentTool } from './tool.js';
 import { GeminiModelName } from './models.js';
+import { env } from './env.js';
 
 /**
  * エージェントの初期化設定を定義するインターフェース。
@@ -43,9 +44,9 @@ export class BaseAgent {
    * @throws {Error} `GEMINI_API_KEY` が環境変数に設定されていない場合
    */
   constructor(config: AgentConfig) {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY is not set in environment variables.');
+      throw new Error('GEMINI_API_KEY is not set.');
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);

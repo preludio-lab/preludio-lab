@@ -4,6 +4,7 @@ import { BaseAgent, AgentConfig } from '../core/agent.js';
 import { AgentTool } from '../core/tool.js';
 import { ResilientFetcher } from '../core/fetcher.js';
 import { GeminiModels } from '../core/models.js';
+import { env } from '../core/env.js';
 
 // === 1. ResilientFetcher のテスト用ツール ===
 const GithubUserSchema = z.object({
@@ -36,15 +37,13 @@ class GitHubUserTool implements AgentTool<z.infer<typeof GithubUserSchema>, unkn
 async function main() {
   consola.box('AI Agent Core: 動作確認テスト');
 
-  // 環境変数チェック
-  if (!process.env.GEMINI_API_KEY) {
-    consola.error('HINT: 実行前に GEMINI_API_KEY を設定してください。');
-    consola.info('例: export GEMINI_API_KEY="your_api_key"');
+  // 環境変数チェック (env.ts のインポート時に検証済みですが、明示的に)
+  if (!env.GEMINI_API_KEY) {
+    consola.error('HINT: .env.local に GEMINI_API_KEY を設定してください。');
     return;
   }
 
   const config: AgentConfig = {
-    // Flashは高速で安価なため、ツール呼び出しテストに最適
     modelName: GeminiModels.FLASH,
     systemInstruction:
       'あなたは優秀なアシスタントです。必要に応じてツールを利用して、ユーザーの質問に日本語で簡潔に答えてください。',
