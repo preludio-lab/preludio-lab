@@ -9,7 +9,6 @@
     }
   },
   "private": true,
-  "workspaces": [],
   "scripts": {
     "dev": "next dev --webpack | pino-pretty",
     "build": "next build",
