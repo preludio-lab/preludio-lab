@@ -133,11 +133,10 @@ export class BaseAgent {
     if (messages.length === 0) {
       throw new Error('Messages array cannot be empty.');
     }
-    // --- 1. 道具の説明書をGemini語（OpenAPI形式）に翻訳する ---
-    // GeminiはTypeScriptやZodを直接理解できないため、事前にJSON Schemaに変換して渡します。
-    // これによりAIは「自分はこのツールを呼び出せるんだ」と認識します。
+    // --- 1. ツール定義をモデルが解釈可能な形式 (OpenAPI Schema) に変換する ---
+    // Gemini SDKはZodオブジェクトを直接扱えないため、事前に互換性のあるJSON Schemaヘ変換します。
     const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
-      // ZodからJSONSchemaへ自動変換（プロンプトや引数定義の代わりになります）
+      // ZodスキーマからJSON Schema (OpenAPI 3) ヘの自動変換を行い、引数仕様を定義します。
       const jsonSchema = zodToJsonSchema(tool.inputSchema, { target: 'openApi3' }) as Record<
         string,
         unknown
@@ -185,15 +184,15 @@ export class BaseAgent {
 
     let calls = result.response.functionCalls();
 
-    // --- 2. 「考えて、実行して、報告する」自律ループ ---
-    // AIが「もっと情報が必要だ（ツールを使いたい）」と返す限り、最大MAX_STEPSまでループします。
+    // --- 2. 推論、ツール実行、および結果解析の自律的な反復処理 ---
+    // モデルがツール実行を要求（Function Call）する限り、指定された最大ステップ数まで継続します。
     while (calls && calls.length > 0 && stepCount < MAX_STEPS) {
       stepCount++;
       const functionResponses: Part[] = [];
 
       for (const call of calls) {
         consola.info(`[BaseAgent] Function Call requested: ${call.name}`);
-        // AIが指定してきた名前と同じツールを、登録された道具箱(tools)から探します。
+        // 要求されたツール名に合致する実装を、登録されたツールリストから取得します。
         const tool = tools.find((t) => t.name === call.name);
 
         // 指定された名前のツールが見つからない場合はエラー
@@ -202,16 +201,16 @@ export class BaseAgent {
         }
 
         try {
-          // --- 3. 型安全な防御壁 (Zodによる解析と実行) ---
-          // AIが送ってきた適当かもしれない引数を、Zodで検証し安全な型(`input`)に変換します。
-          // 想定外の型や欠損があればここで弾かれエラーになります。
+          // --- 3. 型安全性に基づく引数のバリデーションと実行 ---
+          // モデルから渡された動的な引数をZodスキーマに照らして検証し、型確定済みのオブジェクトに変換します。
+          // スキーマに適合しない場合は例外をスローし、不正な実行を防止します。
           const args = (call.args as Record<string, unknown>) || {};
           const input = tool.inputSchema.parse(args);
 
-          // 4. 検証を通った安全な引数で、実際のツールの非同期処理を実行します。
+          // 4. 検証済み引数を用いてツールの実体処理（非同期）を実行します。
           const toolResult = await tool.execute(input);
 
-          // 5. 実行結果をAIへの報告書としてまとめます。
+          // 5. 実行結果をモデルへのレスポンス形式に成形します。
           functionResponses.push({
             functionResponse: {
               name: call.name,
@@ -231,9 +230,8 @@ export class BaseAgent {
         }
       }
 
-      // --- 6. 結果の返却と再考（ループの継続判断） ---
-      // ツールの実行結果のリストをAIへ返却（報告）します。
-      // AIは結果を見て、「これで十分だから最終回答を作る」か「まだ別のツールが必要」かを判断（再考）します。
+      // --- 6. 実行結果のフィードバックと後続推論の継続判断 ---
+      // ツールの実行結果をモデルに返却し、後続の回答生成または追加のツール実行が必要かを判断させます。
       result = await chat.sendMessage(functionResponses);
       calls = result.response.functionCalls();
     }
