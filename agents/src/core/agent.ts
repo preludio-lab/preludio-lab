@@ -46,6 +46,7 @@ export class BaseAgent {
    */
   constructor(config: AgentConfig) {
     const apiKey = env.GEMINI_API_KEY;
+    // APIキーが未設定の場合はエラーを投げて初期化を中断する
     if (!apiKey) {
       throw new Error('GEMINI_API_KEY is not set.');
     }
@@ -56,10 +57,12 @@ export class BaseAgent {
       model: config.modelName,
     };
 
+    // システムプロンプト（役割定義など）が指定されている場合は設定に反映
     if (config.systemInstruction) {
       modelConfig.systemInstruction = config.systemInstruction;
     }
 
+    // Google検索による回答の裏付け（Grounding）が有効な場合の設定
     if (config.enableGrounding) {
       // Gemini の Grounding (Google Search) を有効化
       modelConfig.tools = [
@@ -87,15 +90,25 @@ export class BaseAgent {
    * @throws {Error} Gemini のレスポンスが JSON として不正な場合、またはスキーマ検証に失敗した場合
    */
   async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> {
+    // Zod スキーマを Gemini が理解できる JSON スキーマ（OpenAPI 3形式）に変換
+    const jsonSchema = zodToJsonSchema(schema, { target: 'openApi3' }) as Record<string, unknown>;
+
     const result = await this.model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: 'application/json',
+        // Gemini 側にスキーマを渡すことで、出力構造を物理的に強制（Constrained Output）する
+        responseSchema: {
+          type: SchemaType.OBJECT,
+          properties: (jsonSchema.properties as { [k: string]: Schema }) || {},
+          required: (jsonSchema.required as string[]) || [],
+        },
       },
     });
 
     const responseText = result.response.text();
     try {
+      // モデルが強制に従った出力を返してくるため、JSON パースと Zod 検証は極めて高い確率で成功する
       const parsed = JSON.parse(responseText);
       return schema.parse(parsed);
     } catch (error) {
@@ -116,29 +129,34 @@ export class BaseAgent {
    * @throws {Error} 存在しないツールが LLM から呼び出された場合、またはメッセージリストが空の場合
    */
   async runWithTools(messages: Message[], tools: AgentTool<unknown, unknown>[]): Promise<string> {
+    // 実行には少なくとも1つのユーザーメッセージが必要
     if (messages.length === 0) {
       throw new Error('Messages array cannot be empty.');
     }
+    // --- 1. 道具の説明書をGemini語（OpenAPI形式）に翻訳する ---
+    // GeminiはTypeScriptやZodを直接理解できないため、事前にJSON Schemaに変換して渡します。
+    // これによりAIは「自分はこのツールを呼び出せるんだ」と認識します。
     const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
-      // ZodからJSONSchemaへ変換（zod-to-json-schemaを利用）
+      // ZodからJSONSchemaへ自動変換（プロンプトや引数定義の代わりになります）
       const jsonSchema = zodToJsonSchema(tool.inputSchema, { target: 'openApi3' }) as Record<
         string,
         unknown
       >;
 
       return {
-        name: tool.name,
-        description: tool.description,
+        name: tool.name, // AIが呼び出す関数名
+        description: tool.description, // 何をする関数か、いつ使うべきかの説明
         parameters: {
           type: SchemaType.OBJECT,
           properties: (jsonSchema.properties as { [k: string]: Schema }) || {},
-          required: (jsonSchema.required as string[]) || [],
+          required: (jsonSchema.required as string[]) || [], // 必須パラメータの指定
         },
       };
     });
 
     // 既存の設定（systemInstruction等）を引き継ぎつつ、toolsパラメータを上書きした一時的なモデルを生成
     let toolsConfig: GeminiTool[] = [{ functionDeclarations }];
+    // 既に設定されているツール（Grounding等）がある場合は、それらとマージする
     if (this.model.tools && this.model.tools.length > 0) {
       toolsConfig = [...this.model.tools, ...toolsConfig];
     }
@@ -166,23 +184,34 @@ export class BaseAgent {
     let stepCount = 0;
 
     let calls = result.response.functionCalls();
+
+    // --- 2. 「考えて、実行して、報告する」自律ループ ---
+    // AIが「もっと情報が必要だ（ツールを使いたい）」と返す限り、最大MAX_STEPSまでループします。
     while (calls && calls.length > 0 && stepCount < MAX_STEPS) {
       stepCount++;
       const functionResponses: Part[] = [];
 
       for (const call of calls) {
         consola.info(`[BaseAgent] Function Call requested: ${call.name}`);
+        // AIが指定してきた名前と同じツールを、登録された道具箱(tools)から探します。
         const tool = tools.find((t) => t.name === call.name);
 
+        // 指定された名前のツールが見つからない場合はエラー
         if (!tool) {
           throw new Error(`Tool not found: ${call.name}`);
         }
 
         try {
+          // --- 3. 型安全な防御壁 (Zodによる解析と実行) ---
+          // AIが送ってきた適当かもしれない引数を、Zodで検証し安全な型(`input`)に変換します。
+          // 想定外の型や欠損があればここで弾かれエラーになります。
           const args = (call.args as Record<string, unknown>) || {};
           const input = tool.inputSchema.parse(args);
+
+          // 4. 検証を通った安全な引数で、実際のツールの非同期処理を実行します。
           const toolResult = await tool.execute(input);
 
+          // 5. 実行結果をAIへの報告書としてまとめます。
           functionResponses.push({
             functionResponse: {
               name: call.name,
@@ -202,11 +231,14 @@ export class BaseAgent {
         }
       }
 
-      // ツールの実行結果をエージェントへ返却し、次の推論へつなげる
+      // --- 6. 結果の返却と再考（ループの継続判断） ---
+      // ツールの実行結果のリストをAIへ返却（報告）します。
+      // AIは結果を見て、「これで十分だから最終回答を作る」か「まだ別のツールが必要」かを判断（再考）します。
       result = await chat.sendMessage(functionResponses);
       calls = result.response.functionCalls();
     }
 
+    // 最大ループ回数に達した場合は、無限ループ防止のため警告を出す
     if (stepCount >= MAX_STEPS) {
       consola.warn(`[BaseAgent] Reached maximum tool execution steps (${MAX_STEPS})`);
     }
