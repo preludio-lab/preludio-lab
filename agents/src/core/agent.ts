@@ -2,6 +2,7 @@ import {
   GoogleGenerativeAI,
   GenerativeModel,
   FunctionDeclaration,
+  FunctionDeclarationSchema,
   FunctionCall,
   SchemaType,
   Schema,
@@ -56,6 +57,65 @@ export interface RunWithToolsOptions {
     result?: unknown,
     error?: unknown,
   ) => void;
+}
+
+/**
+ * JSON Schema の型表記（小文字）を Gemini SDK の `SchemaType`（大文字 Enum）にマッピングする変換テーブル。
+ */
+const JSON_SCHEMA_TYPE_TO_GEMINI: Record<string, SchemaType> = {
+  string: SchemaType.STRING,
+  number: SchemaType.NUMBER,
+  integer: SchemaType.INTEGER,
+  boolean: SchemaType.BOOLEAN,
+  array: SchemaType.ARRAY,
+  object: SchemaType.OBJECT,
+};
+
+/**
+ * `zodToJsonSchema` が出力する標準 JSON Schema を、Gemini API が期待する `Schema` 形式に再帰的に変換します。
+ * JSON Schema の `type: "string"` などの小文字表記を、Gemini SDK の `SchemaType.STRING` などの大文字 Enum に変換します。
+ *
+ * @param jsonSchema zodToJsonSchema の出力
+ * @returns Gemini API 互換の Schema オブジェクト
+ */
+function convertToGeminiSchema(jsonSchema: Record<string, unknown>): Schema {
+  const result: Record<string, unknown> = {};
+
+  // type を Gemini の SchemaType Enum に変換
+  if (typeof jsonSchema.type === 'string' && jsonSchema.type in JSON_SCHEMA_TYPE_TO_GEMINI) {
+    result.type = JSON_SCHEMA_TYPE_TO_GEMINI[jsonSchema.type];
+  }
+
+  // description はそのまま保持
+  if (jsonSchema.description) {
+    result.description = jsonSchema.description;
+  }
+
+  // enum 値の保持
+  if (Array.isArray(jsonSchema.enum)) {
+    result.enum = jsonSchema.enum;
+  }
+
+  // 配列の items を再帰的に変換
+  if (jsonSchema.items && typeof jsonSchema.items === 'object') {
+    result.items = convertToGeminiSchema(jsonSchema.items as Record<string, unknown>);
+  }
+
+  // オブジェクトの properties を再帰的に変換
+  if (jsonSchema.properties && typeof jsonSchema.properties === 'object') {
+    const props: Record<string, Schema> = {};
+    for (const [key, value] of Object.entries(jsonSchema.properties as Record<string, unknown>)) {
+      props[key] = convertToGeminiSchema(value as Record<string, unknown>);
+    }
+    result.properties = props;
+  }
+
+  // required の保持
+  if (Array.isArray(jsonSchema.required)) {
+    result.required = jsonSchema.required;
+  }
+
+  return result as unknown as Schema;
 }
 
 /**
@@ -122,19 +182,16 @@ export class BaseAgent {
    * @throws {Error} Gemini のレスポンスが JSON として不正な場合、またはスキーマ検証に失敗した場合
    */
   async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> {
-    // Zod スキーマを Gemini が理解できる JSON スキーマ（OpenAPI 3形式）に変換
+    // Zod スキーマを JSON Schema 経由で Gemini 互換の Schema 形式に変換
     const jsonSchema = zodToJsonSchema(schema, { target: 'openApi3' }) as Record<string, unknown>;
+    const geminiSchema = convertToGeminiSchema(jsonSchema);
 
     const result = await this.model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: 'application/json',
         // Gemini 側にスキーマを渡すことで、出力構造を物理的に強制（Constrained Output）する
-        responseSchema: {
-          type: SchemaType.OBJECT,
-          properties: (jsonSchema.properties as { [k: string]: Schema }) || {},
-          required: (jsonSchema.required as string[]) || [],
-        },
+        responseSchema: geminiSchema,
       },
     });
 
@@ -174,29 +231,26 @@ export class BaseAgent {
     // --- 1. ツール定義をモデルが解釈可能な形式 (OpenAPI Schema) に変換する ---
     // Gemini SDKはZodオブジェクトを直接扱えないため、事前に互換性のあるJSON Schemaヘ変換します。
     const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
-      // ZodスキーマからJSON Schema (OpenAPI 3) ヘの自動変換を行い、引数仕様を定義します。
+      // Zodスキーマを JSON Schema 経由で Gemini 互換の Schema 形式に変換します。
       const jsonSchema = zodToJsonSchema(tool.inputSchema, { target: 'openApi3' }) as Record<
         string,
         unknown
       >;
+      const geminiSchema = convertToGeminiSchema(
+        jsonSchema,
+      ) as unknown as FunctionDeclarationSchema;
 
       return {
         name: tool.name, // AIが呼び出す関数名
         description: tool.description, // 何をする関数か、いつ使うべきかの説明
-        parameters: {
-          type: SchemaType.OBJECT,
-          properties: (jsonSchema.properties as { [k: string]: Schema }) || {},
-          required: (jsonSchema.required as string[]) || [], // 必須パラメータの指定
-        },
+        parameters: geminiSchema,
       };
     });
 
     // 既存の設定（systemInstruction等）を引き継ぎつつ、toolsパラメータを上書きした一時的なモデルを生成
-    let toolsConfig: GeminiTool[] = [{ functionDeclarations }];
-    // 既に設定されているツール（Grounding等）がある場合は、それらとマージする
-    if (this.model.tools && this.model.tools.length > 0) {
-      toolsConfig = [...this.model.tools, ...toolsConfig];
-    }
+    // this.model.tools は undefined の可能性があるため、安全に空配列へフォールバックする
+    const existingTools: GeminiTool[] = Array.isArray(this.model.tools) ? this.model.tools : [];
+    const toolsConfig: GeminiTool[] = [...existingTools, { functionDeclarations }];
 
     const modelWithTools = this.genAI.getGenerativeModel({
       model: this.model.model,
