@@ -26,8 +26,8 @@ Google Generative AI SDK (Gemini) の薄いラッパーです。プロジェク�
 
 - **責務**:
   - Gemini モデルの初期化と設定管理。
-  - 構造化出力 (JSON Mode) の強制。
-  - **Function Calling のサポート**: `AgentTool` インターフェースを実装したツール群をエージェントに渡し、自律的に選択・実行させる機能。
+  - **構造化出力の強制**: Zod スキーマを Gemini の `SchemaType` に厳密に変換・マッピングし、API レベルで仕様準拠の出力を保証（Constrained Output）する。
+  - **Function Calling のサポート**: `AgentTool` インターフェースを実装したツール群を渡し、自律的に選択・実行させる機能。**同一ステップでの複数ツール要求に対する並列実行（Promise.all）** や、実行状態のフック（`onToolCall`）による高度なUX/制御を可能にする。
   - **会話履歴（コンテキスト）管理**: 単発のプロンプトだけでなく、過去のやり取り（Roleごとのメッセージ配列）を状態として適切に保持・管理し、複数ターンのFunction Callingによる推論プロセスを実現する。
   - **Grounding (Google Search) の統合**: 生成オプションとして Google 検索連携を切り替え可能にする。
   - トークン利用状況の記録（将来的なコスト管理用）。
@@ -38,8 +38,12 @@ Google Generative AI SDK (Gemini) の薄いラッパーです。プロジェク�
     // 構造化出力の生成
     async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T>;
     // ツールを使用した自律的な対話実行 (Function Calling)
-    // コンテキスト（会話履歴）を受け取り複数ターンの実行を行う
-    async runWithTools(messages: Message[], tools: AgentTool<any, any>[]): Promise<string>;
+    // コンテキストを受け取り複数ターンの実行を行う。並列実行やコールバック(onToolCall)、最大ループ数制御(maxSteps)をサポート。
+    async runWithTools(
+      messages: Message[],
+      tools: AgentTool<any, any>[],
+      options?: RunWithToolsOptions,
+    ): Promise<string>;
   }
   ```
 

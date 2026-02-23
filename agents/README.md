@@ -116,21 +116,26 @@ import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 import { z } from "zod";
 
 export class BaseAgent {
-  constructor(
-    private modelName: string,
-    private systemInstruction: string
-  ) { ... }
+  constructor(config: AgentConfig) { ... }
 
   /**
-   * 構造化出力の検証を伴う生成の実行
+   * 構造化出力 (JSON Mode) の生成。
+   * Zod スキーマを Gemini 側の SchemaType に変換し、出力構造を API レベルで強制します。
    */
-  async run<T>(input: string, schema: z.ZodType<T>): Promise<T> {
-    // 1. 生成の設定 (responseMimeType: "application/json" 等)
-    // 2. Gemini API の呼び出し
-    // 3. JSON のパースと Zod による検証
-    // 4. レート制限 (429) 回避のための Exponential Backoff を伴う再試行制御
-    return schema.parse(JSON.parse(response));
-  }
+  async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> { ... }
+
+  /**
+   * ツールを使用した自律的な対話実行 (Function Calling)。
+   * - Zod バリデーションによる型安全性の担保
+   * - 複数ツールの並列実行 (Promise.all) による待機時間最小化
+   * - 中間ステータス更新のための UI フック (onToolCall)
+   * - 無限推論を防ぐ動的なループ上限設定 (maxSteps)
+   */
+  async runWithTools(
+    messages: Message[],
+    tools: AgentTool<any, any>[],
+    options?: RunWithToolsOptions
+  ): Promise<string> { ... }
 }
 ```
 
