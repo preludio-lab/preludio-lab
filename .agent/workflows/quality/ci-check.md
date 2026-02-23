@@ -11,3 +11,6 @@ Formatter/Linterはコミット時に自動実行される（Husky）ため、�
 2. **Unit Test**: `pnpm run test`
    - 全体テストを実行し、リグレッションがないか確認します。
    - ※時間がかかる場合は、関連するテストのみ実行でも可
+3. **Multi-Workspace & Phantom Dependencies (幽霊依存) Check**:
+   - `Next.js (Root)`, `Agents`, `Workers` など複数のワークスペースが存在する場合や、パッケージマネージャー移行時は、Hoistingの挙動による暗黙的な依存関係エラーが発生しやすくなります。
+   - 必ずすべてのワークスペースに対してLint, TypeCheck, UnitTest, Buildを網羅的に走らせてください。

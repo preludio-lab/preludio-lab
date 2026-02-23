@@ -29,9 +29,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          cd workers/cdn-proxy && npm ci --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting (Prettier)
         run: pnpm prettier --check .
@@ -45,7 +43,7 @@ jobs:
       - name: Unit Test
         run: |
           pnpm test
-          cd workers/cdn-proxy && npm test -- --run
+          pnpm --filter workers/cdn-proxy test -- --run
 
       - name: Build
         run: pnpm run build
