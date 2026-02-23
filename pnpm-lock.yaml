@@ -31,8 +31,8 @@ importers:
         specifier: ^0.13.10
         version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
       abcjs:
-        specifier: ^6.6.1
-        version: 6.6.1
+        specifier: ^6.6.2
+        version: 6.6.2
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -3112,8 +3112,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  abcjs@6.6.1:
-    resolution: {integrity: sha512-DM7nJcUXCJRVESk9HghI1/RdO8kJqWgqOj2f7p+rZ9AMa4XdlkXLPLRCQbwMEj8VwEG0DvhHIs0pd8RMAIqqzg==}
+  abcjs@6.6.2:
+    resolution: {integrity: sha512-YLbp5lYUq0uOywWZx9EuTdm0TcflKZi7hOzz366A/LFl3qoAXSYIjznJQmr/VeHg8NcLxZYoN8dLi7PqCpxKEA==}
 
   acorn-import-attributes@1.9.5:
     resolution: {integrity: sha512-n02Vykv5uA3eHGM/Z2dQrcD56kL8TyDb2p1+0P83PClMnC/nc+anbQRhIOWnSq4Ke/KvDPrY3C9hDtC/A3eHnQ==}
@@ -9266,7 +9266,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  abcjs@6.6.1: {}
+  abcjs@6.6.2: {}
 
   acorn-import-attributes@1.9.5(acorn@8.15.0):
     dependencies:
