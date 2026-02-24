@@ -1,78 +1,49 @@
-# AI Agent Core 仕様書
+# AI Agent Core (`src/core`)
 
-エージェントシステムの基盤となる共通クラスおよびインターフェースを定義します。
+AIエージェントの基盤となるLLM操作、ツール定義、外部通信、および環境設定を提供するコアディレクトリです。
 
-## 概要
+## モジュール一覧
 
-AIエージェントの基盤となるコア機能（LLM操作、ツール定義、外部通信）を提供するディレクトリです。
+- **[`agent.ts`](./agent.ts)**: Gemini APIのラッパー。型安全な構造化出力や、並列実行可能なFunction Calling（推論ループ）を提供します。
+- **[`tool.ts`](./tool.ts)**: ツールの規格定義。I/Oスキーマの強制とZodによる自動バリデーションを担います。
+- **[`fetcher.ts`](./fetcher.ts)**: 耐障害HTTPクライアント。自動リトライ、スロットリング、ファイルベースのキャッシュ機能を提供します。
+- **[`env.ts`](./env.ts)**: 環境変数管理。起動時にZodで検証を行い、型安全な環境変数をプロジェクト全体に提供します。
+- **[`models.ts`](./models.ts)**: 定数・型定義。一元管理されたモデル名リストや、会話状態のインターフェースを定義します。
 
-## 目的
+---
 
-1. **Gemini APIの抽象化**: `BaseAgent` を通じて、LLMとの対話や構造化出力、Function Callingを標準化する。
-2. **ツールの規格化**: `AgentTool` インターフェースにより、すべてのツールが統一された形式でエージェントに利用されるようにする。
-3. **外部通信の堅牢化**: サードパーティAPI等と通信する際のレート制約やエラーハンドリングを `ResilientFetcher` で吸収する。
+## 1. `agent.ts` (BaseAgent)
 
-## 実装方針（設計原則）
+Google Generative AI SDK (Gemini) をラップし、プロジェクト全体の規律を強制する基底クラスです。
 
-- **Zero-Cost**: 無料枠を最大限活用し、無駄な API コールを抑制する。
-- **Resilience**: 外部サービスの不調（API 制限、ネットワークエラー）に対して堅牢であること。
-- **Type Safety**: I/O は全て Zod を介し、型安全性を保証する。
+- **構造化出力の強制**: ZodスキーマをGeminiネイティブのSchemaTypeに変換し、APIレベルで確実なJSON(Constrained Output)を返却させます。
+- **自律的推論 (Function Calling)**: `AgentTool` インターフェースを持つツール群を渡し、LLMに推論と実行のループを委譲します。
+  - **並列実行**: 同一推論ステップ内の複数ツール要求を `Promise.all` で同時に処理し、待機時間を最小化します。
+  - **制御機構**: 実行状態のフック (`onToolCall`) や無限ループ防止機能 (`maxSteps`) を備えます。
 
-## 構成要素
+## 2. `tool.ts` (AgentTool)
 
-### 1. BaseAgent (`core/agent.ts`)
+エージェントに機能を提供する際の標準規格インターフェースです。
 
-Google Generative AI SDK (Gemini) の薄いラッパーです。プロジェクト全体の規律を強制します。
+- **I/Oの統一**: ツール名、説明、Zodによる入力スキーマ、実行関数 (`execute`) を強制し、LLMが予測可能かつ安全にツールを呼び出せるようにします。
 
-- **責務**:
-  - Gemini モデルの初期化と設定管理。
-  - **構造化出力の強制**: Zod スキーマを Gemini の `SchemaType` に厳密に変換・マッピングし、API レベルで仕様準拠の出力を保証（Constrained Output）する。
-  - **Function Calling のサポート**: `AgentTool` インターフェースを実装したツール群を渡し、自律的に選択・実行させる機能。**同一ステップでの複数ツール要求に対する並列実行（Promise.all）** や、実行状態のフック（`onToolCall`）による高度なUX/制御を可能にする。
-  - **会話履歴（コンテキスト）管理**: 単発のプロンプトだけでなく、過去のやり取り（Roleごとのメッセージ配列）を状態として適切に保持・管理し、複数ターンのFunction Callingによる推論プロセスを実現する。
-  - **Grounding (Google Search) の統合**: 生成オプションとして Google 検索連携を切り替え可能にする。
-  - トークン利用状況の記録（将来的なコスト管理用）。
-- **インターフェース案**:
-  ```typescript
-  class BaseAgent {
-    constructor(config: AgentConfig);
-    // 構造化出力の生成
-    async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T>;
-    // ツールを使用した自律的な対話実行 (Function Calling)
-    // コンテキストを受け取り複数ターンの実行を行う。並列実行やコールバック(onToolCall)、最大ループ数制御(maxSteps)をサポート。
-    async runWithTools(
-      messages: Message[],
-      tools: AgentTool<any, any>[],
-      options?: RunWithToolsOptions,
-    ): Promise<string>;
-  }
-  ```
+## 3. `fetcher.ts` (ResilientFetcher)
 
-### 2. AgentTool Interface (`core/tool.ts`)
+外部APIへの通信を一手に担う、耐障害性の高いインフラ層です。
 
-エージェントが使用するツールの標準規格です。
+- **耐障害性**: 429例外 (Too Many Requests) や5xxエラーに対する指数バックオフ付きリトライ。
+- **スロットリング**: 外部サービスごとのレート制限（RPM等）を遵守するための、キューベースのリクエスト間隔制御。
+- **キャッシュ**: 同一URLへの反復リクエストを防ぐ、ファイルシステムベースのアトミックな永続化キャッシュ。
 
-- **責務**:
-  - 全てのツールに一貫した I/O 形式を強制。
-  - Zod による入力値の自動バリデーション。
-- **インターフェース定義**:
-  ```typescript
-  interface AgentTool<I, O> {
-    name: string;
-    description: string;
-    inputSchema: z.ZodType<I>;
-    execute(input: I): Promise<O>;
-  }
-  ```
+## 4. `env.ts` (環境変数)
 
-### 3. ResilientFetcher (`core/fetcher.ts`)
+`.env.local` などの秘密情報を型安全に読み込みます。
 
-外部 API 通信を一手に担う、耐障害性の高い HTTP クライアントです。
+- **Fail-Fast**: 起動時にZodで環境変数検証を行い、必須キー（`GEMINI_API_KEY` など）が欠損している場合はエラーログを出力して直ちにプロセスを強制終了させます。
 
-- **責務**:
-  - **リトライ制御**: 429 (Rate Limit) や 5xx エラーに対する指数バックオフ付きリトライ。
-  - **プロアクティブなスロットリング**: ドメインごとに「秒間リクエスト数」や「リクエスト間隔」を制限するキューの管理。IP BAN や過剰な負荷を未然に防ぐ。
-  - **キャッシュ層（ローカル永続化）**: `workspace/cache/` 等のファイルシステムを利用したレスポンスのリッチなキャッシュ機能を提供。再実行時や同一エンドポイントへの重複フェッチを防ぎ、API制限回避と時間・コストの削減を図る。
-  - **タイムアウト管理**: 遅い外部 API によるプロセス停止を防止。
-  - **ユーザーエージェント設定**: Wikipedia API 等で求められる適切な UA の設定。
-- **実装方針**:
-  - `axios` + `axios-retry` または `p-retry` を基盤に使用。
+## 5. `models.ts` (定数と型)
+
+マジックストリングを排除するための共通定義ファイルです。
+
+- **モデル定義の一元管理**: `FLASH`, `PRO`, `IMAGE` など、用途に応じたGeminiモデル名定数マップを提供し、型安全なモデル指定を実現します。
+- **状態定義**: LLMとやり取りするコンテキスト（`Message` 型）などの汎用的なインターフェースを定めます。
