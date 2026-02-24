@@ -10,7 +10,7 @@ export const authConfig = {
   callbacks: {
     /**
      * ルーティングごとの認可チェック
-     * Middleware で使用される
+     * Proxy で使用される
      */
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
