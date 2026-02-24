@@ -29,9 +29,21 @@ export const authConfig = {
      * 特定のメールアドレスのみを許可する
      */
     async signIn({ user }) {
-      if (!user.email) return false;
+      console.log(
+        '[Auth Debug] signIn callback executed with user:',
+        JSON.stringify(user, null, 2),
+      );
+
+      if (!user.email) {
+        console.log('[Auth Debug] signIn failed: user.email is missing.');
+        return false;
+      }
 
       const role = await adminAuthRepository.getRole(user.email);
+
+      if (role === null) {
+        console.log(`[Auth Debug] signIn failed: Role not found for email ${user.email}`);
+      }
 
       // ロール（OWNER または EDITOR）を持っている場合のみサインインを許可
       return role !== null;
