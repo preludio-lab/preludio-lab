@@ -1,6 +1,5 @@
-import { createConsola, ConsolaInstance, LogLevel } from 'consola';
+import { createConsola } from 'consola';
 import { env } from '@/core/env.js';
-
 /**
  * プロジェクト全体で利用される構造化ロガーのシングルトンインスタンス。
  *
@@ -8,8 +7,8 @@ import { env } from '@/core/env.js';
  * コンソール出力時には見やすいフォーマットと色付きでログを記録します。
  * デフォルトで `[ADK]` (Agent Development Kit) というタグが付与されます。
  */
-export const logger: ConsolaInstance = createConsola({
-  level: env.LOG_LEVEL as LogLevel,
+export const logger = createConsola({
+  level: env.LOG_LEVEL,
   defaults: {
     tag: 'ADK',
   },

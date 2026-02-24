@@ -23,7 +23,7 @@ APIコストを極限まで抑えるため、以下のレイヤードアーキ�
 制作プロセスは、チャットボットとの会話ではなく、**「厳格なI/O定義に基づいたステートフルな自動処理パイプ」**として実装します。
 
 1.  **Logical Core Domain**: `src/domain`, `src/application` を純粋なドメイン層として維持し、Agent から直接インポートして再利用する（物理的な移動は行わない）。
-2.  **State Management**: 中間生成物と進捗をローカルファイル (`agents/state`) や DB に永続化し、エラー時の中断・再開 (Resumability) を保証する。手軽なファイルベース管理を基本とする。
+2.  **State Management**: 中間生成物と進捗をローカルファイル (`state/` または `.cache/`) に永続化し、エラー時の中断・再開 (Resumability) を保証する。手軽なファイルベース管理を基本とする。
 3.  **Deterministic Validation**: LLM による修正の前に、Zod によるプログラム的な型チェックと自動修復を優先し、コストを削減する。
 
 ### 1.4. Execution Environments & Limits
@@ -31,7 +31,7 @@ APIコストを極限まで抑えるため、以下のレイヤードアーキ�
 #### A. Local Environment (Admin CLI)
 
 - **目的**: 試行錯誤、即時修正、特定のマスターデータの先行生成。
-- **構成**: `agents/` ディレクトリ内のスクリプトを実行。
+- **構成**: ディレクトリ内のスクリプトを `pnpm exec tsx` 等で実行。
 
 #### B. GitHub Actions Environment (Batch)
 
@@ -73,35 +73,36 @@ APIコストを極限まで抑えるため、以下のレイヤードアーキ�
 アプリケーション本体 (`preludiolab/src`) とは明確に分離し、独立した開発ライフサイクルを持つ「工場」として `agents/` ディレクトリを構築します。
 
 ```text
-agents/                        # ★ エージェント開発キット (ADK) ルート
+.                              # ★ エージェント開発キット (ADK) ルルート
 ├── package.json               # ESM設定 ("type": "module")、Gemini SDK、Zod 等
-├── pnpm-lock.yaml             # パッケージ管理は pnpm を使用（本体と統一）
+├── pnpm-lock.yaml             # パッケージ管理は pnpm を使用
 ├── .env.example               # 環境変数のテンプレート
 ├── .env.local                 # Gemini APIキー等のローカル秘密情報
-├── tsconfig.json              # パスエイリアス設定 (@/* -> ../src/*)
+├── tsconfig.json              # パスエイリアス設定 (@/* -> ./src/*)
 ├── src/
-│   ├── core/                  # 基盤ロジック（LLMラップ等）
-│   │   ├── llm.ts             # Google SDK のラッパー
-│   │   ├── agent.ts           # エージェント基底クラス
+│   ├── core/                  # 基盤ロジック（LLMラップ、履歴管理、キャッシュ）
+│   │   ├── agent.ts           # エージェント基底クラス (BaseAgent)
+│   │   ├── fetcher.ts         # アトミックキャッシュ付き HTTP クライアント
 │   │   └── tool.ts            # ツール定義基底
 │   ├── prompts/               # エージェント定義（プロンプト & スキーマ）
-│   │   ├── writer.ts          # ライター用エージェント
-│   │   ├── reviewer.ts        # レビュー用エージェント
-│   │   └── translator.ts      # 翻訳用エージェント
 │   ├── tools/                 # エージェントが使用する機能（関数実装）
-│   │   ├── search.ts          # Google 検索 (Grounding)
-│   │   └── music-xml.ts       # 楽譜解析
-│   ├── workflows/             # 実行用スクリプト（エントリーポイント）
-│   │   ├── create-article.ts
-│   │   └── sync-master-data.ts
-│   ├── infrastructure/        # CLI用リポジトリ実装（直接DB接続、ファイルシステム）
-│   └── state/                 # タスク進捗管理（JSON または SQLite）
+│   ├── workflows/             # 実行用スクリプト（TaskStateManager 等）
+│   └── infrastructure/        # CLI用リポジトリ実装（直接DB接続、ファイルシステム）
+├── .cache/                    # フェッチキャッシュ、タスク状態の永続化
 └── workspace/                 # ローカル作業領域・スクラッチパッド
     ├── temp/                  # 生成途中のドラフト（一時保存）
     └── cache/                 # ダウンロードしたソース（MusicXML 等）
 ```
 
-### 3.2. Component Design (Code Concepts)
+### 3.2. Sub-Component Documentation
+
+各モジュールの詳細な仕様と実装方針については、以下のドキュメントを参照してください。
+
+- [**Core Module (`src/core`)**](./src/core/README.md): Gemini API のラップ、会話履歴管理、アトミックな通信キャッシュ。
+- [**Tools Module (`src/tools`)**](./src/tools/README.md): 外部検索、DB操作、MusicXML解析などの具象ツール定義。
+- [**Workflows Module (`src/workflows`)**](./src/workflows/README.md): 状態永続化 (`TaskStateManager`) を備えた実行パイプライン。
+
+### 3.3. Component Design (Code Concepts)
 
 Google Generative AI SDKを直接利用するのではなく、プロジェクトの規律（JSON Mode、型安全性、エラーハンドリング）を強制するための薄いラッパー層を設けます。
 
@@ -110,26 +111,31 @@ Google Generative AI SDKを直接利用するのではなく、プロジェク�
 `@google/generative-ai` をラップし、`zod` スキーマに基づいた構造化出力を保証する基底クラスです。
 
 ```typescript
-// agents/src/core/agent.ts (Conceptual)
+// src/core/agent.ts (Conceptual)
 import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 import { z } from "zod";
 
 export class BaseAgent {
-  constructor(
-    private modelName: string,
-    private systemInstruction: string
-  ) { ... }
+  constructor(config: AgentConfig) { ... }
 
   /**
-   * 構造化出力の検証を伴う生成の実行
+   * 構造化出力 (JSON Mode) の生成。
+   * Zod スキーマを Gemini 側の SchemaType に変換し、出力構造を API レベルで強制します。
    */
-  async run<T>(input: string, schema: z.ZodType<T>): Promise<T> {
-    // 1. 生成の設定 (responseMimeType: "application/json" 等)
-    // 2. Gemini API の呼び出し
-    // 3. JSON のパースと Zod による検証
-    // 4. レート制限 (429) 回避のための Exponential Backoff を伴う再試行制御
-    return schema.parse(JSON.parse(response));
-  }
+  async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> { ... }
+
+  /**
+   * ツールを使用した自律的な対話実行 (Function Calling)。
+   * - Zod バリデーションによる型安全性の担保
+   * - 複数ツールの並列実行 (Promise.all) による待機時間最小化
+   * - 中間ステータス更新のための UI フック (onToolCall)
+   * - 無限推論を防ぐ動的なループ上限設定 (maxSteps)
+   */
+  async runWithTools(
+    messages: Message[],
+    tools: AgentTool<any, any>[],
+    options?: RunWithToolsOptions
+  ): Promise<string> { ... }
 }
 ```
 
@@ -138,7 +144,7 @@ export class BaseAgent {
 役割（Persona）ごとにプロンプトテンプレートと出力責任（Schema）を定義します。
 
 ```typescript
-// agents/src/prompts/writer.ts
+// src/prompts/writer.ts
 import { BaseAgent } from "../core/agent";
 
 export const ArticleSchema = z.object({
@@ -161,10 +167,10 @@ export const createWriterAgent = () => {
 CLI や CI から実行されるエントリーポイントです。「マスタデータを読み込み、エージェントを呼び出し、成果物を保存する」一連の流れを定義します。
 
 ```typescript
-// agents/src/workflows/create-article.ts
+// src/workflows/create-article.ts
 async function main() {
   // 1. リクエストの読み込み
-  const request = await readJson('agents/workspace/inbox/req.json');
+  const request = await readJson('workspace/inbox/req.json');
 
   // 2. エージェントの実行
   const writer = createWriterAgent();
@@ -175,9 +181,9 @@ async function main() {
 }
 ```
 
-### 3.3. Execution Environment & Future Work
+### 3.4. Execution Environment & Future Work
 
-- **Local Execution:** 開発者は `agents/` 下のスクリプトをローカルで実行し、高速にイテレーションを回します。
+- **Local Execution:** ディレクトリ配下のスクリプトをローカルで実行し、高速にイテレーションを回します。
 - **CI/CD Execution (Phase 2):** GitHub Actions をランタイムとして利用し、`workspace/inbox` へのコミットをトリガーに対応する `flows` を自動実行する環境を構築します。これにより、"Commit-driven Development" を実現します。
 
 ## 4. Roadmap
