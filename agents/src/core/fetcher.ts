@@ -211,3 +211,65 @@ export class ResilientFetcher {
     return this.client;
   }
 }
+
+/**
+ * ネイティブの fetch API に指数バックオフ付きのリトライ機能を追加したラッパーを作成します。
+ * Google AI SDK (Gemini) 等、標準の fetch インターフェースを期待するライブラリに渡すために使用します。
+ *
+ * @param config リトライ回数等の設定
+ * @returns fetch 互換の非同期関数
+ */
+export function createResilientFetch(config: { maxRetries?: number; timeout?: number } = {}) {
+  const maxRetries = config.maxRetries ?? 3;
+  const timeout = config.timeout ?? 60000;
+
+  return async function resilientFetch(
+    input: string | URL | Request,
+    init?: RequestInit,
+  ): Promise<Response> {
+    let attempt = 0;
+
+    const executeFetch = async (): Promise<Response> => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+
+      try {
+        const response = await fetch(input, {
+          ...init,
+          signal: controller.signal,
+        });
+
+        // 429 Too Many Requests や 5xx サーバーエラーの場合はリトライ対象とする
+        if (response.status === 429 || (response.status >= 500 && response.status <= 599)) {
+          if (attempt < maxRetries) {
+            const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+            attempt++;
+            consola.warn(
+              `[ResilientFetch] Received ${response.status}. Retrying in ${Math.round(delay)}ms... (Attempt ${attempt}/${maxRetries})`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            return executeFetch();
+          }
+        }
+
+        return response;
+      } catch (error: any) {
+        if (attempt < maxRetries) {
+          // ネットワークエラー（タイムアウト等）の場合もリトライ対象とする
+          const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+          attempt++;
+          consola.warn(
+            `[ResilientFetch] Error: ${error.message}. Retrying in ${Math.round(delay)}ms... (Attempt ${attempt}/${maxRetries})`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          return executeFetch();
+        }
+        throw error;
+      } finally {
+        clearTimeout(id);
+      }
+    };
+
+    return executeFetch();
+  };
+}

@@ -18,6 +18,7 @@ import { consola } from 'consola';
 import { AgentTool } from './tool.js';
 import { GeminiModelName, Message } from './models.js';
 import { env } from './env.js';
+import { createResilientFetch } from './fetcher.js';
 
 /**
  * エージェントの初期化設定を定義するインターフェース。
@@ -169,7 +170,15 @@ export class BaseAgent {
       ];
     }
 
-    this.model = this.genAI.getGenerativeModel(modelConfig);
+    // カスタムFetch（リトライ付き）をリクエストオプションとして渡す
+    const requestOptions = {
+      customFetch: createResilientFetch({
+        maxRetries: this.config.maxSteps ?? 3,
+        timeout: 60000,
+      }),
+    } as any;
+
+    this.model = this.genAI.getGenerativeModel(modelConfig, requestOptions);
   }
 
   /**
@@ -256,7 +265,12 @@ export class BaseAgent {
       model: this.model.model,
       systemInstruction: this.model.systemInstruction,
       tools: toolsConfig,
-    });
+    }, {
+      customFetch: createResilientFetch({
+        maxRetries: this.config.maxSteps ?? 3,
+        timeout: 60000,
+      }),
+    } as any);
 
     // メッセージ配列から Gemini の Content 形式へ変換（最後のユーザーメッセージは sendMessage に渡すためポップする）
     const history: Content[] = messages.slice(0, -1).map((msg) => ({

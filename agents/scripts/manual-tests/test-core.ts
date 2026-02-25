@@ -1,10 +1,10 @@
 import { consola } from 'consola';
 import { z } from 'zod';
-import { BaseAgent, AgentConfig } from '../core/agent.js';
-import { AgentTool } from '../core/tool.js';
-import { ResilientFetcher } from '../core/fetcher.js';
-import { GeminiModels } from '../core/models.js';
-import { env } from '../core/env.js';
+import { BaseAgent, AgentConfig } from '../../src/core/agent.js';
+import { AgentTool } from '../../src/core/tool.js';
+import { ResilientFetcher } from '../../src/core/fetcher.js';
+import { GeminiModels } from '../../src/core/models.js';
+import { env } from '../../src/core/env.js';
 
 // === 1. ResilientFetcher のテスト用ツール ===
 const GithubUserSchema = z.object({

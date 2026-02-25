@@ -14,8 +14,9 @@ AIエージェントが外部環境（API、データベース、ファイルシ
 ## 実装方針
 
 - **インターフェースの統一**: 全てのツールは `core/README.md` に沿って `AgentTool` インターフェースを実装し、I/O規格を統一する。
-- **堅牢な外部通信**: 外部APIへのリクエストは `ResilientFetcher` 経由で行い、レート制限の回避やエラー発生時の自動リトライを担保する。
+- **堅牢な外部通信**: 外部APIへのリクエストは `ResilientFetcher` (Axiosベース) またはネイティブの `createResilientFetch` を使用し、レート制限の回避やエラー発生時の自動リトライを担保する。
 - **セキュアなクレデンシャル管理**: センシティブな情報（GitHub Token等）はコードに含めず、常に `.env.local` から安全に読み込む。
+- **単方向のデータフロー**: AIエージェントはデータベース（Turso等）へ直接書き込み（Upsert）を行わず、Single Source of Truth としてローカルのJSONファイルへの書き出しのみを担当する。DBへの同期は別途CI/CD等に委ねることで、状態の二重管理を防ぐ。
 
 ## ツール一覧
 
@@ -35,7 +36,7 @@ Wikipedia (MediaWiki API) からエンティティの正確なマスタデータ
 - **実装**: `ResilientFetcher` 経由で MediaWiki Action API にアクセスし、パース済みの JSON データを取得・整形する。
 - **メリット**: `GoogleSearchTool` (Grounding) がRAG的な文書検索に近いのに対し、こちらはキー・バリュー形式の構造化データを低コストかつ安定して取得できるため、マスタデータ収集の要となる。
 
-### 2. GitHubTool (`tools/web/github.tool.ts`)
+### 3. GitHubTool (`tools/web/github.tool.ts`)
 
 GitHub 上で公開されているリソースを安全に取得します。
 
@@ -43,19 +44,16 @@ GitHub 上で公開されているリソースを安全に取得します。
 - **実装**: GitHub Rest API または Raw Content Fetch。
 - **メリット**: 未来の「譜例量産」ワークフローの基盤となる。
 
-### 4. TursoUpsertTool (`tools/db/turso-upsert.tool.ts`)
+### 4. MasterDataWriterTool (`tools/fs/master-data-writer.tool.ts`)
 
-取得・生成したデータを Turso データベースへ永続化します。
+AIエージェントが収集・推論したマスタデータを、直接データベースへ書き込む前にファイルシステム（Gitリポジトリ管理下等）へ JSON 形式で保存します。
 
-- **目的**: エージェントによる DB 書き込み。
-- **接続方針**:
-  - メインアプリの Drizzle Schema を直接インポートして使用。
-  - **前提条件**: `upsert` を正常に動作させるため、メインアプリ側の Schema で `UNIQUE` 制約（作曲家名、作品番号等の組み合わせ）が適切に定義されている必要があります。
-  - `upsert` (ON CONFLICT UPDATE) ロジックにより、重複登録を防止し情報を最新に保つ。
-  - **バルク処理（バッチ実行）の標準化**: 大量データ（数万件規模の楽曲データ等）を扱うため、1件ずつのUpsertではなく、配列（バルクデータ）を入力スキーマ `execute(input: I[])` で受け取り、1度のトランザクションで複数件を効率的に処理する設計を標準とする。
+- **目的**: データのSingle Source of Truth（唯一の情報源）の担保と、状態の二重管理の防止。
+- **実装**: 指定されたZodスキーマ（例: `ComposerMasterSchema`）に従ってデータを検証し、生成時間や使用モデル名を含むメタデータ（`_generatorMeta`）を自動付与して指定ディレクトリ（例: `data/composers/`）に `{slug}.json` として保存する。
+- **運用連携**: このツールによって出力されたローカルのJSONデータをトリガーとして、後続のCI/CDパイプラインやスクリプトがデータベース（Turso等）へのバルク Upsert処理を担うアーキテクチャとする。
 
 ## 共通ルール
 
 - 全てのツールは `core/README.md` で定義された `AgentTool` インターフェースを実装する。
-- 外部通信が発生する場合は、必ず `ResilientFetcher` を使用する。
+- 外部通信が発生する場合は、必ず専用の Resilient クライアントを使用する。
 - センシティブな情報（GitHub Token 等）は `.env.local` で管理する。
