@@ -32,8 +32,6 @@ const nextConfig: NextConfig = {
     return config;
   },
   images: {
-    loader: 'custom',
-    loaderFile: './src/infrastructure/storage/cloudflare.image.loader.ts',
     remotePatterns: [
       {
         protocol: 'https',

@@ -438,6 +438,7 @@ export default function SomeComponent() {
 - **Matcher Configuration (Allow-list vs Deny-list):**
   - Next.js Middlewareの `matcher` 設定において、「特定のパス以外全て (`/((?!...))`)」という Deny-list 方式は便利だが、リスクを伴う。
   - **Rule:** `_vercel`, `_next`, `api` などのシステムパスを必ず除外リストに含めること。
+  - **Rule (No Hardcoded Paths):** 静的アセットの除外等において、`images` や `fonts` のように特定のディレクトリ名をハードコーディングしてはならない。将来的なアセット追加時のバグや `next-intl` との競合を防ぐため、`.*\\..*` のような「拡張子を持つ汎用パターン」を原則第一として使用すること。
 - **Path Constraints:**
   - 正規表現による除外（例: `.*\\..*` で静的ファイルを除外）を行う場合、**正当なコンテンツURL（Slug）にドットを含めない** という運用ルールとセットで設計すること。
   - この制約は `naming-conventions.md` に明記し、チーム全体で共有する。

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { CdnImage } from '@/components/ui/image/CdnImage';
 import { useTranslations } from 'next-intl';
 import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { m } from 'framer-motion';
@@ -80,14 +81,25 @@ export function ArticleCard({
       <Link href={`/${lang}/${category}/${slug}`} className="flex flex-col h-full">
         {/* Thumbnail Area */}
         <div className="relative h-56 w-full overflow-hidden">
-          <Image
-            src={thumbnail || '/images/placeholders/article-placeholder.webp'}
-            alt={displayTitle}
-            fill
-            priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
+          {thumbnail ? (
+            <CdnImage
+              src={thumbnail}
+              alt={displayTitle}
+              fill
+              priority={priority}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : (
+            <Image
+              src="/images/placeholders/article-placeholder.webp"
+              alt={displayTitle}
+              fill
+              priority={priority}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          )}
           <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Category Badge */}
