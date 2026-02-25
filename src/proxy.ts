@@ -40,7 +40,7 @@ export const proxy = auth((req) => {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    ${process.env.NODE_ENV === APP_ENV.PRODUCTION ? 'upgrade-insecure-requests;' : ''}
+    ${process.env.NODE_ENV !== APP_ENV.DEVELOPMENT ? 'upgrade-insecure-requests;' : ''}
   `
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -61,7 +61,7 @@ export const proxy = auth((req) => {
   if (locale) {
     response.cookies.set('NEXT_LOCALE', locale, {
       httpOnly: true, // JavaScript からのアクセスを防ぐ (DAST Alert ID: 10010)
-      secure: process.env.NODE_ENV === 'production', // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
+      secure: process.env.NODE_ENV !== APP_ENV.DEVELOPMENT, // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
       sameSite: 'lax', // CSRF 対策
       maxAge: 31536000, // 1年
       path: '/',
