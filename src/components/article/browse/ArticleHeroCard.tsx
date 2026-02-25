@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { CdnImage } from '@/components/ui/image/CdnImage';
 import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
 import { m } from 'framer-motion';
 
@@ -47,14 +48,25 @@ export function ArticleHeroCard({
         {/* 画像エリア: カード全幅で表示し、overflow-hidden + rounded-[2.5rem] に追従 */}
         {/* TODO(#147): Image Loader改修後、中間サイズバリアント（md: 1080w, lg: 1920w）が配信される */}
         <div className="relative aspect-video w-full overflow-hidden">
-          <Image
-            src={thumbnail || '/images/placeholders/article-placeholder.webp'}
-            alt={`${title} - ${composerName}`}
-            fill
-            priority
-            sizes="(max-width: 896px) 100vw, 896px"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-          />
+          {thumbnail ? (
+            <CdnImage
+              src={thumbnail}
+              alt={`${title} - ${composerName}`}
+              fill
+              priority
+              sizes="(max-width: 896px) 100vw, 896px"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : (
+            <Image
+              src="/images/placeholders/article-placeholder.webp"
+              alt={`${title} - ${composerName}`}
+              fill
+              priority
+              sizes="(max-width: 896px) 100vw, 896px"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          )}
           {/* ホバー時のオーバーレイ */}
           <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           {/* バッジ周辺の限定Scrim: WCAG AA (4.5:1) を純白画像上でも確保 */}

@@ -40,7 +40,7 @@ export const proxy = auth((req) => {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    upgrade-insecure-requests;
+    ${process.env.NODE_ENV !== APP_ENV.DEVELOPMENT ? 'upgrade-insecure-requests;' : ''}
   `
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -61,7 +61,7 @@ export const proxy = auth((req) => {
   if (locale) {
     response.cookies.set('NEXT_LOCALE', locale, {
       httpOnly: true, // JavaScript からのアクセスを防ぐ (DAST Alert ID: 10010)
-      secure: process.env.NODE_ENV === 'production', // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
+      secure: process.env.NODE_ENV !== APP_ENV.DEVELOPMENT, // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
       sameSite: 'lax', // CSRF 対策
       maxAge: 31536000, // 1年
       path: '/',
@@ -72,13 +72,12 @@ export const proxy = auth((req) => {
 });
 
 export const config = {
-  // API, _next, _vercel, 静的ファイル(拡張子あり)を除外してすべてにマッチさせる
+  // API, _next, _vercel, および静的ファイル(拡張子あり: .*\..*)を除外してすべてにマッチさせる
   // Note: この設定により、URLパスに「.」を含むページ（例: /works/op.55）はProxyの対象外となります。
   // そのため、スラグには「.」を使用しない運用（kebab-case）を徹底してください。
   matcher: [
     {
-      source:
-        '/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt|articles).*)',
+      source: '/((?!api|_next|_vercel|.*\\..*).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

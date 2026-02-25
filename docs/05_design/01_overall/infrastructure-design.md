@@ -162,6 +162,19 @@ VercelのISRと共存させるため、キャッシュルールを厳格に分�
 
 アセット本体の格納には **Cloudflare R2** を使用し、Vercelの帯域制限（Hobby: 100GB）を完全に回避します。
 
+### [REQ-INFRA-ASSET-HOSTING] アセットホスティングポリシーの分離 (SSoT)
+
+静的アセットの管理場所を一元化（Single Source of Truth）し、Dev/Prodパリティを確保するため、アセットの性質に応じてホスティングを分離します。
+
+1. **システムUIアセット (Vercel)**
+   - **対象:** システムに密結合し、ファイル数が相対的に少なく不変なアセット（例: `site-logo.svg`, `article-placeholder.webp` 等のシステム画像）
+   - **配置場所:** Next.js リポジトリの `public/` ディレクトリ。
+   - **配信:** Vercel から直接配信します。ローカル・本番環境ともに構成の差異なく動作し、ネットワークホップを最小限に抑えます。
+2. **ユーザーコンテンツ画像 (Cloudflare R2)**
+   - **対象:** 記事内の挿絵、譜例画像、音源データなど、動的に増大するスケールアウトが必要なデータ。
+   - **配置場所:** Cloudflare R2 バケット (`preludiolab-storage`)。
+   - **配信:** Cloudflare CDN (`cdn.preludiolab.com`) 経由で最適化配信します。
+
 ### バケット構成
 
 - **Bucket Name:** `preludiolab-storage`

@@ -12,28 +12,37 @@ import { env } from '@/lib/env';
  * 4. ベース URL は環境変数 `NEXT_PUBLIC_CDN_BASE_URL` から取得する。
  */
 export default function cloudflareImageLoader({ src, width }: ImageLoaderProps): string {
-  // すでに絶対URLの場合はそのまま返す（外部サイトの画像など）
-  if (src.startsWith('http')) {
+  const baseUrl = env.NEXT_PUBLIC_CDN_BASE_URL.replace(/\/$/, '');
+
+  // 1. ローカルの静的UIアセット (Vercel配信)
+  // "/" から始まるパスは、Next.jsの標準的なルート相対パス指定と見なしてそのまま返す
+  if (src.startsWith('/')) {
     return src;
   }
 
-  // CDN のベースURLを取得（末尾のスラッシュを除去して正規化）
-  const baseUrl = env.NEXT_PUBLIC_CDN_BASE_URL.replace(/\/$/, '');
+  // 2. 外部URL (すでに絶対URLの場合)
+  if (src.startsWith('http')) {
+    // もし自社CDNの絶対URLであれば最適化処理へフォールスルーさせる
+    if (!src.startsWith(baseUrl)) {
+      return src; // YouTube等の外部画像はそのまま
+    }
+  }
 
-  // パスの先頭のスラッシュを処理
-  const normalizedPath = src.startsWith('/') ? src : `/${src}`;
+  // 2. CDN配信アセット (Cloudflare R2)
+  // 相対パスの場合はCDNベースURLを結合する。
+  // 注意: `src` の先頭にスラッシュがある場合は除去して結合する
+  const normalizedPath = src.startsWith(baseUrl) ? src : `${baseUrl}/${src.replace(/^\//, '')}`;
 
   // SVG の場合はベクターデータのため常にオリジナルを返す
   if (normalizedPath.toLowerCase().endsWith('.svg')) {
-    return `${baseUrl}${normalizedPath}`;
+    return normalizedPath;
   }
 
   // 640px 以下の場合、拡張子の直前に -sm を挿入する
-  // 正規表現で最後のドット以降（拡張子）をキャプチャして置換
   if (width <= 640) {
-    return `${baseUrl}${normalizedPath.replace(/(\.[a-z0-9]+)$/i, '-sm$1')}`;
+    return normalizedPath.replace(/(\.[a-z0-9]+)$/i, '-sm$1');
   }
 
   // それ以外はオリジナルを配信
-  return `${baseUrl}${normalizedPath}`;
+  return normalizedPath;
 }
