@@ -158,8 +158,8 @@ export class BaseAgent {
     if (config.enableGrounding) {
       // Gemini の Grounding (Google Search) を有効化
       modelConfig.tools = [
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        { googleSearch: {} } as any,
+        // @ts-expect-error: Google Search tool type is not fully exposed in the SDK yet.
+        { googleSearch: {} },
       ];
     }
 
@@ -169,7 +169,7 @@ export class BaseAgent {
         maxRetries: this.config.maxSteps ?? 3,
         timeout: 60000,
       }),
-    } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    };
 
     this.model = this.genAI.getGenerativeModel(modelConfig, requestOptions);
   }
@@ -265,8 +265,7 @@ export class BaseAgent {
           maxRetries: this.config.maxSteps ?? 3,
           timeout: 60000,
         }),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any,
+      },
     );
 
     // メッセージ配列から Gemini の Content 形式へ変換（最後のユーザーメッセージは sendMessage に渡すためポップする）

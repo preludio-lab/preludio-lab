@@ -224,8 +224,8 @@ export function createResilientFetch(config: { maxRetries?: number; timeout?: nu
   const timeout = config.timeout ?? 60000;
 
   return async function resilientFetch(
-    input: string | URL | Request,
-    init?: RequestInit,
+    input: Parameters<typeof fetch>[0],
+    init?: Parameters<typeof fetch>[1],
   ): Promise<Response> {
     let attempt = 0;
 
