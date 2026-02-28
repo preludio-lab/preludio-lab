@@ -1,7 +1,7 @@
-import 'dotenv/config';
 import { BaseAgent } from '../../src/core/agent.js';
 import { MasterDataWriterTool } from '../../src/tools/fs/master-data-writer.tool.js';
 import { ComposerMasterSchema } from '@/application/composer/master/composer-master.schema';
+import { GeminiModels } from '../../src/core/models.js';
 import { consola } from 'consola';
 import fs from 'fs';
 
@@ -23,22 +23,27 @@ async function runMozartTest() {
     // AI には純粋な入力データ（CreateComposerCommandSchema相当）だけを要求するように Omit します。
     ComposerMasterSchema.omit({ _schemaVersion: true, _generatorMeta: true }),
     './data/composers', // 保存先ディレクトリ
-    'slug'              // ファイル名に使うフィールド
+    'slug', // ファイル名に使うフィールド
   );
 
   // 2. BaseAgentの準備
   const agent = new BaseAgent({
-    modelName: 'gemini-2.5-flash',
-    systemInstruction: 
+    modelName: GeminiModels.FLASH,
+    systemInstruction:
       'You are a classical music data specialist. ' +
       'Your job is to provide highly accurate master data for classical composers. ' +
       'When asked about a composer, always use the `saveComposerData` tool to save the information to the system. ' +
-      'Ensure all required fields like slug, name, fullName, birthDate, and deathDate are formatted correctly.',
-    enableGrounding: true // より正確な情報を得るためにGoogle検索を許可する
+      '\n\n' +
+      '### Data Structure Rules:\n' +
+      '- Multilingual Fields: Fields like `fullName`, `displayName`, `shortName`, and `biography` MUST be objects with language codes as keys (e.g., `{ "en": "...", "ja": "..." }`). Always provide at least "en" and "ja" if possible.\n' +
+      '- Dates: Use ISO8601 format (YYYY-MM-DD).\n' +
+      '- Ensure all required fields are provided correctly according to the tool schema.',
+    enableGrounding: false, // 現行モデルでは Function Calling との併用が制限されているため false
   });
 
   // 3. エージェントへの指示（プロンプト）
-  const prompt = 'モーツァルト（Wolfgang Amadeus Mozart）のマスタデータを生成して、ツールを使って保存してください。slugは "mozart-wa" としてください。';
+  const prompt =
+    'モーツァルト（Wolfgang Amadeus Mozart）のマスタデータを生成して、ツールを使って保存してください。slugは "mozart-wa" としてください。';
   consola.box(`User Prompt:\n${prompt}`);
 
   try {
@@ -53,8 +58,8 @@ async function runMozartTest() {
           } else {
             consola.success(`✅ Tool ${name} finished execution.`);
           }
-        }
-      }
+        },
+      },
     );
 
     consola.info('\n--- Agent Final Answer ---');
@@ -67,7 +72,6 @@ async function runMozartTest() {
       const savedData = fs.readFileSync(expectedFilePath, 'utf-8');
       console.log(savedData);
     }
-
   } catch (error) {
     consola.error('Agent execution failed:', error);
   }
