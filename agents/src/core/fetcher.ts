@@ -253,13 +253,14 @@ export function createResilientFetch(config: { maxRetries?: number; timeout?: nu
         }
 
         return response;
-      } catch (error: any) {
+      } catch (error: unknown) {
         if (attempt < maxRetries) {
           // ネットワークエラー（タイムアウト等）の場合もリトライ対象とする
           const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
           attempt++;
+          const errorMessage = error instanceof Error ? error.message : String(error);
           consola.warn(
-            `[ResilientFetch] Error: ${error.message}. Retrying in ${Math.round(delay)}ms... (Attempt ${attempt}/${maxRetries})`,
+            `[ResilientFetch] Error: ${errorMessage}. Retrying in ${Math.round(delay)}ms... (Attempt ${attempt}/${maxRetries})`,
           );
           await new Promise((resolve) => setTimeout(resolve, delay));
           return executeFetch();

@@ -20,12 +20,12 @@ npx tsx scripts/manual-tests/test-tools.ts
 
 ## テストファイル一覧
 
-| ファイル | 概要 |
-|---|---|
-| `test-core.ts` | `BaseAgent` + `AgentTool` + `ResilientFetcher` の統合動作確認 |
-| `test-tools.ts` | `MasterDataWriterTool` のデモ（マスタデータ生成→ファイル保存） |
-| `test-reflect.ts` | Gemini SDK の基本接続確認 |
-| `test-fetch.ts` | カスタム `fetch` 注入パターンの動作確認 |
+| ファイル          | 概要                                                           |
+| ----------------- | -------------------------------------------------------------- |
+| `test-core.ts`    | `BaseAgent` + `AgentTool` + `ResilientFetcher` の統合動作確認  |
+| `test-tools.ts`   | `MasterDataWriterTool` のデモ（マスタデータ生成→ファイル保存） |
+| `test-reflect.ts` | Gemini SDK の基本接続確認                                      |
+| `test-fetch.ts`   | カスタム `fetch` 注入パターンの動作確認                        |
 
 ## 注意事項
 

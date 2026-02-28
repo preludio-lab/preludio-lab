@@ -265,8 +265,9 @@ export class BaseAgent {
           maxRetries: this.config.maxSteps ?? 3,
           timeout: 60000,
         }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
-    ); // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
 
     // メッセージ配列から Gemini の Content 形式へ変換（最後のユーザーメッセージは sendMessage に渡すためポップする）
     const history: Content[] = messages.slice(0, -1).map((msg) => ({

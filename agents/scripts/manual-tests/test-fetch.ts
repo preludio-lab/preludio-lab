@@ -1,3 +1,3 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-const genAI = new GoogleGenerativeAI('test', { fetch: (...args) => fetch(...args) } as any);
+const genAI = new GoogleGenerativeAI('test');
 console.log(genAI);
