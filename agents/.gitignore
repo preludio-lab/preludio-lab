@@ -13,3 +13,7 @@ workspace/cache/*
 
 # Logs
 *.log
+
+# Generated Data
+data/*
+!data/.gitkeep

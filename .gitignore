@@ -61,3 +61,6 @@ tools/musical-example-generator/temp_source/
 tools/musical-example-generator/node_modules/
 tools/musical-example-generator/.venv/
 article_backup/
+
+# agents (TypeScript only - prevent accidental JS output)
+agents/**/*.js

@@ -8,7 +8,6 @@ import {
   Schema,
   Tool as GeminiTool,
   ModelParams,
-  DynamicRetrievalMode,
   Part,
   Content,
 } from '@google/generative-ai';
@@ -18,6 +17,7 @@ import { consola } from 'consola';
 import { AgentTool } from './tool.js';
 import { GeminiModelName, Message } from './models.js';
 import { env } from './env.js';
+import { createResilientFetch } from './fetcher.js';
 
 /**
  * エージェントの初期化設定を定義するインターフェース。
@@ -158,18 +158,20 @@ export class BaseAgent {
     if (config.enableGrounding) {
       // Gemini の Grounding (Google Search) を有効化
       modelConfig.tools = [
-        {
-          googleSearchRetrieval: {
-            dynamicRetrievalConfig: {
-              mode: DynamicRetrievalMode.MODE_DYNAMIC,
-              dynamicThreshold: 0.3, // 一般的な推奨しきい値
-            },
-          },
-        },
+        // @ts-expect-error: Google Search tool type is not fully exposed in the SDK yet.
+        { googleSearch: {} },
       ];
     }
 
-    this.model = this.genAI.getGenerativeModel(modelConfig);
+    // カスタムFetch（リトライ付き）をリクエストオプションとして渡す
+    const requestOptions = {
+      customFetch: createResilientFetch({
+        maxRetries: this.config.maxSteps ?? 3,
+        timeout: 60000,
+      }),
+    };
+
+    this.model = this.genAI.getGenerativeModel(modelConfig, requestOptions);
   }
 
   /**
@@ -252,11 +254,19 @@ export class BaseAgent {
     const existingTools: GeminiTool[] = Array.isArray(this.model.tools) ? this.model.tools : [];
     const toolsConfig: GeminiTool[] = [...existingTools, { functionDeclarations }];
 
-    const modelWithTools = this.genAI.getGenerativeModel({
-      model: this.model.model,
-      systemInstruction: this.model.systemInstruction,
-      tools: toolsConfig,
-    });
+    const modelWithTools = this.genAI.getGenerativeModel(
+      {
+        model: this.model.model,
+        systemInstruction: this.model.systemInstruction,
+        tools: toolsConfig,
+      },
+      {
+        customFetch: createResilientFetch({
+          maxRetries: this.config.maxSteps ?? 3,
+          timeout: 60000,
+        }),
+      },
+    );
 
     // メッセージ配列から Gemini の Content 形式へ変換（最後のユーザーメッセージは sendMessage に渡すためポップする）
     const history: Content[] = messages.slice(0, -1).map((msg) => ({
@@ -303,7 +313,7 @@ export class BaseAgent {
             const input = tool.inputSchema.parse(args);
 
             // 4. 検証済み引数を用いてツールの実体処理（非同期）を実行します。
-            const toolResult = await tool.execute(input);
+            const toolResult = await tool.execute(input, { modelName: this.config.modelName });
 
             consola.success(`[BaseAgent] Tool execution succeeded: ${call.name}`);
             options.onToolCall?.('end', call.name, toolResult);

@@ -10,6 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
+    "noEmit": true,
     "paths": {
       "@/core/*": ["src/core/*"],
       "@/prompts/*": ["src/prompts/*"],
@@ -19,9 +20,10 @@
       "@/state/*": ["src/state/*"],
 
       "@/domain/*": ["../src/domain/*"],
+      "@/application/*": ["../src/application/*"],
       "@/shared/*": ["../src/shared/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "scripts/**/*"],
   "exclude": ["node_modules", "workspace"]
 }
