@@ -16,11 +16,11 @@
 これにより、CI基盤（GitHub Actions等）やログ監視基盤（Datadog, Splunk等）でエラー内容や実行結果を機械的かつ容易にパース・検索できるようになります。
 
 ```typescript
-// ❌ Bad (使用禁止)
+// Bad (使用禁止)
 console.log('検証が完了しました。');
 console.error(`エラー: 行 ${index} のフォーマットが不正です。内容: ${line}`);
 
-// ✅ Good (推奨)
+// Good (推奨)
 import { PinoLogger } from '../src/infrastructure/logging/pino.logger';
 const logger = new PinoLogger();
 
