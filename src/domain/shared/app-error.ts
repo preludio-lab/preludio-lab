@@ -4,7 +4,8 @@ export type ErrorCode =
   | 'VALIDATION_ERROR'
   | 'CONFLICT'
   | 'INFRASTRUCTURE_ERROR'
-  | 'INTERNAL_SERVER_ERROR';
+  | 'INTERNAL_SERVER_ERROR'
+  | 'CONCURRENCY_ERROR';
 
 export class AppError extends Error {
   constructor(
