@@ -29,6 +29,7 @@
     "seed:works": "tsx src/infrastructure/work/cli/seed-works.ts",
     "validate:composers": "tsx src/infrastructure/composer/cli/validate-composers.ts",
     "validate:works": "tsx src/infrastructure/work/cli/validate-works.ts",
+    "validate:zap-rules": "tsx scripts/validate-zap-rules.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -117,6 +118,9 @@
     ],
     "*.{json,md,mdx,css}": [
       "prettier --write"
+    ],
+    ".zap/zap-rules.conf": [
+      "pnpm run validate:zap-rules"
     ]
   }
 }
