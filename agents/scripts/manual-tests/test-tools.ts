@@ -1,12 +1,12 @@
 import { BaseAgent } from '../../src/core/agent.js';
-import { MasterDataWriterTool } from '../../src/tools/fs/master-data-writer.tool.js';
+import { AgentDataWriterTool } from '../../src/tools/agent-data-writer.tool.js';
 import { ComposerMasterSchema } from '@/application/composer/master/composer-master.schema';
 import { GeminiModels } from '../../src/core/models.js';
 import { consola } from 'consola';
 import fs from 'fs';
 
 async function runMozartTest() {
-  consola.info('--- AI Agent MasterDataWriterTool Demo ---');
+  consola.info('--- AI Agent AgentDataWriterTool Demo ---');
 
   if (!process.env.GEMINI_API_KEY) {
     consola.error('GEMINI_API_KEY is not set. Please set it to run the demo.');
@@ -14,9 +14,9 @@ async function runMozartTest() {
   }
 
   // 1. ツールの準備
-  // 作曲家データを保存するためのWriterToolを初期化します。
+  // 作曲家等のデータを保存するためのWriterToolを初期化します。
   // スキーマはアプリ本体で定義されている ComposerMasterSchema を利用します。
-  const composerWriterTool = new MasterDataWriterTool(
+  const composerWriterTool = new AgentDataWriterTool(
     'saveComposerData', // AIに認識させる関数名
     'Save structured composer master data into the local file system as a JSON file. Use this when you have collected accurate information about a composer.', // AI向けの関数の説明
     // _schemaVersion や _generatorMeta は内部で自動付与・管理されるため、

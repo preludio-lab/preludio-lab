@@ -5,12 +5,12 @@ import { AgentTool, ToolContext } from '@/core/tool.js';
 import { consola } from 'consola';
 
 /**
- * AIエージェントが生成したマスタデータを、直接DBに書き込む前に
+ * AIエージェントが生成したデータ（マスタデータ等）を、直接DBに書き込む前に
  * ファイルシステム（Gitリポジトリの `data/` ディレクトリ等）へJSONとして保存するツール。
  *
  * 指定されたZodスキーマに従ってデータを検証し、管理用メタデータを自動付与して保存します。
  */
-export class MasterDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
+export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
   z.infer<z.ZodObject<T>>,
   string
 > {
@@ -61,7 +61,7 @@ export class MasterDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
     const slug = String(input[this.slugField]);
     if (!slug) {
       throw new Error(
-        `[MasterDataWriterTool] The input data does not contain the required slug field: ${String(this.slugField)}`,
+        `[AgentDataWriterTool] The input data does not contain the required slug field: ${String(this.slugField)}`,
       );
     }
 
@@ -84,10 +84,10 @@ export class MasterDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
     try {
       // 整形してJSONとして書き出し
       fs.writeFileSync(filePath, JSON.stringify(finalData, null, 2), 'utf-8');
-      consola.success(`[MasterDataWriterTool] Successfully wrote master data to: ${filePath}`);
+      consola.success(`[AgentDataWriterTool] Successfully wrote data to: ${filePath}`);
       return filePath;
     } catch (error) {
-      consola.error(`[MasterDataWriterTool] Failed to write data to ${filePath}`, error);
+      consola.error(`[AgentDataWriterTool] Failed to write data to ${filePath}`, error);
       throw error;
     }
   }

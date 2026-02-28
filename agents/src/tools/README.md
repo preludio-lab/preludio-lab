@@ -44,9 +44,9 @@ GitHub 上で公開されているリソースを安全に取得します。
 - **実装**: GitHub Rest API または Raw Content Fetch。
 - **メリット**: 未来の「譜例量産」ワークフローの基盤となる。
 
-### 4. MasterDataWriterTool (`tools/fs/master-data-writer.tool.ts`)
+### 4. AgentDataWriterTool (`tools/agent-data-writer.tool.ts`)
 
-AIエージェントが収集・推論したマスタデータを、直接データベースへ書き込む前にファイルシステム（Gitリポジトリ管理下等）へ JSON 形式で保存します。
+AIエージェントが収集・推論したデータ（マスタデータ等）を、直接データベースへ書き込む前にファイルシステム（Gitリポジトリ管理下等）へ JSON 形式で保存します。
 
 - **目的**: データのSingle Source of Truth（唯一の情報源）の担保と、状態の二重管理の防止。
 - **実装**: 指定されたZodスキーマ（例: `ComposerMasterSchema`）に従ってデータを検証し、生成時間や使用モデル名を含むメタデータ（`_generatorMeta`）を自動付与して指定ディレクトリ（例: `data/composers/`）に `{slug}.json` として保存する。
