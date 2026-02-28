@@ -10,7 +10,7 @@ const validateZapRules = () => {
   const filePath = path.join(process.cwd(), '.zap/zap-rules.conf');
 
   if (!fs.existsSync(filePath)) {
-    console.log('ℹ️  .zap/zap-rules.conf not found. Skipping validation.');
+    console.log('[INFO] .zap/zap-rules.conf not found. Skipping validation.');
     return;
   }
 
@@ -29,7 +29,7 @@ const validateZapRules = () => {
     // タブ文字が含まれているか確認
     if (!line.includes('\t')) {
       console.error(
-        `❌ Error at line ${index + 1}: Line must be tab-separated. Spaces are not allowed as delimiters.\n   Line content: "${line}"`,
+        `[ERROR] Line ${index + 1}: Line must be tab-separated. Spaces are not allowed as delimiters.\n        Line content: "${line}"`,
       );
       hasError = true;
       return;
@@ -38,7 +38,7 @@ const validateZapRules = () => {
     const parts = line.split('\t');
     if (parts.length < 2) {
       console.error(
-        `❌ Error at line ${index + 1}: Each rule must have at least an Alert ID and an Action.\n   Line content: "${line}"`,
+        `[ERROR] Line ${index + 1}: Each rule must have at least an Alert ID and an Action.\n        Line content: "${line}"`,
       );
       hasError = true;
     }
@@ -46,7 +46,7 @@ const validateZapRules = () => {
     const [alertId, action] = parts;
     if (!/^\d+$/.test(alertId)) {
       console.error(
-        `❌ Error at line ${index + 1}: Invalid Alert ID "${alertId}". It must be numeric.`,
+        `[ERROR] Line ${index + 1}: Invalid Alert ID "${alertId}". It must be numeric.`,
       );
       hasError = true;
     }
@@ -54,17 +54,17 @@ const validateZapRules = () => {
     const validActions = ['IGNORE', 'INFO', 'WARN', 'FAIL'];
     if (!validActions.includes(action)) {
       console.error(
-        `❌ Error at line ${index + 1}: Invalid Action "${action}". Must be one of: ${validActions.join(', ')}`,
+        `[ERROR] Line ${index + 1}: Invalid Action "${action}". Must be one of: ${validActions.join(', ')}`,
       );
       hasError = true;
     }
   });
 
   if (hasError) {
-    console.error('\n🚨 ZAP rules validation failed. Please use tabs for delimiters.');
+    console.error('\n[FAILED] ZAP rules validation failed. Please use tabs for delimiters.');
     process.exit(1);
   } else {
-    console.log('✅ .zap/zap-rules.conf is valid.');
+    console.log('[SUCCESS] .zap/zap-rules.conf is valid.');
   }
 };
 
