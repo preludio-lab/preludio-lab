@@ -27,6 +27,14 @@ export interface IComposerDataSource {
   save(rows: ComposerRows, ctx?: TransactionContext): Promise<void>;
 
   /**
+   * Find many composers
+   */
+  findMany(
+    params?: { limit?: number; offset?: number },
+    ctx?: TransactionContext,
+  ): Promise<ComposerRows[]>;
+
+  /**
    * Delete composer by ID
    */
   deleteById(id: string, ctx?: TransactionContext): Promise<void>;

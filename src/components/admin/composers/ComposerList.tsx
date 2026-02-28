@@ -1,31 +1,26 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { Badge, EyeIcon } from '@/components/ui/admin/CommonIcons';
-
-/**
- * 作曲家データの定義
- */
-export interface ComposerListItem {
-  id: string;
-  name: string;
-  slug: string;
-  era: string;
-  worksCount: number;
-  status: 'published' | 'draft';
-}
+import { EyeIcon } from '@/components/ui/admin/CommonIcons';
+import { ComposerListDto } from '@/application/composer/dto/composer.dto';
 
 interface ComposerListProps {
-  composers: ComposerListItem[];
-  onViewDetail: (composer: ComposerListItem) => void;
+  composers: ComposerListDto[];
 }
 
 /**
  * ComposerList - 作曲家一覧 (Presentational Component)
  */
-export function ComposerList({ composers, onViewDetail }: ComposerListProps) {
-  const columns: DataTableColumn<ComposerListItem>[] = [
+export function ComposerList({ composers }: ComposerListProps) {
+  const router = useRouter();
+
+  const handleRowClick = (item: ComposerListDto) => {
+    router.push(`/admin/composers/${item.slug}`);
+  };
+
+  const columns: DataTableColumn<ComposerListDto>[] = [
     {
       header: '名称',
       accessor: (item) => (
@@ -37,19 +32,11 @@ export function ComposerList({ composers, onViewDetail }: ComposerListProps) {
     },
     {
       header: '時代',
-      accessor: 'era',
+      accessor: (item) => item.era || '未設定',
     },
     {
       header: '作品数',
       accessor: (item) => <span className="text-admin-text-secondary">{item.worksCount} 作品</span>,
-    },
-    {
-      header: 'ステータス',
-      accessor: (item) => (
-        <Badge variant={item.status === 'published' ? 'success' : 'warning'}>
-          {item.status === 'published' ? '公開中' : '下書き'}
-        </Badge>
-      ),
     },
     {
       header: 'アクション',
@@ -57,7 +44,7 @@ export function ComposerList({ composers, onViewDetail }: ComposerListProps) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onViewDetail(item);
+            handleRowClick(item);
           }}
           className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
           title="詳細を見る"
@@ -77,7 +64,7 @@ export function ComposerList({ composers, onViewDetail }: ComposerListProps) {
           新規作成
         </button>
       </div>
-      <DataTable data={composers} columns={columns} onRowClick={onViewDetail} />
+      <DataTable data={composers} columns={columns} onRowClick={handleRowClick} />
     </div>
   );
 }

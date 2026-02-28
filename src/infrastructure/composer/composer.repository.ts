@@ -35,9 +35,14 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async findMany(criteria?: ComposerSearchCriteria): Promise<Composer[]> {
-    throw new Error('Method not implemented.');
+  async findMany(criteria?: ComposerSearchCriteria, ctx?: TransactionContext): Promise<Composer[]> {
+    try {
+      const rowsArray = await this.ds.findMany(criteria, ctx);
+      return rowsArray.map((rows) => TursoComposerMapper.toDomain(rows));
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
   }
 
   async save(composer: Composer, ctx?: TransactionContext): Promise<void> {

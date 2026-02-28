@@ -1,56 +1,32 @@
-'use client';
+// Removed 'use client' to make it a Server Component
 
 import React from 'react';
-import { ComposerList, type ComposerListItem } from '@/components/admin/composers/ComposerList';
-import { useRouter } from 'next/navigation';
+import { ComposerList } from '@/components/admin/composers/ComposerList';
+import { GetComposersUseCase } from '@/application/composer/usecase/get-composers.usecase';
+import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
+import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
+import { db } from '@/infrastructure/database/turso.client';
 
 /**
- * MOCK DATA
+ * ComposersManagementPage - 作曲家管理ページ (Server Component)
  */
-const MOCK_COMPOSERS: ComposerListItem[] = [
-  {
-    id: '1',
-    name: 'Ludwig van Beethoven',
-    slug: 'beethoven',
-    era: 'Classical/Romantic',
-    worksCount: 12,
-    status: 'published',
-  },
-  {
-    id: '2',
-    name: 'Wolfgang Amadeus Mozart',
-    slug: 'mozart',
-    era: 'Classical',
-    worksCount: 8,
-    status: 'published',
-  },
-  {
-    id: '3',
-    name: 'Johannes Brahms',
-    slug: 'brahms',
-    era: 'Romantic',
-    worksCount: 5,
-    status: 'draft',
-  },
-  {
-    id: '4',
-    name: 'Johann Sebastian Bach',
-    slug: 'bach',
-    era: 'Baroque',
-    worksCount: 15,
-    status: 'published',
-  },
-];
+export default async function ComposersManagementPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const sp = await searchParams;
+  const page = parseInt(sp.page || '1', 10);
+  const limit = 20;
+  const offset = (page - 1) * limit;
 
-/**
- * ComposersManagementPage - 作曲家管理ページ (Container Component)
- */
-export default function ComposersManagementPage() {
-  const router = useRouter();
+  // DI Setup
+  const dataSource = new TursoComposerDataSource(db);
+  const repository = new ComposerRepositoryImpl(dataSource);
+  const useCase = new GetComposersUseCase(repository);
 
-  const handleViewDetail = (composer: ComposerListItem) => {
-    router.push(`/admin/composers/${composer.slug}`);
-  };
+  // Data Fetching
+  const result = await useCase.execute({ limit, offset });
 
   return (
     <div className="space-y-6">
@@ -61,7 +37,33 @@ export default function ComposersManagementPage() {
         </p>
       </div>
 
-      <ComposerList composers={MOCK_COMPOSERS} onViewDetail={handleViewDetail} />
+      <ComposerList composers={result.composers} />
+
+      {/* ページネーション UI はここに追加 */}
+      <div className="flex justify-between items-center text-sm text-admin-text-secondary">
+        <span>
+          全 {result.totalCount} 件中 {offset + 1} - {Math.min(offset + limit, result.totalCount)}{' '}
+          件を表示
+        </span>
+        <div className="flex gap-2">
+          {page > 1 && (
+            <a
+              href={`/admin/composers?page=${page - 1}`}
+              className="px-3 py-1 bg-admin-surface rounded-md border border-admin-divider"
+            >
+              前へ
+            </a>
+          )}
+          {offset + limit < result.totalCount && (
+            <a
+              href={`/admin/composers?page=${page + 1}`}
+              className="px-3 py-1 bg-admin-surface rounded-md border border-admin-divider"
+            >
+              次へ
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
