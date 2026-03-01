@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
 import { EyeIcon } from '@/components/ui/admin/CommonIcons';
 import { GetComposersDto } from '@/application/composer/dto/get-composers.dto';
@@ -15,28 +15,67 @@ interface ComposerListProps {
  */
 export function ComposerList({ composers }: ComposerListProps) {
   const router = useRouter();
+  const params = useParams();
+  const lang = (params?.lang as string) || 'ja';
 
   const handleRowClick = (item: GetComposersDto) => {
-    router.push(`/admin/composers/${item.slug}`);
+    router.push(`/${lang}/admin/composers/${item.slug}`);
   };
 
   const columns: DataTableColumn<GetComposersDto>[] = [
     {
-      header: '名称',
+      header: '画像',
       accessor: (item) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-admin-text-primary">{item.name}</span>
-          <span className="text-xs text-admin-text-secondary">{item.slug}</span>
+        <div className="flex items-center">
+          {item.portrait ? (
+            <img
+              src={item.portrait}
+              alt={item.name}
+              className="w-10 h-10 rounded-full object-cover bg-admin-surface border border-admin-divider"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-admin-surface border border-admin-divider flex items-center justify-center text-admin-text-secondary">
+              <span className="text-xs">{item.name.charAt(0)}</span>
+            </div>
+          )}
         </div>
       ),
     },
     {
-      header: '時代',
-      accessor: (item) => item.era || '未設定',
+      header: '名前',
+      accessor: (item) => <span className="font-medium text-admin-text-primary">{item.name}</span>,
     },
     {
-      header: '作品数',
-      accessor: (item) => <span className="text-admin-text-secondary">{item.worksCount} 作品</span>,
+      header: 'Slug',
+      accessor: (item) => (
+        <span className="text-sm text-admin-text-secondary opacity-70">{item.slug}</span>
+      ),
+    },
+    {
+      header: '時代',
+      accessor: (item) => (
+        <span className="text-sm text-admin-text-primary">{item.era || '未設定'}</span>
+      ),
+    },
+    {
+      header: '国籍',
+      accessor: (item) => (
+        <span className="text-sm text-admin-text-secondary">{item.nationalityCode || '-'}</span>
+      ),
+    },
+    {
+      header: '最終更新',
+      accessor: (item) => (
+        <span className="text-sm text-admin-text-secondary">
+          {new Intl.DateTimeFormat(lang === 'ja' ? 'ja-JP' : 'en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          }).format(new Date(item.updatedAt))}
+        </span>
+      ),
     },
     {
       header: 'アクション',
