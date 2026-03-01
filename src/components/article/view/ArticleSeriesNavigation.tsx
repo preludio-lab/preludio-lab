@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 
 type Props = {
   prev: ArticleCardDto | null;

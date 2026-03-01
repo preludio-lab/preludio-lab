@@ -1,5 +1,5 @@
 import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/article.repository';
-import { ArticleListItemDto } from '@/application/article/dto/article-list.dto';
+import { ArticleListItemDto } from '@/application/article/dto/get-articles.dto';
 import { PagedResponse } from '@/domain/shared/pagination';
 import { ArticleSummary } from '@/domain/article/article';
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ArticleListItemDtoSchema } from './article-list.dto';
+import { ArticleListItemDtoSchema } from './get-articles.dto';
 
 /**
  * Article Search Meta DTO

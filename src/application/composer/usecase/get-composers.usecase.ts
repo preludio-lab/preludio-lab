@@ -1,4 +1,4 @@
-import { ComposerListDto } from '../dto/composer.dto';
+import { GetComposersDto } from '../dto/get-composers.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { MusicalEra } from '@/domain/shared/musical-era';
 
@@ -9,7 +9,7 @@ export class GetComposersUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
   async execute(params: { limit: number; offset: number }): Promise<{
-    composers: ComposerListDto[];
+    composers: GetComposersDto[];
     totalCount: number;
   }> {
     const composers = await this.composerRepository.findMany({

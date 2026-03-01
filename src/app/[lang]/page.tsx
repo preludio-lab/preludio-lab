@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server';
 import { articleRepository } from '@/infrastructure/article';
 import { ArticleFeaturedFeature } from '@/components/article/browse/ArticleFeaturedFeature';
 import { ArticleCategory } from '@/domain/article/article.metadata';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 
 // ホーム画面のDiscoverセクションに表示するカテゴリ
 const HOME_DISPLAY_CATEGORIES: ArticleCategory[] = [

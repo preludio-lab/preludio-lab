@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ArticleSearchResultItemDtoSchema } from './article-search.dto';
+import { ArticleSearchResultItemDtoSchema } from './search-articles.dto';
 import { ArticleCategory } from '@/domain/article/article.metadata';
 
 describe('ArticleSearchResultItemDtoSchema', () => {

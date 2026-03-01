@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SlugSchema } from '@/domain/shared/common.metadata';
 import { ComposerBaseCommandSchema } from './base.command';
 
 /**
@@ -8,7 +9,7 @@ import { ComposerBaseCommandSchema } from './base.command';
  */
 export const UpdateComposerCommandSchema = ComposerBaseCommandSchema.partial().extend({
   /** 更新対象を特定するために slug は必須 */
-  slug: z.string().min(1),
+  slug: SlugSchema,
 });
 
 export type UpdateComposerCommand = z.infer<typeof UpdateComposerCommandSchema>;

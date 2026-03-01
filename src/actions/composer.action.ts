@@ -1,12 +1,15 @@
 'use server';
 
 import { z } from 'zod';
+import { SlugSchema } from '@/domain/shared/common.metadata';
 import { ActionResponse } from './shared/action-response';
 import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { db } from '@/infrastructure/database/turso.client';
+import { TursoTransactionManager } from '@/infrastructure/database/turso.transaction-manager';
 import { AppError } from '@/domain/shared/app-error';
+import { Logger } from '@/shared/logging/logger';
 
 // Zod Schema based on the policy of sending all language data
 const TranslationSchema = z.object({
@@ -18,7 +21,7 @@ const TranslationSchema = z.object({
 
 const UpdateComposerSchema = z.object({
   id: z.string().uuid(),
-  slug: z.string().min(1),
+  slug: SlugSchema,
   era: z.string().nullable().optional(),
   birthDate: z.string().nullable().optional(),
   deathDate: z.string().nullable().optional(),
@@ -69,29 +72,47 @@ export async function updateComposerAction(
     // We instantiate infra/repository/usecase explicitly
     const ds = new TursoComposerDataSource(db);
     const repository = new ComposerRepositoryImpl(ds);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const useCase = new UpdateComposerUseCase(
-      repository,
-      {} as any /* mock txManager */,
-      console as any,
-    ); // Adapt to the existing signature
+    const txManager = new TursoTransactionManager(db);
+    const logger: Logger = {
+      debug: console.debug,
+      info: console.info,
+      warn: console.warn,
+      error: console.error,
+    };
+
+    const useCase = new UpdateComposerUseCase(repository, txManager, logger);
 
     // We already noticed previous existing UpdateComposerUseCase has different signature.
     // The previous implementation requires `UpdateComposerCommand`.
     // Let's adapt our parsed DTO to it.
 
     // 3. Execution
+    // Adapt UI translation array to MultilingualString objects for domain schema
+    const translations = parsedData.data.translations;
+    const fullName: Record<string, string> = {};
+    const displayName: Record<string, string> = {};
+    const shortName: Record<string, string> = {};
+    const biography: Record<string, string> = {};
+
+    for (const [lang, trans] of Object.entries(translations)) {
+      fullName[lang] = trans.fullName;
+      displayName[lang] = trans.displayName;
+      shortName[lang] = trans.shortName;
+      if (trans.biography) {
+        biography[lang] = trans.biography;
+      }
+    }
+
     await useCase.execute({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      id: parsedData.data.id as any,
       slug: parsedData.data.slug,
-      birthDate: parsedData.data.birthDate ?? undefined,
-      deathDate: parsedData.data.deathDate ?? undefined,
-      translations: parsedData.data.translations,
-      updatedAt: parsedData.data.updatedAt,
-      // mapping missing fields correctly inside UseCase adapting logic
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
+      fullName,
+      displayName,
+      shortName,
+      biography: Object.keys(biography).length > 0 ? biography : undefined,
+      birthDate: parsedData.data.birthDate ? new Date(parsedData.data.birthDate) : undefined,
+      deathDate: parsedData.data.deathDate ? new Date(parsedData.data.deathDate) : undefined,
+      // We'll pass the optimstic locking updatedat into a domain concern later if needed
+    });
 
     return { success: true, data: undefined };
   } catch (error) {
