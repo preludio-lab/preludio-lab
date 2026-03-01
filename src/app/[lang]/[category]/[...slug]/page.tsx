@@ -7,8 +7,8 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { LOCALES } from '@/lib/constants';
 
-import { ArticleDto } from '@/application/article/dto/article-detail.dto';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleDto } from '@/application/article/dto/get-article.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 
 type Props = {
   params: Promise<{

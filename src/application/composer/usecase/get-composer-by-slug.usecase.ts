@@ -1,4 +1,4 @@
-import { ComposerDetailDto } from '../dto/composer.dto';
+import { GetComposerDto } from '../dto/get-composer.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { AppError } from '@/domain/shared/app-error';
 import { MusicalEra } from '@/domain/shared/musical-era';
@@ -9,7 +9,7 @@ import { MusicalEra } from '@/domain/shared/musical-era';
 export class GetComposerBySlugUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
-  async execute(slug: string): Promise<ComposerDetailDto> {
+  async execute(slug: string): Promise<GetComposerDto> {
     const composer = await this.composerRepository.findBySlug(slug);
 
     if (!composer) {

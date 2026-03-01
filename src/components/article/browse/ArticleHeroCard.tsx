@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CdnImage } from '@/components/ui/image/CdnImage';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { m } from 'framer-motion';
 
 export interface ArticleHeroCardProps {

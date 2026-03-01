@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { ArticleDto } from '@/application/article/dto/article-detail.dto';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleDto } from '@/application/article/dto/get-article.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getTranslations } from 'next-intl/server';
 import { ArticleTableOfContents } from './ArticleTableOfContents';

@@ -2,7 +2,7 @@ import { ArticleRepository, ArticleSearchCriteria } from '@/domain/article/artic
 import {
   ArticleSearchResultListDto,
   ArticleSearchResultItemDto,
-} from '@/application/article/dto/article-search.dto';
+} from '@/application/article/dto/search-articles.dto';
 
 import { ArticleSummary } from '@/domain/article/article';
 

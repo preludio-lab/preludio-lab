@@ -4,10 +4,10 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
 import { EyeIcon } from '@/components/ui/admin/CommonIcons';
-import { ComposerListDto } from '@/application/composer/dto/composer.dto';
+import { GetComposersDto } from '@/application/composer/dto/get-composers.dto';
 
 interface ComposerListProps {
-  composers: ComposerListDto[];
+  composers: GetComposersDto[];
 }
 
 /**
@@ -16,11 +16,11 @@ interface ComposerListProps {
 export function ComposerList({ composers }: ComposerListProps) {
   const router = useRouter();
 
-  const handleRowClick = (item: ComposerListDto) => {
+  const handleRowClick = (item: GetComposersDto) => {
     router.push(`/admin/composers/${item.slug}`);
   };
 
-  const columns: DataTableColumn<ComposerListDto>[] = [
+  const columns: DataTableColumn<GetComposersDto>[] = [
     {
       header: '名称',
       accessor: (item) => (

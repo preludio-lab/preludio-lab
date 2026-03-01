@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CdnImage } from '@/components/ui/image/CdnImage';
 import { useTranslations } from 'next-intl';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { m } from 'framer-motion';
 import { getStandardThumbnailUrl } from '@/lib/youtube';
 import { useMemo } from 'react';

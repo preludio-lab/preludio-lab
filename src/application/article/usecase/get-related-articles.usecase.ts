@@ -1,5 +1,5 @@
 import { ArticleRepository } from '@/domain/article/article.repository';
-import { ArticleCardDto } from '@/application/article/dto/article-list.dto';
+import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { ArticleSortOption, SortDirection } from '@/domain/article/article.constants';
 import { ArticleStatus } from '@/domain/article/article.control';
 import { ArticleSummary } from '@/domain/article/article';
