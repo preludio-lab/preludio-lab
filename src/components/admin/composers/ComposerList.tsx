@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
+import { ChevronRightIcon } from '@/components/ui/admin/CommonIcons';
 import { GetComposersDto } from '@/application/composer/dto/get-composers.dto';
 
 interface ComposerListProps {
@@ -84,9 +85,10 @@ export function ComposerList({ composers }: ComposerListProps) {
             e.stopPropagation();
             handleRowClick(item);
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-admin-primary bg-admin-primary-light rounded-md hover:bg-admin-primary hover:text-white transition-colors"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-admin-primary bg-white border border-admin-primary rounded-md hover:bg-admin-primary hover:text-white transition-all shadow-sm active:scale-95 group"
         >
-          詳細
+          <span>詳細</span>
+          <ChevronRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
         </button>
       ),
       className: 'text-right',
