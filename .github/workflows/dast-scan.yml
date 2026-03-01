@@ -64,16 +64,59 @@ jobs:
               return;
             }
 
+            // zap-rules.confの読み込みとパース
+            const ignoreRules = new Map();
+            if (fs.existsSync('.zap/zap-rules.conf')) {
+              console.log('Parsing .zap/zap-rules.conf ...');
+              const rulesContent = fs.readFileSync('.zap/zap-rules.conf', 'utf8');
+              rulesContent.split('\n').forEach(line => {
+                const trimmed = line.trim();
+                // コメント・空行スキップ
+                if (!trimmed || trimmed.startsWith('#')) return;
+                // タブ区切りでパース
+                const parts = line.split('\t');
+                if (parts.length >= 2) {
+                  const alertId = parts[0].trim();
+                  const action = parts[1].trim();
+                  ignoreRules.set(alertId, action);
+                }
+              });
+            }
+
             const report = JSON.parse(fs.readFileSync('report_json.json', 'utf8'));
             let maxRisk = 0;
+            const validAlerts = [];
 
             // 各サイトのアラートを確認
             if (report.site) {
               report.site.forEach(site => {
                 if (site.alerts) {
                   site.alerts.forEach(alert => {
-                    const risk = parseInt(alert.riskcode, 10);
-                    if (risk > maxRisk) maxRisk = risk;
+                    // ID取得
+                    const alertId = String(alert.pluginid || alert.pluginId);
+                    const action = ignoreRules.get(alertId);
+
+                    if (action === 'IGNORE') {
+                      console.log(`Alert ${alertId} (${alert.name}) is IGNORED by zap-rules.conf`);
+                      return; // スキップ
+                    }
+
+                    let risk = parseInt(alert.riskcode, 10);
+                    
+                    if (action === 'INFO') {
+                      console.log(`Alert ${alertId} (${alert.name}) risk reduced to INFO (0) by zap-rules.conf`);
+                      risk = 0; // 手動でRiskを0に低下
+                    }
+
+                    if (risk > maxRisk) {
+                      maxRisk = risk;
+                    }
+                    
+                    // RiskがLow (1) 以上のものをIssue用に記録
+                    if (risk >= 1) {
+                        const description = alert.desc ? alert.desc.replace(/<[^>]+>/g, '') : 'No description provided';
+                        validAlerts.push(`- **${alert.name}** (Risk: ${risk}, Confidence: ${alert.confidence})\n  - Description: ${description}`);
+                    }
                   });
                 }
               });
@@ -85,11 +128,13 @@ jobs:
               console.log('Vulnerabilities found (Risk Level >= Low). Creating issue...');
               
               const issueTitle = 'DAST Scan Report - ${{ github.event.deployment.sha }}';
-              let issueBody = '';
+              let issueBody = '## DAST Scan Found Vulnerabilities (Risk Level >= Low)\n\n';
+              issueBody += validAlerts.join('\n\n');
+              
               if (fs.existsSync('report_md.md')) {
-                issueBody = fs.readFileSync('report_md.md', 'utf8');
+                issueBody += '\n\n---\n### Full Markdown Report\n\n' + fs.readFileSync('report_md.md', 'utf8');
               } else {
-                issueBody = 'No markdown report generated.';
+                issueBody += '\n\nNo markdown report generated.';
               }
 
               await github.rest.issues.create({
