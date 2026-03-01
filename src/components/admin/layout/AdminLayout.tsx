@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { AdminSidebar, type AdminLocale, type AdminNavItem } from './AdminSidebar';
 import { AdminHeader } from './AdminHeader';
 import { UsersIcon, MusicalNoteIcon, DocumentTextIcon, NewspaperIcon } from './AdminIcons';
@@ -60,9 +61,24 @@ const NAVIGATION_ITEMS: AdminNavItem[] = [
  * - PresentationalコンポーネントへのProps伝達
  */
 export function AdminLayout({ userEmail, uiLocale, children }: AdminLayoutProps) {
-  // Content編集言語の状態管理（デフォルトはUIの言語に合わせる）
-  const [contentLocale, setContentLocale] = useState<AdminLocale>(
-    (uiLocale as AdminLocale) || 'ja',
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // URLのcontentLangパラメータから初期値を取得（なければUI言語をデフォルトに）
+  const initialLocale =
+    (searchParams.get('contentLang') as AdminLocale) || (uiLocale as AdminLocale) || 'ja';
+  const [contentLocale, setContentLocale] = useState<AdminLocale>(initialLocale);
+
+  // 言語変更時にURLのsearchParamsも更新し、Server Componentの再レンダリングをトリガー
+  const handleLocaleChange = useCallback(
+    (locale: AdminLocale) => {
+      setContentLocale(locale);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('contentLang', locale);
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
   );
 
   // サインアウトハンドラー
@@ -74,7 +90,7 @@ export function AdminLayout({ userEmail, uiLocale, children }: AdminLayoutProps)
     <div className="flex h-screen bg-admin-content-bg">
       <AdminSidebar
         currentLocale={contentLocale}
-        onLocaleChange={setContentLocale}
+        onLocaleChange={handleLocaleChange}
         navigationItems={NAVIGATION_ITEMS}
       />
       <div className="flex-1 flex flex-col overflow-hidden">

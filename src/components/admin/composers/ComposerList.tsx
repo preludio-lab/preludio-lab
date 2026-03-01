@@ -3,7 +3,6 @@
 import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { EyeIcon } from '@/components/ui/admin/CommonIcons';
 import { GetComposersDto } from '@/application/composer/dto/get-composers.dto';
 
 interface ComposerListProps {
@@ -78,17 +77,16 @@ export function ComposerList({ composers }: ComposerListProps) {
       ),
     },
     {
-      header: 'アクション',
+      header: '',
       accessor: (item) => (
         <button
           onClick={(e) => {
             e.stopPropagation();
             handleRowClick(item);
           }}
-          className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
-          title="詳細を見る"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-admin-primary bg-admin-primary-light rounded-md hover:bg-admin-primary hover:text-white transition-colors"
         >
-          <EyeIcon />
+          詳細
         </button>
       ),
       className: 'text-right',
