@@ -41,13 +41,14 @@ Google Generative AI SDK (Gemini) をラップし、プロジェクト全体の�
 
 - **I/Oの統一**: ツール名、説明、Zodによる入力スキーマ、実行関数 (`execute`) を強制し、LLMが予測可能かつ安全にツールを呼び出せるようにします。
 
-## 3. `fetcher.ts` (ResilientFetcher)
+## 3. `fetcher.ts` (ResilientFetcher & createResilientFetch)
 
-外部APIへの通信を一手に担う、耐障害性の高いインフラ層です。
+外部APIへの通信を一手に担う、耐障害性の高いインフラ層です。Gemini API 等のストリーミング処理と互換性を持たせるネイティブラッパーと、汎用的な Axios ラッパーを提供します。
 
-- **耐障害性**: 429例外 (Too Many Requests) や5xxエラーに対する指数バックオフ付きリトライ。
-- **スロットリング**: 外部サービスごとのレート制限（RPM等）を遵守するための、キューベースのリクエスト間隔制御。
-- **キャッシュ**: 同一URLへの反復リクエストを防ぐ、ファイルシステムベースのアトミックな永続化キャッシュ。
+- **耐障害性**: 429例外 (Too Many Requests) や5xxエラーに対する指数バックオフ付きリトライ（Axios / ネイティブ `fetch` 双方で対応）。
+- **ストリーミング互換 (`createResilientFetch`)**: `@google/generative-ai` SDK の `ReadableStream` などの標準仕様と互換性を保ちつつ、リトライ機能を持つ `fetch` ラッパー関数。
+- **スロットリング (`ResilientFetcher`)**: 外部サービスごとのレート制限（RPM等）を遵守するための、キューベースのアクティブリクエスト間隔制御。
+- **キャッシュ (`ResilientFetcher`)**: 同一URLへの反復リクエストを防ぐ、ファイルシステムベースのアトミックな永続化キャッシュ。
 
 ## 4. `env.ts` (環境変数)
 

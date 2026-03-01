@@ -1,6 +1,15 @@
 import { z } from 'zod';
 
 /**
+ * ツール実行時のコンテキスト情報。
+ * エージェントの内部状態や構成情報をツール側で参照する必要がある場合に使用します。
+ */
+export interface ToolContext {
+  /** ツールを呼び出しているエージェントのモデル名（例: 'gemini-3-flash-preview'） */
+  modelName?: string;
+}
+
+/**
  * エージェントが自律的に使用する機能（ツール）の基本インターフェース。
  *
  * Function Calling の仕様に準拠するため、ツールのメタ情報（名前、説明）と、
@@ -32,8 +41,9 @@ export interface AgentTool<I = unknown, O = unknown> {
    * LLM によって生成され、`inputSchema` による検証を通過した安全な引数を受け取ります。
    *
    * @param input Zod スキーマで検証および型付けされた入力値
+   * @param context 実行時のコンテキスト情報（呼び出し元のモデル名など）
    * @returns 実行結果。通常は JSON 化可能なオブジェクトや文字列を返します。
    * @throws {Error} 実行中の予期せぬエラー（ネットワーク切断、権限エラーなど）
    */
-  execute(input: I): Promise<O>;
+  execute(input: I, context?: ToolContext): Promise<O>;
 }

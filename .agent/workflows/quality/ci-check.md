@@ -14,3 +14,5 @@ Formatter/Linterはコミット時に自動実行される（Husky）ため、�
 3. **Multi-Workspace & Phantom Dependencies (幽霊依存) Check**:
    - `Next.js (Root)`, `Agents`, `Workers` など複数のワークスペースが存在する場合や、パッケージマネージャー移行時は、Hoistingの挙動による暗黙的な依存関係エラーが発生しやすくなります。
    - 必ずすべてのワークスペースに対してLint, TypeCheck, UnitTest, Buildを網羅的に走らせてください。
+4. **Lint Rules**:
+   - `pnpm run lint`等で発生したエラー（特に`@typescript-eslint/no-explicit-any`）を解消する際、**`eslint-disable` コメントを使用して握りつぶすことは固く禁じられています。** 必ず型の絞り込みや `unknown` を活用して本質的に修正してください。
