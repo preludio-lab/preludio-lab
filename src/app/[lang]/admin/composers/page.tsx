@@ -11,12 +11,17 @@ import { db } from '@/infrastructure/database/turso.client';
  * ComposersManagementPage - 作曲家管理ページ (Server Component)
  */
 export default async function ComposersManagementPage({
+  params,
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ page?: string; contentLang?: string }>;
 }) {
+  const p = await params;
+  const lang = p.lang;
   const sp = await searchParams;
   const page = parseInt(sp.page || '1', 10);
+  const contentLang = sp.contentLang || lang || 'ja';
   const limit = 20;
   const offset = (page - 1) * limit;
 
@@ -25,8 +30,8 @@ export default async function ComposersManagementPage({
   const repository = new ComposerRepositoryImpl(dataSource);
   const useCase = new GetComposersUseCase(repository);
 
-  // Data Fetching
-  const result = await useCase.execute({ limit, offset });
+  // Data Fetching - コンテンツ言語はサイドバーの選択言語を使用
+  const result = await useCase.execute({ limit, offset, lang: contentLang });
 
   return (
     <div className="space-y-6">
