@@ -1,56 +1,47 @@
 import { z } from 'zod';
+import { ComposerControlSchema } from '@/domain/composer/composer.control';
+import { ComposerMetadataSchema } from '@/domain/composer/composer.metadata';
 
 /**
  * Get Composer Response DTO
  * アプリケーション外部へ返す作曲家データ（単一リソース用）の構造定義。
- * ドメインの MasterSchema をベースにしつつ、関連作品などのUI要件を結合します。
+ * ドメインの MasterSchema をベースにしつつ、関連作品などのUI要件を結合（Composition）します。
  */
-export const GetComposerDtoSchema = z
-  .object({
-    id: z.string(),
-    slug: z.string(),
-    name: z.string(),
-    biography: z.string().nullable(),
-    era: z.string().nullable(),
-    birthDate: z.string().nullable(),
-    deathDate: z.string().nullable(),
-    nationalityCode: z.string().nullable(),
 
-    /** 肖像画・イメージ画像のリソースパス */
-    portrait: z.string().nullable(),
+const baseControl = ComposerControlSchema.pick({
+  id: true,
+  slug: true,
+}).extend({
+  createdAt: ComposerControlSchema.shape.createdAt.transform((d) => d.toISOString()),
+  updatedAt: ComposerControlSchema.shape.updatedAt.transform((d) => d.toISOString()),
+});
 
-    /** 代表的な楽器 */
-    representativeInstruments: z.array(z.string()),
+const baseMetadata = ComposerMetadataSchema.pick({
+  representativeInstruments: true,
+  representativeGenres: true,
+  places: true,
+  tags: true,
+  impressionDimensions: true,
+}).extend({
+  name: z.string(),
+  biography: z.string().nullable(),
+  era: ComposerMetadataSchema.shape.era.nullable(),
+  // DTO層での直列化の契約 (Date -> ISO String)
+  birthDate: z.coerce
+    .date()
+    .nullable()
+    .transform((d) => (d ? d.toISOString() : null)),
+  deathDate: z.coerce
+    .date()
+    .nullable()
+    .transform((d) => (d ? d.toISOString() : null)),
+  nationalityCode: ComposerMetadataSchema.shape.nationalityCode.nullable(),
+  portrait: ComposerMetadataSchema.shape.portrait.nullable(),
+});
 
-    /** 代表的なジャンル */
-    representativeGenres: z.array(z.string()),
-
-    /** 活動拠点 */
-    places: z.array(
-      z
-        .object({
-          slug: z.string(),
-          type: z.string(),
-          countryCode: z.string().optional(),
-        })
-        .strict(),
-    ),
-
-    /** 自由タグ */
-    tags: z.array(z.string()),
-
-    /** 印象次元 (-10 to +10) */
-    impressionDimensions: z
-      .object({
-        innovation: z.number(),
-        emotionality: z.number(),
-        nationalism: z.number(),
-        scale: z.number(),
-        complexity: z.number(),
-        theatricality: z.number(),
-      })
-      .nullable(),
-
+export const GetComposerDtoSchema = baseControl
+  .merge(baseMetadata)
+  .extend({
     // 多言語データ
     translations: z.record(
       z.string(),
@@ -63,8 +54,7 @@ export const GetComposerDtoSchema = z
         })
         .strict(),
     ),
-
-    // 関連作品プレビュー
+    // 関連作品プレビュー (Composition from Work domain)
     relatedWorks: z.array(
       z
         .object({
@@ -74,12 +64,6 @@ export const GetComposerDtoSchema = z
         })
         .strict(),
     ),
-
-    /** 作成日時 */
-    createdAt: z.string(),
-
-    /** 更新日時 (オプティミスティックロック用) */
-    updatedAt: z.string(),
   })
   .strict();
 

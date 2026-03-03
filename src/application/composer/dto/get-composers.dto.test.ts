@@ -6,7 +6,7 @@ describe('GetComposersDtoSchema', () => {
     id: '123e4567-e89b-12d3-a456-426614174000',
     slug: 'beethoven',
     name: 'Ludwig van Beethoven',
-    era: 'romantic',
+    era: 'early-romantic',
     worksCount: 42,
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   };

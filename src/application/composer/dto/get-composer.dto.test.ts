@@ -7,9 +7,9 @@ describe('GetComposerDtoSchema', () => {
     slug: 'beethoven',
     name: 'Ludwig van Beethoven',
     biography: 'German composer.',
-    era: 'romantic',
-    birthDate: '1770-12-17',
-    deathDate: '1827-03-26',
+    era: 'early-romantic',
+    birthDate: new Date('1770-12-17T00:00:00.000Z'),
+    deathDate: new Date('1827-03-26T00:00:00.000Z'),
     nationalityCode: 'DE',
     portrait: null,
     representativeInstruments: ['piano'],
@@ -42,8 +42,8 @@ describe('GetComposerDtoSchema', () => {
         year: 1808,
       },
     ],
-    createdAt: '2024-01-01T00:00:00.000Z',
-    updatedAt: '2024-01-01T00:00:00.000Z',
+    createdAt: new Date('2024-01-01T00:00:00.000Z'),
+    updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   };
 
   it('should parse valid data', () => {

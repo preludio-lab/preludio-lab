@@ -1,5 +1,9 @@
 import type { NextAuthConfig } from 'next-auth';
 import { adminAuthRepository } from '@/infrastructure/admin';
+import { NODE_ENV } from '@/lib/constants';
+
+const isDevAuthBypassEnabled =
+  process.env.NODE_ENV === NODE_ENV.DEVELOPMENT && process.env.DEV_AUTH_BYPASS === 'true';
 
 /**
  * Edge Runtime でも動作可能な認証設定
@@ -39,6 +43,11 @@ export const authConfig = {
         return false;
       }
 
+      // 【フェイルセーフ】開発時のダミーユーザーであれば無条件で許可
+      if (isDevAuthBypassEnabled && user.email === 'admin@preludiolab.local') {
+        return true;
+      }
+
       const role = await adminAuthRepository.getRole(user.email);
 
       if (role === null) {
@@ -53,6 +62,14 @@ export const authConfig = {
      */
     async session({ session, token }) {
       if (session.user && token.email) {
+        // 開発環境用のバイパスユーザーの場合
+        if (isDevAuthBypassEnabled && token.email === 'admin@preludiolab.local') {
+          session.user.role = 'OWNER';
+          // UI側でバッジ表示を行うためのフラグを含める
+          (session.user as { isDevBypass?: boolean }).isDevBypass = true;
+          return session;
+        }
+
         const role = await adminAuthRepository.getRole(token.email);
 
         // Module Augmentation により session.user.role が認識される

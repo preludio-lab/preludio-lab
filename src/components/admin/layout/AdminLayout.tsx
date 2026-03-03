@@ -15,6 +15,8 @@ interface AdminLayoutProps {
   userEmail: string;
   /** 現在のUI言語（next-intlから取得） */
   uiLocale: string;
+  /** 開発用認証バイパスが有効かどうかのフラグ */
+  isDevBypass?: boolean;
   /** 子要素 */
   children: React.ReactNode;
 }
@@ -60,7 +62,7 @@ const NAVIGATION_ITEMS: AdminNavItem[] = [
  * - Server Actionの呼び出し
  * - PresentationalコンポーネントへのProps伝達
  */
-export function AdminLayout({ userEmail, uiLocale, children }: AdminLayoutProps) {
+export function AdminLayout({ userEmail, uiLocale, isDevBypass, children }: AdminLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -94,7 +96,7 @@ export function AdminLayout({ userEmail, uiLocale, children }: AdminLayoutProps)
         navigationItems={NAVIGATION_ITEMS}
       />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <AdminHeader userName={userEmail} onSignOut={handleSignOut} />
+        <AdminHeader userName={userEmail} isDevBypass={isDevBypass} onSignOut={handleSignOut} />
         <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>
