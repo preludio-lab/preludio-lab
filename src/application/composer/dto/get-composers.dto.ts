@@ -11,6 +11,9 @@ export const GetComposersDtoSchema = z
     name: z.string(),
     era: z.string().nullable(),
     worksCount: z.number(),
+    nationalityCode: z.string().optional(),
+    portrait: z.string().nullable().optional(),
+    updatedAt: z.coerce.date(),
   })
   .strict();
 

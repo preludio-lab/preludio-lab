@@ -35,6 +35,25 @@ export class GetComposerBySlugUseCase {
       birthDate: composer.birthDate ? composer.birthDate.toISOString() : null,
       deathDate: composer.deathDate ? composer.deathDate.toISOString() : null,
       nationalityCode: composer.nationalityCode || null,
+      portrait: composer.portrait || null,
+      representativeInstruments: composer.representativeInstruments,
+      representativeGenres: composer.representativeGenres,
+      places: composer.places.map((p) => ({
+        slug: p.slug,
+        type: p.type,
+        countryCode: p.countryCode,
+      })),
+      tags: composer.tags,
+      impressionDimensions: composer.impressionDimensions
+        ? {
+            innovation: composer.impressionDimensions.innovation,
+            emotionality: composer.impressionDimensions.emotionality,
+            nationalism: composer.impressionDimensions.nationalism,
+            scale: composer.impressionDimensions.scale,
+            complexity: composer.impressionDimensions.complexity,
+            theatricality: composer.impressionDimensions.theatricality,
+          }
+        : null,
       translations: {
         ja: {
           fullName:
@@ -57,6 +76,7 @@ export class GetComposerBySlugUseCase {
         },
       },
       relatedWorks: [],
+      createdAt: composer.control.createdAt.toISOString(),
       updatedAt: composer.control.updatedAt.toISOString(),
     };
   }
