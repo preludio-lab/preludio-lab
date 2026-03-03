@@ -26,7 +26,11 @@ export default async function AdminLayoutPage({ children }: { children: React.Re
   const uiLocale = await getLocale();
 
   return (
-    <AdminLayout userEmail={adminUser.email} uiLocale={uiLocale}>
+    <AdminLayout
+      userEmail={adminUser.email}
+      uiLocale={uiLocale}
+      isDevBypass={adminUser.isDevBypass}
+    >
       {children}
     </AdminLayout>
   );

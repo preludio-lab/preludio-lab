@@ -13,6 +13,7 @@ export type AdminRole = z.infer<typeof AdminRoleSchema>;
 export const AdminUserSchema = z.object({
   email: z.string().email(),
   role: AdminRoleSchema,
+  isDevBypass: z.boolean().optional(),
 });
 
 export type AdminUser = z.infer<typeof AdminUserSchema>;

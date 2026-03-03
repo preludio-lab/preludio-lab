@@ -1,6 +1,5 @@
-import { GetComposersDto } from '../dto/get-composers.dto';
+import { GetComposersDto, GetComposersDtoSchema } from '../dto/get-composers.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { MusicalEra } from '@/domain/shared/musical-era';
 
 /**
  * 作曲家一覧取得 ユースケース
@@ -40,16 +39,16 @@ export class GetComposersUseCase {
           localizedName = fullName as unknown as string;
         }
 
-        return {
+        return GetComposersDtoSchema.parse({
           id: composer.id,
           slug: composer.slug,
           name: localizedName,
-          era: (composer.era as MusicalEra) || undefined,
+          era: composer.era || null,
           worksCount: 0, // 今後のDataSource拡張で取得
           nationalityCode: composer.nationalityCode,
           portrait: composer.portrait,
           updatedAt: composer.control.updatedAt,
-        };
+        });
       }),
       totalCount,
     };

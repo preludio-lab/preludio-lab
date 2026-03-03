@@ -26,6 +26,7 @@ export async function verifyAdminUseCase(): Promise<AdminUser | null> {
   const result = AdminUserSchema.safeParse({
     email: session.user.email,
     role: role,
+    isDevBypass: (session.user as { isDevBypass?: boolean }).isDevBypass,
   });
 
   if (!result.success) {

@@ -1,7 +1,6 @@
-import { GetComposerDto } from '../dto/get-composer.dto';
+import { GetComposerDto, GetComposerDtoSchema } from '../dto/get-composer.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { AppError } from '@/domain/shared/app-error';
-import { MusicalEra } from '@/domain/shared/musical-era';
 
 /**
  * 作曲家詳細取得 ユースケース
@@ -19,7 +18,7 @@ export class GetComposerBySlugUseCase {
     // TODO: 7ヶ国語の翻訳データ、関連作品プレビュー等を取得・マージする処理は
     // インフラ層の拡張（IComposerDataSource / Mapper）完了後に実装
 
-    return {
+    return GetComposerDtoSchema.parse({
       id: composer.id,
       slug: composer.slug,
       name:
@@ -31,9 +30,9 @@ export class GetComposerBySlugUseCase {
       biography:
         (typeof composer.biography === 'object' ? composer.biography?.ja : composer.biography) ||
         null,
-      era: (composer.era as MusicalEra) || undefined,
-      birthDate: composer.birthDate ? composer.birthDate.toISOString() : null,
-      deathDate: composer.deathDate ? composer.deathDate.toISOString() : null,
+      era: composer.era || null,
+      birthDate: composer.birthDate,
+      deathDate: composer.deathDate,
       nationalityCode: composer.nationalityCode || null,
       portrait: composer.portrait || null,
       representativeInstruments: composer.representativeInstruments,
@@ -44,16 +43,7 @@ export class GetComposerBySlugUseCase {
         countryCode: p.countryCode,
       })),
       tags: composer.tags,
-      impressionDimensions: composer.impressionDimensions
-        ? {
-            innovation: composer.impressionDimensions.innovation,
-            emotionality: composer.impressionDimensions.emotionality,
-            nationalism: composer.impressionDimensions.nationalism,
-            scale: composer.impressionDimensions.scale,
-            complexity: composer.impressionDimensions.complexity,
-            theatricality: composer.impressionDimensions.theatricality,
-          }
-        : null,
+      impressionDimensions: composer.impressionDimensions,
       translations: {
         ja: {
           fullName:
@@ -76,8 +66,8 @@ export class GetComposerBySlugUseCase {
         },
       },
       relatedWorks: [],
-      createdAt: composer.control.createdAt.toISOString(),
-      updatedAt: composer.control.updatedAt.toISOString(),
-    };
+      createdAt: composer.control.createdAt,
+      updatedAt: composer.control.updatedAt,
+    });
   }
 }
