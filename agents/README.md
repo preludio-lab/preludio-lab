@@ -169,17 +169,24 @@ CLI や CI から実行されるエントリーポイントです。「マスタ
 ```typescript
 // src/workflows/create-article.ts
 async function main() {
-  // 1. リクエストの読み込み
+  // 1. リクエストの読み込みとValidation (Validate-First)
   const request = await readJson('workspace/inbox/req.json');
 
-  // 2. エージェントの実行
+  // 2. エージェントの実行 (副作用を持たない推論)
   const writer = createWriterAgent();
   const article = await writer.run(request, ArticleSchema);
 
-  // 3. 成果物の保存
+  // 3. 成果物の保存 (Thin Orchestratorによる確実な書き込み)
   await saveMdx('src/content/works/...', article);
 }
 ```
+
+### 3.5. Separation of Concerns (Thin Orchestrator)
+
+ワークフローとエージェントの役割を厳格に分離する **Thin Orchestrator** パターンを採用します。
+
+- **エージェントの役割 (Pure Function)**: コンテキストと入力を受け取り、構造化データやテキストを出力（推論）すること。ファイル出力やDB保存などの「副作用」を直接持たせてはなりません。
+- **ワークフローの役割 (Side Effects)**: 「情報の読み込み」「エージェントへの指示」「返却されたデータの検証・保存機能の呼び出し (`AgentDataWriterTool`)」を担当し、プロセス全体のエラーと冪等性を管理します。
 
 ### 3.4. Execution Environment & Future Work
 

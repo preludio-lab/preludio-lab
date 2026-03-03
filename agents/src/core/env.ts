@@ -21,8 +21,8 @@ const EnvSchema = z.object({
   /** ログレベル (デフォルト: 3=Info) */
   LOG_LEVEL: z
     .string()
-    .transform((val) => parseInt(val, 10))
-    .default('3'),
+    .default('3')
+    .transform((val) => parseInt(val, 10)),
 });
 
 // プロセス環境変数の検証

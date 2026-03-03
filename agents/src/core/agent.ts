@@ -10,14 +10,15 @@ import {
   ModelParams,
   Part,
   Content,
+  RequestOptions,
 } from '@google/generative-ai';
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { consola } from 'consola';
 import { AgentTool } from './tool.js';
 import { GeminiModelName, Message } from './models.js';
 import { env } from './env.js';
 import { createResilientFetch } from './fetcher.js';
+import { convertZodToJsonSchema } from './schema-converter.js';
 
 /**
  * エージェントの初期化設定を定義するインターフェース。
@@ -164,7 +165,7 @@ export class BaseAgent {
     }
 
     // カスタムFetch（リトライ付き）をリクエストオプションとして渡す
-    const requestOptions = {
+    const requestOptions: RequestOptions = {
       customFetch: createResilientFetch({
         maxRetries: this.config.maxSteps ?? 3,
         timeout: 60000,
@@ -185,7 +186,7 @@ export class BaseAgent {
    */
   async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> {
     // Zod スキーマを JSON Schema 経由で Gemini 互換の Schema 形式に変換
-    const jsonSchema = zodToJsonSchema(schema, { target: 'openApi3' }) as Record<string, unknown>;
+    const jsonSchema = convertZodToJsonSchema(schema);
     const geminiSchema = convertToGeminiSchema(jsonSchema);
 
     const result = await this.model.generateContent({
@@ -234,10 +235,7 @@ export class BaseAgent {
     // Gemini SDKはZodオブジェクトを直接扱えないため、事前に互換性のあるJSON Schemaヘ変換します。
     const functionDeclarations: FunctionDeclaration[] = tools.map((tool) => {
       // Zodスキーマを JSON Schema 経由で Gemini 互換の Schema 形式に変換します。
-      const jsonSchema = zodToJsonSchema(tool.inputSchema, { target: 'openApi3' }) as Record<
-        string,
-        unknown
-      >;
+      const jsonSchema = convertZodToJsonSchema(tool.inputSchema);
       const geminiSchema = convertToGeminiSchema(
         jsonSchema,
       ) as unknown as FunctionDeclarationSchema;
