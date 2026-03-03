@@ -2,6 +2,7 @@ import { getLocale } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { verifyAdminUseCase } from '@/application/admin/usecase/verify-admin.usecase';
 import { AdminLayout } from '@/components/admin/layout/AdminLayout';
+import './admin.css';
 
 /**
  * AdminLayout - 管理画面レイアウト (Server Component)

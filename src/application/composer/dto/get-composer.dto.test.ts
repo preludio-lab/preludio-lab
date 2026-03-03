@@ -11,6 +11,22 @@ describe('GetComposerDtoSchema', () => {
     birthDate: '1770-12-17',
     deathDate: '1827-03-26',
     nationalityCode: 'DE',
+    portrait: null,
+    representativeInstruments: ['piano'],
+    representativeGenres: ['symphony', 'sonata'],
+    places: [
+      { slug: 'vienna', type: 'activity', countryCode: 'AT' },
+      { slug: 'bonn', type: 'birth', countryCode: 'DE' },
+    ],
+    tags: ['classicist'],
+    impressionDimensions: {
+      innovation: 6,
+      emotionality: 10,
+      nationalism: -6,
+      scale: 8,
+      complexity: 4,
+      theatricality: 2,
+    },
     translations: {
       ja: {
         fullName: 'ルートヴィヒ・ヴァン・ベートーヴェン',
@@ -26,6 +42,7 @@ describe('GetComposerDtoSchema', () => {
         year: 1808,
       },
     ],
+    createdAt: '2024-01-01T00:00:00.000Z',
     updatedAt: '2024-01-01T00:00:00.000Z',
   };
 

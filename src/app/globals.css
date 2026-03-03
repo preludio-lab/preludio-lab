@@ -65,35 +65,6 @@
   }
 }
 
-/* 
-  Admin UI Design Tokens (Figma v2)
-  管理画面専用のデザイントークン。Figmaとの双方向性を確保するためCSS Variablesで定義。
-*/
-:root {
-  /* Primary Colors - Figma v2 Spec */
-  --admin-primary: #2563eb; /* blue-600 - アクションボタン、アクティブ状態 */
-  --admin-primary-light: #eff6ff; /* blue-50 - アクティブなナビゲーション背景 */
-  --admin-success: #10b981; /* emerald-500 - 公開・保存 */
-  --admin-danger: #ef4444; /* red-500 - 削除・警告 */
-  --admin-warning: #f59e0b; /* amber-500 - 未公開・注意 */
-
-  /* Layout Colors */
-  --admin-sidebar-bg: #f9fafb; /* slate-50 - サイドバー背景 */
-  --admin-content-bg: #f3f4f6; /* slate-100 - メインコンテンツ背景 */
-  --admin-card-bg: #ffffff; /* カード・テーブル背景 */
-
-  /* Text Colors */
-  --admin-text-primary: #111827; /* slate-900 - 主要テキスト */
-  --admin-text-secondary: #6b7280; /* slate-500 - 補助テキスト */
-
-  /* Border Colors */
-  --admin-border: #e5e7eb; /* slate-200 - ボーダー・区切り線 */
-
-  /* Layout Dimensions */
-  --admin-sidebar-width: 240px; /* サイドバー固定幅 */
-  --admin-header-height: 64px; /* ヘッダー高さ */
-}
-
 body {
   background-color: var(--color-paper);
   color: var(--color-primary);

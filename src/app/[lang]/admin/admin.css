@@ -1,0 +1,66 @@
+@import 'tailwindcss';
+
+/* 
+  Admin UI Design Tokens (Figma v2) & Tailwind v4 Theme
+  管理画面専用のデザイントークン。
+  フロントエンド (app/globals.css) と分離し、管理画面でのみ読み込まれます。
+*/
+
+@theme {
+  /* Admin UI Color Mappings */
+  --color-admin-primary: var(--admin-primary);
+  --color-admin-primary-hover: var(--admin-primary-hover);
+  --color-admin-primary-active: var(--admin-primary-active);
+  --color-admin-primary-disabled: var(--admin-primary-disabled);
+  --color-admin-primary-light: var(--admin-primary-light);
+
+  --color-admin-success: var(--admin-success);
+  --color-admin-danger: var(--admin-danger);
+  --color-admin-warning: var(--admin-warning);
+
+  --color-admin-sidebar-bg: var(--admin-sidebar-bg);
+  --color-admin-content-bg: var(--admin-content-bg);
+  --color-admin-card-bg: var(--admin-card-bg);
+  --color-admin-surface: var(--admin-surface);
+
+  --color-admin-text-primary: var(--admin-text-primary);
+  --color-admin-text-secondary: var(--admin-text-secondary);
+
+  --color-admin-border: var(--admin-border);
+  --color-admin-divider: var(--admin-divider);
+
+  /* Layout Dimensions */
+  --spacing-admin-sidebar: var(--admin-sidebar-width);
+  --spacing-admin-header: var(--admin-header-height);
+}
+
+:root {
+  /* Primary Colors - Figma v2 Spec */
+  --admin-primary: #2563eb; /* blue-600 */
+  --admin-primary-hover: #1d4ed8; /* blue-700 */
+  --admin-primary-active: #1e40af; /* blue-800 */
+  --admin-primary-disabled: #93c5fd; /* blue-300 */
+  --admin-primary-light: #eff6ff; /* blue-50 */
+
+  --admin-success: #10b981; /* emerald-500 */
+  --admin-danger: #ef4444; /* red-500 */
+  --admin-warning: #f59e0b; /* amber-500 */
+
+  /* Layout Colors */
+  --admin-sidebar-bg: #f9fafb; /* slate-50 */
+  --admin-content-bg: #f3f4f6; /* slate-100 */
+  --admin-card-bg: #ffffff; /* white */
+  --admin-surface: #f1f5f9; /* slate-100 (for secondary backgrounds inside cards) */
+
+  /* Text Colors */
+  --admin-text-primary: #111827; /* slate-900 */
+  --admin-text-secondary: #6b7280; /* slate-500 */
+
+  /* Border Colors */
+  --admin-border: #e5e7eb; /* slate-200 */
+  --admin-divider: #f3f4f6; /* slate-100 */
+
+  /* Layout Dimensions */
+  --admin-sidebar-width: 240px;
+  --admin-header-height: 64px;
+}

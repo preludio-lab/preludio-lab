@@ -8,7 +8,7 @@ import { MusicalEra } from '@/domain/shared/musical-era';
 export class GetComposersUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
-  async execute(params: { limit: number; offset: number }): Promise<{
+  async execute(params: { limit: number; offset: number; lang?: string }): Promise<{
     composers: GetComposersDto[];
     totalCount: number;
   }> {
@@ -21,19 +21,36 @@ export class GetComposersUseCase {
     // 現状のRepository InterfaceにはCountがないため、暫定的に取得件数または別途カウントロジックを検討
     const totalCount = composers.length; // 暫定
 
+    const lang = params.lang || 'ja';
+
     return {
-      composers: composers.map((composer) => ({
-        id: composer.id,
-        slug: composer.slug,
-        name:
-          (typeof composer.displayName === 'object'
-            ? composer.displayName?.ja
-            : composer.displayName) ||
-          (typeof composer.fullName === 'object' ? composer.fullName?.ja : composer.fullName) ||
-          'Unknown',
-        era: (composer.era as MusicalEra) || undefined,
-        worksCount: 0, // 今後のDataSource拡張で取得
-      })),
+      composers: composers.map((composer) => {
+        const displayName = composer.displayName;
+        const fullName = composer.fullName;
+
+        let localizedName = 'Unknown';
+        if (typeof displayName === 'object') {
+          localizedName =
+            (displayName as Record<string, string>)[lang] || displayName?.ja || 'Unknown';
+        } else if (displayName) {
+          localizedName = displayName as unknown as string;
+        } else if (typeof fullName === 'object') {
+          localizedName = (fullName as Record<string, string>)[lang] || fullName?.ja || 'Unknown';
+        } else if (fullName) {
+          localizedName = fullName as unknown as string;
+        }
+
+        return {
+          id: composer.id,
+          slug: composer.slug,
+          name: localizedName,
+          era: (composer.era as MusicalEra) || undefined,
+          worksCount: 0, // 今後のDataSource拡張で取得
+          nationalityCode: composer.nationalityCode,
+          portrait: composer.portrait,
+          updatedAt: composer.control.updatedAt,
+        };
+      }),
       totalCount,
     };
   }

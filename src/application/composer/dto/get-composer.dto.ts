@@ -16,6 +16,41 @@ export const GetComposerDtoSchema = z
     deathDate: z.string().nullable(),
     nationalityCode: z.string().nullable(),
 
+    /** 肖像画・イメージ画像のリソースパス */
+    portrait: z.string().nullable(),
+
+    /** 代表的な楽器 */
+    representativeInstruments: z.array(z.string()),
+
+    /** 代表的なジャンル */
+    representativeGenres: z.array(z.string()),
+
+    /** 活動拠点 */
+    places: z.array(
+      z
+        .object({
+          slug: z.string(),
+          type: z.string(),
+          countryCode: z.string().optional(),
+        })
+        .strict(),
+    ),
+
+    /** 自由タグ */
+    tags: z.array(z.string()),
+
+    /** 印象次元 (-10 to +10) */
+    impressionDimensions: z
+      .object({
+        innovation: z.number(),
+        emotionality: z.number(),
+        nationalism: z.number(),
+        scale: z.number(),
+        complexity: z.number(),
+        theatricality: z.number(),
+      })
+      .nullable(),
+
     // 多言語データ
     translations: z.record(
       z.string(),
@@ -40,7 +75,10 @@ export const GetComposerDtoSchema = z
         .strict(),
     ),
 
-    // オプティミスティックロック用
+    /** 作成日時 */
+    createdAt: z.string(),
+
+    /** 更新日時 (オプティミスティックロック用) */
     updatedAt: z.string(),
   })
   .strict();
