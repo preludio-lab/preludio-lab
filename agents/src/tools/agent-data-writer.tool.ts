@@ -33,7 +33,7 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
     description: string,
     schema: z.ZodObject<T>,
     outputDir: string,
-    slugField: keyof z.infer<z.ZodObject<T>> = 'slug',
+    slugField: keyof z.infer<z.ZodObject<T>>,
   ) {
     this.name = name;
     this.description = description;
