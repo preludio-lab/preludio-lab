@@ -38,6 +38,14 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
         { fullName: string; displayName: string; shortName: string; biography: string }
       >,
     ),
+    impressionDimensions: {
+      innovation: composer.impressionDimensions?.innovation || 0,
+      emotionality: composer.impressionDimensions?.emotionality || 0,
+      nationalism: composer.impressionDimensions?.nationalism || 0,
+      scale: composer.impressionDimensions?.scale || 0,
+      complexity: composer.impressionDimensions?.complexity || 0,
+      theatricality: composer.impressionDimensions?.theatricality || 0,
+    },
   });
 
   const [activeLang, setActiveLang] = useState<LanguageCode>('ja');
@@ -59,6 +67,19 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
     setFormData((prev) => ({
       ...prev,
       [field]: value,
+    }));
+  };
+
+  const handleDimensionChange = (
+    key: keyof typeof formData.impressionDimensions,
+    value: number,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      impressionDimensions: {
+        ...prev.impressionDimensions,
+        [key]: value,
+      },
     }));
   };
 
@@ -85,6 +106,7 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
           },
         ]),
       ),
+      impressionDimensions: formData.impressionDimensions,
       updatedAt: composer.updatedAt,
     };
 
@@ -249,6 +271,50 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
             className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
           />
         </div>
+      </div>
+
+      {/* Impression Dimensions */}
+      <h3 className="text-lg font-medium text-admin-text-primary border-b border-admin-border pb-2 mt-8">
+        印象次元 (-10 から +10)
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+        {[
+          { key: 'innovation', label: '革新性 (Innovation: -10 伝統的 ~ +10 革新的)' },
+          { key: 'emotionality', label: '情動性 (Emotionality: -10 知的 ~ +10 感情的)' },
+          { key: 'nationalism', label: '民族性 (Nationalism: -10 国際的 ~ +10 民族的)' },
+          { key: 'scale', label: '規模感 (Scale: -10 親密 ~ +10 壮大)' },
+          { key: 'complexity', label: '複雑性 (Complexity: -10 簡潔 ~ +10 複雑)' },
+          { key: 'theatricality', label: '演劇性 (Theatricality: -10 絶対音楽 ~ +10 演劇的)' },
+        ].map(({ key, label }) => (
+          <div key={key}>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-sm font-medium text-admin-text-secondary">{label}</label>
+              <span className="text-sm font-mono text-admin-primary font-bold">
+                {formData.impressionDimensions[key as keyof typeof formData.impressionDimensions] >
+                0
+                  ? '+'
+                  : ''}
+                {formData.impressionDimensions[key as keyof typeof formData.impressionDimensions]}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="-10"
+              max="10"
+              step="1"
+              value={
+                formData.impressionDimensions[key as keyof typeof formData.impressionDimensions]
+              }
+              onChange={(e) =>
+                handleDimensionChange(
+                  key as keyof typeof formData.impressionDimensions,
+                  parseInt(e.target.value, 10),
+                )
+              }
+              className="w-full accent-admin-primary"
+            />
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-end gap-3 pt-6 border-t border-admin-border">
