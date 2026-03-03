@@ -8,6 +8,7 @@ describe('GetComposersDtoSchema', () => {
     name: 'Ludwig van Beethoven',
     era: 'romantic',
     worksCount: 42,
+    updatedAt: new Date('2024-01-01T00:00:00.000Z'),
   };
 
   it('should parse valid data', () => {
