@@ -9,6 +9,13 @@ updates:
       time: '00:00'
       timezone: 'Asia/Tokyo'
     open-pull-requests-limit: 10
+    groups:
+      dependency-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
