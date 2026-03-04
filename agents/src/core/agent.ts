@@ -74,17 +74,33 @@ const JSON_SCHEMA_TYPE_TO_GEMINI: Record<string, SchemaType> = {
 
 /**
  * `zodToJsonSchema` が出力する標準 JSON Schema を、Gemini API が期待する `Schema` 形式に再帰的に変換します。
- * JSON Schema の `type: "string"` などの小文字表記を、Gemini SDK の `SchemaType.STRING` などの大文字 Enum に変換します。
+ *
+ * Gemini の `responseSchema` には以下のような制限と非互换があるため、本関数で吸収します:
+ * - `$ref`: サポートされないため、STRING にフォールバック
+ * - `anyOf` / `not` / `allOf`: サポートされないため STRING にフォールバック
+ * - `minimum` / `maximum` / `minLength` / `maxLength` / `maxItems`: 状態数超過を引き起こすため除外
+ * - `additionalProperties` / `format` / `default`: サポートされないため除外
+ * - `integer`: 範囲制約と組み合わせると状態数超過となるため `NUMBER` に変換
+ * これらの制約はすべて Zod の `.parse()` によってモデル出力後に改めて検証されます。
  *
  * @param jsonSchema zodToJsonSchema の出力
  * @returns Gemini API 互換の Schema オブジェクト
  */
 function convertToGeminiSchema(jsonSchema: Record<string, unknown>): Schema {
+  // $ref / anyOf / not / allOf はGeminiがサポートしないため STRING にフォールバック
+  if (jsonSchema['$ref'] || jsonSchema['anyOf'] || jsonSchema['not'] || jsonSchema['allOf']) {
+    return { type: SchemaType.STRING } as Schema;
+  }
+
   const result: Record<string, unknown> = {};
 
   // type を Gemini の SchemaType Enum に変換
-  if (typeof jsonSchema.type === 'string' && jsonSchema.type in JSON_SCHEMA_TYPE_TO_GEMINI) {
-    result.type = JSON_SCHEMA_TYPE_TO_GEMINI[jsonSchema.type];
+  // integer は NUMBER に統一（integer と範囲制約の組み合わせが状態数超過エラーを引き起こすため）
+  if (typeof jsonSchema.type === 'string') {
+    const normalizedType = jsonSchema.type === 'integer' ? 'number' : jsonSchema.type;
+    if (normalizedType in JSON_SCHEMA_TYPE_TO_GEMINI) {
+      result.type = JSON_SCHEMA_TYPE_TO_GEMINI[normalizedType];
+    }
   }
 
   // description はそのまま保持
@@ -92,29 +108,43 @@ function convertToGeminiSchema(jsonSchema: Record<string, unknown>): Schema {
     result.description = jsonSchema.description;
   }
 
-  // enum 値の保持
+  // enum 値の処理
   if (Array.isArray(jsonSchema.enum)) {
-    result.enum = jsonSchema.enum;
+    // 項目数が少ない（20以下）場合は Gemini の enum 制約としてそのまま渡す。
+    // これにより「ブランチング超過」を避けつつ、精度を確保する。
+    if (jsonSchema.enum.length <= 20) {
+      result.enum = jsonSchema.enum;
+    } else {
+      // 項目数が多い場合は enum 制約を外し、代わりに description に候補値を追記してヒントを与える。
+      const hint = `(Allowed values: ${jsonSchema.enum.slice(0, 50).join(', ')}${jsonSchema.enum.length > 50 ? '...' : ''})`;
+      result.description = result.description ? `${result.description} ${hint}` : hint;
+    }
   }
 
-  // 配列の items を再帰的に変換
+  // 配列の items を再帰的に変換（maxItems は除外）
+
   if (jsonSchema.items && typeof jsonSchema.items === 'object') {
     result.items = convertToGeminiSchema(jsonSchema.items as Record<string, unknown>);
   }
 
   // オブジェクトの properties を再帰的に変換
+  // Gemini responseSchema はオプショナルプロパティが多いと「ブランチング超過」エラーとなるため、
+  // Gemini Schema では一律すべてのプロパティを required 扱いにする。
+  // 実際のオプショナル性のバリデーションはモデル出力後の Zod.parse() で担保する。
   if (jsonSchema.properties && typeof jsonSchema.properties === 'object') {
     const props: Record<string, Schema> = {};
+    const allKeys: string[] = [];
     for (const [key, value] of Object.entries(jsonSchema.properties as Record<string, unknown>)) {
       props[key] = convertToGeminiSchema(value as Record<string, unknown>);
+      allKeys.push(key);
     }
     result.properties = props;
+    // すべてのプロパティを required に強制する
+    result.required = allKeys;
   }
 
-  // required の保持
-  if (Array.isArray(jsonSchema.required)) {
-    result.required = jsonSchema.required;
-  }
+  // 以下のキーは意図的に省略する（Gemini API 非対応または状態数超過の原因となる）:
+  // minimum, maximum, minLength, maxLength, maxItems, additionalProperties, format, default
 
   return result as unknown as Schema;
 }
@@ -200,12 +230,11 @@ export class BaseAgent {
 
     const responseText = result.response.text();
     try {
-      // モデルが強制に従った出力を返してくるため、JSON パースと Zod 検証は極めて高い確率で成功する
       const parsed = JSON.parse(responseText);
+      // モデルが強制に従った出力を返してくるため、JSON パースと Zod 検証は極めて高い確率で成功する
       return schema.parse(parsed);
     } catch (error) {
       consola.error('[BaseAgent] Failed to parse JSON response or validate against schema.');
-      consola.debug('Response text:', responseText);
       throw error;
     }
   }

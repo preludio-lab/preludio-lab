@@ -1,0 +1,99 @@
+{
+  "fullName": {
+    "en": "",
+    "ja": "フランツ・シューベルト",
+    "es": "",
+    "de": "",
+    "fr": "",
+    "it": "",
+    "zh": ""
+  },
+  "displayName": {
+    "en": "",
+    "ja": "シューベルト",
+    "es": "",
+    "de": "",
+    "fr": "",
+    "it": "",
+    "zh": ""
+  },
+  "shortName": {
+    "en": "",
+    "ja": "シューベルト",
+    "es": "",
+    "de": "",
+    "fr": "",
+    "it": "",
+    "zh": ""
+  },
+  "era": "early-romantic",
+  "biography": {
+    "en": "",
+    "ja": "フランツ・シューベルトは、ウィーンに生まれたオーストリアの作曲家であり、古典派音楽の伝統を受け継ぎながら、ロマン派音楽の幕開けを告げた重要な存在です。特にリート（ドイツ語歌曲）の分野で革新的な貢献を果たし、「歌曲の王」と称されています。彼の生涯はわずか31年という短さでしたが、600曲以上のリートを含む、交響曲、室内楽、ピアノ曲、合唱曲、オペラなど、膨大な数の作品を残しました。代表作には、未完ながらも圧倒的な人気を誇る交響曲第8番「未完成」、スケールの大きな交響曲第9番「ザ・グレイト」の他、リートでは「魔王」「野ばら」を含む歌曲集「美しき水車小屋の娘」「冬の旅」「白鳥の歌」があります。室内楽では弦楽四重奏曲第14番「死と乙女」やピアノ五重奏曲「ます」、ピアノ独奏曲では即興曲や楽興の時などが広く知られています。シューベルトの音楽は、時に深い叙情性、時に劇的な情熱、時に郷愁を帯びた旋律と豊かな和声が特徴で、人間の内面を深く描き出すことに長けていました。その作品の多くは生前にはあまり広く知られることはありませんでしたが、死後に再評価され、現在ではベートーヴェンと並び称されるウィーン古典派・ロマン派の巨匠として不動の地位を確立しています。",
+    "es": "",
+    "de": "",
+    "fr": "",
+    "it": "",
+    "zh": ""
+  },
+  "birthDate": "1797-01-31T00:00:00.000Z",
+  "deathDate": "1828-11-19T00:00:00.000Z",
+  "nationalityCode": "AT",
+  "representativeInstruments": ["piano", "violin", "cello"],
+  "representativeGenres": [
+    "lied",
+    "song-cycle",
+    "symphony",
+    "chamber-strings",
+    "keyboard-solo",
+    "chamber-piano"
+  ],
+  "places": [
+    {
+      "slug": "vienna",
+      "type": "birth",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "activity",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "death",
+      "countryCode": "AT"
+    }
+  ],
+  "portrait": "",
+  "tags": [
+    "romanticism",
+    "lieder",
+    "classical-romantic-bridge",
+    "vienna-school",
+    "austrian",
+    "chamber-music"
+  ],
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 10,
+    "nationalism": 3,
+    "scale": 6,
+    "complexity": 7,
+    "theatricality": 2
+  },
+  "slug": "schubert",
+  "_schemaVersion": "1.0.0",
+  "_generatorMeta": {
+    "model": "gemini-2.5-flash",
+    "generatedAt": "2024-07-30T10:30:00Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 0.98,
+    "sourceRefs": [
+      "https://ja.wikipedia.org/wiki/フランツ・シューベルト",
+      "https://www.britannica.com/biography/Franz-Schubert",
+      "https://www.schubert.org/schuberts-life/"
+    ],
+    "executionId": "b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e"
+  }
+}

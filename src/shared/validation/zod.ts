@@ -4,7 +4,6 @@ export { z };
 
 /**
  * Zodの拡張ユーティリティ。
- * 特定の環境（Turbopack等）で .int() が ReferenceError を引き起こす問題への対策を提供します。
+ * z.number().int() を返し、.min()/.max() などの数値バリデーションをチェーン可能にする。
  */
-export const zInt = (message: string = 'Must be an integer') =>
-  z.number().refine(Number.isInteger, { message });
+export const zInt = () => z.number().int();

@@ -10,14 +10,16 @@
  * 新しいモデルが追加された場合はここに追記します。
  */
 export const GeminiModels = {
-  /** 高速・低コスト。ツール呼び出しやバッチ処理に最適 */
+  /** 最新の軽量・高速モデル */
+  FLASH_LITE: 'gemini-3.1-flash-lite-preview',
+  /** 高速・低コストな標準モデル */
   FLASH: 'gemini-3-flash-preview',
-  /** 高精度。複雑な推論や高品質な出力が必要な場面向け */
-  PRO: 'gemini-3.1-pro-preview',
-  /** 画像生成・解析に特化したモデル */
-  IMAGE: 'gemini-3-pro-image-preview',
-  /** 開発・テスト用の安定版モデル */
+  /** 開発・テスト用の安定版（汎用） */
   STABLE_FLASH: 'gemini-2.5-flash',
+  /** 開発・テスト用の安定版（軽量） */
+  STABLE_FLASH_LITE: 'gemini-2.5-flash-lite',
+  /** 試験的なGemmaベースモデル */
+  GEMMA_3_27B: 'gemma-3-27b-it',
 } as const;
 
 /**
