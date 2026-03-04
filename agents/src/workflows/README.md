@@ -101,3 +101,71 @@ AIエージェント、Coreモジュール、およびTools群を組み合わせ
   5. 【最終化 (`--step=finalize`) または `--auto`継続時】:
      - 翻訳済みのデータ（`translated.json`）を読み込み、改めて全体の最終検証を実施。
      - `AgentDataWriterTool` を用いて最終永続化先（`data/composers/{slug}.json`）へ正式に出力する。
+
+### 実行・検証ガイド (Walkthrough)
+
+本ワークフローを実際にローカル環境で動かしてコンポーザーデータを作成・検証するための具体的な手順です。
+
+#### 事前準備
+
+Google Gemini API を利用するため、プロジェクトルートにて `GEMINI_API_KEY` 環境変数が設定されている必要があります。
+実行はすべてプロジェクトのルートディレクトリで `pnpm run workflow:composer` コマンドを通じて行います。
+
+#### 1. ステップバイステップでの実行（HITLモード）
+
+特定の作曲家（例: `beethoven`）を対象に、一つずつステップを進めて動作を確認し、途中で人間が介入（Human-in-the-Loop）する手順です。
+
+##### ① 素案（日本語のみ）の作成
+
+`draft` モードで歴史的背景や代表作を調べさせ、日本語のJSONを生成させます。
+
+```bash
+pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step draft
+```
+
+> **確認:** 実行後、`agents/workspace/temp/composers/beethoven.draft.json` にファイルが生成されるので内容を確認します。
+
+##### ② (任意) AIによる推敲と改善
+
+生成された内容に対してレビューコメント（例:「もっと交響曲第9番について詳しく書いて」など）を与え、AIに内容を改善（Refine）させます。
+※手動で直接 json を編集しても構いません（その場合は厳格なJSON Formatterチェックが走ります）。
+
+```bash
+pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step refine --review "代表作の解釈に、交響曲第9番が後世に与えた影響を厚めに追記してください"
+```
+
+> **確認:** 実行後、指摘事項が反映された `beethoven.refined.json` が生成されます。
+
+##### ③ 多言語への翻訳
+
+日本語の内容が確定したら、残りの6言語（en, de, fr, it, es, zh）へ並列で推論APIを利用し翻訳させます。
+
+```bash
+pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step translate
+```
+
+> **確認:** 実行後、各言語を含んだ完全なデータ形式の `beethoven.translated.json` が生成されます。
+
+##### ④ 最終化とマスターデータ保存
+
+翻訳結果にも問題がなければ、Zodによる最終型チェックを経て正式な保存先へ書き出します。
+
+```bash
+pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step finalize
+```
+
+> **確認:** 実行後、`data/composers/beethoven.json` に完成版のデータが保存されます。
+
+#### 2. 全自動モードでの一括実行 (Auto)
+
+途中の確認（HITLによる手動レビュー）が不要な場合は、`--auto` フラグを付与することで `draft` -> `translate` -> `finalize` を一気通貫で実行できます。
+
+```bash
+# モーツァルトの全言語データを一気に生成して保存する例
+pnpm run workflow:composer --slug mozart --name "Wolfgang Amadeus Mozart" --auto
+```
+
+#### その他の便利なオプション
+
+- `--dry-run`: 実際の API コールやファイル書き込みを行わず、バリデーションと引数のパースのみをテストします。
+- `--force`: 本ワークフローは無駄なAPIコールを防ぐため、すでに `data/composers/{slug}.json` が存在する場合は処理をスキップ（フェイルファスト）します。これを無視して強制的に上書き実行したい場合は付与してください。

@@ -12,20 +12,44 @@ import {
   type ComposerMaster,
 } from '@/application/composer/master/composer-master.schema.js';
 
+/**
+ * 作曲家生成ワークフローの実行ステップ定義
+ * - draft: 基本情報の収集 (日本語のみ)
+ * - refine: 人間によるレビュー内容の反映
+ * - translate: 多言語翻訳
+ * - finalize: 最終バリデーションとデータの永続化
+ */
 const StepEnumSchema = z.enum(['draft', 'refine', 'translate', 'finalize']);
 
+/**
+ * 作曲家生成ワークフローの入力スキーマ
+ */
 export const GenerateComposerInputSchema = z.object({
+  /** 対象作曲家のスラグ (例: beethoven) */
   slug: z.string().min(1),
+  /** 作曲家のフルネーム表示名 */
   name: z.string().min(1),
+  /** 実行を開始するターゲットステップ (デフォルト: draft) */
   step: StepEnumSchema.optional(),
+  /** 'refine' ステップで使用される人間からのレビュー指摘 */
   review: z.string().optional(),
+  /** true の場合、後続のステップへ自動で進む */
   auto: z.boolean().default(false),
+  /** true の場合、API呼び出しやファイル書き込みを行わずに検証のみ実施 */
   dryRun: z.boolean().default(false),
+  /** true の場合、既に最終データが存在していても強制的に再生成する */
   force: z.boolean().default(false),
 });
 
+/**
+ * 作曲家生成ワークフローの入力型定義
+ */
 export type GenerateComposerInput = z.infer<typeof GenerateComposerInputSchema>;
 
+/**
+ * Manage the AI workflow to generate, refine, translate, and persist
+ * detailed data for a classical composer.
+ */
 export class GenerateComposerWorkflow {
   private tempDir = path.resolve(process.cwd(), 'agents/workspace/temp/composers');
   private dataDir = path.resolve(process.cwd(), 'data/composers');
@@ -53,66 +77,120 @@ export class GenerateComposerWorkflow {
   }
 
   /**
-   * 厳格な JSON パースとエラーハンドリングを行うヘルパー
-   * 人間が手動編集した際のエラー（カンマ抜け等）を検知し、分かりやすいメッセージを出力する
+   * 厳格な JSON パースとエラーハンドリングを行うヘルパー関数。
+   * ドラフト修正時などで人間が手動編集した際のエラー（カンマ抜け、カッコの閉じ忘れ等）を検知し、
+   * トラブルシューティングしやすいエラーメッセージを提供する。
+   *
+   * @param filePath パース対象のJSONファイルパス
+   * @returns パースされたJSONオブジェクト (unknown型)
+   * @throws {Error} 未パース・フォーマットエラー時にスロー
    */
   private async loadAndParseJson(filePath: string): Promise<unknown> {
     if (!fsSync.existsSync(filePath)) {
-      throw new Error(`ファイルが見つかりません: ${filePath}`);
+      throw new Error(`[GenerateComposerWorkflow] File not found: ${filePath}`);
     }
     const rawData = await fs.readFile(filePath, 'utf-8');
     try {
       return JSON.parse(rawData);
     } catch (error) {
       throw new Error(
-        `[JSONParseError] ${filePath} が正しい JSON フォーマットとしてパースできませんでした。手動編集時の文法エラー（カンマ抜け、引用符の閉じ忘れ等）を確認してください。\nDetails: ${(error as Error).message}`,
+        `[JSONParseError] Failed to parse ${filePath} as valid JSON. Check for syntax errors (e.g., missing commas, unclosed quotes) from manual edits.\nDetails: ${(error as Error).message}`,
       );
     }
   }
 
+  /**
+   * ワークフローを実行するメイン関数。
+   * 指定ステップ（draft -> refine -> translate -> finalize）からプロセスを開始する。
+   *
+   * @param rawInput ワークフロー実行パラメータ（未検証）
+   */
   async execute(rawInput: unknown) {
     const input = GenerateComposerInputSchema.parse(rawInput);
     const startStep = input.step || 'draft';
 
-    // 冪等性の確認: 最終マスターデータが存在するかを引数パース直後に全ステップ共通で早期チェック (Fail-Fast)
+    // API呼び出しコストの節約・安全策 (Fail-Fast)
+    // 最終マスターデータが既に存在する場合は、上書きによる消失・無駄なコストを避けるため早期リターンする
     if (!input.force && fsSync.existsSync(this.getFinalPath(input.slug))) {
       consola.warn(
-        `[GenerateComposerWorkflow] 永続化先データが既に存在します: ${this.getFinalPath(input.slug)}`,
+        `[GenerateComposerWorkflow] Final persisted data already exists for ${input.slug}: ${this.getFinalPath(input.slug)}`,
       );
       consola.warn(
-        `無駄なAPIコスト消費と上書きを防ぐため処理をスキップしました。強制実行する場合は --force を指定してください。`,
+        `[GenerateComposerWorkflow] Workflow skipped to prevent accidental overwrite and API costs. Use --force to override.`,
       );
       return;
     }
 
     if (input.dryRun) {
       consola.success(
-        `[GenerateComposerWorkflow] Dry-run: 検証成功。対象: ${input.slug} (Step: ${startStep})。API呼び出しをスキップして終了します。`,
+        `[GenerateComposerWorkflow] Dry-run: Validation successful for target ${input.slug} (Step: ${startStep}). Skipping API calls.`,
       );
       return;
     }
 
     const systemInstruction = `あなたは世界最高のクラシック音楽サイトの専属プロデューサー・音楽学者です。
-指定された作曲家に関する正確な史実と、音楽史における独自の解釈・評価を提供してください。`;
+指定された作曲家に関する正確な史実と、音楽史における独自の解釈・評価を提供してください。
+
+# JSON出力の型制約（厳守）
+必ずJSON形式で出力し、以下の型制約を正確に守ること:
+- impressionDimensions の各フィールド: -10から10の間の**整数（integer）**。例: -5, 0, 8。**"low", "medium", "high" などの文字列や、"7.5" などの小数は絶対に使用禁止。**
+- places[].type: "birth", "death", "activity", "other" の4値のみ。
+- _generatorMeta.confidenceScore: 0.0 から 1.0 の間の数値（例: 0.95）。1.0を超える値やパーセント表記は禁止。
+- birthDate, deathDate: ISO 8601 形式（例: "1797-01-31"）。日付が不明な場合は null またはフィールド自体を省略。
+- 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。`;
 
     let currentJson: ComposerMaster | null = null;
 
     // ----- STEP 1: DRAFT -----
+    // 初期データの土台を作成するステップ。歴史的事実・代表作などを集め、ベースとなる日本語(ja)でのマスターデータを生成する
     if (startStep === 'draft' || input.auto) {
       consola.start(
-        `[Step: draft] ${input.name} の背景情報を収集し、日本語マスターデータを生成しています...`,
+        `[Step: draft] Collecting background information for ${input.name} and generating primary Japanese master data...`,
       );
 
       const agent = new BaseAgent({
-        modelName: GeminiModels.PRO,
+        modelName: GeminiModels.STABLE_FLASH,
         systemInstruction,
-        enableGrounding: true,
       });
 
       const prompt = `作曲家 ${input.name} (スラッグ: ${input.slug}) のマスターデータを生成してください。
 まずは歴史的背景や人物像、代表作を日本語(ja)で詳しく調査し、ComposerMasterSchema に合致する形の JSON として出力してください。
 ※他言語フィールド（en, frなど対象フィールド）は空のままにし、まずは ja フィールドのみを充実させてください。
-（例: fullName: { ja: "ルードヴィヒ・ヴァン・ベートーヴェン" } のように）`;
+
+# 出力例 (参考)
+{
+  "fullName": { "ja": "ルードヴィヒ・ヴァン・ベートーヴェン" },
+  "displayName": { "ja": "ベートーヴェン" },
+  "shortName": { "ja": "ベートーヴェン" },
+  "era": "classical",
+  "birthDate": "1770-12-16",
+  "nationalityCode": "DE",
+  "representativeInstruments": ["piano", "violin"],
+  "representativeGenres": ["symphony", "piano-concerto", "sonata"],
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 9,
+    "nationalism": 2,
+    "scale": 10,
+    "complexity": 7,
+    "theatricality": 5
+  },
+  "slug": "beethoven",
+  "_generatorMeta": {
+    "model": "gemini-2.5-flash",
+    "generatedAt": "2024-07-27T12:00:00Z",
+    "confidenceScore": 0.95,
+    "sourceRefs": ["https://ja.wikipedia.org/wiki/ベートーヴェン"]
+  }
+}
+
+# 重要な制約・ヒント
+- impressionDimensions: 必ず -10〜10 の整数値。**"+" や "medium" 等の文字列は厳禁。**
+- representativeGenres: symphony, overture, opera, piano-concerto, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, choral-others 等。
+- representativeInstruments: "voice" は避け、"soprano", "tenor", "choir-mixed" 等を指定。
+- places[].slug: vienna, paris, london, rome, venice, milan, st-petersburg, warsaw, prague, budapest, berlin, leipzig, salzburg, bonn 等。
+- _generatorMeta.sourceRefs: 必ず "https://..." 形式。
+- _generatorMeta.confidenceScore: 0.0〜1.0 の範囲。`;
 
       currentJson = await agent.generateObject<ComposerMaster>(
         prompt,
@@ -121,32 +199,35 @@ export class GenerateComposerWorkflow {
 
       const outPath = this.getDraftPath(input.slug);
       await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
-      consola.success(`[Step: draft] 素案を一時ファイルに保存しました: ${outPath}`);
+      consola.success(`[Step: draft] Saved initial draft to temporary file: ${outPath}`);
 
       if (!input.auto) {
         consola.info(
-          `次フェーズへ進む場合は、必要に応じて生成されたJSONを手動修正後、--step=translate または --step=refine を実行してください。`,
+          `[GenerateComposerWorkflow] If you wish to proceed to the next phase, manually edit the generated JSON if needed, and run with --step=translate or --step=refine.`,
         );
         return;
       }
     }
 
     // ----- STEP 2: REFINE -----
+    // 生成されたドラフトデータに対する非エンジニア(音楽の専門家・ディレクター)等からのレビュー指摘(prompt)を反映し、データを最適化する。
+    // 手動で直接JSONを書き換えるのではなくLLM経由で再解釈・表現修正させるためのステップ。
     if (startStep === 'refine') {
-      consola.start(
-        `[Step: refine] 人間のレビューコメントをもとにモデルがデータを再生成しています...`,
-      );
+      consola.start(`[Step: refine] Regenerating data based on human review comments...`);
       if (!input.review) {
-        throw new Error(`--step=refine には --review="..." 引数が必須です。`);
+        throw new Error(
+          `[GenerateComposerWorkflow] '--review="..."' argument is mandatory for '--step=refine'.`,
+        );
       }
 
+      // レビューのベースとするデータを選択（前回の修正版が存在すればそれを、無ければ最初のドラフトを利用）
       const sourcePath = fsSync.existsSync(this.getRefinedPath(input.slug))
         ? this.getRefinedPath(input.slug)
         : this.getDraftPath(input.slug);
 
       if (!fsSync.existsSync(sourcePath)) {
         throw new Error(
-          `一時ファイル(draft/refined)が見つかりません。先に --step=draft を実行してください: ${sourcePath}`,
+          `[GenerateComposerWorkflow] Temporary file (draft or refined) not found. Please run '--step=draft' first: ${sourcePath}`,
         );
       }
 
@@ -154,7 +235,7 @@ export class GenerateComposerWorkflow {
       const draftData = ComposerMasterSchema.parse(draftObj);
 
       const agent = new BaseAgent({
-        modelName: GeminiModels.PRO,
+        modelName: GeminiModels.FLASH_LITE,
         systemInstruction,
       });
 
@@ -174,24 +255,29 @@ ${JSON.stringify(draftData, null, 2)}`;
 
       const outPath = this.getRefinedPath(input.slug);
       await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
-      consola.success(`[Step: refine] レビューを反映した改善版データを保存しました: ${outPath}`);
+      consola.success(`[Step: refine] Saved the refined data applying human review: ${outPath}`);
 
       if (!input.auto) {
-        consola.info(`次フェーズへ進む場合は --step=translate を実行してください。`);
+        consola.info(
+          `[GenerateComposerWorkflow] To proceed to the next phase, run with --step=translate.`,
+        );
         return;
       }
     }
 
     // ----- STEP 3: TRANSLATE -----
+    // 日本語(ja)で用意されたデータを基に多言語(en, de, fr, it, es, zh)の翻訳データを生成するステップ。
+    // 多言語フィールド(MultilingualString)それぞれに、対象言語を含んだ情報をマージする。
     if (startStep === 'translate' || input.auto) {
       if (!currentJson) {
+        // ステップがtranslateから開始された場合、ソースとなる一時ファイルを読み込む
         const sourcePath = fsSync.existsSync(this.getRefinedPath(input.slug))
           ? this.getRefinedPath(input.slug)
           : this.getDraftPath(input.slug);
 
         if (!fsSync.existsSync(sourcePath)) {
           throw new Error(
-            `一時ファイルが見つかりません。先に --step=draft 等を実行してください: ${sourcePath}`,
+            `[GenerateComposerWorkflow] Temporary file not found. Run '--step=draft' or similar steps first: ${sourcePath}`,
           );
         }
         const rawData = await fs.readFile(sourcePath, 'utf-8');
@@ -199,7 +285,7 @@ ${JSON.stringify(draftData, null, 2)}`;
       }
 
       consola.start(
-        `[Step: translate] 日本語データを基に多言語(en, de, fr, it, es, zh)への翻訳を生成しています...`,
+        `[Step: translate] Translating Japanese data into multiple languages (en, de, fr, it, es, zh)...`,
       );
 
       const targetLangs = ['en', 'de', 'fr', 'it', 'es', 'zh'];
@@ -208,7 +294,7 @@ ${JSON.stringify(draftData, null, 2)}`;
       const translationResults = await Promise.all(
         targetLangs.map(async (lang) => {
           const agent = new BaseAgent({
-            modelName: GeminiModels.PRO,
+            modelName: GeminiModels.FLASH_LITE,
             systemInstruction: `あなたは多言語対応のクラシック音楽サイトの翻訳スペシャリストです。指定されたJSONデータに含まれる日本語(ja)のテキストを元に、指定されたターゲット言語(${lang})へ高品質な翻訳テキストを生成し、対象言語のみを埋めたJSONを出力してください。専門用語や固有名詞は音楽史的に正確な名称を使用してください。`,
           });
 
@@ -224,7 +310,16 @@ ${JSON.stringify(currentJson, null, 2)}`;
         }),
       );
 
-      // マージ用ヘルパー関数: base に対して translated の該当言語(lang)のプロパティを再帰的にマージ
+      /**
+       * マージ用ヘルパー関数
+       * ベースデータ(jaなどを含む元データ)と、今回翻訳された言語(lang)を含むデータを再帰的に探索し、
+       * `MultilingualString` (実体は { ja: string } などのオブジェクト) に `lang: string` を追記する。
+       *
+       * @param base マージ先（元データ）
+       * @param translated 翻訳された結果
+       * @param lang 翻訳先の言語（例: 'en'）
+       * @returns 再帰的にマージされた新しいオブジェクト構造
+       */
       function mergeTranslation(base: unknown, translated: unknown, lang: string): unknown {
         if (!base || typeof base !== 'object') return base;
         if (Array.isArray(base)) {
@@ -264,30 +359,38 @@ ${JSON.stringify(currentJson, null, 2)}`;
 
       const outPath = this.getTranslatedPath(input.slug);
       await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
-      consola.success(`[Step: translate] 翻訳済みの多言語データを保存しました: ${outPath}`);
+      consola.success(
+        `[Step: translate] Successfully saved translated multilingual data: ${outPath}`,
+      );
 
       if (!input.auto) {
-        consola.info(`次フェーズへ進む場合は --step=finalize を実行して永続化を完了してください。`);
+        consola.info(
+          `[GenerateComposerWorkflow] To proceed to the next phase and finalize persistence, run with --step=finalize.`,
+        );
         return;
       }
     }
 
     // ----- STEP 4: FINALIZE -----
+    // マスターデータの最終バリデーションを実行し、`data/` 配下などの永続化用ディレクトリへ保存するステップ。
     if (startStep === 'finalize' || input.auto) {
-      consola.start(`[Step: finalize] 最終検証とマスターデータへの永続化を行います...`);
+      consola.start(
+        `[Step: finalize] Performing final validation and persisting as master data...`,
+      );
 
       if (!currentJson) {
+        // 対象データメモリ上に存在しない場合、直前の翻訳済み結果をロード
         const sourcePath = this.getTranslatedPath(input.slug);
         if (!fsSync.existsSync(sourcePath)) {
           throw new Error(
-            `翻訳済みの一時ファイルが見つかりません。先に --step=translate を実行してください: ${sourcePath}`,
+            `[GenerateComposerWorkflow] Translated temporary file not found. Please run '--step=translate' first: ${sourcePath}`,
           );
         }
         const rawData = await fs.readFile(sourcePath, 'utf-8');
         currentJson = ComposerMasterSchema.parse(JSON.parse(rawData));
       }
 
-      // 最終バリデーション
+      // 最終的に必要なすべてのデータがスキーマ仕様を満たしているか検証・整形
       const finalData = ComposerMasterSchema.parse(currentJson);
 
       const writer = new AgentDataWriterTool(
@@ -298,9 +401,9 @@ ${JSON.stringify(currentJson, null, 2)}`;
         'slug',
       );
 
-      const finalPath = await writer.execute(finalData, { modelName: GeminiModels.PRO });
+      const finalPath = await writer.execute(finalData, { modelName: GeminiModels.FLASH_LITE });
       consola.success(
-        `[Step: finalize] コンポーザーマスターの生成が完了しました！ -> ${finalPath}`,
+        `[Step: finalize] Composer Master Data successfully generated and persisted! -> ${finalPath}`,
       );
     }
   }
