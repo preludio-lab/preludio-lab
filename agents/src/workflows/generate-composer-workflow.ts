@@ -10,7 +10,9 @@ import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 import {
   ComposerMasterSchema,
   type ComposerMaster,
+  COMPOSER_MASTER_VERSION,
 } from '@/application/composer/master/composer-master.schema.js';
+import { AppLocale } from '@/domain/i18n/locale.js';
 
 /**
  * 作曲家生成ワークフローの実行ステップ定義
@@ -27,8 +29,8 @@ const StepEnumSchema = z.enum(['draft', 'refine', 'translate', 'finalize']);
 export const GenerateComposerInputSchema = z.object({
   /** 対象作曲家のスラグ (例: beethoven) */
   slug: z.string().min(1),
-  /** 作曲家のフルネーム表示名 */
-  name: z.string().min(1),
+  /** 作曲家のフルネーム表示名 (draft または auto=true 時に必須) */
+  name: z.string().min(1).optional(),
   /** 実行を開始するターゲットステップ (デフォルト: draft) */
   step: StepEnumSchema.optional(),
   /** 'refine' ステップで使用される人間からのレビュー指摘 */
@@ -46,13 +48,38 @@ export const GenerateComposerInputSchema = z.object({
  */
 export type GenerateComposerInput = z.infer<typeof GenerateComposerInputSchema>;
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const AGENT_ROOT = path.resolve(__dirname, '../../'); // agents/
+const PROJECT_ROOT = path.resolve(AGENT_ROOT, '../'); // root/
+
+/**
+ * Draft phase specialized schema.
+ * Fields with MultiLanguageString are simplified to single strings (Japanese)
+ * to focus the model's attention.
+ */
+const DraftFieldsSchema = z.object({
+  fullName: z.string().describe('作曲家の氏名（日本語フルネーム）'),
+  displayName: z.string().describe('作曲家の表示用氏名（日本語、名字のみ等）'),
+  shortName: z.string().describe('作曲家の短縮名（日本語、姓のみ等）'),
+  biography: z.string().describe('作曲家の人物紹介・略歴（日本語、500〜1000文字程度）').optional(),
+});
+
+const ComposerDraftSchema = ComposerMasterSchema.omit({
+  fullName: true,
+  displayName: true,
+  shortName: true,
+  biography: true,
+}).extend(DraftFieldsSchema.shape);
+
+type ComposerDraft = z.infer<typeof ComposerDraftSchema>;
+
 /**
  * Manage the AI workflow to generate, refine, translate, and persist
  * detailed data for a classical composer.
  */
 export class GenerateComposerWorkflow {
-  private tempDir = path.resolve(process.cwd(), 'agents/workspace/temp/composers');
-  private dataDir = path.resolve(process.cwd(), 'data/composers');
+  private tempDir = path.resolve(AGENT_ROOT, 'workspace/temp/composers');
+  private dataDir = path.resolve(PROJECT_ROOT, 'data/composers');
 
   constructor() {
     if (!fsSync.existsSync(this.tempDir)) {
@@ -109,6 +136,13 @@ export class GenerateComposerWorkflow {
     const input = GenerateComposerInputSchema.parse(rawInput);
     const startStep = input.step || 'draft';
 
+    const isDraftOrAuto = startStep === 'draft' || input.auto;
+    if (isDraftOrAuto && !input.name) {
+      throw new Error(
+        `[GenerateComposerWorkflow] '--name' is required when starting from 'draft' step or using '--auto'.`,
+      );
+    }
+
     // API呼び出しコストの節約・安全策 (Fail-Fast)
     // 最終マスターデータが既に存在する場合は、上書きによる消失・無駄なコストを避けるため早期リターンする
     if (!input.force && fsSync.existsSync(this.getFinalPath(input.slug))) {
@@ -128,9 +162,7 @@ export class GenerateComposerWorkflow {
       return;
     }
 
-    const systemInstruction = `あなたは世界最高のクラシック音楽サイトの専属プロデューサー・音楽学者です。
-指定された作曲家に関する正確な史実と、音楽史における独自の解釈・評価を提供してください。
-
+    const jsonConstraints = `
 # JSON出力の型制約（厳守）
 必ずJSON形式で出力し、以下の型制約を正確に守ること:
 - impressionDimensions の各フィールド: -10から10の間の**整数（integer）**。例: -5, 0, 8。**"low", "medium", "high" などの文字列や、"7.5" などの小数は絶対に使用禁止。**
@@ -139,29 +171,37 @@ export class GenerateComposerWorkflow {
 - birthDate, deathDate: ISO 8601 形式（例: "1797-01-31"）。日付が不明な場合は null またはフィールド自体を省略。
 - 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。`;
 
+    const systemInstruction = `あなたは世界最高のクラシック音楽サイトの専属プロデューサー・音楽学者です。
+指定された作曲家に関する正確な史実と、音楽史における独自の解釈・評価を提供してください。
+${jsonConstraints}`;
+
     let currentJson: ComposerMaster | null = null;
 
     // ----- STEP 1: DRAFT -----
     // 初期データの土台を作成するステップ。歴史的事実・代表作などを集め、ベースとなる日本語(ja)でのマスターデータを生成する
     if (startStep === 'draft' || input.auto) {
+      const composerName = input.name as string;
       consola.start(
-        `[Step: draft] Collecting background information for ${input.name} and generating primary Japanese master data...`,
+        `[Step: draft] Collecting background information for ${composerName} and generating primary Japanese master data...`,
       );
 
       const agent = new BaseAgent({
-        modelName: GeminiModels.STABLE_FLASH,
+        modelName: GeminiModels.FLASH_LITE,
         systemInstruction,
       });
 
-      const prompt = `作曲家 ${input.name} (スラッグ: ${input.slug}) のマスターデータを生成してください。
-まずは歴史的背景や人物像、代表作を日本語(ja)で詳しく調査し、ComposerMasterSchema に合致する形の JSON として出力してください。
-※他言語フィールド（en, frなど対象フィールド）は空のままにし、まずは ja フィールドのみを充実させてください。
+      const prompt = `作曲家 ${composerName} (スラッグ: ${input.slug}) のマスターデータを生成してください。
+まずは歴史的背景や人物像、代表作を日本語で詳しく調査し、JSON として出力してください。
+
+# 出力形式の注意
+- fullName, displayName, shortName, biography フィールドは、オブジェクトではなく**「日本語の文字列」**として直接出力してください。
+- その他のフィールド（era, birthDate, deathDate等）はスキーマの定義に従ってください。
 
 # 出力例 (参考)
 {
-  "fullName": { "ja": "ルードヴィヒ・ヴァン・ベートーヴェン" },
-  "displayName": { "ja": "ベートーヴェン" },
-  "shortName": { "ja": "ベートーヴェン" },
+  "fullName": "ルードヴィヒ・ヴァン・ベートーヴェン",
+  "displayName": "ベートーヴェン",
+  "shortName": "ベートーヴェン",
   "era": "classical",
   "birthDate": "1770-12-16",
   "nationalityCode": "DE",
@@ -177,25 +217,41 @@ export class GenerateComposerWorkflow {
   },
   "slug": "beethoven",
   "_generatorMeta": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.1-flash-lite",
     "generatedAt": "2024-07-27T12:00:00Z",
     "confidenceScore": 0.95,
     "sourceRefs": ["https://ja.wikipedia.org/wiki/ベートーヴェン"]
   }
 }
 
-# 重要な制約・ヒント
-- impressionDimensions: 必ず -10〜10 の整数値。**"+" や "medium" 等の文字列は厳禁。**
-- representativeGenres: symphony, overture, opera, piano-concerto, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, choral-others 等。
-- representativeInstruments: "voice" は避け、"soprano", "tenor", "choir-mixed" 等を指定。
-- places[].slug: vienna, paris, london, rome, venice, milan, st-petersburg, warsaw, prague, budapest, berlin, leipzig, salzburg, bonn 等。
-- _generatorMeta.sourceRefs: 必ず "https://..." 形式。
-- _generatorMeta.confidenceScore: 0.0〜1.0 の範囲。`;
+# 重要な制約・ヒント (Taxonomy)
+1. **era (時代)**: 以下から選択: medieval, renaissance, baroque, classical, early-romantic, mid-romantic, late-romantic, impressionism, modern, contemporary.
+2. **impressionDimensions**: -10から10の整数。**数値のみ。文字列や記号（"+"等）は絶対禁止。自信がない場合は "0" を使用。**
+3. **representativeGenres**: symphony, overture, opera, piano-concerto, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, choral-others 等。
+4. **representativeInstruments**: piano, violin, cello, organ, flute, oboe, clarinet, bassoon, horn, trumpet, trombone, soprano, alto, tenor, bass, choir-mixed 等。
+5. **places[].slug**: vienna, paris, london, rome, venice, milan, st-petersburg, warsaw, prague, budapest, berlin, leipzig, salzburg, bonn 等。
+6. **_generatorMeta.sourceRefs**: 有効な "https://..." 形式。
+7. **_generatorMeta.confidenceScore**: 0.0〜1.0 の範囲。`;
 
-      currentJson = await agent.generateObject<ComposerMaster>(
+      const draftResult = await agent.generateObject<ComposerDraft>(
         prompt,
-        ComposerMasterSchema as unknown as z.ZodType<ComposerMaster>,
+        ComposerDraftSchema as unknown as z.ZodType<ComposerDraft>,
       );
+
+      // Draft 形式 (単一文字列) から Master 形式 (多言語オブジェクト) へ変換
+      currentJson = {
+        ...draftResult,
+        _schemaVersion: COMPOSER_MASTER_VERSION,
+        _generatorMeta: {
+          ...draftResult._generatorMeta,
+          model: GeminiModels.FLASH_LITE,
+          generatedAt: new Date().toISOString(),
+        },
+        fullName: { [AppLocale.JA]: draftResult.fullName },
+        displayName: { [AppLocale.JA]: draftResult.displayName },
+        shortName: { [AppLocale.JA]: draftResult.shortName },
+        biography: draftResult.biography ? { [AppLocale.JA]: draftResult.biography } : undefined,
+      } as ComposerMaster;
 
       const outPath = this.getDraftPath(input.slug);
       await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
@@ -290,25 +346,57 @@ ${JSON.stringify(draftData, null, 2)}`;
 
       const targetLangs = ['en', 'de', 'fr', 'it', 'es', 'zh'];
 
-      // Promise.allで言語ごとに独立した推論APIを並列実行
-      const translationResults = await Promise.all(
-        targetLangs.map(async (lang) => {
-          const agent = new BaseAgent({
-            modelName: GeminiModels.FLASH_LITE,
-            systemInstruction: `あなたは多言語対応のクラシック音楽サイトの翻訳スペシャリストです。指定されたJSONデータに含まれる日本語(ja)のテキストを元に、指定されたターゲット言語(${lang})へ高品質な翻訳テキストを生成し、対象言語のみを埋めたJSONを出力してください。専門用語や固有名詞は音楽史的に正確な名称を使用してください。`,
-          });
+      // 無料枠のレートリミット（10 Requests Per Minute 等）を回避するため、
+      // `Promise.all`による完全並列実行から、直列実行（Sequential）へ変更し、間にインターバルを設けます。
+      const translationResults: { lang: string; data: ComposerMaster }[] = [];
 
-          const prompt = `以下のマスターデータの多言語(MultilingualString)フィールドについて、ターゲット言語 '${lang}' の翻訳を生成した新しいJSONを出力してください。
+      for (let i = 0; i < targetLangs.length; i++) {
+        const lang = targetLangs[i];
+        if (!lang) continue;
+        consola.start(
+          `[Step: translate] Translating into ${lang} (${i + 1}/${targetLangs.length})...`,
+        );
+
+        const TranslationOutputSchema = z.object({
+          fullName: z.string().describe(`'${lang}' に翻訳されたフルネーム`),
+          displayName: z.string().describe(`'${lang}' に翻訳された表示名`),
+          shortName: z.string().describe(`'${lang}' に翻訳された短縮名`),
+          biography: z.string().describe(`'${lang}' に翻訳された人物紹介・略歴`).optional(),
+        });
+
+        const agent = new BaseAgent({
+          modelName: GeminiModels.FLASH_LITE,
+          systemInstruction: `あなたは多言語対応のクラシック音楽サイトの翻訳スペシャリストです。指定された日本語(ja)のテキストを元に、指定されたターゲット言語(${lang})へ高品質な翻訳テキストを生成してください。専門用語や固有名詞は音楽史的に正確な名称を使用してください。`,
+        });
+
+        const prompt = `以下の日本語(ja)テキストについて、ターゲット言語 '${lang}' の翻訳を生成してください。
 【翻訳元データ (ja)】
-${JSON.stringify(currentJson, null, 2)}`;
+- fullName: ${currentJson?.fullName?.ja || ''}
+- displayName: ${currentJson?.displayName?.ja || ''}
+- shortName: ${currentJson?.shortName?.ja || ''}
+- biography: ${currentJson?.biography?.ja || ''}`;
 
-          const translatedData = await agent.generateObject<ComposerMaster>(
-            prompt,
-            ComposerMasterSchema as unknown as z.ZodType<ComposerMaster>,
-          );
-          return { lang, data: translatedData };
-        }),
-      );
+        const translatedStrings = await agent.generateObject<
+          z.infer<typeof TranslationOutputSchema>
+        >(prompt, TranslationOutputSchema);
+
+        const translatedData = {
+          fullName: { [lang]: translatedStrings.fullName },
+          displayName: { [lang]: translatedStrings.displayName },
+          shortName: { [lang]: translatedStrings.shortName },
+          biography: translatedStrings.biography
+            ? { [lang]: translatedStrings.biography }
+            : undefined,
+        } as unknown as ComposerMaster;
+
+        translationResults.push({ lang, data: translatedData });
+
+        // 最後の言語以外は、レートリミット対策として待機（例: 5秒）
+        if (i < targetLangs.length - 1) {
+          consola.info(`Waiting 5 seconds to prevent rate limit...`);
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+        }
+      }
 
       /**
        * マージ用ヘルパー関数
@@ -322,6 +410,8 @@ ${JSON.stringify(currentJson, null, 2)}`;
        */
       function mergeTranslation(base: unknown, translated: unknown, lang: string): unknown {
         if (!base || typeof base !== 'object') return base;
+        // Date オブジェクトはスプレッドマージすると {} になってしまうため、そのまま返す
+        if (base instanceof Date) return base;
         if (Array.isArray(base)) {
           const transArray = Array.isArray(translated) ? translated : [];
           return base.map((item, i) => mergeTranslation(item, transArray[i], lang));
@@ -426,9 +516,13 @@ async function main() {
       strict: false,
     });
 
-    if (!values.slug || !values.name) {
+    const step = values.step || 'draft';
+    const isDraftOrAuto = step === 'draft' || values.auto;
+
+    if (!values.slug || (isDraftOrAuto && !values.name)) {
       consola.error(
-        `Usage: pnpm exec tsx agents/src/workflows/generate-composer-workflow.ts --slug <slug> --name <name> [--step <step>] [--auto] [--dry-run]`,
+        `Usage: pnpm run workflow:composer --slug <slug> [--name <name>] [--step <step>] [--auto] [--dry-run]\n` +
+          `Note: '--name' is required when starting from 'draft' step or using '--auto'.`,
       );
       process.exit(1);
     }
