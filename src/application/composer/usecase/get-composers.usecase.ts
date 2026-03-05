@@ -1,4 +1,8 @@
-import { GetComposersDto, GetComposersDtoSchema } from '../dto/get-composers.dto';
+import {
+  LocalizedComposerDto,
+  LocalizedComposerDtoInput,
+  LocalizedComposerDtoSchema,
+} from '../dto/localized-composer.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 
 /**
@@ -8,7 +12,7 @@ export class GetComposersUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
   async execute(params: { limit: number; offset: number; lang?: string }): Promise<{
-    composers: GetComposersDto[];
+    composers: LocalizedComposerDto[];
     totalCount: number;
   }> {
     const composers = await this.composerRepository.findMany({
@@ -39,7 +43,7 @@ export class GetComposersUseCase {
           localizedName = fullName as unknown as string;
         }
 
-        return GetComposersDtoSchema.parse({
+        const rawData: LocalizedComposerDtoInput = {
           id: composer.id,
           slug: composer.slug,
           name: localizedName,
@@ -48,7 +52,9 @@ export class GetComposersUseCase {
           nationalityCode: composer.nationalityCode,
           portrait: composer.portrait,
           updatedAt: composer.control.updatedAt,
-        });
+        };
+
+        return LocalizedComposerDtoSchema.parse(rawData);
       }),
       totalCount,
     };

@@ -4,10 +4,10 @@ import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
 import { ChevronRightIcon } from '@/components/ui/admin/CommonIcons';
-import { GetComposersDto } from '@/application/composer/dto/get-composers.dto';
+import { LocalizedComposerDto } from '@/application/composer/dto/localized-composer.dto';
 
 interface ComposerListProps {
-  composers: GetComposersDto[];
+  composers: LocalizedComposerDto[];
 }
 
 /**
@@ -18,11 +18,11 @@ export function ComposerList({ composers }: ComposerListProps) {
   const params = useParams();
   const lang = (params?.lang as string) || 'ja';
 
-  const handleRowClick = (item: GetComposersDto) => {
+  const handleRowClick = (item: LocalizedComposerDto) => {
     router.push(`/${lang}/admin/composers/${item.slug}`);
   };
 
-  const columns: DataTableColumn<GetComposersDto>[] = [
+  const columns: DataTableColumn<LocalizedComposerDto>[] = [
     {
       header: '画像',
       accessor: (item) => (

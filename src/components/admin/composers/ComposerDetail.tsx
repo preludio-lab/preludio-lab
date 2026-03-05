@@ -5,10 +5,10 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
 import { ComposerEditForm } from './ComposerEditForm';
 
-import { GetComposerDto } from '@/application/composer/dto/get-composer.dto';
+import { ComposerDto } from '@/application/composer/dto/composer.dto';
 
 interface ComposerDetailProps {
-  composer: GetComposerDto;
+  composer: ComposerDto;
   relatedWorks: { id: string; title: string; year: number | null }[];
 }
 
