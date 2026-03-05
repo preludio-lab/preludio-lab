@@ -12,10 +12,10 @@ updates:
     groups:
       dependency-updates:
         patterns:
-          - "*"
+          - '*'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
