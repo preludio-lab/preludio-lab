@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
-import { GetComposerDto } from '@/application/composer/dto/get-composer.dto';
+import { ComposerDto } from '@/application/composer/dto/composer.dto';
 import { updateComposerAction } from '@/actions/composer.action';
 
 interface ComposerEditFormProps {
-  composer: GetComposerDto;
+  composer: ComposerDto;
   onCancel: () => void;
 }
 

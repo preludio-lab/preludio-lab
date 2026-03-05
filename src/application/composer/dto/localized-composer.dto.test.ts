@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { GetComposersDtoSchema } from './get-composers.dto';
+import { LocalizedComposerDtoSchema } from './localized-composer.dto';
 
-describe('GetComposersDtoSchema', () => {
+describe('LocalizedComposerDtoSchema', () => {
   const validData = {
     id: '123e4567-e89b-12d3-a456-426614174000',
     slug: 'beethoven',
@@ -12,7 +12,7 @@ describe('GetComposersDtoSchema', () => {
   };
 
   it('should parse valid data', () => {
-    const result = GetComposersDtoSchema.safeParse(validData);
+    const result = LocalizedComposerDtoSchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
@@ -22,7 +22,7 @@ describe('GetComposersDtoSchema', () => {
       biography: 'Should not leak to list response',
     };
 
-    const result = GetComposersDtoSchema.safeParse(dataWithExtra);
+    const result = LocalizedComposerDtoSchema.safeParse(dataWithExtra);
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].code).toBe('unrecognized_keys');

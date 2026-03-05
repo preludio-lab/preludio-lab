@@ -6,7 +6,7 @@ import { ComposerMetadataSchema } from '@/domain/composer/composer.metadata';
  * Get Composers Response DTO
  * アプリケーション外部へ返す作曲家データ（リスト用）の構造定義。
  */
-export const GetComposersDtoSchema = ComposerControlSchema.pick({
+export const LocalizedComposerDtoSchema = ComposerControlSchema.pick({
   id: true,
   slug: true,
 })
@@ -20,4 +20,5 @@ export const GetComposersDtoSchema = ComposerControlSchema.pick({
   })
   .strict();
 
-export type GetComposersDto = z.infer<typeof GetComposersDtoSchema>;
+export type LocalizedComposerDto = z.output<typeof LocalizedComposerDtoSchema>;
+export type LocalizedComposerDtoInput = z.input<typeof LocalizedComposerDtoSchema>;

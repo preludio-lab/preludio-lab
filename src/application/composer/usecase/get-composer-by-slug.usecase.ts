@@ -1,4 +1,4 @@
-import { GetComposerDto, GetComposerDtoSchema } from '../dto/get-composer.dto';
+import { ComposerDto, ComposerDtoInput, ComposerDtoSchema } from '../dto/composer.dto';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { AppError } from '@/domain/shared/app-error';
 
@@ -8,7 +8,7 @@ import { AppError } from '@/domain/shared/app-error';
 export class GetComposerBySlugUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
-  async execute(slug: string): Promise<GetComposerDto> {
+  async execute(slug: string): Promise<ComposerDto> {
     const composer = await this.composerRepository.findBySlug(slug);
 
     if (!composer) {
@@ -18,7 +18,7 @@ export class GetComposerBySlugUseCase {
     // TODO: 7ヶ国語の翻訳データ、関連作品プレビュー等を取得・マージする処理は
     // インフラ層の拡張（IComposerDataSource / Mapper）完了後に実装
 
-    return GetComposerDtoSchema.parse({
+    const rawData: ComposerDtoInput = {
       id: composer.id,
       slug: composer.slug,
       name:
@@ -31,8 +31,8 @@ export class GetComposerBySlugUseCase {
         (typeof composer.biography === 'object' ? composer.biography?.ja : composer.biography) ||
         null,
       era: composer.era || null,
-      birthDate: composer.birthDate,
-      deathDate: composer.deathDate,
+      birthDate: composer.birthDate || null,
+      deathDate: composer.deathDate || null,
       nationalityCode: composer.nationalityCode || null,
       portrait: composer.portrait || null,
       representativeInstruments: composer.representativeInstruments,
@@ -68,6 +68,8 @@ export class GetComposerBySlugUseCase {
       relatedWorks: [],
       createdAt: composer.control.createdAt,
       updatedAt: composer.control.updatedAt,
-    });
+    };
+
+    return ComposerDtoSchema.parse(rawData);
   }
 }

@@ -27,11 +27,11 @@ const baseMetadata = ComposerMetadataSchema.pick({
   biography: z.string().nullable(),
   era: ComposerMetadataSchema.shape.era.nullable(),
   // DTO層での直列化の契約 (Date -> ISO String)
-  birthDate: z.coerce
+  birthDate: z
     .date()
     .nullable()
     .transform((d) => (d ? d.toISOString() : null)),
-  deathDate: z.coerce
+  deathDate: z
     .date()
     .nullable()
     .transform((d) => (d ? d.toISOString() : null)),
@@ -39,7 +39,7 @@ const baseMetadata = ComposerMetadataSchema.pick({
   portrait: ComposerMetadataSchema.shape.portrait.nullable(),
 });
 
-export const GetComposerDtoSchema = baseControl
+export const ComposerDtoSchema = baseControl
   .merge(baseMetadata)
   .extend({
     // 多言語データ
@@ -67,4 +67,5 @@ export const GetComposerDtoSchema = baseControl
   })
   .strict();
 
-export type GetComposerDto = z.infer<typeof GetComposerDtoSchema>;
+export type ComposerDto = z.output<typeof ComposerDtoSchema>;
+export type ComposerDtoInput = z.input<typeof ComposerDtoSchema>;

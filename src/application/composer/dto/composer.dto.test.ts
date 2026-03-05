@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { GetComposerDtoSchema } from './get-composer.dto';
+import { ComposerDtoSchema } from './composer.dto';
 
-describe('GetComposerDtoSchema', () => {
+describe('ComposerDtoSchema', () => {
   const validData = {
     id: '123e4567-e89b-12d3-a456-426614174000',
     slug: 'beethoven',
@@ -47,7 +47,7 @@ describe('GetComposerDtoSchema', () => {
   };
 
   it('should parse valid data', () => {
-    const result = GetComposerDtoSchema.safeParse(validData);
+    const result = ComposerDtoSchema.safeParse(validData);
     expect(result.success).toBe(true);
   });
 
@@ -57,7 +57,7 @@ describe('GetComposerDtoSchema', () => {
       secretField: 'secret-do-not-leak',
     };
 
-    const result = GetComposerDtoSchema.safeParse(dataWithSecret);
+    const result = ComposerDtoSchema.safeParse(dataWithSecret);
     expect(result.success).toBe(false);
     if (!result.success) {
       const issue = result.error.issues[0];
@@ -81,7 +81,7 @@ describe('GetComposerDtoSchema', () => {
       ],
     };
 
-    const result = GetComposerDtoSchema.safeParse(dataWithExtraWorksInfo);
+    const result = ComposerDtoSchema.safeParse(dataWithExtraWorksInfo);
     expect(result.success).toBe(false);
     if (!result.success) {
       const issue = result.error.issues[0];
