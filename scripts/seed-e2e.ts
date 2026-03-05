@@ -23,7 +23,7 @@ type WorkFixture = z.infer<typeof WorkFixturesSchema>;
 type ArticleFixture = z.infer<typeof ArticleFixturesSchema>;
 
 // --- Helper: Read and Validate JSON ---
-function readFixture<T>(filename: string, schema: z.ZodType<T>): T {
+function readFixture<T>(filename: string, schema: z.ZodType<T, z.ZodTypeDef, unknown>): T {
   const filePath = path.join(process.cwd(), 'src/shared/fixtures/gold-set/data', filename);
   const rawData = fs.readFileSync(filePath, 'utf-8');
   const json = JSON.parse(rawData);

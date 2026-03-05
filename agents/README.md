@@ -84,9 +84,11 @@ APIコストを極限まで抑えるため、以下のレイヤードアーキ�
 │   │   ├── agent.ts           # エージェント基底クラス (BaseAgent)
 │   │   ├── fetcher.ts         # アトミックキャッシュ付き HTTP クライアント
 │   │   └── tool.ts            # ツール定義基底
-│   ├── prompts/               # エージェント定義（プロンプト & スキーマ）
+│   ├── agents/                # エージェント定義（役割定義と推論ロジック）
+│   │   └── composer/          # 作曲家生成に特化したエージェント群
+│   ├── schemas/               # 中間データ・エージェントI/O用Zodスキーマ
 │   ├── tools/                 # エージェントが使用する機能（関数実装）
-│   ├── workflows/             # 実行用スクリプト（TaskStateManager 等）
+│   ├── workflows/             # 実行用スクリプト（Thin Orchestrator）
 │   └── infrastructure/        # CLI用リポジトリ実装（直接DB接続、ファイルシステム）
 ├── .cache/                    # フェッチキャッシュ、タスク状態の永続化
 └── workspace/                 # ローカル作業領域・スクラッチパッド
@@ -139,27 +141,32 @@ export class BaseAgent {
 }
 ```
 
-#### B. Prompts & Schemas: Specialized Agents
+#### B. Agents & Schemas: Specialized AI Units
 
-役割（Persona）ごとにプロンプトテンプレートと出力責任（Schema）を定義します。
+役割（Persona）ごとにシステム指示と推論ロジックをクラスとしてカプセル化します。データ構造（Schema）は `src/schemas` に分離し、型安全性を確保します。
 
 ```typescript
-// src/prompts/writer.ts
-import { BaseAgent } from "../core/agent";
+// src/agents/composer/draft-agent.ts
+import { BaseAgent } from '@/core/agent.js';
+import { ComposerDraftSchema } from '@/schemas/composer.js';
 
-export const ArticleSchema = z.object({
-  title: z.string(),
-  summary: z.string(),
-  sections: z.array(z.object({ ... }))
-});
+const SYSTEM_INSTRUCTION = `あなたはクラシック音楽の専門家です...`;
 
-export const createWriterAgent = () => {
-  return new BaseAgent(
-    "gemini-3-flash-preview", // ライター役には最新の高性能モデルを割り当て
-    `あなたはPreludioLabの専属ライターです。
-     読者はクラシック音楽の初心者です...`
-  );
-};
+export class ComposerDraftAgent {
+  private agent: BaseAgent;
+
+  constructor(config: { modelName: string }) {
+    this.agent = new BaseAgent({
+      modelName: config.modelName,
+      systemInstruction: SYSTEM_INSTRUCTION,
+    });
+  }
+
+  async execute(name: string) {
+    const prompt = `${name} についてのドラフトを作成してください。`;
+    return await this.agent.generateObject(prompt, ComposerDraftSchema);
+  }
+}
 ```
 
 #### C. Workflows: Executable Scripts
