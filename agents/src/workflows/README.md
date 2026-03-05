@@ -71,7 +71,7 @@ AIエージェント、Coreモジュール、およびTools群を組み合わせ
 - **目的**: 高性能AIとGoogle Search (Grounding)を利用して、指定された作曲家の詳細な情報を収集し、世界最高のクラシック音楽サイトの基準に合致する高品質なマスタデータを生成する。
 - **入力 (`GenerateComposerInputSchema`)**:
   - `slug` (string): 作曲家の識別子（例: `beethoven`）
-  - `name` (string): 検索やプロンプト生成に使用するフルネーム（例: `Ludwig van Beethoven`）
+  - `name` (string): 検索やプロンプト生成に使用するフルネーム（例: `Ludwig van Beethoven`）。`draft` ステップおよび `--auto` 実行時にのみ必須。
   - `dryRun` (boolean): `true` の場合は出力ファイルの存在確認やバリデーションのみ行い、API通信をスキップする（冪等性・安全性）。
   - `step` (enum): 実行するステップを指定する (`draft` | `refine` | `translate` | `finalize`)。
   - `review` (string): `step=refine` 時に渡す、人間のフィードバックや改善指示コメント。
@@ -131,7 +131,7 @@ pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step
 ※手動で直接 json を編集しても構いません（その場合は厳格なJSON Formatterチェックが走ります）。
 
 ```bash
-pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step refine --review "代表作の解釈に、交響曲第9番が後世に与えた影響を厚めに追記してください"
+pnpm run workflow:composer --slug beethoven --step refine --review "代表作の解釈に、交響曲第9番が後世に与えた影響を厚めに追記してください"
 ```
 
 > **確認:** 実行後、指摘事項が反映された `beethoven.refined.json` が生成されます。
@@ -141,7 +141,7 @@ pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step
 日本語の内容が確定したら、残りの6言語（en, de, fr, it, es, zh）へ並列で推論APIを利用し翻訳させます。
 
 ```bash
-pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step translate
+pnpm run workflow:composer --slug beethoven --step translate
 ```
 
 > **確認:** 実行後、各言語を含んだ完全なデータ形式の `beethoven.translated.json` が生成されます。
@@ -151,7 +151,7 @@ pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step
 翻訳結果にも問題がなければ、Zodによる最終型チェックを経て正式な保存先へ書き出します。
 
 ```bash
-pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step finalize
+pnpm run workflow:composer --slug beethoven --step finalize
 ```
 
 > **確認:** 実行後、`data/composers/beethoven.json` に完成版のデータが保存されます。
