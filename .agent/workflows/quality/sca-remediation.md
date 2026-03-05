@@ -10,7 +10,7 @@ Weekly で発生する「定型的な脆弱性対応・アップデート対応�
 
 // turbo
 
-1. `gh pr list --state open` を実行し、Dependabot 等による SCA 関連 PR を抽出する。
+1. `gh pr list --state open --search "chore(deps)"` を実行し、Dependabot 等による SCA 関連 PR を抽出する。
 2. 各 PR の変更内容と、現在のプロジェクトの制約（Node.js 22 LTS, pnpm 10）を照合する。
 
 # 2. 不正・不適切な PR の棄却 (Fail-Fast)
