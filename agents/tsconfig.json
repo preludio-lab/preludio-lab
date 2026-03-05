@@ -13,7 +13,8 @@
     "noEmit": true,
     "paths": {
       "@/core/*": ["src/core/*"],
-      "@/prompts/*": ["src/prompts/*"],
+      "@/agents/*": ["src/agents/*"],
+      "@/schemas/*": ["src/schemas/*"],
       "@/tools/*": ["src/tools/*"],
       "@/workflows/*": ["src/workflows/*"],
       "@/infrastructure/*": ["src/infrastructure/*"],

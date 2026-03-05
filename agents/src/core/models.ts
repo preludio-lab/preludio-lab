@@ -19,7 +19,7 @@ export const GeminiModels = {
   /** 開発・テスト用の安定版（軽量） */
   STABLE_FLASH_LITE: 'gemini-2.5-flash-lite',
   /** 試験的なGemmaベースモデル */
-  GEMMA_3_27B: 'gemma-3-27b-it',
+  GEMMA_3_12B: 'gemma-3-12b-it',
 } as const;
 
 /**

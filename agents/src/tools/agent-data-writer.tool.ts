@@ -67,11 +67,14 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
 
     const filePath = path.join(this.outputDir, `${slug}.json`);
 
-    // システムメタデータの生成
+    // システムメタデータの生成 (既存のものを優先)
+    const existingMeta = (input as Record<string, unknown>)._generatorMeta as
+      | Record<string, unknown>
+      | undefined;
     const metaData: Record<string, unknown> = {
       _generatorMeta: {
-        model: context?.modelName || 'AgentSystem',
-        generatedAt: new Date().toISOString(),
+        model: existingMeta?.model || context?.modelName || 'AgentSystem',
+        generatedAt: existingMeta?.generatedAt || new Date().toISOString(),
       },
     };
 

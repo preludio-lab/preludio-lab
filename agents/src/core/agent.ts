@@ -206,37 +206,71 @@ export class BaseAgent {
   }
 
   /**
-   * 単純な構造化出力 (JSON Mode) を生成します。
    * ユーザーからのプロンプトに対し、指定された Zod スキーマに完全に合致する JSON オブジェクトを返します。
+   * バリデーションに失敗した場合は、エラー内容をモデルにフィードバックして自動的に再試行します。
    *
    * @param prompt ユーザーからの指示（プロンプト）文字列
    * @param schema 出力として期待するデータ構造を定義した Zod スキーマ
+   * @param options 再試行回数等のオプション
    * @returns スキーマの検証を通過したパース済みのオブジェクト
-   * @throws {Error} Gemini のレスポンスが JSON として不正な場合、またはスキーマ検証に失敗した場合
+   * @throws {Error} 最大再試行回数を超えても成功しない場合
    */
-  async generateObject<T>(prompt: string, schema: z.ZodType<T>): Promise<T> {
+  async generateObject<T>(
+    prompt: string,
+    schema: z.ZodType<T, z.ZodTypeDef, unknown>,
+    options: { maxRetries?: number } = {},
+  ): Promise<T> {
+    const maxRetries = options.maxRetries ?? 3;
+    let currentRetries = 0;
+    let lastError: Error | null = null;
+    const currentPrompt = prompt;
+
     // Zod スキーマを JSON Schema 経由で Gemini 互換の Schema 形式に変換
     const jsonSchema = convertZodToJsonSchema(schema);
     const geminiSchema = convertToGeminiSchema(jsonSchema);
 
-    const result = await this.model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        // Gemini 側にスキーマを渡すことで、出力構造を物理的に強制（Constrained Output）する
-        responseSchema: geminiSchema,
-      },
-    });
+    const history: { role: string; parts: { text: string }[] }[] = [
+      { role: 'user', parts: [{ text: currentPrompt }] },
+    ];
 
-    const responseText = result.response.text();
-    try {
-      const parsed = JSON.parse(responseText);
-      // モデルが強制に従った出力を返してくるため、JSON パースと Zod 検証は極めて高い確率で成功する
-      return schema.parse(parsed);
-    } catch (error) {
-      consola.error('[BaseAgent] Failed to parse JSON response or validate against schema.');
-      throw error;
+    while (currentRetries <= maxRetries) {
+      if (currentRetries > 0 && lastError) {
+        consola.warn(
+          `[BaseAgent] Validation failed (attempt ${currentRetries}). Retrying with error feedback...`,
+        );
+        // エラー内容をフィードバックとして追加
+        history.push({
+          role: 'user',
+          parts: [
+            {
+              text: `前回の回答にバリデーションエラーがありました。以下のエラー内容を確認し、JSONを修正して再度出力してください。\n\nERROR:\n${lastError.message}`,
+            },
+          ],
+        });
+      }
+
+      const result = await this.model.generateContent({
+        contents: history,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          responseSchema: geminiSchema,
+        },
+      });
+
+      const responseText = result.response.text();
+      history.push({ role: 'model', parts: [{ text: responseText }] });
+
+      try {
+        const parsed = JSON.parse(responseText);
+        return schema.parse(parsed);
+      } catch (error) {
+        lastError = error as Error;
+        currentRetries++;
+      }
     }
+
+    consola.error('[BaseAgent] Max retries reached. Failed to satisfy schema.');
+    throw lastError || new Error('Failed to generate valid object after retries.');
   }
 
   /**
