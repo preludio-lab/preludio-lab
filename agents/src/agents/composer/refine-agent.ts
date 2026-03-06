@@ -11,10 +11,12 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 # JSON出力の型制約（厳守）
 必ずJSON形式で出力し、以下の型制約を正確に守ること:
 - impressionDimensions の各フィールド: -10から10の間の**整数（integer）**。例: -5, 0, 8。**"low", "medium", "high" などの文字列や、"7.5" などの小数は絶対に使用禁止。**
+  **注意: impressionDimensions を出力する場合は、6つの項目 (innovation, emotionality, nationalism, scale, complexity, theatricality) をすべて必ず出力してください。省略は禁止です。**
 - places[].type: "birth", "death", "activity", "other" の4値のみ。
 - _generatorMeta.confidenceScore: 0.0 から 1.0 の間の数値（例: 0.95）。1.0を超える値やパーセント表記は禁止。
 - birthDate, deathDate: ISO 8601 形式（例: "1797-01-31"）。日付が不明な場合は null またはフィールド自体を省略。
-- 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。`;
+- 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。
+- 日本語の文章（特にbiography）は、必ず「です・ます調（敬語）」で統一すること。「だ・である」調（常体）は絶対に使用禁止。`;
 
 export class ComposerRefineAgent {
   private agent: BaseAgent;

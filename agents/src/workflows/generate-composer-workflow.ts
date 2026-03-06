@@ -11,6 +11,7 @@ import {
   type ComposerMaster,
   COMPOSER_MASTER_VERSION,
 } from '@/application/composer/master/composer-master.schema.js';
+import { WorkflowComposerMasterSchema } from '@/schemas/composer.js';
 import { AppLocale } from '@/domain/i18n/locale.js';
 
 import { ComposerDraftAgent } from '@/agents/composer/draft-agent.js';
@@ -157,7 +158,7 @@ export class GenerateComposerWorkflow {
       return;
     }
 
-    let currentJson: ComposerMaster | null = null;
+    let currentJson: unknown = null;
     const modelName = GeminiModels.FLASH_LITE; // 使用モデルを一元管理
 
     // ----- STEP 1: DRAFT -----
@@ -186,6 +187,14 @@ export class GenerateComposerWorkflow {
 
     // ----- STEP 3: TRANSLATE -----
     if (startStep === COMPOSER_WORKFLOW_STEPS.TRANSLATE || input.auto) {
+      // autoモードかつ、前のステップ(draft/refine)から継続してきた場合のみウェイト(RPM対策)
+      if (input.auto && startStep !== COMPOSER_WORKFLOW_STEPS.TRANSLATE) {
+        consola.info(
+          `[GenerateComposerWorkflow] Waiting 5 seconds before starting translation to prevent rate limit...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+
       currentJson = await this.executeTranslateStep(input, modelName, currentJson);
 
       if (!input.auto) {
@@ -209,7 +218,7 @@ export class GenerateComposerWorkflow {
   private async executeDraftStep(
     input: GenerateComposerInput,
     modelName: GeminiModelName,
-  ): Promise<ComposerMaster> {
+  ): Promise<unknown> {
     const composerName = input.name as string;
     consola.start(
       `[Step: draft] Collecting background information for ${composerName} and generating primary Japanese master data...`,
@@ -219,18 +228,21 @@ export class GenerateComposerWorkflow {
     const draftResult = await agent.execute(composerName, input.slug);
 
     // Draft 形式 (単一文字列) から Master 形式 (多言語オブジェクト) へ変換
+    // _reasoning フィールドはマスターデータには含めないため、ここで除外
+    const { _reasoning, ...draftData } = draftResult;
+
     const currentJson = {
-      ...draftResult,
+      ...draftData,
       _schemaVersion: COMPOSER_MASTER_VERSION,
       _generatorMeta: {
-        ...draftResult._generatorMeta,
+        ...draftData._generatorMeta,
         model: modelName,
         generatedAt: new Date().toISOString(),
       },
-      fullName: { [AppLocale.JA]: draftResult.fullName },
-      displayName: { [AppLocale.JA]: draftResult.displayName },
-      shortName: { [AppLocale.JA]: draftResult.shortName },
-      biography: draftResult.biography ? { [AppLocale.JA]: draftResult.biography } : undefined,
+      fullName: { [AppLocale.JA]: draftData.fullName },
+      displayName: { [AppLocale.JA]: draftData.displayName },
+      shortName: { [AppLocale.JA]: draftData.shortName },
+      biography: draftData.biography ? { [AppLocale.JA]: draftData.biography } : undefined,
     } as ComposerMaster;
 
     const outPath = this.getDraftPath(input.slug);
@@ -247,7 +259,7 @@ export class GenerateComposerWorkflow {
   private async executeRefineStep(
     input: GenerateComposerInput,
     modelName: GeminiModelName,
-  ): Promise<ComposerMaster> {
+  ): Promise<unknown> {
     consola.start(`[Step: refine] Regenerating data based on human review comments...`);
     if (!input.review) {
       throw new Error(
@@ -269,7 +281,11 @@ export class GenerateComposerWorkflow {
     const draftData = ComposerMasterSchema.parse(draftObj);
 
     const agent = new ComposerRefineAgent({ modelName });
-    const currentJson = await agent.execute(draftData, input.review);
+    const refinedResult = await agent.execute(draftData, input.review);
+
+    // _reasoning フィールドが含まれている可能性があるため除外（TypeScript上の型定義にはないが、AIが返す可能性がある）
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _reasoning, ...currentJson } = refinedResult as Record<string, unknown>;
 
     const outPath = this.getRefinedPath(input.slug);
     await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
@@ -285,8 +301,8 @@ export class GenerateComposerWorkflow {
   private async executeTranslateStep(
     input: GenerateComposerInput,
     modelName: GeminiModelName,
-    currentJson: ComposerMaster | null,
-  ): Promise<ComposerMaster> {
+    currentJson: unknown | null,
+  ): Promise<unknown> {
     let targetJson = currentJson;
     if (!targetJson) {
       // ステップがtranslateから開始された場合、ソースとなる一時ファイルを読み込む
@@ -318,7 +334,7 @@ export class GenerateComposerWorkflow {
         `[Step: translate] Translating into ${lang} (${i + 1}/${targetLangs.length})...`,
       );
 
-      const translatedStrings = await agent.execute(targetJson, lang);
+      const translatedStrings = await agent.execute(targetJson as ComposerMaster, lang);
       translationResults.push({ lang, data: translatedStrings });
 
       // レートリミット対策として待機
@@ -381,7 +397,7 @@ export class GenerateComposerWorkflow {
    */
   private async executeFinalizeStep(
     input: GenerateComposerInput,
-    currentJson: ComposerMaster | null,
+    currentJson: unknown | null,
   ): Promise<void> {
     consola.start(`[Step: finalize] Performing final validation and persisting as master data...`);
 
@@ -395,16 +411,17 @@ export class GenerateComposerWorkflow {
         );
       }
       const rawData = await fs.readFile(sourcePath, 'utf-8');
-      targetJson = ComposerMasterSchema.parse(JSON.parse(rawData));
+      targetJson = JSON.parse(rawData);
     }
 
     // 最終的に必要なすべてのデータがスキーマ仕様を満たしているか検証・整形
-    const finalData = ComposerMasterSchema.parse(targetJson);
+    // 日付がDate型にキャストされないようWorkflowComposerMasterSchemaを使用
+    const finalData = WorkflowComposerMasterSchema.parse(targetJson);
 
     const writer = new AgentDataWriterTool(
       'composerDataWriter',
       'ComposerMasterDataをファイルシステムへ保存する',
-      ComposerMasterSchema as unknown as z.AnyZodObject,
+      WorkflowComposerMasterSchema as unknown as z.AnyZodObject,
       this.dataDir,
       'slug',
     );
