@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { ComposerMasterSchema } from '@/application/composer/master/composer-master.schema.js';
+import {
+  ComposerMasterSchema,
+  COMPOSER_MASTER_VERSION,
+} from '@/application/composer/master/composer-master.schema.js';
 
 /**
  * Draft phase specialized schema.
@@ -10,17 +13,94 @@ export const DraftFieldsSchema = z.object({
   fullName: z.string().describe('作曲家の氏名（日本語フルネーム）'),
   displayName: z.string().describe('作曲家の表示用氏名（日本語、名字のみ等）'),
   shortName: z.string().describe('作曲家の短縮名（日本語、姓のみ等）'),
-  biography: z.string().describe('作曲家の人物紹介・略歴（日本語、500〜1000文字程度）').optional(),
+  biography: z
+    .string()
+    .describe(
+      '作曲家の人物紹介・略歴（日本語）。可読性を高めるため、必ず3つの段落で構成し、各段落の間には改行コード "\\n\\n" を挿入すること。第1段落: 生い立ちと概要、第2段落: 音楽史における功績と代表作、第3段落: 後世への影響と現代における評価。文章は必ず「です・ます調（敬語）」で記述し、「だ・である調（常体）」は不可。',
+    )
+    .optional(),
 });
+
+/**
+ * AIの思考プロセスを格納するスキーマ
+ */
+const ReasoningSchema = z
+  .object({
+    nameAnalysis: z
+      .string()
+      .describe(
+        '原語でのフルネームを確認し、日本で最も一般的に使用されるカタカナ表記のフルネーム、一般的な表示名（例: J.S.バッハ）、および短縮名（姓のみ）を整理してください。',
+      ),
+    chronologyAndLocations: z
+      .string()
+      .describe(
+        '生年月日、没年月日、および主要な活動拠点（出生地、没地、活躍した都市）を時系列で列挙し、それぞれの都市が現在どの国のISO 3166-1 alpha-2コードに属するかを確認してください。活動拠点 (places) は最大3つに絞り込んでください。',
+      ),
+    musicalContributions: z
+      .string()
+      .describe(
+        '歴史的に最も重要な貢献を果たしたジャンルと楽器を特定し、それが指定されたEnumリストのどれに該当するかをマッピングしてください。',
+      ),
+    historicalContext: z
+      .string()
+      .describe('この作曲家の音楽史における最大の功績を事実に基づいて分析してください。'),
+    eraClassification: z.string().describe('時代区分を決定した理由を記述してください。'),
+    biographyStructure: z
+      .string()
+      .describe(
+        '伝記執筆のため、1)生い立ちと初期キャリア、2)功績と代表作、3)後世への影響 の3段落構成でのアウトライン（箇条書き）を作成してください。',
+      ),
+  })
+  .describe('最終的なデータを出力する前の思考プロセス。事実確認と分析をここで行うこと。');
+
+/**
+ * 日付文字列の共通制約
+ */
+const DateStringSchema = z
+  .string()
+  .describe('YYYY-MM-DD 形式の文字列（例: "1678-03-04"）。タイムゾーン情報は絶対に含めないこと。')
+  .nullable()
+  .optional();
 
 export const ComposerDraftSchema = ComposerMasterSchema.omit({
   fullName: true,
   displayName: true,
   shortName: true,
   biography: true,
-}).extend(DraftFieldsSchema.shape);
+  representativeGenres: true,
+  birthDate: true,
+  deathDate: true,
+})
+  .extend(DraftFieldsSchema.shape)
+  .extend({
+    _reasoning: ReasoningSchema,
+    representativeGenres: z
+      .array(z.string())
+      .describe(
+        '代表ジャンル。必ず以下のリストから最も歴史的貢献度が高いものを最大5つまで選択すること: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。注意: 例えばバロック期の協奏曲において、solo-concerto（独奏協奏曲）と concerto-grosso（合奏協奏曲）は歴史的事実に基づいて厳密に区別すること。',
+      )
+      .default([]),
+    birthDate: DateStringSchema,
+    deathDate: DateStringSchema,
+  });
 
 export type ComposerDraft = z.infer<typeof ComposerDraftSchema>;
+
+/**
+ * Workflow output & persistence specialized schema.
+ * Overrides Date types to strings to prevent T00:00:00Z suffix during JSON stringification.
+ */
+export const WorkflowComposerMasterSchema = ComposerMasterSchema.omit({
+  birthDate: true,
+  deathDate: true,
+  _schemaVersion: true,
+}).extend({
+  birthDate: z.string().nullable().optional(),
+  deathDate: z.string().nullable().optional(),
+  _schemaVersion: z.string().default(COMPOSER_MASTER_VERSION),
+});
+
+export type WorkflowComposerMaster = z.infer<typeof WorkflowComposerMasterSchema>;
 
 /**
  * Translation step specialized schema.
