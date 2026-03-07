@@ -51,13 +51,11 @@ AIエージェント、Coreモジュール、およびTools群を組み合わせ
 - プロセスが中断（OOMやAPIエラー等）した場合でも、再実行時に成功済みのステップをスキップし、安全に再開できる設計とする。
 - 状態の確認を伴わない外部API呼び出しや書き込み処理は行わない。
 
-### 4. File Bucket Relay Compliance & Validate-First (ディレクトリ規約と事前検証)
-
-- ワークフローの入力元と出力先は、アーキテクチャで定められたディレクトリパスを遵守する。揮発的なメモリのみに依存した状態の受け渡しは行わない。
-- **事前検証 (Validate-First)**: ファイルの読み込み直後に Zod スキーマで構造を検証し、不正なデータであればAPI呼び出し前にエラー終了（Fail-Fast）させる。
-
 ### 5. Fail-Fast & Observability (エラーハンドリングと可観測性)
 
+- **早期チェックとAPIコスト保護**: 重いAPI処理を実行する前に最終永続化データの存在確認を行い（冪等性の早期チェック）、無駄なAPIコールをスキップする。
+- **厳格な事前検証 (Validate-First)**: 各ステップでの一時保存や永続化の直前に、必ず `Zod` スキーマによる検証を行う。人間がテキストエディタで直接編集した一時ファイル（`*.refined.json` 等）を読み込む際は、単なるスキーマ検証だけでなく「正しいJSONフォーマットとしてパース可能か」を厳格に検証し、文法エラー時は開発者に分かりやすいエラーメッセージを出力する。
+- **Rate Limit への耐性 (Resilience)**: Gemini API の一時的なネットワークエラーやレートリミット（429エラー）に備え、HTTPクライアントに Exponential Backoff を伴う自動リトライ機構を実装する。
 - 予期せぬエラーやリトライ上限到達時は例外をキャッチせず、スタックトレースを残して即座に異常終了（`exit code 1`）させる。
 - **可観測性の確保**: 異常終了の前には、`consola.error` 等を用いて処理中だったエンティティの識別子（IDやファイルパス等）を標準出力に記録し、リカバリを容易にする。
 
@@ -65,3 +63,109 @@ AIエージェント、Coreモジュール、およびTools群を組み合わせ
 
 - 破壊的変更（DBへのUpsertやAPIコストの発生等）を伴うワークフローは、`--dry-run` フラグの入力をサポートする。
 - 実行対象の件数や事前パース結果のみを、安全かつコストゼロで検証できる状態を確保する。
+
+## ワークフロー一覧
+
+### 1. マスターデータ生成（Composer） (`generate-composer-workflow.ts`)
+
+- **目的**: 高性能AIとGoogle Search (Grounding)を利用して、指定された作曲家の詳細な情報を収集し、世界最高のクラシック音楽サイトの基準に合致する高品質なマスタデータを生成する。
+- **入力 (`GenerateComposerInputSchema`)**:
+  - `slug` (string): 作曲家の識別子（例: `beethoven`）
+  - `name` (string): 検索やプロンプト生成に使用するフルネーム（例: `Ludwig van Beethoven`）。`draft` ステップおよび `--auto` 実行時にのみ必須。
+  - `dryRun` (boolean): `true` の場合は出力ファイルの存在確認やバリデーションのみ行い、API通信をスキップする（冪等性・安全性）。
+  - `step` (enum): 実行するステップを指定する (`draft` | `refine` | `translate` | `finalize`)。
+  - `review` (string): `step=refine` 時に渡す、人間のフィードバックや改善指示コメント。
+  - `auto` (boolean): `true` の場合、全ステップを人間を介さず一気通貫で実行するモード。
+- **出力先**:
+  - 一時保存先 (draft後): `agents/workspace/temp/composers/{slug}.draft.json`
+  - 一時保存先 (refine後): `agents/workspace/temp/composers/{slug}.refined.json`
+  - 一時保存先 (translate後): `agents/workspace/temp/composers/{slug}.translated.json`
+  - 永続化先 (finalize時): `data/composers/{slug}.json`
+- **使用モデル**: `gemini-3.1-pro-preview` 等の高精度モデル（Grounding有効）
+- **アーキテクチャの特徴**:
+  - **Thin Orchestrator**: `AgentDataWriterTool` は Agent の関数としてではなく、ワークフロー自身のインフラ層として利用し、失敗時は `exit code 1` で終了する（Fail-Fast）。
+  - **AI-assisted HITL (4-Phase Lifecycle)**: 開発者のレビュー負担を減らすため、「(1)素案作成 (`draft`)」→「(2)AIによるレビュー反映 (`refine`)」→「(3)翻訳 (`translate`)」→「(4)最終化 (`finalize`)」のライフサイクルを導入。人間は直接JSONを編集するのではなく、フィードバックテキストを渡してAIに直させる運用も可能とする。
+- **処理フロー**:
+  1. CLI引数として `slug`, `name`, `--step=...`, `--review=...`, `--auto` を受け取り Validate-First を実行する。
+  2. 【素案作成 (`--step=draft`) または `--auto`時】:
+     - 対象の作曲家情報を**日本語**で汎用的に検索・要約し、`ja`ノードのみ埋めたJSONデータを生成。
+     - **[検証]**: `ComposerMasterSchema`（日本語検証用）でバリデーションを実施。
+     - 一時領域に `{slug}.draft.json` として保存する。稼働者はこれを確認する。
+  3. 【レビュー反映 (`--step=refine`)】:
+     - `--review="..."` の指示に基づき、Agentが最新の一時ファイル（`draft.json` または既存の `refined.json`）を読み込んで改善版を再生成。
+     - **[検証]**: スキーマで妥当性を検証後、一時ファイル `{slug}.refined.json` として保存する。
+  4. 【翻訳作成 (`--step=translate`) または `--auto`継続時】:
+     - 最新の素案ファイル（`refined.json` または `draft.json`）を読み込み、テキストベースに残り全言語（en, de, fr 等）へ翻訳処理を実施。
+     - **[並列実行の独立性]**: 出力トークンの上限超過やJSON構造破損を防ぐため、1回のAPIコールで処理せず、言語ごとの配列（`['en', 'de', ...]`）に対してループを回し、言語単位で独立したプロンプトによる推論API呼び出し（`Promise.all`等による並列実行）を行う。
+     - **[検証]**: スキーマ要件（全言語データが揃っているか等）を満たすか検証し、一時領域に `{slug}.translated.json` として保存する。
+  5. 【最終化 (`--step=finalize`) または `--auto`継続時】:
+     - 翻訳済みのデータ（`translated.json`）を読み込み、改めて全体の最終検証を実施。
+     - `AgentDataWriterTool` を用いて最終永続化先（`data/composers/{slug}.json`）へ正式に出力する。
+
+### 実行・検証ガイド (Walkthrough)
+
+本ワークフローを実際にローカル環境で動かしてコンポーザーデータを作成・検証するための具体的な手順です。
+
+#### 事前準備
+
+Google Gemini API を利用するため、プロジェクトルートにて `GEMINI_API_KEY` 環境変数が設定されている必要があります。
+実行はすべてプロジェクトのルートディレクトリで `pnpm run workflow:composer` コマンドを通じて行います。
+
+#### 1. ステップバイステップでの実行（HITLモード）
+
+特定の作曲家（例: `beethoven`）を対象に、一つずつステップを進めて動作を確認し、途中で人間が介入（Human-in-the-Loop）する手順です。
+
+##### ① 素案（日本語のみ）の作成
+
+`draft` モードで歴史的背景や代表作を調べさせ、日本語のJSONを生成させます。
+
+```bash
+pnpm run workflow:composer --slug beethoven --name "Ludwig van Beethoven" --step draft
+```
+
+> **確認:** 実行後、`agents/workspace/temp/composers/beethoven.draft.json` にファイルが生成されるので内容を確認します。
+
+##### ② (任意) AIによる推敲と改善
+
+生成された内容に対してレビューコメント（例:「もっと交響曲第9番について詳しく書いて」など）を与え、AIに内容を改善（Refine）させます。
+※手動で直接 json を編集しても構いません（その場合は厳格なJSON Formatterチェックが走ります）。
+
+```bash
+pnpm run workflow:composer --slug beethoven --step refine --review "代表作の解釈に、交響曲第9番が後世に与えた影響を厚めに追記してください"
+```
+
+> **確認:** 実行後、指摘事項が反映された `beethoven.refined.json` が生成されます。
+
+##### ③ 多言語への翻訳
+
+日本語の内容が確定したら、残りの6言語（en, de, fr, it, es, zh）へ並列で推論APIを利用し翻訳させます。
+
+```bash
+pnpm run workflow:composer --slug beethoven --step translate
+```
+
+> **確認:** 実行後、各言語を含んだ完全なデータ形式の `beethoven.translated.json` が生成されます。
+
+##### ④ 最終化とマスターデータ保存
+
+翻訳結果にも問題がなければ、Zodによる最終型チェックを経て正式な保存先へ書き出します。
+
+```bash
+pnpm run workflow:composer --slug beethoven --step finalize
+```
+
+> **確認:** 実行後、`data/composers/beethoven.json` に完成版のデータが保存されます。
+
+#### 2. 全自動モードでの一括実行 (Auto)
+
+途中の確認（HITLによる手動レビュー）が不要な場合は、`--auto` フラグを付与することで `draft` -> `translate` -> `finalize` を一気通貫で実行できます。
+
+```bash
+# モーツァルトの全言語データを一気に生成して保存する例
+pnpm run workflow:composer --slug mozart --name "Wolfgang Amadeus Mozart" --auto
+```
+
+#### その他の便利なオプション
+
+- `--dry-run`: 実際の API コールやファイル書き込みを行わず、バリデーションと引数のパースのみをテストします。
+- `--force`: 本ワークフローは無駄なAPIコールを防ぐため、すでに `data/composers/{slug}.json` が存在する場合は処理をスキップ（フェイルファスト）します。これを無視して強制的に上書き実行したい場合は付与してください。

@@ -84,9 +84,11 @@ APIコストを極限まで抑えるため、以下のレイヤードアーキ�
 │   │   ├── agent.ts           # エージェント基底クラス (BaseAgent)
 │   │   ├── fetcher.ts         # アトミックキャッシュ付き HTTP クライアント
 │   │   └── tool.ts            # ツール定義基底
-│   ├── prompts/               # エージェント定義（プロンプト & スキーマ）
+│   ├── agents/                # エージェント定義（役割定義と推論ロジック）
+│   │   └── composer/          # 作曲家生成に特化したエージェント群
+│   ├── schemas/               # 中間データ・エージェントI/O用Zodスキーマ
 │   ├── tools/                 # エージェントが使用する機能（関数実装）
-│   ├── workflows/             # 実行用スクリプト（TaskStateManager 等）
+│   ├── workflows/             # 実行用スクリプト（Thin Orchestrator）
 │   └── infrastructure/        # CLI用リポジトリ実装（直接DB接続、ファイルシステム）
 ├── .cache/                    # フェッチキャッシュ、タスク状態の永続化
 └── workspace/                 # ローカル作業領域・スクラッチパッド
@@ -139,27 +141,32 @@ export class BaseAgent {
 }
 ```
 
-#### B. Prompts & Schemas: Specialized Agents
+#### B. Agents & Schemas: Specialized AI Units
 
-役割（Persona）ごとにプロンプトテンプレートと出力責任（Schema）を定義します。
+役割（Persona）ごとにシステム指示と推論ロジックをクラスとしてカプセル化します。データ構造（Schema）は `src/schemas` に分離し、型安全性を確保します。
 
 ```typescript
-// src/prompts/writer.ts
-import { BaseAgent } from "../core/agent";
+// src/agents/composer/draft-agent.ts
+import { BaseAgent } from '@/core/agent.js';
+import { ComposerDraftSchema } from '@/schemas/composer.js';
 
-export const ArticleSchema = z.object({
-  title: z.string(),
-  summary: z.string(),
-  sections: z.array(z.object({ ... }))
-});
+const SYSTEM_INSTRUCTION = `あなたはクラシック音楽の専門家です...`;
 
-export const createWriterAgent = () => {
-  return new BaseAgent(
-    "gemini-3-flash-preview", // ライター役には最新の高性能モデルを割り当て
-    `あなたはPreludioLabの専属ライターです。
-     読者はクラシック音楽の初心者です...`
-  );
-};
+export class ComposerDraftAgent {
+  private agent: BaseAgent;
+
+  constructor(config: { modelName: string }) {
+    this.agent = new BaseAgent({
+      modelName: config.modelName,
+      systemInstruction: SYSTEM_INSTRUCTION,
+    });
+  }
+
+  async execute(name: string) {
+    const prompt = `${name} についてのドラフトを作成してください。`;
+    return await this.agent.generateObject(prompt, ComposerDraftSchema);
+  }
+}
 ```
 
 #### C. Workflows: Executable Scripts
@@ -169,17 +176,24 @@ CLI や CI から実行されるエントリーポイントです。「マスタ
 ```typescript
 // src/workflows/create-article.ts
 async function main() {
-  // 1. リクエストの読み込み
+  // 1. リクエストの読み込みとValidation (Validate-First)
   const request = await readJson('workspace/inbox/req.json');
 
-  // 2. エージェントの実行
+  // 2. エージェントの実行 (副作用を持たない推論)
   const writer = createWriterAgent();
   const article = await writer.run(request, ArticleSchema);
 
-  // 3. 成果物の保存
+  // 3. 成果物の保存 (Thin Orchestratorによる確実な書き込み)
   await saveMdx('src/content/works/...', article);
 }
 ```
+
+### 3.5. Separation of Concerns (Thin Orchestrator)
+
+ワークフローとエージェントの役割を厳格に分離する **Thin Orchestrator** パターンを採用します。
+
+- **エージェントの役割 (Pure Function)**: コンテキストと入力を受け取り、構造化データやテキストを出力（推論）すること。ファイル出力やDB保存などの「副作用」を直接持たせてはなりません。
+- **ワークフローの役割 (Side Effects)**: 「情報の読み込み」「エージェントへの指示」「返却されたデータの検証・保存機能の呼び出し (`AgentDataWriterTool`)」を担当し、プロセス全体のエラーと冪等性を管理します。
 
 ### 3.4. Execution Environment & Future Work
 

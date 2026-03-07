@@ -24,9 +24,11 @@ else
     git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" master
 fi
 
-echo "Copying environment files..."
-cp .env $WORKTREE_PATH/.env 2>/dev/null || echo ".env not found, skipping."
-cp .env.local $WORKTREE_PATH/.env.local 2>/dev/null || echo ".env.local not found, skipping."
+echo "Copying environment files (.env.local)..."
+cp .env.local $WORKTREE_PATH/.env.local 2>/dev/null || echo "Root .env.local not found, skipping."
+if [ -d "agents" ]; then
+    cp agents/.env.local $WORKTREE_PATH/agents/.env.local 2>/dev/null || echo "agents/.env.local not found, skipping."
+fi
 
 echo "Installing dependencies in worktree..."
 cd $WORKTREE_PATH

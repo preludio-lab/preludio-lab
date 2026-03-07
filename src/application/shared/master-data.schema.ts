@@ -19,7 +19,7 @@ export const MasterSystemMetadataSchema = z.object({
       /** プロンプトのバージョンやGitハッシュ */
       promptVersion: z.string().max(100).optional(),
       /** AIによる推論結果の自信度 (0.0 - 1.0) */
-      confidenceScore: z.number().min(0).max(1).optional(),
+      confidenceScore: z.coerce.number().min(0).max(1).optional(),
       /** 参考にした情報源のURLリスト (Wikipedia, IMSLP等) */
       sourceRefs: z.array(z.string().url()).max(50).optional(),
       /** CI実行IDやバッチID */

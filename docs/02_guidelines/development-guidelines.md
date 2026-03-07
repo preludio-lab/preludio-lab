@@ -217,6 +217,8 @@ graph TD
 - **TypeScript:** `strict: true` を必須とする。`any` 型の使用は原則禁止（`unknown` を使用し、型ガードを行う）。
   - **Rule (No `eslint-disable` for Types):** 型エラー（特に `@typescript-eslint/no-explicit-any` や TS2345等）を解消するために、**安易に `// eslint-disable...` や `as any` キャストを使用することを固く禁ずる**。
   - 代替手段として、必ず型の絞り込み（Type Narrowing）、`unknown` 型での受け出し、またはライブラリの型定義不足が明白な場合は（理由をコメントに明記した上で）`@ts-expect-error` または適切な `as unknown as Type` ダウンキャストを使用すること。
+  - **Rule (Type Bridge Pattern):** 外部ライブラリの型定義が不足・不整合な場合は、**型ブリッジラッパー関数**または**Declaration Merging (`d.ts`)** で対処する。`as any` キャストをコード全体に散在させず、型変換を一箇所に集約すること。（参考: `agents/src/core/schema-converter.ts`, `agents/src/core/types/gemini-sdk.d.ts`）
+- **Dependency Version Sync:** サブパッケージ（`agents/` 等）で使用する共通ライブラリ（特に `zod` 等の型システムに深く関わるもの）は、**ルートプロジェクトとメジャーバージョンを一致させること**。実装着手前に `pnpm list <pkg>` 等で不整合がないか確認する。
 - **Immutability:** 変数は可能な限り `const` を使用し、再代入可能な `let` の使用を避ける。
 - **Functional:** `for` ループよりも `map`, `filter`, `reduce` 等の高階関数を使用する。
 

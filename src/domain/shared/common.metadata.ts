@@ -70,7 +70,7 @@ export type Place = z.infer<typeof PlaceSchema>;
 /**
  * 印象評価値の共通スキーマ (-10 to +10)
  */
-export const DimensionSchema = zInt().min(-10).max(10);
+export const DimensionSchema = z.coerce.number().int().min(-10).max(10);
 
 /**
  * Composer Impression Dimensions
