@@ -18,20 +18,24 @@ export const authConfig = {
      */
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
+      const pathname = nextUrl.pathname;
 
       // /admin や /ja/admin, /en/admin などにマッチさせる
-      const isAdminPath = /^\/([a-z]{2}\/)?admin/.test(nextUrl.pathname);
+      const isAdminPath = /^\/([a-z]{2}\/)?admin/.test(pathname);
+      // loginページは保護対象から除外する
+      const isLoginPath = /^\/([a-z]{2}\/)?admin\/login\/?$/.test(pathname);
 
-      if (isAdminPath) {
+      if (isAdminPath && !isLoginPath) {
         if (isLoggedIn) return true;
-        return false; // Redirect to login
+
+        // 未承認の場合: false を返すと pages.signIn (/admin/login) へリダイレクトされる
+        // i18n のリダイレクトは next-intl ミドルウェアが後段で処理する
+        return false;
       }
       return true;
     },
-    /**
-     * サインイン時のバリデーション
-     * 特定のメールアドレスのみを許可する
-     */
+    // redirectコールバックにあった複雑な条件は不要になったため削除（デフォルトの動作に任せる）
+
     async signIn({ user }) {
       console.log(
         '[Auth Debug] signIn callback executed with user:',
@@ -79,6 +83,7 @@ export const authConfig = {
     },
   },
   pages: {
-    // signIn: '/api/auth/signin', // Default is used
+    // 抽象化されたログインパスを指定。ロケールの付与は next-intl (proxy.ts) に任せる
+    signIn: '/admin/login',
   },
 } satisfies NextAuthConfig;

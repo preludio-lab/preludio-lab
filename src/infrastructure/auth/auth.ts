@@ -13,14 +13,16 @@ const devProviders = isDevAuthBypassEnabled
         id: 'dev-bypass',
         name: '開発用認証バイパス',
         credentials: {
-          bypass: { label: '開発用ログイン（クリックのみ）', type: 'text', value: 'bypass' },
+          // ダミーの認証情報（ボタンクリック時に使用）
+          dummy: { label: 'Bypass', type: 'text' },
         },
         async authorize() {
+          // 開発環境かつバイパス有効時のみ、固定のユーザー情報を返す
           return {
             id: 'dev-admin-id',
             name: 'Dev Admin',
             email: 'admin@preludiolab.local',
-            role: 'OWNER',
+            role: 'OWNER' as const,
           };
         },
       }),

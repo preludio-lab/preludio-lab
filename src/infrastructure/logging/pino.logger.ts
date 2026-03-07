@@ -1,38 +1,25 @@
-import pino from 'pino';
 import { Logger } from '@/shared/logging/logger';
 
 /**
- * インフラ層の実装: Pino Logger
+ * インフラ層の実装: Basic Logger (Edge Compatible)
  *
- * ILogger の Pino による具体的な実装。
- * 主にサーバーコンポーネントおよびサーバーアクションで使用されます。
+ * TODO: Pino の Edge Runtime 対応設定が完了したら元に戻す。
+ * 現時点では Middleware (Edge) での動作安定性を優先し console を使用する。
  */
 export class PinoLogger implements Logger {
-  private logger: pino.Logger;
-
-  constructor() {
-    // 設定:
-    // - 開発環境: 読みやすさのために Pretty print を使用（Pinoのデフォルト設定に依存）
-    // - 本番環境: オブザーバビリティのために JSON 形式
-    this.logger = pino({
-      level: process.env.LOG_LEVEL || 'info', // デフォルトは info
-    });
-  }
-
   debug(message: string, meta?: Record<string, unknown>) {
-    this.logger.debug(meta, message);
+    console.debug(`[DEBUG] ${message}`, meta || '');
   }
 
   info(message: string, meta?: Record<string, unknown>) {
-    this.logger.info(meta, message);
+    console.info(`[INFO] ${message}`, meta || '');
   }
 
   warn(message: string, meta?: Record<string, unknown>) {
-    this.logger.warn(meta, message);
+    console.warn(`[WARN] ${message}`, meta || '');
   }
 
   error(message: string, error?: Error, meta?: Record<string, unknown>) {
-    // 構造化パースのためにエラーオブジェクトがログオブジェクトにマージされるようにする
-    this.logger.error({ ...meta, err: error }, message);
+    console.error(`[ERROR] ${message}`, error || '', meta || '');
   }
 }
