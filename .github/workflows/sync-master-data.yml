@@ -1,0 +1,56 @@
+name: Sync Master Data
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'data/**/*.json'
+  workflow_dispatch:
+
+concurrency:
+  group: sync-master-data-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync to Turso
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          json: true
+          write_output_files: true
+
+      - name: Sync Composers
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: |
+          pnpm seed:composers \
+            --upsert-json .github/outputs/all_changed_and_modified_files.json \
+            --delete-json .github/outputs/deleted_files.json
+
+      # 他のエンティティ (Works等) も同様にここに追加可能
+      # - name: Sync Works
+      #   run: pnpm seed:works --upsert-json ...

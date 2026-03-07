@@ -30,6 +30,13 @@ export interface ComposerRepository {
   findBySlug(slug: string, ctx?: TransactionContext): Promise<Composer | null>;
 
   /**
+   * 複数のSlugによる取得
+   * @param slugs スラグリスト
+   * @param ctx トランザクションコンテキスト（オプション）
+   */
+  findBySlugs(slugs: string[], ctx?: TransactionContext): Promise<Composer[]>;
+
+  /**
    * 複数のIDによる取得
    * @param ids 作曲家IDリスト
    * @param ctx トランザクションコンテキスト（オプション）
@@ -51,9 +58,23 @@ export interface ComposerRepository {
   save(composer: Composer, ctx?: TransactionContext): Promise<void>;
 
   /**
+   * 複数保存
+   * @param composers 作曲家エンティティリスト
+   * @param ctx トランザクションコンテキスト（オプション）
+   */
+  saveMany(composers: Composer[], ctx?: TransactionContext): Promise<void>;
+
+  /**
    * IDによる削除
    * @param id 作曲家ID
    * @param ctx トランザクションコンテキスト（オプション）
    */
   deleteById(id: string, ctx?: TransactionContext): Promise<void>;
+
+  /**
+   * Slugによる一括削除
+   * @param slugs 作曲家スラグリスト
+   * @param ctx トランザクションコンテキスト（オプション）
+   */
+  deleteBySlugs(slugs: string[], ctx?: TransactionContext): Promise<void>;
 }
