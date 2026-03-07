@@ -7,74 +7,106 @@ import {
 } from '@/infrastructure/shared/cli/seeder-utils';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
-import { CreateComposerUseCase } from '@/application/composer/usecase/create-composer.usecase';
-import { UpdateComposerUseCase } from '@/application/composer/usecase/update-composer.usecase';
+import { SyncComposersUseCase } from '@/application/composer/usecase/sync-composers.usecase';
 import { ComposerMaster } from '@/application/composer/master/composer-master.schema';
-
 import { TursoTransactionManager } from '@/infrastructure/database/turso.transaction-manager';
 
 /**
  * 作曲家マスタデータをデータベースに同期するスクリプト。
  *
- * 指定されたファイル、またはディレクトリ内のすべてのJSONファイルを読み込み、
- * データベースへの保存（新規作成または更新）を行います。
+ * 使い方:
+ *   全件同期: pnpm seed:composers
+ *   差分同期: pnpm seed:composers --upsert-json added_files.json --delete-json deleted_files.json
+ *   プレビュー: pnpm seed:composers --dry-run
  */
 async function main() {
   const logger = getLogger();
-  const db = initDb();
+  const args = process.argv.slice(2);
+  const upsertJsonPath = getArgValue(args, '--upsert-json');
+  const deleteJsonPath = getArgValue(args, '--delete-json');
+  const dryRun = args.includes('--dry-run');
 
-  // インフラ層のデータソースとリポジトリの初期化
+  const db = initDb();
   const ds = new TursoComposerDataSource(db);
   const repo = new ComposerRepositoryImpl(ds);
   const txManager = new TursoTransactionManager(db);
+  const syncUseCase = new SyncComposersUseCase(repo, txManager, logger);
 
-  // アプリケーション層のユースケース初期化
-  const createUseCase = new CreateComposerUseCase(repo, txManager, logger);
-  const updateUseCase = new UpdateComposerUseCase(repo, txManager, logger);
-
-  // マスタデータが格納されているルートディレクトリ
   const dataDir = path.join(process.cwd(), 'data', 'composers');
 
-  // 引数で特定のファイルが指定されているか確認。あればそのファイルのみを処理
-  const argFile = process.argv[2];
-  let files: string[];
-
-  if (argFile) {
-    const fullPath = path.isAbsolute(argFile) ? argFile : path.join(process.cwd(), argFile);
-    logger.info(`Processing single file: ${fullPath}`);
-    files = [fullPath];
-  } else {
-    // 引数がない場合は全件スキャン
-    logger.info(`Scanning for composer data in: ${dataDir}`);
-    files = await listJsonFiles(dataDir);
-  }
-
   try {
-    logger.info(`Found ${files.length} composer files.`);
+    let upsertFiles: string[] = [];
+    let deleteSlugs: string[] = [];
 
-    for (const file of files) {
-      logger.info(`Processing: ${path.basename(file)}`);
+    if (upsertJsonPath || deleteJsonPath) {
+      // --- インクリメンタル同期モード (Git Diff活用) ---
+      logger.info('Running in Incremental Sync mode based on Git changes.');
 
-      // JSONをComposerMaster型として読み込み
-      const data = await readJsonFile<ComposerMaster>(file);
+      if (upsertJsonPath) {
+        const list = await readJsonFile<string[]>(upsertJsonPath);
+        // 作曲家データのみをフィルタリング (data/composers/**/*.json)
+        upsertFiles = list
+          .filter((f) => f.startsWith('data/composers/') && f.endsWith('.json'))
+          .map((f) => path.join(process.cwd(), f));
+      }
 
-      // 既存データの存在確認（スラグを使用）
-      const existing = await repo.findBySlug(data.slug);
+      if (deleteJsonPath) {
+        const list = await readJsonFile<string[]>(deleteJsonPath);
+        // 削除されたファイルのパスからスラグを抽出
+        deleteSlugs = list
+          .filter((f) => f.startsWith('data/composers/') && f.endsWith('.json'))
+          .map((f) => path.basename(f, '.json'));
+      }
+    } else {
+      // --- フル同期モード (ディレクトリ全スキャン) ---
+      logger.info(
+        'Running in Full Sync mode. DB will be matched exactly with data/composers directory.',
+      );
+      upsertFiles = await listJsonFiles(dataDir);
 
-      if (existing) {
-        // 存在する場合は更新
-        await updateUseCase.execute(data);
-      } else {
-        // 存在しない場合は新規作成
-        await createUseCase.execute(data);
+      // フル同期時は、DBにあってディレクトリにないものを削除対象とする
+      const existingInDb = await repo.findMany({});
+      const dbSlugs = existingInDb.map((c) => c.slug);
+      const fileSlugs = new Set(upsertFiles.map((f) => path.basename(f, '.json')));
+      deleteSlugs = dbSlugs.filter((slug) => !fileSlugs.has(slug));
+    }
+
+    logger.info(`Plan: ${upsertFiles.length} upserts, ${deleteSlugs.length} deletes.`);
+
+    if (dryRun) {
+      logger.info('Dry-run enabled. No changes will be applied to the database.');
+      for (const f of upsertFiles) logger.info(`[DRY-RUN] Upsert: ${path.basename(f)}`);
+      for (const s of deleteSlugs) logger.info(`[DRY-RUN] Delete: ${s}`);
+      return;
+    }
+
+    // データの読み込み
+    const upsertList: ComposerMaster[] = [];
+    for (const file of upsertFiles) {
+      try {
+        const data = await readJsonFile<ComposerMaster>(file);
+        upsertList.push(data);
+      } catch (e) {
+        logger.warn(`Failed to read or parse ${file}. Skipping.`, { error: String(e) });
       }
     }
 
-    logger.info('Composer seeding completed successfully.');
+    // ユースケース実行
+    await syncUseCase.execute({ upsertList, deleteSlugs });
+
+    logger.info('Composer sync completed successfully.');
   } catch (err) {
-    logger.error('Seeding failed', err as Error);
+    logger.error('Sync failed', err as Error);
     process.exit(1);
   }
+}
+
+function getArgValue(args: string[], key: string): string | undefined {
+  const index = args.indexOf(key);
+  if (index !== -1 && index + 1 < args.length) {
+    return args[index + 1];
+  }
+  return undefined;
 }
 
 main();

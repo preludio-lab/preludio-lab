@@ -30,6 +30,16 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     }
   }
 
+  async findBySlugs(slugs: string[], ctx?: TransactionContext): Promise<Composer[]> {
+    try {
+      const rowsArray = await this.ds.findBySlugs(slugs, ctx);
+      return rowsArray.map((rows) => TursoComposerMapper.toDomain(rows));
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async findByIds(ids: string[]): Promise<Composer[]> {
     throw new Error('Method not implemented.');
@@ -55,12 +65,31 @@ export class ComposerRepositoryImpl implements ComposerRepository {
     }
   }
 
+  async saveMany(composers: Composer[], ctx?: TransactionContext): Promise<void> {
+    try {
+      const rowsList = composers.map((c) => TursoComposerMapper.toPersistence(c));
+      await this.ds.saveMany(rowsList, ctx);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database save many error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
   async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     try {
       await this.ds.deleteById(id, ctx);
     } catch (err) {
       if (err instanceof AppError) throw err;
       throw new AppError('Database delete error', 'INFRASTRUCTURE_ERROR', 500, err);
+    }
+  }
+
+  async deleteBySlugs(slugs: string[], ctx?: TransactionContext): Promise<void> {
+    try {
+      await this.ds.deleteBySlugs(slugs, ctx);
+    } catch (err) {
+      if (err instanceof AppError) throw err;
+      throw new AppError('Database delete by slugs error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 }

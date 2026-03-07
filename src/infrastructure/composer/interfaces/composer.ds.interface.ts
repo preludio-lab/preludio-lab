@@ -22,9 +22,19 @@ export interface IComposerDataSource {
   findBySlug(slug: string, ctx?: TransactionContext): Promise<ComposerRows | null>;
 
   /**
+   * Find composers and their translations by Slugs
+   */
+  findBySlugs(slugs: string[], ctx?: TransactionContext): Promise<ComposerRows[]>;
+
+  /**
    * Upsert composer and its translations (Atomic Transaction)
    */
   save(rows: ComposerRows, ctx?: TransactionContext): Promise<void>;
+
+  /**
+   * Upsert multiple composers and their translations
+   */
+  saveMany(rowsList: ComposerRows[], ctx?: TransactionContext): Promise<void>;
 
   /**
    * Find many composers
@@ -38,4 +48,9 @@ export interface IComposerDataSource {
    * Delete composer by ID
    */
   deleteById(id: string, ctx?: TransactionContext): Promise<void>;
+
+  /**
+   * Delete composers by Slugs
+   */
+  deleteBySlugs(slugs: string[], ctx?: TransactionContext): Promise<void>;
 }

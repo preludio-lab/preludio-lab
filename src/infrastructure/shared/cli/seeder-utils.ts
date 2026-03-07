@@ -51,9 +51,9 @@ export const readJsonFile = async <T>(filePath: string): Promise<T> => {
 
 export const getLogger = (): Logger => {
   return {
-    debug: (msg, ...args) => console.debug(`[DEBUG] ${msg}`, ...args),
-    info: (msg, ...args) => console.info(`[INFO] ${msg}`, ...args),
-    warn: (msg, ...args) => console.warn(`[WARN] ${msg}`, ...args),
-    error: (msg, ...args) => console.error(`[ERROR] ${msg}`, ...args),
+    debug: (msg, meta) => console.debug(`[DEBUG] ${msg}`, meta ?? ''),
+    info: (msg, meta) => console.info(`[INFO] ${msg}`, meta ?? ''),
+    warn: (msg, meta) => console.warn(`[WARN] ${msg}`, meta ?? ''),
+    error: (msg, error, meta) => console.error(`[ERROR] ${msg}`, error, meta ?? ''),
   };
 };

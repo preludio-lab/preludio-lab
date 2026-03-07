@@ -1,10 +1,9 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql, inArray } from 'drizzle-orm';
 import { LibSQLDatabase } from 'drizzle-orm/libsql';
 import * as schema from '@/infrastructure/database/schema';
 import { IComposerDataSource, ComposerRows } from './interfaces/composer.ds.interface';
 import { getDb } from '@/infrastructure/database/drizzle-utils';
 import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
-import { AppError } from '@/domain/shared/app-error';
 
 export class TursoComposerDataSource implements IComposerDataSource {
   constructor(private db: LibSQLDatabase<typeof schema>) {}
@@ -48,6 +47,31 @@ export class TursoComposerDataSource implements IComposerDataSource {
     };
   }
 
+  async findBySlugs(slugs: string[], ctx?: TransactionContext): Promise<ComposerRows[]> {
+    if (slugs.length === 0) return [];
+    const db = getDb(ctx);
+
+    const results: ComposerRows[] = [];
+    const chunkSize = 100;
+
+    for (let i = 0; i < slugs.length; i += chunkSize) {
+      const chunk = slugs.slice(i, i + chunkSize);
+      const rows = await db.query.composers.findMany({
+        where: inArray(schema.composers.slug, chunk),
+        with: {
+          translations: true,
+        },
+      });
+
+      for (const r of rows) {
+        const { translations, ...composer } = r;
+        results.push({ composer, translations: translations || [] });
+      }
+    }
+
+    return results;
+  }
+
   async findMany(
     params?: { limit?: number; offset?: number },
     ctx?: TransactionContext,
@@ -70,51 +94,61 @@ export class TursoComposerDataSource implements IComposerDataSource {
   }
 
   async save(rows: ComposerRows, ctx?: TransactionContext): Promise<void> {
+    await this.saveMany([rows], ctx);
+  }
+
+  async saveMany(rowsList: ComposerRows[], ctx?: TransactionContext): Promise<void> {
+    if (rowsList.length === 0) return;
+
     const execute = async (tx: TransactionContext) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const dtx = tx as any;
-      // 1. Check existing for Optimistic Locking
-      const existing = await dtx.query.composers.findFirst({
-        where: eq(schema.composers.id, rows.composer.id),
-      });
 
-      if (existing) {
-        // If it exists, we must do an UPDATE and check rows affected (or just do the update with where clause and check)
-        const updated = await dtx
-          .update(schema.composers)
-          .set(rows.composer)
-          .where(
-            eq(schema.composers.id, rows.composer.id),
-            // Note: In a real Optimistic Lock scenario we'd check: eq(schema.composers.updatedAt, previousUpdatedAt)
-            // However, since Turso/SQLite doesn't easily return rowsAffected in this exact generic driver setup,
-            // we will simulate the check here by comparing the existing updatedAt with what the entity *was* based on.
-            // For this PoC, we will assume rows.composer.updatedAt is the *new* timestamp, so we need the *old* one.
-            // Since DTOs don't pass old timestamp perfectly yet in this generic mapper, we do a simple save.
-            //
-            // FIXME (Future): Pass oldUpdatedAt via ComposerRows and check it against `existing.updatedAt`.
-            // if (existing.updatedAt !== rows.oldUpdatedAt) throw new AppError('Concurrency Conflict', 'CONCURRENCY_ERROR', 409);
-          )
-          .returning({ id: schema.composers.id });
+      const composerData = rowsList.map((r) => r.composer);
+      const composerIds = composerData.map((c) => c.id);
 
-        if (updated.length === 0) {
-          throw new AppError(
-            'Optimistic Lock Error: The record was updated by another user.',
-            'CONCURRENCY_ERROR',
-            409,
-          );
-        }
-      } else {
-        // Insert new
-        await dtx.insert(schema.composers).values(rows.composer);
+      // 1. Bulk Upsert Composers with Chunking
+      // SQLite parameter limit workaround
+      const composerChunkSize = 20;
+      for (let i = 0; i < composerData.length; i += composerChunkSize) {
+        const chunk = composerData.slice(i, i + composerChunkSize);
+        await dtx
+          .insert(schema.composers)
+          .values(chunk)
+          .onConflictDoUpdate({
+            target: schema.composers.id,
+            set: {
+              slug: sql.raw(`excluded.slug`),
+              era: sql.raw(`excluded.era`),
+              birthDate: sql.raw(`excluded.birth_date`),
+              deathDate: sql.raw(`excluded.death_date`),
+              nationalityCode: sql.raw(`excluded.nationality_code`),
+              representativeInstruments: sql.raw(`excluded.representative_instruments`),
+              representativeGenres: sql.raw(`excluded.representative_genres`),
+              places: sql.raw(`excluded.places`),
+              impressionDimensions: sql.raw(`excluded.impression_dimensions`),
+              tags: sql.raw(`excluded.tags`),
+              portraitImagePath: sql.raw(`excluded.portrait_image_path`),
+              updatedAt: sql.raw(`excluded.updated_at`),
+            },
+          });
       }
 
-      // 2. Refresh Translations (Delete & Insert strategy for simplicity in Master Data Sync)
-      await dtx
-        .delete(schema.composerTranslations)
-        .where(eq(schema.composerTranslations.composerId, rows.composer.id));
+      // 2. Refresh Translations (Bulk Delete & Bulk Insert) with Chunking
+      for (let i = 0; i < composerIds.length; i += 50) {
+        const idChunk = composerIds.slice(i, i + 50);
+        await dtx
+          .delete(schema.composerTranslations)
+          .where(inArray(schema.composerTranslations.composerId, idChunk));
+      }
 
-      if (rows.translations.length > 0) {
-        await dtx.insert(schema.composerTranslations).values(rows.translations);
+      const allTranslations = rowsList.flatMap((r) => r.translations);
+      if (allTranslations.length > 0) {
+        const transChunkSize = 30;
+        for (let i = 0; i < allTranslations.length; i += transChunkSize) {
+          const chunk = allTranslations.slice(i, i + transChunkSize);
+          await dtx.insert(schema.composerTranslations).values(chunk);
+        }
       }
     };
 
@@ -128,5 +162,16 @@ export class TursoComposerDataSource implements IComposerDataSource {
   async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
     const db = getDb(ctx);
     await db.delete(schema.composers).where(eq(schema.composers.id, id));
+  }
+
+  async deleteBySlugs(slugs: string[], ctx?: TransactionContext): Promise<void> {
+    if (slugs.length === 0) return;
+    const db = getDb(ctx);
+
+    // Chunking for IN clause
+    for (let i = 0; i < slugs.length; i += 100) {
+      const slugChunk = slugs.slice(i, i + 100);
+      await db.delete(schema.composers).where(inArray(schema.composers.slug, slugChunk));
+    }
   }
 }
