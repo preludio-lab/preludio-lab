@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { handleClientError } from '@/lib/client-error';
 import { useTranslations } from 'next-intl';
 
 export default function Error({
@@ -14,10 +13,23 @@ export default function Error({
   const t = useTranslations('Error');
 
   useEffect(() => {
-    // 標準エラーハンドラを使用してエラーをログ記録
-    // 第2引数はユーザー通知用なのでi18n化する
-    handleClientError(error, t('toastMessage'));
-  }, [error, t]);
+    // エラーバウンダリは最も堅牢である必要があるため、
+    // react-hot-toast 等の外部ライブラリに依存せず、最小限のログ出力に留める。
+    // これにより、react-hot-toast 自体がクラッシュした場合でも
+    // エラーバウンダリが正常に機能し、無限ループを防止する。
+    console.error('[ErrorBoundary]', error);
+
+    // Sentry への送信は動的インポートで行い、失敗しても握り潰す
+    import('@sentry/nextjs')
+      .then((Sentry) => {
+        Sentry.captureException(error, {
+          tags: { context: 'ErrorBoundary' },
+        });
+      })
+      .catch(() => {
+        // Sentry の読み込みに失敗しても、エラーバウンダリの表示は継続する
+      });
+  }, [error]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] p-4 text-center">

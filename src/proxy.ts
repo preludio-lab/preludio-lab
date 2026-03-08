@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import { routing } from './shared/i18n/routing';
 import { auth } from '@/infrastructure/auth/auth';
 import { APP_ENV } from '@/lib/constants';
+import { supportedLocales, defaultLocale } from '@/domain/i18n/locale';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -20,6 +21,16 @@ export const proxy = auth((req) => {
   // Next.js のマイナーバージョン差異に起因する内部型の不整合があるため、unknown を経由してキャストしています。
   // 将来的にライブラリ側の型定義が更新されたら直接渡せるようになるはずです。
   const response = intlMiddleware(req as unknown as NextRequest);
+
+  // リダイレクト応答の場合: Cache-Control を付与してブラウザによる永続キャッシュを防止し、
+  // 後続処理（CSP付与等）をスキップして即座に返す。
+  // 背景: next-intl が 308 Permanent Redirect を返すことがあり、ブラウザがこれを
+  // プロファイル単位でディスクキャッシュすると、ルーティングロジック変更後に
+  // サーバーへリクエストが到達しなくなる致命的な問題が発生する。
+  if (response.status >= 300 && response.status < 400) {
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    return response;
+  }
 
   const nonce = crypto.randomUUID();
   // SupabaseのURLを許可リストに追加（環境変数から取得できない場合はハードコードかドメイン指定）
@@ -56,10 +67,17 @@ export const proxy = auth((req) => {
   // Nonceをリクエストヘッダーにセット（Server Componentsで取得するため）
   response.headers.set('x-nonce', nonce);
 
-  // セキュリティ強化: NEXT_LOCALE Cookieに HttpOnly と Secure フラグを追加
-  const locale = response.cookies.get('NEXT_LOCALE')?.value;
-  if (locale) {
-    response.cookies.set('NEXT_LOCALE', locale, {
+  // セキュリティ強化 + フェールセーフ: NEXT_LOCALE Cookie のバリデーション
+  // 不正な値や旧仕様のフォーマットを検出した場合はデフォルトロケールで上書きし、
+  // ルーティング異常を未然に防止する。
+  const rawLocale = response.cookies.get('NEXT_LOCALE')?.value;
+  if (rawLocale) {
+    const validatedLocale = supportedLocales.includes(
+      rawLocale as (typeof supportedLocales)[number],
+    )
+      ? rawLocale
+      : defaultLocale;
+    response.cookies.set('NEXT_LOCALE', validatedLocale, {
       httpOnly: true, // JavaScript からのアクセスを防ぐ (DAST Alert ID: 10010)
       secure: process.env.NODE_ENV !== APP_ENV.DEVELOPMENT, // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
       sameSite: 'lax', // CSRF 対策
