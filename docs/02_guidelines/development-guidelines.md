@@ -311,7 +311,9 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
   - **Exception (CLI/Agents):**
     - GitHub Actionsや開発用スクリプト (`agents/` 等) においては、可読性とシンプルさを優先し、`console.log` / `console.error` の使用を許可する。ただし、機密情報の出力は厳禁とする。
 - **Client-Side:**
-  - **Development:** `console.log` / `console.error` を使用してデバッグを行う。
+  - **Linting Rule:** `eslint.config.mjs` にて `no-console: error` を設定。原則として `console.*` の直接使用を禁止する。
+  - **Development:** デバッグ目的で一時的に使用することは許可するが、コミット前に Logger 移行または削除を行う。
+  - **Implementation:** 環境差異を吸収するため、`ConsoleLogger` クラス（または同様のラッパー）を使用することを推奨する。
     - **推奨:** 環境差異を吸収するため、以下のような `ConsoleLogger` クラス（または同様のラッパー）を実装し、製品コードには `console` を直接記述しないことを推奨する。
 
       ```ts
@@ -480,3 +482,14 @@ export default function SomeComponent() {
 - **RLS (Row Level Security):** すべてのテーブルに対して RLS を有効化 (`ENABLE ROW LEVEL SECURITY`) し、ポリシーを明示的に定義する。
 - **No Raw SQL:** SQLインジェクションを防ぐため、Supabase Client SDK (`supabase-js`) のメソッドチェーンのみを使用する。生SQLの実行は禁止。
 - **Secrets:** APIキーや接続文字列は `.env.local` で管理し、リポジトリにはコミットしない。クライアント側に露出させる変数は `NEXT_PUBLIC_` プレフィックスを付けるが、最小限に留める。
+
+### 5.2. External Resource Safety (CSP Checklist)
+
+外部リソース（画像、スクリプト、API等）を新たに追加・変更する際は、セキュリティ上のブロックを防ぐため、以下の設定を必ず**セットで更新**すること。
+
+1.  **CSP (Content Security Policy) の更新**:
+    - `src/proxy.ts` 内の `cspHeader` 定義を確認し、適切なディレクティブ（`img-src`, `connect-src`, `frame-src` 等）に新しいドメインを追加する。
+2.  **Next.js Remote Patterns の同期**:
+    - 画像アセット（`next/image` 等）の場合、`next.config.ts` の `images.remotePatterns` にもドメインを追加する。
+3.  **配信ドメインの特定**:
+    - `www.youtube.com`（サイトドメイン）だけでなく、実際に画像が配信される `i.ytimg.com`（CDNドメイン）のように、ブラウザが実際にリクエストを送るオリジンを確認して指定すること。
