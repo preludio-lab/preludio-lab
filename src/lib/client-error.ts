@@ -20,6 +20,7 @@ export function handleClientError(
   });
 
   if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
+    // eslint-disable-next-line no-console
     console.error('[Client Error]', error, context ? `Context: ${context}` : '');
   }
   if (userNotificationMessage) toast.error(userNotificationMessage);

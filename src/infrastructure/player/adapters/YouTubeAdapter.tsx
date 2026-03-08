@@ -75,6 +75,7 @@ export function YouTubeAdapter({
       options: { videoId: string; startSeconds?: number; endSeconds?: number },
     ) => {
       try {
+        // eslint-disable-next-line no-console
         console.debug('[YouTubeAdapter] 動画ロード開始:', options);
         target.loadVideoById(options);
       } catch (e) {

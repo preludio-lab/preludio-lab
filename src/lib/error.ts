@@ -18,6 +18,7 @@ export function handleError(error: unknown, context?: string): void {
   // 開発環境では console.error で詳細を出力
   // クライアント側は別ハンドラに委譲。サーバー側は PinoLogger を使用するのでここでは何もしない。
   if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
+    // eslint-disable-next-line no-console
     console.error('[Server Error]', err);
   }
 }

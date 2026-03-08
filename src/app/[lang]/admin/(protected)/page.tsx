@@ -3,8 +3,6 @@
 import React from 'react';
 
 export default function AdminDashboardPage() {
-  console.log('Admin Dashboard Page Hit');
-
   return (
     <div className="space-y-6">
       <div>

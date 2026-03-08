@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Logger } from '@/shared/logging/logger';
 import { APP_ENV } from '@/lib/constants';
 

@@ -53,6 +53,7 @@ describe('ArticleDtoSchema', () => {
   it('should validate a complete valid article object', () => {
     const result = ArticleDtoSchema.safeParse(validData);
     if (!result.success) {
+      // eslint-disable-next-line no-console
       console.error(JSON.stringify(result.error.format(), null, 2));
     }
     expect(result.success).toBe(true);

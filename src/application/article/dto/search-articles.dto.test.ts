@@ -40,6 +40,7 @@ describe('ArticleSearchResultItemDtoSchema', () => {
     // For now, testing basic structure.
     const result = ArticleSearchResultItemDtoSchema.safeParse(validSearchResult);
     if (!result.success) {
+      // eslint-disable-next-line no-console
       console.error(result.error);
     }
     expect(result.success).toBe(true);

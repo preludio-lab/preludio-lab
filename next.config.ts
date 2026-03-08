@@ -12,7 +12,14 @@ const BASE_URL =
     : 'https://preludiolab.com');
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
+  serverExternalPackages: [
+    'pino',
+    'pino-pretty',
+    'thread-stream',
+    '@sentry/nextjs',
+    'import-in-the-middle',
+    'require-in-the-middle',
+  ],
   compiler: {
     removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION,
   },

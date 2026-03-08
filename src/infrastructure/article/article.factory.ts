@@ -36,7 +36,7 @@ export class ArticleRepositoryFactory {
       return this.instance;
     }
 
-    logger.info(
+    logger.debug(
       `Initializing ArticleRepository (Metadata: ${config.metadata}, Payload: ${config.payload})`,
     );
 

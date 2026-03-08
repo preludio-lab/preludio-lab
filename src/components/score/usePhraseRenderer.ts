@@ -37,12 +37,14 @@ export function usePhraseRenderer(phrase: Phrase | { data: string; format: Notat
 
       try {
         if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
+          // eslint-disable-next-line no-console
           console.debug('usePhraseRenderer: レンダリングを開始しました', { format });
         }
 
         await renderer.render(data, elementRef.current, format);
 
         if (isMounted && process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
+          // eslint-disable-next-line no-console
           console.debug('usePhraseRenderer: レンダリングが完了しました');
         }
       } catch (error) {

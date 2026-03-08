@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import * as schema from '@/infrastructure/database/schema';

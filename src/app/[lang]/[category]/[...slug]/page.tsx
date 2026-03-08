@@ -42,7 +42,7 @@ export async function generateStaticParams() {
         });
       }
     } catch (e) {
-      console.warn(`Failed to generate static params for ${lang}`, e);
+      logger.warn(`Failed to generate static params for ${lang}`, { error: e });
     }
   }
   return params;

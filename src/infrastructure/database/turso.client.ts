@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from './schema';
 import { env } from '@/lib/env';
 import { APP_ENV } from '@/lib/constants';
+import { logger } from '@/infrastructure/logging';
 
 /**
  * Turso / LibSQL Client
@@ -16,8 +17,8 @@ const { TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, NEXT_PUBLIC_APP_ENV } = env;
 const isConfigMissing = !TURSO_DATABASE_URL;
 
 if (isConfigMissing && NEXT_PUBLIC_APP_ENV !== APP_ENV.DEVELOPMENT) {
-  console.warn(
-    '[TursoClient] TURSO_DATABASE_URL is not defined in non-development environment. Database operations may fail.',
+  logger.warn(
+    'TURSO_DATABASE_URL is not defined in non-development environment. Database operations may fail.',
   );
 }
 
@@ -26,6 +27,6 @@ const client = createClient({
   authToken: TURSO_AUTH_TOKEN,
 });
 
-console.log('[DEBUG] Turso Client URL:', TURSO_DATABASE_URL || 'file:local.db');
+logger.debug('Turso Client initialized', { url: TURSO_DATABASE_URL || 'file:local.db' });
 
 export const db = drizzle(client, { schema });

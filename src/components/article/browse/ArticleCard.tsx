@@ -3,10 +3,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CdnImage } from '@/components/ui/image/CdnImage';
+import { YouTubeThumbnail } from '@/components/ui/image/YouTubeThumbnail';
 import { useTranslations } from 'next-intl';
 import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { m } from 'framer-motion';
-import { getStandardThumbnailUrl } from '@/lib/youtube';
+import {
+  getStandardThumbnailUrl,
+  isYoutubeThumbnailUrl,
+  extractVideoIdFromThumbnailUrl,
+} from '@/lib/youtube';
 import { useMemo } from 'react';
 
 export interface ArticleCardProps {
@@ -51,6 +56,12 @@ export function ArticleCard({
     return url;
   }, [content.thumbnail, content.playback?.audioSrc]);
 
+  // YouTube 動画 ID の抽出 (サムネイルが YouTube 由来の場合)
+  const youtubeVideoId = useMemo(() => {
+    if (!thumbnail || !isYoutubeThumbnailUrl(thumbnail)) return null;
+    return extractVideoIdFromThumbnailUrl(thumbnail);
+  }, [thumbnail]);
+
   const level = readingLevel || performanceDifficulty || 3;
   const dateObj = publishedAt
     ? typeof publishedAt === 'string'
@@ -81,7 +92,16 @@ export function ArticleCard({
       <Link href={`/${lang}/${category}/${slug}`} className="flex flex-col h-full">
         {/* Thumbnail Area */}
         <div className="relative h-56 w-full overflow-hidden">
-          {thumbnail ? (
+          {youtubeVideoId ? (
+            <YouTubeThumbnail
+              videoId={youtubeVideoId}
+              alt={displayTitle}
+              priority={priority}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : thumbnail ? (
             <CdnImage
               src={thumbnail}
               alt={displayTitle}

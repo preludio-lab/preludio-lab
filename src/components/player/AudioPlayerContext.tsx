@@ -175,6 +175,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         }));
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error('Failed to load player state', e);
     }
   }, []);

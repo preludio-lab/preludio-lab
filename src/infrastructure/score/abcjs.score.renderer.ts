@@ -11,6 +11,7 @@ export class AbcjsScoreRenderer implements INotationRenderer {
    */
   async render(data: string, element: HTMLElement, format: NotationFormat): Promise<void> {
     if (format !== NotationFormat.ABC) {
+      // eslint-disable-next-line no-console
       console.warn(
         `AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`,
       );
@@ -18,6 +19,7 @@ export class AbcjsScoreRenderer implements INotationRenderer {
     }
 
     if (!element) {
+      // eslint-disable-next-line no-console
       console.error('AbcjsScoreRenderer: ターゲット要素が null です。');
       return;
     }

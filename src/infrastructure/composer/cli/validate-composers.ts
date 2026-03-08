@@ -43,6 +43,7 @@ async function main() {
       } else {
         // バリデーションエラー時はエラー内容をフォーマットして出力
         logger.error(`FAILED: ${path.basename(file)}`);
+        // eslint-disable-next-line no-console
         console.error(JSON.stringify(result.error.format(), null, 2));
         hasError = true;
       }

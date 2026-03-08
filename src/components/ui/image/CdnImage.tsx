@@ -23,5 +23,13 @@ export interface CdnImageProps extends Omit<ImageProps, 'src' | 'loader' | 'unop
  * 標準の `<Image>` コンポーネントを使用してください。
  */
 export function CdnImage({ src, alt, ...props }: CdnImageProps) {
+  // TODO(#XXX): 外部 URL に対しては Cloudflare Image Resizing を活用するカスタムローダーを
+  // 実装し、unoptimized の使用を解消すること。現状は技術的負債として管理。
+  const isExternalUrl = src.startsWith('http://') || src.startsWith('https://');
+
+  if (isExternalUrl) {
+    return <Image src={src} alt={alt} unoptimized {...props} />;
+  }
+
   return <Image src={src} alt={alt} loader={cloudflareImageLoader} {...props} />;
 }
