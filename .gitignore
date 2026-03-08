@@ -64,3 +64,6 @@ article_backup/
 
 # agents (TypeScript only - prevent accidental JS output)
 agents/**/*.js
+
+# gemini-cli
+.gemini/Local/
