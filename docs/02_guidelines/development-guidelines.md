@@ -346,17 +346,18 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
 
 ### D. Exception Handling（例外処理）
 
-| 観点                             | 推奨内容                                                                                                                                                                           | 目的                                                     |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **統一的な例外捕捉**             | すべての非同期処理（`fetch`, `axios`, `Promise` 系）と UI イベントハンドラは `try / catch` でラップし、例外は必ず捕捉する。                                                        | 予期しないクラッシュを防ぎ、エラーログを一元化           |
-| **エラーハンドラ関数の共通化**   | `src/lib/client-error.ts` に `handleClientError(error: unknown, userMessage?: string, context?: string)` を実装し、`Sentry.captureException` と `console.error` を内部で呼び出す。 | 再利用性と一貫したエラーレポート                         |
-| **ユーザー向けフィードバック**   | UI では **エラートースト**（例: `react-hot-toast`）や **フォールバック UI** を表示し、内部エラー情報は決して露出しない。                                                           | UX の低下防止と情報漏洩防止                              |
-| **型安全なエラー**               | カスタムエラークラス `AppError extends Error { code: string; status?: number; }` を作成し、`code` でエラー種別を識別できるようにする。                                             | エラーの分類とハンドリングロジックの簡素化               |
-| **境界層でのサニタイズ**         | API 呼び出し層（`src/infrastructure/api/*`）で受け取ったエラーは **外部情報を除去** した上で上位に伝搬する。                                                                       | セキュリティ（機密情報漏洩防止）                         |
-| **テストでの例外シナリオ**       | ユニットテストは `jest.mock` で例外を強制し、`handleError` が正しく呼ばれることを検証する。                                                                                        | 回帰防止と例外処理の網羅性確保                           |
-| **App Router での例外**          | Server Components (`page.tsx`) のエラーは同ディレクトリの `error.tsx` で捕捉。Server Actions は `try/catch` し、失敗時は `{ success: false, errorMessage: '...' }` を返す。        | アプリ全体のホワイトアウト防止と安全なエラーハンドリング |
-| **エラーログのレベル**           | 例外は **ERROR** レベルでログ出力し、`Sentry` に必ず送信する。開発時は `console.error` でスタックトレースを確認。                                                                  | 監視とデバッグの両立                                     |
-| **非同期 UI のローディング解除** | 例外が発生したら必ずローディング状態を解除し、ユーザーが再試行できるようにする。                                                                                                   | UI のハング防止                                          |
+| 観点                              | 推奨内容                                                                                                                                                                                                                                                                                        | 目的                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **統一的な例外捕捉**              | すべての非同期処理（`fetch`, `axios`, `Promise` 系）と UI イベントハンドラは `try / catch` でラップし、例外は必ず捕捉する。                                                                                                                                                                     | 予期しないクラッシュを防ぎ、エラーログを一元化           |
+| **エラーハンドラ関数の共通化**    | `src/lib/client-error.ts` に `handleClientError(error: unknown, userMessage?: string, context?: string)` を実装し、`Sentry.captureException` と `console.error` を内部で呼び出す。                                                                                                              | 再利用性と一貫したエラーレポート                         |
+| **ユーザー向けフィードバック**    | UI では **エラートースト**（例: `react-hot-toast`）や **フォールバック UI** を表示し、内部エラー情報は決して露出しない。                                                                                                                                                                        | UX の低下防止と情報漏洩防止                              |
+| **型安全なエラー**                | カスタムエラークラス `AppError extends Error { code: string; status?: number; }` を作成し、`code` でエラー種別を識別できるようにする。                                                                                                                                                          | エラーの分類とハンドリングロジックの簡素化               |
+| **境界層でのサニタイズ**          | API 呼び出し層（`src/infrastructure/api/*`）で受け取ったエラーは **外部情報を除去** した上で上位に伝搬する。                                                                                                                                                                                    | セキュリティ（機密情報漏洩防止）                         |
+| **テストでの例外シナリオ**        | ユニットテストは `jest.mock` で例外を強制し、`handleError` が正しく呼ばれることを検証する。                                                                                                                                                                                                     | 回帰防止と例外処理の網羅性確保                           |
+| **App Router での例外**           | Server Components (`page.tsx`) のエラーは同ディレクトリの `error.tsx` で捕捉。Server Actions は `try/catch` し、失敗時は `{ success: false, errorMessage: '...' }` を返す。                                                                                                                     | アプリ全体のホワイトアウト防止と安全なエラーハンドリング |
+| **エラーログのレベル**            | 例外は **ERROR** レベルでログ出力し、`Sentry` に必ず送信する。開発時は `console.error` でスタックトレースを確認。                                                                                                                                                                               | 監視とデバッグの両立                                     |
+| **非同期 UI のローディング解除**  | 例外が発生したら必ずローディング状態を解除し、ユーザーが再試行できるようにする。                                                                                                                                                                                                                | UI のハング防止                                          |
+| **Error Boundary の外部依存禁止** | `error.tsx`（Next.js Error Boundary）は、**`react-hot-toast` や `goober` 等の外部ライブラリに直接・間接を問わず依存してはならない**。エラーバウンダリは最後の砦であり、それ自体がクラッシュすると無限ループを引き起こすため、`console.error` と動的 `import('@sentry/nextjs')` のみを使用する。 | Error Boundary の堅牢性確保、循環クラッシュの防止        |
 
 #### E. Third-Party Library Reliability (Learning from Audio Player)
 
@@ -446,6 +447,14 @@ export default function SomeComponent() {
 - **Path Constraints:**
   - 正規表現による除外（例: `.*\\..*` で静的ファイルを除外）を行う場合、**正当なコンテンツURL（Slug）にドットを含めない** という運用ルールとセットで設計すること。
   - この制約は `naming-conventions.md` に明記し、チーム全体で共有する。
+- **Redirect Routing Policy (Single Source of Truth):**
+  - ロケール判定やリダイレクトの責務は、エッジ層（`proxy.ts`）に**完全に一元化**する。アプリケーション層（`page.tsx` 等の Page コンポーネント内）で `redirect()` を使用してロケールパスへリダイレクトすることを**禁止**する。
+  - **Rationale:** エッジ層とアプリケーション層の双方にリダイレクトロジックが存在すると、処理の競合やブラウザキャッシュとの相互作用により、無限ループや到達不能状態を引き起こす。
+- **Redirect Caching Prevention:**
+  - `proxy.ts` からリダイレクト応答（3xx）を返す際は、レスポンスヘッダーに `Cache-Control: no-store, max-age=0` を**必ず付与**する。
+  - **Rationale:** `next-intl` 等のライブラリが HTTP 308 Permanent Redirect を返す場合がある。ブラウザはこれをプロファイル単位でディスクキャッシュし、ルーティングロジック変更後もサーバーにリクエストが到達しなくなる致命的な問題が発生する。Cloudflare CDN エッジでのキャッシュも同様に防止する。
+- **NEXT_LOCALE Cookie Validation:**
+  - `proxy.ts` でレスポンスに `NEXT_LOCALE` Cookie を設定する際は、その値が `supportedLocales` に含まれることを**必ず検証**する。不正な値や旧仕様のフォーマットを検出した場合は、デフォルトロケール（`defaultLocale`）で上書きし、ルーティング異常を未然に防止する。
 
 ## 3. Deployment & CI/CD
 

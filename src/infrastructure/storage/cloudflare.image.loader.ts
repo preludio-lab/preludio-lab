@@ -39,7 +39,8 @@ export default function cloudflareImageLoader({ src, width }: ImageLoaderProps):
   }
 
   // 640px 以下の場合、拡張子の直前に -sm を挿入する
-  if (width <= 640) {
+  // Next.js の ImageLoader 規格に基づき、width パラメータを考慮したパスを返します
+  if (width && width <= 640) {
     return normalizedPath.replace(/(\.[a-z0-9]+)$/i, '-sm$1');
   }
 
