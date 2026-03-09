@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
     'require-in-the-middle',
   ],
   compiler: {
-    removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION,
+    removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION ? { exclude: ['error'] } : false,
   },
   webpack: (config, { dev }) => {
     // 本番ビルド時にコメントを削除 (DAST Alert: Information Disclosure - Suspicious Comments)

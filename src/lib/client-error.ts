@@ -1,13 +1,14 @@
-import * as Sentry from '@sentry/nextjs';
 import toast from 'react-hot-toast';
-import { NODE_ENV } from './constants';
+import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+
+const logger = new ConsoleLogger();
 
 /**
  * クライアント用エラーハンドラ。
- * エラー自体はSentry等のログ収集基盤に送信されます（英語推奨）。
- * 第2引数はユーザーへのトースト通知用であり、必要に応じてi18n化されたメッセージを渡します。
+ * ConsoleLogger を介してログ出力と Sentry 送信を行い、オプションでトースト通知を表示します。
  *
  * @param error 発生したエラーオブジェクト
+ * @param userNotificationMessage ユーザーに表示するトーストメッセージ (通知が不要な場合は省略可)
  * @param context エラーの発生場所や文脈を示す識別子 (Sentryタグ用)
  */
 export function handleClientError(
@@ -15,13 +16,8 @@ export function handleClientError(
   userNotificationMessage?: string,
   context?: string,
 ): void {
-  Sentry.captureException(error, {
-    tags: { context: context ?? 'unknown' },
-  });
+  const err = error instanceof Error ? error : new Error(String(error));
+  logger.error(err.message, err, { context });
 
-  if (process.env.NODE_ENV === NODE_ENV.DEVELOPMENT) {
-    // eslint-disable-next-line no-console
-    console.error('[Client Error]', error, context ? `Context: ${context}` : '');
-  }
   if (userNotificationMessage) toast.error(userNotificationMessage);
 }

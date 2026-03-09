@@ -1,5 +1,8 @@
 import * as abcjs from 'abcjs';
 import { INotationRenderer, NotationFormat } from '@/domain/score/score';
+import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+
+const logger = new ConsoleLogger();
 
 /**
  * AbcjsScoreRenderer
@@ -11,16 +14,14 @@ export class AbcjsScoreRenderer implements INotationRenderer {
    */
   async render(data: string, element: HTMLElement, format: NotationFormat): Promise<void> {
     if (format !== NotationFormat.ABC) {
-      // eslint-disable-next-line no-console
-      console.warn(
+      logger.warn(
         `AbcjsScoreRenderer: サポートされていないフォーマット '${format}' です。レンダリングをスキップします。`,
       );
       return;
     }
 
     if (!element) {
-      // eslint-disable-next-line no-console
-      console.error('AbcjsScoreRenderer: ターゲット要素が null です。');
+      logger.error('AbcjsScoreRenderer: ターゲット要素が null です。');
       return;
     }
 

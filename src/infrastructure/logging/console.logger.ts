@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import * as Sentry from '@sentry/nextjs';
 import { Logger } from '@/shared/logging/logger';
 import { APP_ENV } from '@/lib/constants';
 
@@ -39,20 +40,31 @@ export class ConsoleLogger implements Logger {
   }
 
   warn(message: string, meta?: Record<string, unknown>) {
-    // Warnは本番でも出す場合が多いが、ノイズになるなら開発のみにする
-    if (meta) {
-      console.warn(`[WARN] ${message}`, meta);
-    } else {
-      console.warn(`[WARN] ${message}`);
+    // 警告は開発時のみ出力（本番ではノイズ削減のため）
+    if (this.isDevelopment) {
+      if (meta) {
+        console.warn(`[WARN] ${message}`, meta);
+      } else {
+        console.warn(`[WARN] ${message}`);
+      }
     }
   }
 
   error(message: string, error?: Error, meta?: Record<string, unknown>) {
-    // Errorは常に出力
+    // エラーは常に出力 (Sentry 送信用に console.error を使用)
     if (meta || error) {
       console.error(`[ERROR] ${message}`, { ...meta, error });
     } else {
       console.error(`[ERROR] ${message}`);
     }
+
+    // ガイドライン: ERROR レベルのログ出力時に自動で Sentry.captureException が走る
+    Sentry.captureException(error || new Error(message), {
+      extra: { ...meta, originalMessage: message },
+      tags: {
+        logger: 'console',
+        runtime: 'browser',
+      },
+    });
   }
 }
