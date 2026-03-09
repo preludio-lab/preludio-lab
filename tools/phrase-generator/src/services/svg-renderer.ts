@@ -1,46 +1,27 @@
-import verovio, { toolkit } from 'verovio';
+import verovio, { type toolkit as _toolkit } from 'verovio';
 import fs from 'fs/promises';
+import { consola } from 'consola';
 
 // Singleton promise for the toolkit
 // const toolkitPromise: Promise<toolkit> | null = null;
 
-async function getVerovioToolkit(): Promise<toolkit> {
-  // verovio npm package usually handles its own initialization or is synchronous in Node
-  return new verovio.toolkit();
-}
+export async function renderToSVG(xml: string): Promise<string> {
+  const vrv = await verovio.module();
+  const tk = new vrv.toolkit();
 
-export async function renderToSVG(
-  xmlContent: string,
-  options: Record<string, unknown> = {},
-): Promise<string> {
-  const vrvToolkit = await getVerovioToolkit();
+  tk.setOptions({
+    // scale: 100,
+    pageWidth: 2100,
+    pageHeight: 2970,
+    // border: 0,
+  });
 
-  const defaultOptions = {
-    scale: 100,
-    adjustPageHeight: true,
-    pageMarginTop: 0,
-    pageMarginBottom: 0,
-    pageMarginLeft: 0,
-    pageMarginRight: 0,
-    pageWidth: 1200, // Content-friendly width
-    header: 'none',
-    footer: 'none',
-    mdivAll: true,
-    justifyVertically: false,
-    noJustification: true,
-    ...options,
-  };
-
-  vrvToolkit.setOptions(defaultOptions);
-  vrvToolkit.loadData(xmlContent);
-  vrvToolkit.redoLayout();
-
-  // Render the first page (common for snippets)
-  const svg = vrvToolkit.renderToSVG(1);
+  tk.loadData(xml);
+  const svg = tk.renderToSVG(1, {});
   return svg;
 }
 
 export async function saveSVG(svg: string, outputPath: string): Promise<void> {
   await fs.writeFile(outputPath, svg);
-  console.log(`SVG saved to: ${outputPath}`);
+  consola.success(`SVG saved to: ${outputPath}`);
 }

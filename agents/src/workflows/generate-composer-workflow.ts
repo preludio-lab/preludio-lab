@@ -284,7 +284,6 @@ export class GenerateComposerWorkflow {
     const refinedResult = await agent.execute(draftData, input.review);
 
     // _reasoning フィールドが含まれている可能性があるため除外（TypeScript上の型定義にはないが、AIが返す可能性がある）
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _reasoning, ...currentJson } = refinedResult as Record<string, unknown>;
 
     const outPath = this.getRefinedPath(input.slug);

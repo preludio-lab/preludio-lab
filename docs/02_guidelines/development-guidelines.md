@@ -308,8 +308,10 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
     - ログには可能な限り `requestId` (Trace ID) を含め、一連の処理フローを追跡可能にする。
   - **Security (Redaction):**
     - パスワード、トークン、メールアドレスなどの機密情報（PII）がログに残らないよう、**Pino の `redact` オプション設定を必須**とする。
-  - **Exception (CLI/Agents):**
-    - GitHub Actionsや開発用スクリプト (`agents/` 等) においては、可読性とシンプルさを優先し、`console.log` / `console.error` の使用を許可する。ただし、機密情報の出力は厳禁とする。
+- **Exception (CLI/Agents):**
+  - 開発用スクリプト (`scripts/` 等)、自動化エージェント (`agents/` 等)、および開発ツール (`tools/` 等) においては、生の `console.log` ではなく **`consola`** の使用を標準とする。
+  - **Rationale:** 構造化ログ、色付き出力、および環境に応じた適切なレベル制御を一貫して提供するため。
+  - **Linting:** CLI 環境においても `no-console: error` を適用し、意図しない生の `console` 使用を防止する。直接出力が必要な箇所は `eslint-disable-next-line no-console` を明記すること。
 - **Client-Side:**
   - **Linting Rule:** `eslint.config.mjs` にて `no-console: error` を設定。原則として `console.*` の直接使用を禁止する。
   - **Development:** デバッグ目的で一時的に使用することは許可するが、コミット前に Logger 移行または削除を行う。
@@ -485,7 +487,7 @@ export default function SomeComponent() {
 
 ### 5.2. External Resource Safety (CSP Checklist)
 
-外部リソース（画像、スクリプト、API等）を新たに追加・変更する際は、セキュリティ上のブロックを防ぐため、以下の設定を必ず**セットで更新**すること。
+外部リソース（画像、スクリプト、API等）を新たに追加・変更する際は、セキュリティ上のブロックを防ぐため、**`src/proxy.ts` の CSP 定義更新を必須の確認項目**とし、以下の設定を必ず**セットで更新**すること。
 
 1.  **CSP (Content Security Policy) の更新**:
     - `src/proxy.ts` 内の `cspHeader` 定義を確認し、適切なディレクティブ（`img-src`, `connect-src`, `frame-src` 等）に新しいドメインを追加する。
@@ -493,3 +495,23 @@ export default function SomeComponent() {
     - 画像アセット（`next/image` 等）の場合、`next.config.ts` の `images.remotePatterns` にもドメインを追加する。
 3.  **配信ドメインの特定**:
     - `www.youtube.com`（サイトドメイン）だけでなく、実際に画像が配信される `i.ytimg.com`（CDNドメイン）のように、ブラウザが実際にリクエストを送るオリジンを確認して指定すること。
+
+### 5.3. URL Validation & Sanitization (CodeQL Safety)
+
+外部からの入力（Query Params, API Response 等）に含まれる URL を処理する際は、SSRF や XSS を防ぐため、以下の実装パターンを義務付ける。
+
+- **`URL` API の使用**: 文字列操作（`.includes()` 等）による不完全なサニタイズを避け、必ず組み込みの `new URL(url)` を使用してパースする。
+- **Host Validation**: `url.hostname` を取得し、ホワイトリスト（`supportedDomains` 等）に対して厳格に検証する。
+- **Exception Handling**: 不正な形式の URL が渡された際にアプリがクラッシュしないよう、必ず `try...catch` でラップし、失敗時は安全なデフォルト値や `false` を返す。
+
+```ts
+// Example: Strict YouTube Thumbnail Validation
+export function isSafeUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return ['img.youtube.com', 'i.ytimg.com'].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+```

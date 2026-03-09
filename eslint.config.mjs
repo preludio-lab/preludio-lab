@@ -7,15 +7,18 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      // Logger インターフェース経由のログ出力を強制する。
-      // console.logger.ts や CLI スクリプトなど、直接使用が必要な箇所は
-      // eslint-disable-next-line no-console で個別に例外処理を行うこと。
       'no-console': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
-  // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     '.next/**',
     'out/**',
     'build/**',

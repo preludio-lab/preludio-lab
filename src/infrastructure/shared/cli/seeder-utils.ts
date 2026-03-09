@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
 import * as schema from '@/infrastructure/database/schema';
@@ -9,10 +8,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();
-
-// Load Env if not loaded (CLI execution might need dotenv)
-// Assuming user runs via `tsx` or `dotenv` preloaded.
-// But explicit check is good.
 
 export const initDb = () => {
   const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;

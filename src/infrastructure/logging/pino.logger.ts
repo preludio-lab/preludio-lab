@@ -83,7 +83,7 @@ export class PinoLogger implements Logger {
       message: error.message,
       stack: error.stack,
       name: error.name,
-      ...(error as Record<string, unknown>),
+      ...(error as unknown as Record<string, unknown>),
     };
   }
 }
