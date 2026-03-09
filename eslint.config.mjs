@@ -18,13 +18,7 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-  globalIgnores([
-    '.next/**',
-    'out/**',
-    'build/**',
-    'next-env.d.ts',
-    '**/.wrangler/**',
-  ]),
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', '**/.wrangler/**']),
 ]);
 
 export default eslintConfig;

@@ -11,7 +11,6 @@ import { HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
  *   pnpm tsx scripts/composer/process-portrait.ts <slug> <image_url> [--force]
  */
 async function main() {
-  const { default: axios } = await import('axios');
   const { default: sharp } = await import('sharp');
   const { r2Client } = await import('@/infrastructure/storage/r2.client');
   const { getLogger } = await import('@/infrastructure/shared/cli/seeder-utils');
@@ -67,8 +66,12 @@ async function main() {
   try {
     // --- 画像の取得 ---
     logger.info(`画像を取得中: ${imageUrl}`);
-    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-    const buffer = Buffer.from(response.data);
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
     // --- 画像の変換 (sharp) ---
     logger.info('画像を WebP に変換・リサイズ中...');
