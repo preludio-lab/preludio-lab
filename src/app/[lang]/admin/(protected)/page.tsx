@@ -1,8 +1,11 @@
 'use client';
 
 import React from 'react';
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 
 export default function AdminDashboardPage() {
+  clientLogger.debug('Admin Dashboard Page Hit');
+
   return (
     <div className="space-y-6">
       <div>
