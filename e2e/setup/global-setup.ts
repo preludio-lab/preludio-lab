@@ -1,15 +1,16 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { consola } from 'consola';
 
 async function globalSetup() {
-  console.log('Starting Global Setup for E2E...');
+  consola.info('Starting Global Setup for E2E...');
 
   const dbPath = path.join(process.cwd(), 'local-e2e.db');
 
   // 1. Clean existing DB
   if (fs.existsSync(dbPath)) {
-    console.log(`Deleting existing DB: ${dbPath}`);
+    consola.info(`Deleting existing DB: ${dbPath}`);
     fs.unlinkSync(dbPath);
   }
 
@@ -23,20 +24,20 @@ async function globalSetup() {
 
   try {
     // 3. Migrate Schema (Using Drizzle Kit Push for speed in test)
-    console.log('Pushing schema to local-e2e.db...');
+    consola.info('Pushing schema to local-e2e.db...');
     // We can use drizzle-kit push or run migrations.
     // Since we want schema/index.ts to be reflected:
     execSync('pnpm db:generate', { stdio: 'inherit', env });
     execSync('pnpm db:migrate', { stdio: 'inherit', env });
 
     // 4. Run Seeding
-    console.log('Running Gold Set Seed...');
+    consola.info('Running Gold Set Seed...');
     // Execute seed-e2e.ts using tsx
     execSync('npx tsx scripts/seed-e2e.ts', { stdio: 'inherit', env });
 
-    console.log('Global Setup Complete.');
+    consola.success('Global Setup Complete.');
   } catch (error) {
-    console.error('Global Setup Failed:', error);
+    consola.error('Global Setup Failed:', error);
     throw error;
   }
 }

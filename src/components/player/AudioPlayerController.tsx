@@ -5,9 +5,7 @@ import { useAudioPlayer } from './AudioPlayerContext';
 import { PlayerProvider } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
 import { AudioPlayerAdapter } from './AudioPlayerAdapter';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
-
-const logger = new ConsoleLogger();
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
 
 /**
  * [REQ-UI-GLOBAL-PLAYER] Audio Player Controller (Smart Container)

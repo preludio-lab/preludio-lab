@@ -3,15 +3,11 @@ import { createClient } from '@libsql/client';
 import * as schema from '@/infrastructure/database/schema';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { Logger } from '@/shared/logging/logger';
+import { cliLogger as logger } from '@/infrastructure/logging/cli.logger';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
 dotenv.config();
-
-// Load Env if not loaded (CLI execution might need dotenv)
-// Assuming user runs via `tsx` or `dotenv` preloaded.
-// But explicit check is good.
 
 export const initDb = () => {
   const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
@@ -49,11 +45,4 @@ export const readJsonFile = async <T>(filePath: string): Promise<T> => {
   return JSON.parse(content) as T;
 };
 
-export const getLogger = (): Logger => {
-  return {
-    debug: (msg, meta) => console.debug(`[DEBUG] ${msg}`, meta ?? ''),
-    info: (msg, meta) => console.info(`[INFO] ${msg}`, meta ?? ''),
-    warn: (msg, meta) => console.warn(`[WARN] ${msg}`, meta ?? ''),
-    error: (msg, error, meta) => console.error(`[ERROR] ${msg}`, error, meta ?? ''),
-  };
-};
+export const getLogger = () => logger;

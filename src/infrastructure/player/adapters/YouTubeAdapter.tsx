@@ -3,9 +3,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 import { AudioPlayerAdapterProps } from '@/components/player/AudioPlayerAdapter';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
-
-const logger = new ConsoleLogger();
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
 
 interface YouTubePlayer {
   loadVideoById: (options: { videoId: string; startSeconds?: number; endSeconds?: number }) => void;
@@ -75,7 +73,7 @@ export function YouTubeAdapter({
       options: { videoId: string; startSeconds?: number; endSeconds?: number },
     ) => {
       try {
-        console.debug('[YouTubeAdapter] 動画ロード開始:', options);
+        logger.debug('[YouTubeAdapter] 動画ロード開始:', { options });
         target.loadVideoById(options);
       } catch (e) {
         logger.error('[YouTubeAdapter] 同期ロードエラー:', e as Error);

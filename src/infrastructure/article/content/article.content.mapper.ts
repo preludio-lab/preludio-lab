@@ -1,6 +1,6 @@
 import { ArticleContent, ContentSection, ContentStructure } from '@/domain/article/article';
 import matter from 'gray-matter';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * 記事コンテンツ（MDX）の変換を担うマッパー

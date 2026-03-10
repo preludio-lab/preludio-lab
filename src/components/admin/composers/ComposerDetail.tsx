@@ -54,7 +54,7 @@ function DimensionBar({ dimensionKey, value }: { dimensionKey: string; value: nu
   if (!config) return null;
 
   // -10 to +10 を 0-100% に正規化
-  const percentage = ((value + 10) / 20) * 100;
+  const _percentage = ((value + 10) / 20) * 100;
 
   return (
     <div className="flex items-center gap-3 py-1.5">
@@ -245,6 +245,7 @@ export function ComposerDetail({ composer, relatedWorks }: ComposerDetailProps) 
           <div className="flex items-center gap-4">
             {/* Portrait */}
             {composer.portrait ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={composer.portrait}
                 alt={displayName}
@@ -470,6 +471,7 @@ export function ComposerDetail({ composer, relatedWorks }: ComposerDetailProps) 
         <div className="flex items-center gap-5">
           {/* Portrait */}
           {composer.portrait ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={composer.portrait}
               alt={displayName}

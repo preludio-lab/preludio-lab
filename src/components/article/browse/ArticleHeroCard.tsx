@@ -3,8 +3,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { CdnImage } from '@/components/ui/image/CdnImage';
+import { YouTubeThumbnail } from '@/components/ui/image/YouTubeThumbnail';
 import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
 import { m } from 'framer-motion';
+import { isYoutubeThumbnailUrl, extractVideoIdFromThumbnailUrl } from '@/lib/youtube';
+import { useMemo } from 'react';
 
 export interface ArticleHeroCardProps {
   content: ArticleCardDto;
@@ -24,6 +27,12 @@ export function ArticleHeroCard({
   categoryLabel,
 }: ArticleHeroCardProps) {
   const { lang, category, slug, thumbnail, title, composerName } = content;
+
+  // YouTube 動画 ID の抽出 (サムネイルが YouTube 由来の場合)
+  const youtubeVideoId = useMemo(() => {
+    if (!thumbnail || !isYoutubeThumbnailUrl(thumbnail)) return null;
+    return extractVideoIdFromThumbnailUrl(thumbnail);
+  }, [thumbnail]);
 
   return (
     <m.div
@@ -48,7 +57,16 @@ export function ArticleHeroCard({
         {/* 画像エリア: カード全幅で表示し、overflow-hidden + rounded-[2.5rem] に追従 */}
         {/* TODO(#147): Image Loader改修後、中間サイズバリアント（md: 1080w, lg: 1920w）が配信される */}
         <div className="relative aspect-video w-full overflow-hidden">
-          {thumbnail ? (
+          {youtubeVideoId ? (
+            <YouTubeThumbnail
+              videoId={youtubeVideoId}
+              alt={`${title} - ${composerName}`}
+              priority
+              fill
+              sizes="(max-width: 896px) 100vw, 896px"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : thumbnail ? (
             <CdnImage
               src={thumbnail}
               alt={`${title} - ${composerName}`}

@@ -1,7 +1,7 @@
 import { GetArticleBySlugUseCase } from '@/application/article/usecase/get-article-by-slug.usecase';
 import { ListArticlesUseCase } from '@/application/article/usecase/list-articles.usecase';
 import { articleRepository } from '@/infrastructure/article';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -42,7 +42,7 @@ export async function generateStaticParams() {
         });
       }
     } catch (e) {
-      console.warn(`Failed to generate static params for ${lang}`, e);
+      logger.warn(`Failed to generate static params for ${lang}`, { error: e });
     }
   }
   return params;

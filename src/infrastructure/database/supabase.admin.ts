@@ -2,7 +2,7 @@ import 'server-only';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { env } from '@/lib/env';
 import { Database } from './database.types';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * 管理者権限を持つ Supabase クライアント (Singleton)

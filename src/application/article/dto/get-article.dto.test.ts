@@ -52,10 +52,10 @@ describe('ArticleDtoSchema', () => {
 
   it('should validate a complete valid article object', () => {
     const result = ArticleDtoSchema.safeParse(validData);
-    if (!result.success) {
-      console.error(JSON.stringify(result.error.format(), null, 2));
-    }
-    expect(result.success).toBe(true);
+    expect(
+      result.success,
+      result.success ? undefined : JSON.stringify(result.error.format(), null, 2),
+    ).toBe(true);
   });
 
   it('should fail if a required section is missing', () => {

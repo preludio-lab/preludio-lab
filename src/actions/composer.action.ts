@@ -9,7 +9,7 @@ import { TursoComposerDataSource } from '@/infrastructure/composer/turso.compose
 import { db } from '@/infrastructure/database/turso.client';
 import { TursoTransactionManager } from '@/infrastructure/database/turso.transaction-manager';
 import { AppError } from '@/domain/shared/app-error';
-import { Logger } from '@/shared/logging/logger';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 // Zod Schema based on the policy of sending all language data
 const TranslationSchema = z.object({
@@ -73,12 +73,6 @@ export async function updateComposerAction(
     const ds = new TursoComposerDataSource(db);
     const repository = new ComposerRepositoryImpl(ds);
     const txManager = new TursoTransactionManager(db);
-    const logger: Logger = {
-      debug: console.debug,
-      info: console.info,
-      warn: console.warn,
-      error: console.error,
-    };
 
     const useCase = new UpdateComposerUseCase(repository, txManager, logger);
 

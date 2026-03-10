@@ -8,7 +8,7 @@ import {
 } from '@/domain/article/article.metadata';
 import { ContentStructure, ContentSection } from '@/domain/article/article';
 import { ArticleStatus } from '@/domain/article/article.control';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import {
   IArticleMetadataDataSource,
   ArticleMetadataRow,

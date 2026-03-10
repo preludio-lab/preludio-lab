@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { PinoLogger } from '../src/infrastructure/logging/pino.logger';
-
-const logger = new PinoLogger();
+import { cliLogger as logger } from '../src/infrastructure/logging/cli.logger';
 
 /**
  * .zap/zap-rules.conf のバリデーション

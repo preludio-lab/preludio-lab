@@ -41,7 +41,7 @@ export const proxy = auth((req) => {
       process.env.NODE_ENV === APP_ENV.DEVELOPMENT ? "'unsafe-eval'" : ''
     };
     style-src 'self' 'unsafe-inline';
-    img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://cdn.preludiolab.com;
+    img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://i.ytimg.com https://cdn.preludiolab.com;
     font-src 'self' data:;
     connect-src 'self' https://www.google-analytics.com ${supabaseUrl} https://*.supabase.co;
     frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;

@@ -3,7 +3,7 @@ import { ArticleRepository } from '@/domain/article/article.repository';
 import { ArticleRepositoryImpl } from './article.repository';
 import { FsArticleMetadataDataSource } from './metadata/fs.article.metadata.ds';
 import { TursoArticleMetadataDataSource } from './metadata/turso.article.metadata.ds';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import { R2StorageService } from '../storage/r2.storage';
 import { FileSystemStorageService } from '../storage/fs.storage';
 import { TursoArticleMapper } from './metadata/turso.article.metadata.mapper';
@@ -36,7 +36,7 @@ export class ArticleRepositoryFactory {
       return this.instance;
     }
 
-    logger.info(
+    logger.debug(
       `Initializing ArticleRepository (Metadata: ${config.metadata}, Payload: ${config.payload})`,
     );
 

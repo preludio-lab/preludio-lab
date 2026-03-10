@@ -4,7 +4,7 @@ import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { WorkPart, WorkPartControl } from '@/domain/work/work-part';
 import { WorkPartMetadataSchema } from '@/domain/work/work-part.metadata';
 import { WorkPartControlSchema } from '@/domain/work/work-part.control';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * File System Implementation of WorkPart Repository

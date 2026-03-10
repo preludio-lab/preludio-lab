@@ -23,9 +23,7 @@ import {
   DisplayType,
 } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
-
-const logger = new ConsoleLogger();
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
 
 export type PlayerModeType = PlayerMode;
 
@@ -175,7 +173,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         }));
       }
     } catch (e) {
-      console.error('Failed to load player state', e);
+      logger.error('Failed to load player state', e instanceof Error ? e : new Error(String(e)));
     }
   }, []);
 

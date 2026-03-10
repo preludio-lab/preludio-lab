@@ -12,9 +12,16 @@ const BASE_URL =
     : 'https://preludiolab.com');
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['pino', 'pino-pretty', 'thread-stream'],
+  serverExternalPackages: [
+    'pino',
+    'pino-pretty',
+    'thread-stream',
+    '@sentry/nextjs',
+    'import-in-the-middle',
+    'require-in-the-middle',
+  ],
   compiler: {
-    removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION,
+    removeConsole: process.env.NODE_ENV === APP_ENV.PRODUCTION ? { exclude: ['error'] } : false,
   },
   webpack: (config, { dev }) => {
     // 本番ビルド時にコメントを削除 (DAST Alert: Information Disclosure - Suspicious Comments)
@@ -36,6 +43,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'img.youtube.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
       },
       {
         protocol: 'https',

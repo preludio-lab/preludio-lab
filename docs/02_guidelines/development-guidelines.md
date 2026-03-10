@@ -292,39 +292,55 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
 
 #### A. Strategy Overview
 
-| 領域       | 実行環境       | 推奨ツール                           | 目的・役割                                                                                                                      |
-| :--------- | :------------- | :----------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| **Server** | Node.js / Edge | **Pino** (Log)<br>**Sentry** (Error) | **Pino:** システム動作の記録、監査ログ。構造化データ（JSON）必須。<br>**Sentry:** 予期せぬ例外（Crash/Exception）の検知と通知。 |
-| **Client** | Browser        | **Sentry** / Console                 | **Sentry:** ユーザー環境でのクラッシュ検知、UX計測（Vercel Speed Insights併用）。<br>**Console:** 開発時のデバッグ用。          |
+| 領域       | 実行環境       | 推奨ツール                                    | 目的・役割                                                                                                                                              |
+| :--------- | :------------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Server** | Node.js / Edge | **ServerLogger (Pino)**<br>**Sentry** (Error) | **ServerLogger:** システム動作の記録、監査ログ。構造化データ（JSON）必須。<br>**Sentry:** 予期せぬ例外（Crash/Exception）の検知と通知。                 |
+| **Client** | Browser        | **Sentry** / **ClientLogger**                 | **Sentry:** ユーザー環境でのクラッシュ検知、UX計測（Vercel Speed Insights併用）。<br>**ClientLogger:** 開発時デバッグおよびSentryへの確実なエラー送信。 |
 
 #### B. Implementation Policy
 
 - **Server-Side:**
-  - **Architecture:** Clean Architectureに基づき、`src/domain/services/logger-interface.ts` (Interface) を定義し、`src/infrastructure/logging/pino-logger.ts` (Implementation) で実装する。
+  - **Architecture:** Clean Architectureに基づき、`src/shared/logging/logger.ts` (Interface) を定義し、`src/infrastructure/logging/server.logger.ts` (Implementation) で実装する。
   - **Integration:**
-    - **PinoLogger** を使用し、`ERROR` レベルのログ出力時に自動で **Sentry.captureException** が走るよう実装済み。
+    - **ServerLogger** を使用し、`ERROR` レベルのログ出力時に自動で **Sentry.captureException** が走るよう実装済み。
     - 呼び出し元（Use Case / Server Action）は Logger のみを依存し、Sentry を直接意識しない。
+    - **Singleton:** 依存や設定を一元管理するため、各ファイルからは `import { serverLogger } from '@/infrastructure/logging/server.logger'` のようにシングルトンインスタンスを利用する。
   - **Traceability:**
-    - ログには可能な限り `requestId` (Trace ID) を含め、一連の処理フローを追跡可能にする。
+    - ログには可能な限り `requestId` (Trace ID) を含め、一連の処理フローを追跡可能にする。（将来拡張として AsyncLocalStorage 等の利用も想定）
   - **Security (Redaction):**
     - パスワード、トークン、メールアドレスなどの機密情報（PII）がログに残らないよう、**Pino の `redact` オプション設定を必須**とする。
-  - **Exception (CLI/Agents):**
-    - GitHub Actionsや開発用スクリプト (`agents/` 等) においては、可読性とシンプルさを優先し、`console.log` / `console.error` の使用を許可する。ただし、機密情報の出力は厳禁とする。
+- **Exception (CLI/Agents):**
+  - 開発用スクリプト (`scripts/` 等)、自動化エージェント (`agents/` 等)、および開発ツール (`tools/` 等) においては、生の `console.log` ではなく **`CliLogger`**（内部的に `consola` を使用したシングルトン） の使用を標準とする。
+  - **Rationale:** 構造化ログ、色付き出力、および環境に応じた適切なレベル制御を一貫して提供するため。
+  - **Linting:** CLI 環境においても `no-console: error` を適用し、意図しない生の `console` 使用を防止する。直接出力が必要な箇所は `eslint-disable-next-line no-console` を明記すること。
+
+#### インポートパターンの標準化
+
+コードのポータビリティ（サーバー/クライアントコンポーネント間でのコード移動）を高めるため、各ファイルでは以下のように名前を `logger` にエイリアスしてインポートすることを必須とします。
+
+```ts
+// Server side
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
+
+// Client side
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
+
+// CLI / Scripts
+import { cliLogger as logger } from '@/infrastructure/logging/cli.logger';
+```
+
 - **Client-Side:**
-  - **Development:** `console.log` / `console.error` を使用してデバッグを行う。
-    - **推奨:** 環境差異を吸収するため、以下のような `ConsoleLogger` クラス（または同様のラッパー）を実装し、製品コードには `console` を直接記述しないことを推奨する。
+  - **Linting Rule:** `eslint.config.mjs` にて `no-console: error` を設定。原則として `console.*` の直接使用を禁止する。
+  - **Development:** デバッグ目的で一時的に使用することは許可するが、コミット前に `clientLogger` へ移行または削除を行う。
+  - **Implementation:** 環境差異を吸収し、クライアントプロセスで安全なように `ClientLogger` シングルトンを使用する。
+    - ブラウザ専用APIを安全に使うため、サーバー側の依存（Pinoなど）が混入しないよう厳密にファイルを分ける（Bundler Safety）。
 
       ```ts
-      import { APP_ENV } from '@/lib/constants';
+      import { clientLogger } from '@/infrastructure/logging/client.logger';
 
-      export class ConsoleLogger implements Logger {
-        private isDevelopment = process.env.NODE_ENV === APP_ENV.DEVELOPMENT;
-
-        debug(message: string, meta?: any) {
-          if (this.isDevelopment) console.debug(message, meta);
-        }
-        // ... info, warn, error
-      }
+      // ...
+      clientLogger.info('API call succeeded', { dataId: 123 });
+      clientLogger.error('Unhandled Rejection', error);
       ```
 
   - **Production:**
@@ -372,6 +388,18 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
     - 外部API呼び出しは `try/catch` だけでなく、戻り値が Promise でないか確認し、必要であればチェーンで `.catch()` を接続する。Frameworkやライブラリによっては `await` してもエラーが補足できない実装（Fire-and-forget）があるため注意する。
 3.  **Privacy & CORS Noise Reduction:**
     - YouTube等の埋め込みプレイヤーを使用する場合、`www.youtube-nocookie.com` ドメインを使用することで、トラッキングCookieを抑制し、ブラウザコンソールへのCORSエラーノイズ（`googleads.g.doubleclick.net`等）を低減できる。
+
+#### E. Testing Quality (DTO & Console Error Prevention)
+
+- **Test Silence Principle**: CI / CD 環境でのノイズを根絶するため、テスト実行時に（予期せぬ問題を示唆しない限り）コンソール出力を発生させることを厳禁とする。
+- **Zod Error Debugging**: DTOテストなどでバリデーションが失敗した詳細を知りたい場合は `console.error` を使って吐き出すのではなく、`ZodError` のフォーマット出力を `expect` 期待値メッセージの中に埋め込むこと。
+  ```ts
+  const result = ArticleDtoSchema.safeParse(data);
+  expect(
+    result.success,
+    result.success ? undefined : JSON.stringify(result.error.format(), null, 2),
+  ).toBe(true);
+  ```
 
 #### 例：クライアント側エラーハンドラ実装（`src/lib/client-error.ts`）
 
@@ -480,3 +508,34 @@ export default function SomeComponent() {
 - **RLS (Row Level Security):** すべてのテーブルに対して RLS を有効化 (`ENABLE ROW LEVEL SECURITY`) し、ポリシーを明示的に定義する。
 - **No Raw SQL:** SQLインジェクションを防ぐため、Supabase Client SDK (`supabase-js`) のメソッドチェーンのみを使用する。生SQLの実行は禁止。
 - **Secrets:** APIキーや接続文字列は `.env.local` で管理し、リポジトリにはコミットしない。クライアント側に露出させる変数は `NEXT_PUBLIC_` プレフィックスを付けるが、最小限に留める。
+
+### 5.2. External Resource Safety (CSP Checklist)
+
+外部リソース（画像、スクリプト、API等）を新たに追加・変更する際は、セキュリティ上のブロックを防ぐため、**`src/proxy.ts` の CSP 定義更新を必須の確認項目**とし、以下の設定を必ず**セットで更新**すること。
+
+1.  **CSP (Content Security Policy) の更新**:
+    - `src/proxy.ts` 内の `cspHeader` 定義を確認し、適切なディレクティブ（`img-src`, `connect-src`, `frame-src` 等）に新しいドメインを追加する。
+2.  **Next.js Remote Patterns の同期**:
+    - 画像アセット（`next/image` 等）の場合、`next.config.ts` の `images.remotePatterns` にもドメインを追加する。
+3.  **配信ドメインの特定**:
+    - `www.youtube.com`（サイトドメイン）だけでなく、実際に画像が配信される `i.ytimg.com`（CDNドメイン）のように、ブラウザが実際にリクエストを送るオリジンを確認して指定すること。
+
+### 5.3. URL Validation & Sanitization (CodeQL Safety)
+
+外部からの入力（Query Params, API Response 等）に含まれる URL を処理する際は、SSRF や XSS を防ぐため、以下の実装パターンを義務付ける。
+
+- **`URL` API の使用**: 文字列操作（`.includes()` 等）による不完全なサニタイズを避け、必ず組み込みの `new URL(url)` を使用してパースする。
+- **Host Validation**: `url.hostname` を取得し、ホワイトリスト（`supportedDomains` 等）に対して厳格に検証する。
+- **Exception Handling**: 不正な形式の URL が渡された際にアプリがクラッシュしないよう、必ず `try...catch` でラップし、失敗時は安全なデフォルト値や `false` を返す。
+
+```ts
+// Example: Strict YouTube Thumbnail Validation
+export function isSafeUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return ['img.youtube.com', 'i.ytimg.com'].includes(hostname);
+  } catch {
+    return false;
+  }
+}
+```
