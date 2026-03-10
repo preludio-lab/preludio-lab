@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from 'next-auth';
 import { adminAuthRepository } from '@/infrastructure/admin';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import { NODE_ENV } from '@/lib/constants';
 
 const isDevAuthBypassEnabled =
@@ -37,8 +38,10 @@ export const authConfig = {
     // redirectコールバックにあった複雑な条件は不要になったため削除（デフォルトの動作に任せる）
 
     async signIn({ user }) {
+      logger.debug('signIn callback executed', { user: JSON.stringify(user, null, 2) });
 
       if (!user.email) {
+        logger.debug('signIn failed: user.email is missing.');
         return false;
       }
 
@@ -48,6 +51,10 @@ export const authConfig = {
       }
 
       const role = await adminAuthRepository.getRole(user.email);
+
+      if (role === null) {
+        logger.debug(`signIn failed: Role not found for email ${user.email}`);
+      }
 
       // ロール（OWNER または EDITOR）を持っている場合のみサインインを許可
       return role !== null;

@@ -22,6 +22,12 @@ jobs:
       - name: Prepare workspace permissions
         run: chmod -R 777 ${{ github.workspace }}
 
+      - name: Pre-pull ZAP Image (Resilience)
+        run: |
+          for i in {1..3}; do
+            docker pull ghcr.io/zaproxy/zaproxy:stable && break || sleep 10
+          done
+
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.15.0
         with:
