@@ -11,7 +11,7 @@
 ### 1. 構造化ロギングの徹底 (No `console.log`)
 
 スクリプト内での安易な `console.log` や `console.error` の使用は**禁止**します。
-代わりに、アプリケーション本体と共通の **`PinoLogger`** を使用し、構造化ログ（JSON形式）として出力してください。
+代わりに、アプリケーション本体と共通の **`CliLogger`** (または状況により `ServerLogger`) を使用し、構造化ログ（JSON形式）として出力してください。
 
 これにより、CI基盤（GitHub Actions等）やログ監視基盤（Datadog, Splunk等）でエラー内容や実行結果を機械的かつ容易にパース・検索できるようになります。
 
@@ -21,8 +21,8 @@ console.log('検証が完了しました。');
 console.error(`エラー: 行 ${index} のフォーマットが不正です。内容: ${line}`);
 
 // Good (推奨)
-import { PinoLogger } from '../src/infrastructure/logging/pino.logger';
-const logger = new PinoLogger();
+import { cliLogger } from '../src/infrastructure/logging/cli.logger';
+const logger = cliLogger;
 
 // 成功時のイベントログ
 logger.info('検証が完了しました。', {

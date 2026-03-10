@@ -4,12 +4,12 @@ import { Logger } from '@/shared/logging/logger';
 import { APP_ENV } from '@/lib/constants';
 
 /**
- * インフラ層の実装: Console Logger
+ * インフラ層の実装: Client Logger
  *
  * ILogger の Console API による具体的な実装。
- * クライアントコンポーネントで使用されます。
+ * クライアントコンポーネント (Browser) で使用されます。
  */
-export class ConsoleLogger implements Logger {
+export class ClientLogger implements Logger {
   private isDevelopment: boolean;
 
   constructor() {
@@ -62,9 +62,11 @@ export class ConsoleLogger implements Logger {
     Sentry.captureException(error || new Error(message), {
       extra: { ...meta, originalMessage: message },
       tags: {
-        logger: 'console',
+        logger: 'client',
         runtime: 'browser',
       },
     });
   }
 }
+
+export const clientLogger = new ClientLogger();

@@ -1,11 +1,11 @@
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 import toast from 'react-hot-toast';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
 
-const logger = new ConsoleLogger();
+const logger = clientLogger;
 
 /**
  * クライアント用エラーハンドラ。
- * ConsoleLogger を介してログ出力と Sentry 送信を行い、オプションでトースト通知を表示します。
+ * ClientLogger を介してログ出力と Sentry 送信を行い、オプションでトースト通知を表示します。
  *
  * @param error 発生したエラーオブジェクト
  * @param userNotificationMessage ユーザーに表示するトーストメッセージ (通知が不要な場合は省略可)

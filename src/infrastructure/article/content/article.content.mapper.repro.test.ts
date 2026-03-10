@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { ArticleContentMapper } from './article.content.mapper';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import matter from 'gray-matter';
 
 // Modules to mock
-vi.mock('@/infrastructure/logging', () => ({
-  logger: {
+vi.mock('@/infrastructure/logging/server.logger', () => ({
+  serverLogger: {
     error: vi.fn(),
     warn: vi.fn(),
   },

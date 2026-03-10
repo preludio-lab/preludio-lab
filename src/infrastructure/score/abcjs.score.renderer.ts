@@ -1,8 +1,8 @@
 import * as abcjs from 'abcjs';
 import { INotationRenderer, NotationFormat } from '@/domain/score/score';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 
-const logger = new ConsoleLogger();
+const logger = clientLogger;
 
 /**
  * AbcjsScoreRenderer

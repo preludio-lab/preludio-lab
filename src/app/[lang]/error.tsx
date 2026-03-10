@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 
 export default function Error({
   error,
@@ -17,7 +18,7 @@ export default function Error({
     // react-hot-toast 等の外部ライブラリに依存せず、最小限のログ出力に留める。
     // これにより、react-hot-toast 自体がクラッシュした場合でも
     // エラーバウンダリが正常に機能し、無限ループを防止する。
-    console.error('[ErrorBoundary]', error);
+    clientLogger.error('[ErrorBoundary]', error);
 
     // Sentry への送信は動的インポートで行い、失敗しても握り潰す
     import('@sentry/nextjs')

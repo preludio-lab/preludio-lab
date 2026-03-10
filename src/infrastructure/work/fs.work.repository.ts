@@ -5,7 +5,7 @@ import { Work, WorkControl } from '@/domain/work/work';
 import { WorkMetadataSchema } from '@/domain/work/work.metadata';
 import { WorkControlSchema } from '@/domain/work/work.control';
 import { MusicalGenre } from '@/domain/shared/musical-genre';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * File System Implementation of Work Repository

@@ -1,5 +1,5 @@
 import { AdminRole } from '@/domain/admin/admin-user';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import { IAdminAuthDataSource } from './interfaces/admin-auth.ds.interface';
 
 /**

@@ -23,9 +23,9 @@ import {
   DisplayType,
 } from '@/domain/player/player';
 import { handleClientError } from '@/lib/client-error';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 
-const logger = new ConsoleLogger();
+const logger = clientLogger;
 
 export type PlayerModeType = PlayerMode;
 

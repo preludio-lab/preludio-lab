@@ -1,4 +1,4 @@
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * アプリ全体で使用する例外ハンドラ。

@@ -1,7 +1,7 @@
 import { S3Client } from '@aws-sdk/client-s3';
 import { env } from '@/lib/env';
 import { APP_ENV } from '@/lib/constants';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 const { R2_REGION, R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY } = env;
 

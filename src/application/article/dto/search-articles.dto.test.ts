@@ -39,11 +39,10 @@ describe('ArticleSearchResultItemDtoSchema', () => {
     // If the schema expects EXACT matches, we need to ensure validMetadata has all props.
     // For now, testing basic structure.
     const result = ArticleSearchResultItemDtoSchema.safeParse(validSearchResult);
-    if (!result.success) {
-      // eslint-disable-next-line no-console
-      console.error(result.error);
-    }
-    expect(result.success).toBe(true);
+    expect(
+      result.success,
+      result.success ? undefined : JSON.stringify(result.error.format(), null, 2),
+    ).toBe(true);
   });
 
   it('should fail if search context is missing', () => {

@@ -3,9 +3,9 @@ import { NotationFormat } from '@/domain/score/score';
 import { Phrase } from '@/domain/score/phrase';
 import { AbcjsScoreRenderer } from '@/infrastructure/score/abcjs.score.renderer';
 import { handleClientError } from '@/lib/client-error';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
+import { clientLogger } from '@/infrastructure/logging/client.logger';
 
-const logger = new ConsoleLogger();
+const logger = clientLogger;
 
 /**
  * usePhraseRenderer

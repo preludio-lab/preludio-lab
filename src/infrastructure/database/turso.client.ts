@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import * as schema from './schema';
 import { env } from '@/lib/env';
 import { APP_ENV } from '@/lib/constants';
-import { logger } from '@/infrastructure/logging';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
  * Turso / LibSQL Client

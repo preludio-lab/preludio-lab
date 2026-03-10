@@ -9,7 +9,7 @@ import { NODE_ENV } from '@/lib/constants';
  * ILogger の Pino による具体的な実装。
  * サーバーサイド (Node.js) および Edge Runtime (Middleware 等) で使用されます。
  */
-export class PinoLogger implements Logger {
+export class ServerLogger implements Logger {
   private pino: PinoInstance;
 
   constructor() {
@@ -69,7 +69,7 @@ export class PinoLogger implements Logger {
     Sentry.captureException(error || new Error(message), {
       extra: { ...meta, originalMessage: message },
       tags: {
-        logger: 'pino',
+        logger: 'server',
         runtime: process.env.NEXT_RUNTIME || 'unknown',
       },
     });
@@ -87,3 +87,5 @@ export class PinoLogger implements Logger {
     };
   }
 }
+
+export const serverLogger = new ServerLogger();

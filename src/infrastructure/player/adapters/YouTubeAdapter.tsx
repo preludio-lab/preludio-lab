@@ -3,9 +3,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps, YouTubeEvent } from 'react-youtube';
 import { AudioPlayerAdapterProps } from '@/components/player/AudioPlayerAdapter';
-import { ConsoleLogger } from '@/infrastructure/logging/console.logger';
-
-const logger = new ConsoleLogger();
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
 
 interface YouTubePlayer {
   loadVideoById: (options: { videoId: string; startSeconds?: number; endSeconds?: number }) => void;
