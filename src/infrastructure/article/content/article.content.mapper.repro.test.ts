@@ -5,7 +5,7 @@ import matter from 'gray-matter';
 
 // Modules to mock
 vi.mock('@/infrastructure/logging/server.logger', () => ({
-  serverLogger: {
+  ['serverLogger']: {
     error: vi.fn(),
     warn: vi.fn(),
   },
