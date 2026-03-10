@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { cliLogger } from '../src/infrastructure/logging/cli.logger';
-
-const logger = cliLogger;
+import { cliLogger as logger } from '../src/infrastructure/logging/cli.logger';
 
 /**
  * .zap/zap-rules.conf のバリデーション

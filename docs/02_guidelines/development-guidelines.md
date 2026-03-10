@@ -313,6 +313,22 @@ Next.js (App Router) における Hydration Mismatch を防ぐため、以下の
   - 開発用スクリプト (`scripts/` 等)、自動化エージェント (`agents/` 等)、および開発ツール (`tools/` 等) においては、生の `console.log` ではなく **`CliLogger`**（内部的に `consola` を使用したシングルトン） の使用を標準とする。
   - **Rationale:** 構造化ログ、色付き出力、および環境に応じた適切なレベル制御を一貫して提供するため。
   - **Linting:** CLI 環境においても `no-console: error` を適用し、意図しない生の `console` 使用を防止する。直接出力が必要な箇所は `eslint-disable-next-line no-console` を明記すること。
+
+#### インポートパターンの標準化
+
+コードのポータビリティ（サーバー/クライアントコンポーネント間でのコード移動）を高めるため、各ファイルでは以下のように名前を `logger` にエイリアスしてインポートすることを必須とします。
+
+```ts
+// Server side
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
+
+// Client side
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
+
+// CLI / Scripts
+import { cliLogger as logger } from '@/infrastructure/logging/cli.logger';
+```
+
 - **Client-Side:**
   - **Linting Rule:** `eslint.config.mjs` にて `no-console: error` を設定。原則として `console.*` の直接使用を禁止する。
   - **Development:** デバッグ目的で一時的に使用することは許可するが、コミット前に `clientLogger` へ移行または削除を行う。

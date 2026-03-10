@@ -21,8 +21,7 @@ console.log('検証が完了しました。');
 console.error(`エラー: 行 ${index} のフォーマットが不正です。内容: ${line}`);
 
 // Good (推奨)
-import { cliLogger } from '../src/infrastructure/logging/cli.logger';
-const logger = cliLogger;
+import { cliLogger as logger } from '../src/infrastructure/logging/cli.logger';
 
 // 成功時のイベントログ
 logger.info('検証が完了しました。', {

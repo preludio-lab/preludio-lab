@@ -1,7 +1,5 @@
-import { clientLogger } from '@/infrastructure/logging/client.logger';
+import { clientLogger as logger } from '@/infrastructure/logging/client.logger';
 import toast from 'react-hot-toast';
-
-const logger = clientLogger;
 
 /**
  * クライアント用エラーハンドラ。

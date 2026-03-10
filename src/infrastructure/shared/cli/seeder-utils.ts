@@ -3,7 +3,7 @@ import { createClient } from '@libsql/client';
 import * as schema from '@/infrastructure/database/schema';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { cliLogger } from '@/infrastructure/logging/cli.logger';
+import { cliLogger as logger } from '@/infrastructure/logging/cli.logger';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.local' });
@@ -45,4 +45,4 @@ export const readJsonFile = async <T>(filePath: string): Promise<T> => {
   return JSON.parse(content) as T;
 };
 
-export const getLogger = () => cliLogger;
+export const getLogger = () => logger;
