@@ -6,7 +6,7 @@ describe('ComposerDtoSchema', () => {
     id: '123e4567-e89b-12d3-a456-426614174000',
     slug: 'beethoven',
     name: 'Ludwig van Beethoven',
-    biography: 'German composer.',
+    summary: 'German composer.',
     era: 'early-romantic',
     birthDate: new Date('1770-12-17T00:00:00.000Z'),
     deathDate: new Date('1827-03-26T00:00:00.000Z'),
@@ -32,7 +32,7 @@ describe('ComposerDtoSchema', () => {
         fullName: 'ルートヴィヒ・ヴァン・ベートーヴェン',
         displayName: 'ベートーヴェン',
         shortName: 'Beethoven',
-        biography: 'ドイツの作曲家。',
+        summary: 'ドイツの作曲家。',
       },
     },
     relatedWorks: [

@@ -35,7 +35,7 @@ export class TursoComposerMapper {
     const fullName = aggregateTranslations(translations, 'fullName');
     const displayName = aggregateTranslations(translations, 'displayName');
     const shortName = aggregateTranslations(translations, 'shortName');
-    const biography = aggregateTranslations(translations, 'biography');
+    const summary = aggregateTranslations(translations, 'summary');
 
     // Reconstruct Entity
     return new Composer({
@@ -49,7 +49,7 @@ export class TursoComposerMapper {
         fullName,
         displayName,
         shortName,
-        biography,
+        summary,
 
         era: (composer.era as any) || undefined,
         birthDate: composer.birthDate ? new Date(composer.birthDate) : undefined,
@@ -100,7 +100,7 @@ export class TursoComposerMapper {
       ...Object.keys(metadata.fullName || {}),
       ...Object.keys(metadata.displayName || {}),
       ...Object.keys(metadata.shortName || {}),
-      ...Object.keys(metadata.biography || {}),
+      ...Object.keys(metadata.summary || {}),
     ]);
 
     const translations: ComposerTranslationRow[] = [];
@@ -114,7 +114,7 @@ export class TursoComposerMapper {
       // If a language is missing one of these, we might fail DB constraint.
       // For Master Data Sync, we trust the input is valid or we handle it.
       // Currently, if "en" has full/display/short, and "ja" has full/display/short, we are good.
-      // If "biography" only exists in "en", then "ja" row will have null biography (allowed).
+      // If "summary" only exists in "en", then "ja" row will have null summary (allowed).
 
       const fn = getVal(metadata.fullName);
       const dn = getVal(metadata.displayName);
@@ -139,7 +139,7 @@ export class TursoComposerMapper {
         fullName: fn,
         displayName: dn,
         shortName: sn,
-        biography: getVal(metadata.biography) || null,
+        summary: getVal(metadata.summary) || null,
         // profileEmbedding not handled yet without vector logic.
         profileEmbedding: null,
         createdAt: new Date().toISOString(), // New row

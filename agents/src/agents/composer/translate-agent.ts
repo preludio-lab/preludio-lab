@@ -26,7 +26,7 @@ export class ComposerTranslateAgent {
 - fullName: ${jaData.fullName?.ja || ''}
 - displayName: ${jaData.displayName?.ja || ''}
 - shortName: ${jaData.shortName?.ja || ''}
-- biography: ${jaData.biography?.ja || ''}`;
+- summary: ${jaData.summary?.ja || ''}`;
 
     return await this.agent.generateObject<TranslationOutput>(prompt, TranslationOutputSchema);
   }

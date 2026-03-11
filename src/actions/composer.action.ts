@@ -16,7 +16,7 @@ const TranslationSchema = z.object({
   fullName: z.string().min(1, { message: 'Required' }),
   displayName: z.string().min(1, { message: 'Required' }),
   shortName: z.string().min(1, { message: 'Required' }),
-  biography: z.string().nullable().optional(),
+  summary: z.string().nullable().optional(),
 });
 
 const UpdateComposerSchema = z.object({
@@ -86,14 +86,14 @@ export async function updateComposerAction(
     const fullName: Record<string, string> = {};
     const displayName: Record<string, string> = {};
     const shortName: Record<string, string> = {};
-    const biography: Record<string, string> = {};
+    const summary: Record<string, string> = {};
 
     for (const [lang, trans] of Object.entries(translations)) {
       fullName[lang] = trans.fullName;
       displayName[lang] = trans.displayName;
       shortName[lang] = trans.shortName;
-      if (trans.biography) {
-        biography[lang] = trans.biography;
+      if (trans.summary) {
+        summary[lang] = trans.summary;
       }
     }
 
@@ -102,7 +102,7 @@ export async function updateComposerAction(
       fullName,
       displayName,
       shortName,
-      biography: Object.keys(biography).length > 0 ? biography : undefined,
+      summary: Object.keys(summary).length > 0 ? summary : undefined,
       birthDate: parsedData.data.birthDate ? new Date(parsedData.data.birthDate) : undefined,
       deathDate: parsedData.data.deathDate ? new Date(parsedData.data.deathDate) : undefined,
       // We'll pass the optimstic locking updatedat into a domain concern later if needed

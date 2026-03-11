@@ -43,6 +43,13 @@
       "when": 1771216614422,
       "tag": "0005_clever_doctor_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1773161512569,
+      "tag": "0006_rename_biography_to_summary",
+      "breakpoints": true
     }
   ]
 }

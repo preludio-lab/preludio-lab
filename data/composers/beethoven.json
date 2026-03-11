@@ -65,9 +65,9 @@
     "complexity": 8,
     "theatricality": 6
   },
-  "portrait": "https://cdn.preludiolab.com/composers/beethoven/images/portrait.webp",
+  "portrait": "/composers/beethoven/images/portrait.webp",
   "tags": ["deafness", "titan", "transition-to-romanticism", "vienna"],
-  "biography": {
+  "summary": {
     "en": "A German composer and pianist. A crucial figure in the transition between the Classical and Romantic eras in classical music, he remains one of the most recognized and influential musicians of all time. His career is typically divided into early, middle, and late periods, famously continuing to compose even after losing his hearing.",
     "ja": "ドイツの作曲家、ピアニスト。古典派音楽の集大成を築き、ロマン派音楽への道を開いた音楽史上最も重要な人物の一人。20代後半から始まった難聴という逆境に立ち向かい、交響曲第5番「運命」や第9番「合唱付き」など、不屈の精神と崇高な響きを備えた数々の傑作を残した。その独創性と劇的な作風は、後のあらゆる作曲家に多大な影響を与えた。",
     "de": "Ein deutscher Komponist und Pianist. Er war eine entscheidende Figur beim Übergang zwischen der Ära der Klassik und der Romantik in der klassischen Musik und bleibt einer der anerkanntesten und einflussreichsten Musiker aller Zeiten. Seine Karriere wird typischerweise in frühe, mittlere und späte Perioden unterteilt, wobei er bekanntlich auch nach dem Verlust seines Gehörs weiter komponierte.",

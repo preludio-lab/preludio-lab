@@ -27,9 +27,8 @@ export class GetComposerBySlugUseCase {
           : composer.displayName) ||
         (typeof composer.fullName === 'object' ? composer.fullName?.ja : composer.fullName) ||
         'Unknown',
-      biography:
-        (typeof composer.biography === 'object' ? composer.biography?.ja : composer.biography) ||
-        null,
+      summary:
+        (typeof composer.summary === 'object' ? composer.summary?.ja : composer.summary) || null,
       era: composer.era || null,
       birthDate: composer.birthDate || null,
       deathDate: composer.deathDate || null,
@@ -59,10 +58,9 @@ export class GetComposerBySlugUseCase {
             (typeof composer.shortName === 'object'
               ? composer.shortName?.ja
               : composer.shortName) || '',
-          biography:
-            (typeof composer.biography === 'object'
-              ? composer.biography?.ja
-              : composer.biography) || null,
+          summary:
+            (typeof composer.summary === 'object' ? composer.summary?.ja : composer.summary) ||
+            null,
         },
       },
       relatedWorks: [],

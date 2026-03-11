@@ -23,7 +23,7 @@ export const ComposerFixtureSchema = z.object({
       fullName: z.string(),
       displayName: z.string(),
       shortName: z.string(),
-      biography: z.string().optional(),
+      summary: z.string().optional(),
     }),
   ),
 });

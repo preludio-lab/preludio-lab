@@ -20,7 +20,7 @@ describe('Composer Entity', () => {
     displayName: { ja: 'L. v. ベートーヴェン', en: 'L. v. Beethoven' },
     shortName: { ja: 'ベートーヴェン', en: 'Beethoven' },
     era: MusicalEra.CLASSICAL,
-    biography: { ja: '偉大な作曲家', en: 'Great composer' },
+    summary: { ja: '偉大な作曲家', en: 'Great composer' },
     birthDate: new Date('1770-12-17'),
     deathDate: new Date('1827-03-26'),
     nationalityCode: Nationality.DE,
@@ -46,7 +46,7 @@ describe('Composer Entity', () => {
     expect(composer.displayName.en).toBe('L. v. Beethoven');
     expect(composer.shortName.en).toBe('Beethoven');
     expect(composer.era).toBe(MusicalEra.CLASSICAL);
-    expect(composer.biography?.en).toBe('Great composer');
+    expect(composer.summary?.en).toBe('Great composer');
     expect(composer.birthDate).toEqual(validMetadata.birthDate);
     expect(composer.nationalityCode).toBe(Nationality.DE);
     expect(composer.representativeInstruments).toContain(MusicalInstrument.PIANO);

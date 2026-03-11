@@ -71,9 +71,9 @@
     "complexity": 10,
     "theatricality": 4
   },
-  "portrait": "https://cdn.preludiolab.com/composers/johann-sebastian-bach/images/portrait.webp",
+  "portrait": "/composers/johann-sebastian-bach/images/portrait.webp",
   "tags": ["counterpoint", "cantor", "leipzig", "father-of-modern-music"],
-  "biography": {
+  "summary": {
     "en": "A German composer and musician of the Baroque period. He is known for instrumental compositions such as the Brandenburg Concertos and the Goldberg Variations, and for vocal music such as the St Matthew Passion and the Mass in B minor. Since the 19th-century Bach revival, he has been generally regarded as one of the greatest composers in the history of Western music.",
     "ja": "バロック音楽を代表するドイツの作曲家・オルガン奏者。対位法やフーガの技法を極め、西洋音楽の基礎を築いた「音楽の父」と称される。ライプツィヒの聖トーマス教会のカントールとして活動し、マタイ受難曲やブランデンブルク協奏曲など、宗教音楽から器楽、鍵盤音楽まで、あらゆるジャンルで最高の知性と精神性を備えた傑作を残した。",
     "de": "Ein deutscher Komponist und Musiker des Barock. Er ist bekannt für Instrumentalwerke wie die Brandenburgischen Konzerte und die Goldberg-Variationen sowie für Vokalmusik wie die Matthäus-Passion und die h-Moll-Messe. Seit der Bach-Renaissance im 19. Jahrhundert gilt er allgemein als einer der größten Komponisten in der Geschichte der westlichen Musik.",

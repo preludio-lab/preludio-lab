@@ -44,8 +44,8 @@ export class Composer {
     return this.metadata.era;
   }
 
-  get biography() {
-    return this.metadata.biography;
+  get summary() {
+    return this.metadata.summary;
   }
 
   get birthDate() {

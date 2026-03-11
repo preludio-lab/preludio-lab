@@ -242,7 +242,7 @@ export class GenerateComposerWorkflow {
       fullName: { [AppLocale.JA]: draftData.fullName },
       displayName: { [AppLocale.JA]: draftData.displayName },
       shortName: { [AppLocale.JA]: draftData.shortName },
-      biography: draftData.biography ? { [AppLocale.JA]: draftData.biography } : undefined,
+      summary: draftData.summary ? { [AppLocale.JA]: draftData.summary } : undefined,
     } as ComposerMaster;
 
     const outPath = this.getDraftPath(input.slug);

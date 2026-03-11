@@ -80,9 +80,9 @@
     "complexity": 6,
     "theatricality": 8
   },
-  "portrait": "https://cdn.preludiolab.com/composers/mozart/images/portrait.webp",
+  "portrait": "/composers/mozart/images/portrait.webp",
   "tags": ["prodigy", "vienna-classicism", "enlightenment", "universal-genius"],
-  "biography": {
+  "summary": {
     "en": "A prolific and influential composer of the Classical period. Born in Salzburg, in the Holy Roman Empire, Mozart showed prodigious ability from his earliest childhood. He excelled in every musical genre of his time and is considered one of the greatest composers in the history of Western music.",
     "ja": "古典派音楽を代表するオーストリアの作曲家。神童として幼少期からヨーロッパ中を旅し、35年という短い生涯の中で、オペラ、交響曲、協奏曲、室内楽など、当時のあらゆるジャンルで最高の傑作を残した。比類なき旋律美と形式的な完成度を誇る作品群は、西洋音楽史における至高の到達点の一つとされる。",
     "de": "Ein produktiver und einflussreicher Komponist der Wiener Klassik. Geboren in Salzburg, zeichnete sich Mozart bereits in seiner frühesten Kindheit durch außergewöhnliche Fähigkeiten aus. Er brillierte in jedem musikalischen Genre seiner Zeit und gilt als einer der bedeutendsten Komponisten in der Geschichte der westlichen Musik.",

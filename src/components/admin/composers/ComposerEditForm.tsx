@@ -29,13 +29,13 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
           fullName: composer.translations[lang]?.fullName || '',
           displayName: composer.translations[lang]?.displayName || '',
           shortName: composer.translations[lang]?.shortName || '',
-          biography: composer.translations[lang]?.biography || '',
+          summary: composer.translations[lang]?.summary || '',
         };
         return acc;
       },
       {} as Record<
         LanguageCode,
-        { fullName: string; displayName: string; shortName: string; biography: string }
+        { fullName: string; displayName: string; shortName: string; summary: string }
       >,
     ),
     impressionDimensions: {
@@ -102,7 +102,7 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
             fullName: data.fullName || '',
             displayName: data.displayName || data.fullName || '',
             shortName: data.shortName || '',
-            biography: data.biography || null,
+            summary: data.summary || null,
           },
         ]),
       ),
@@ -262,12 +262,12 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
         </div>
         <div>
           <label className="block text-sm font-medium text-admin-text-secondary mb-1">
-            バイオグラフィ / Biography
+            要約 / Summary (150文字程度)
           </label>
           <textarea
             rows={5}
-            value={formData.translations[activeLang].biography}
-            onChange={(e) => handleTranslationChange(activeLang, 'biography', e.target.value)}
+            value={formData.translations[activeLang].summary}
+            onChange={(e) => handleTranslationChange(activeLang, 'summary', e.target.value)}
             className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary"
           />
         </div>

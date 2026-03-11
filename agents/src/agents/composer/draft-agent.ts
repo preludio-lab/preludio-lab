@@ -12,7 +12,7 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 3. musicalContributions: 歴史的に最も貢献したジャンル・楽器と、指定Enumリストとのマッピング検証。
 4. historicalContext: その作曲家の歴史的背景、最大の功績の事実ベースでの分析。
 5. eraClassification: なぜその時代区分（era）を選択したのかの根拠。
-6. biographyStructure: 「生い立ち」「功績」「影響」の3段落構成での伝記アウトライン作成。
+6. summaryStructure: 「音楽的魅力の核」「革新性」「おすすめの聴き方」の観点でのサマリーアウトライン作成。
 
 # JSON出力の型制約（厳守）
 必ずJSON形式で出力し、以下の型制約を正確に守ること:
@@ -20,9 +20,10 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
   **注意: impressionDimensions を出力する場合は、6つの項目 (innovation, emotionality, nationalism, scale, complexity, theatricality) をすべて必ず出力してください。省略は禁止です。**
 - places[].type: "birth", "death", "activity", "other" の4値のみ。
 - _generatorMeta.confidenceScore: 0.0 から 1.0 の間の数値（例: 0.95）。
-- birthDate, deathDate: **"YYYY-MM-DD" 形式の文字列（例: "1797-01-31"）。タイムゾーン情報（T00:00...）は絶対に含めないこと。** 日付が不明な場合は null またはフィールド自体を省略。
-- 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。
-- 日本語の文章（特にbiography）は、必ず「です・ます調（敬語）」で統一すること。文章は3つの段落で構成し、段落間は \`\\n\\n\` で区切ること。`;
+- 肖像画 (portrait): 必ず \`/composers/{slug}/images/portrait.webp\` の形式で出力すること。{slug}は実際の作曲家のスラグに置き換える。
+- 日本語の文章（特にsummary）は、必ず「です・ます調（敬語）」で統一すること。100〜150文字程度で、読者がその音楽を聴きたくなるような魅力的な要約にすること。
+- birthDate, deathDate: **"YYYY-MM-DD" 形式の文字列（例: "1797-01-31"）。タイムゾーン情報（T00:00...）は絶対に含めないこと。** 生年月日が正確に不明で「洗礼日」のみが判明している場合は、便宜上その洗礼日を birthDate に設定すること。日付が完全に不明な場合は null またはフィールド自体を省略。
+- 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。`;
 
 export class ComposerDraftAgent {
   private agent: BaseAgent;
@@ -42,8 +43,8 @@ export class ComposerDraftAgent {
 
 # 出力形式の注意
 - **_reasoning**: 音楽史的事実の整理と時代区分の根拠を記述してください。
-- **biography**: 「です・ます調（敬語）」で統一し、3段落構成（生い立ち、功績、影響）にしてください。
-- **fullName, displayName, shortName, biography**: 日本語の文字列として直接出力してください。
+- **summary**: 「です・ます調（敬語）」で統一し、音楽的魅力に焦点を当てた150文字程度の要約。
+- **fullName, displayName, shortName, summary**: 日本語の文字列として直接出力してください。
 - **birthDate, deathDate**: "YYYY-MM-DD" 形式の文字列。タイムゾーンは禁止。
 
 # 重要な制約・ヒント (Taxonomy)

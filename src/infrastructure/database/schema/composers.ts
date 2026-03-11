@@ -55,7 +55,7 @@ export const composerTranslations = sqliteTable(
     fullName: text('full_name').notNull(),
     displayName: text('display_name').notNull(),
     shortName: text('short_name').notNull(),
-    biography: text('biography'),
+    summary: text('summary'),
 
     // Vector Embedding
     profileEmbedding: libsqlVector(384)('profile_embedding'),

@@ -70,9 +70,9 @@
     "complexity": 7,
     "theatricality": 4
   },
-  "portrait": "https://cdn.preludiolab.com/composers/chopin/images/portrait.webp",
+  "portrait": "/composers/chopin/images/portrait.webp",
   "tags": ["poet-of-the-piano", "poland", "romanticism", "virtuoso"],
-  "biography": {
+  "summary": {
     "en": "A Polish composer and virtuoso pianist of the Romantic era who wrote primarily for solo piano. He has maintained worldwide renown as a leading musician of his era, one whose 'poetic genius was based on a professional technique that was without equal in his generation.' Poland's greatest composer, he spent most of his professional life in Paris.",
     "ja": "ポーランド出身のロマン派音楽を代表する作曲家、ピアニスト。生涯のほとんどの作品をピアノ独奏曲に捧げ、「ピアノの詩人」と称される。繊細で詩的な旋律美、革新的な和声法、そして母国ポーランドの民族舞踊（マズルカやポロネーズ）を取り入れた独自の作風を確立した。その情熱的かつ憂いを帯びた音楽は、ピアノ音楽の表現力を極限まで高めたとされる。",
     "de": "Ein polnischer Komponist und virtuoser Pianist der Romantik, der hauptsächlich für Soloklavier schrieb. Er genießt weltweit Ansehen als führender Musiker seiner Ära, dessen 'poetisches Genie auf einer professionellen Technik basierte, die in seiner Generation ihresgleichen suchte.' Als größter Komponist Polens verbrachte er den Großteil seines Berufslebens in Paris.",
