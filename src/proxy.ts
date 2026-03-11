@@ -3,7 +3,6 @@ import { NextRequest } from 'next/server';
 import { routing } from './shared/i18n/routing';
 import { auth } from '@/infrastructure/auth/auth';
 import { APP_ENV } from '@/lib/constants';
-import { supportedLocales, defaultLocale } from '@/domain/i18n/locale';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -66,25 +65,6 @@ export const proxy = auth((req) => {
   response.headers.set('Content-Security-Policy', cspHeader);
   // Nonceをリクエストヘッダーにセット（Server Componentsで取得するため）
   response.headers.set('x-nonce', nonce);
-
-  // セキュリティ強化 + フェールセーフ: NEXT_LOCALE Cookie のバリデーション
-  // 不正な値や旧仕様のフォーマットを検出した場合はデフォルトロケールで上書きし、
-  // ルーティング異常を未然に防止する。
-  const rawLocale = response.cookies.get('NEXT_LOCALE')?.value;
-  if (rawLocale) {
-    const validatedLocale = supportedLocales.includes(
-      rawLocale as (typeof supportedLocales)[number],
-    )
-      ? rawLocale
-      : defaultLocale;
-    response.cookies.set('NEXT_LOCALE', validatedLocale, {
-      httpOnly: true, // JavaScript からのアクセスを防ぐ (DAST Alert ID: 10010)
-      secure: process.env.NODE_ENV !== APP_ENV.DEVELOPMENT, // HTTPS 接続のみで送信 (DAST Alert ID: 10011)
-      sameSite: 'lax', // CSRF 対策
-      maxAge: 31536000, // 1年
-      path: '/',
-    });
-  }
 
   return response;
 });
