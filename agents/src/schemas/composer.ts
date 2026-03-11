@@ -16,7 +16,7 @@ export const DraftFieldsSchema = z.object({
   summary: z
     .string()
     .describe(
-      '音楽的魅力に焦点を当てた、SEOに強い100〜150文字程度の要約（日本語）。人物像ではなく、提供する音楽、サウンド、感動できるポイントを端的に記述すること。文章は必ず「です・ます調」で記述。',
+      '音楽的魅力に焦点を当てた、SEOに強い150〜200文字程度の要約（日本語）。人物像ではなく、提供する音楽、サウンド、感動できるポイントを端的に記述すること。文章は必ず「です・ます調」で記述。「〜ぜひお楽しみください」等の安価な宣伝文句や直接的な呼びかけを絶対に使用禁止とし、音楽そのものがもたらす感情的な広がりや情景を客観的かつ美しく言い切る形にすること（例：「〜深い感動をもたらします」「〜心に強く語りかけます」など。「リスナーに」「聴き手に」といった直接的な対象語の明記は避けること）。多言語翻訳を前提とするため、文脈から主語（作曲家名や「彼の音楽は」など）を絶対に省略しないこと。',
     )
     .optional(),
 });
@@ -48,7 +48,7 @@ const ReasoningSchema = z
     summaryStructure: z
       .string()
       .describe(
-        '要約執筆のため、1)音楽的魅力の核、2)革新性、3)どのような気分で聴くべきか の3つのポイントを箇条書きで整理してください。',
+        '要約執筆のため、1)音楽的魅力の核、2)革新性、3)音楽がもたらす情景や情動的深み の3つのポイントを箇条書きで整理してください。',
       ),
   })
   .describe('最終的なデータを出力する前の思考プロセス。事実確認と分析をここで行うこと。');
@@ -67,6 +67,7 @@ export const ComposerDraftSchema = ComposerMasterSchema.omit({
   displayName: true,
   shortName: true,
   summary: true,
+  representativeInstruments: true,
   representativeGenres: true,
   birthDate: true,
   deathDate: true,
@@ -74,6 +75,12 @@ export const ComposerDraftSchema = ComposerMasterSchema.omit({
   .extend(DraftFieldsSchema.shape)
   .extend({
     _reasoning: ReasoningSchema,
+    representativeInstruments: z
+      .array(z.string())
+      .describe(
+        '代表的な楽器。作曲家自身が名手であった、または独奏曲として歴史的に重要視した楽器に限定し、最大5つまでとする。交響曲の管弦楽編成を無闇に羅列しないこと。',
+      )
+      .default([]),
     representativeGenres: z
       .array(z.string())
       .describe(

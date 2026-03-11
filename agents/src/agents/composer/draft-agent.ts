@@ -12,16 +12,30 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 3. musicalContributions: 歴史的に最も貢献したジャンル・楽器と、指定Enumリストとのマッピング検証。
 4. historicalContext: その作曲家の歴史的背景、最大の功績の事実ベースでの分析。
 5. eraClassification: なぜその時代区分（era）を選択したのかの根拠。
-6. summaryStructure: 「音楽的魅力の核」「革新性」「おすすめの聴き方」の観点でのサマリーアウトライン作成。
+6. summaryStructure: 「音楽的魅力の核」「革新性」「音楽がもたらす情景や情動的深み」の観点でのサマリーアウトライン作成。
+7. tagSelection: 指定されたタグリスト（composer-attribute, musical-schools）の中から、その作曲家の生涯や作風を最も象徴するタグ（最大5つ）を選定し、なぜそれが妥当であるかの根拠を提示。
 
 # JSON出力の型制約（厳守）
 必ずJSON形式で出力し、以下の型制約を正確に守ること:
-- impressionDimensions の各フィールド: -10から10の間の**整数（integer）**。例: -5, 0, 8。**"low", "medium", "high" などの文字列や、"7.5" などの小数は絶対に使用禁止。**
-  **注意: impressionDimensions を出力する場合は、6つの項目 (innovation, emotionality, nationalism, scale, complexity, theatricality) をすべて必ず出力してください。省略は禁止です。**
+- impressionDimensions: 作曲家の作風・特徴を表す6軸の印象評価値です。必ず以下の定義に従い、-10から+10の整数で6項目すべてを出力してください（0は中立・バランス型を意味します）。小数の使用は厳禁です。
+  * innovation: 伝統的(-10) <-> 中立(0) <-> 革新的(+10)
+  * emotionality: 知的・構造的(-10) <-> 中立(0) <-> 感情的・情動的(+10)
+  * nationalism: 国際的・普遍的(-10) <-> 中立(0) <-> 民族的(+10)
+  * scale: 親密・室内楽的(-10) <-> 中立(0) <-> 壮大・大編成(+10)
+  * complexity: 簡潔・明快(-10) <-> 中立(0) <-> 複雑・難解(+10)
+  * theatricality: 絶対音楽(-10) <-> 中立(0) <-> 演劇的・標題音楽的(+10)
+  【評価の基準（Few-Shot例）】
+  各極端な値の基準として以下を参考にし、対象の作曲家を相対的にマッピングしてください。
+  - J.S.バッハの例: emotionalityは -8 (極めて知的・対位法的)、theatricalityは -9 (絶対音楽の最高峰)
+  - ワーグナーの例: scaleは 10 (極めて壮大)、theatricalityは 10 (総合芸術・演劇的)
+  - ショパンの例: scaleは -7 (ピアノ独奏中心で親密)、emotionalityは 8 (感情豊か)
+  - モーツァルトの例: complexityは -3 (明快で自然)、innovationは 0 (伝統の完成・中立)
 - places[].type: "birth", "death", "activity", "other" の4値のみ。
 - _generatorMeta.confidenceScore: 0.0 から 1.0 の間の数値（例: 0.95）。
 - 肖像画 (portrait): 必ず \`/composers/{slug}/images/portrait.webp\` の形式で出力すること。{slug}は実際の作曲家のスラグに置き換える。
-- 日本語の文章（特にsummary）は、必ず「です・ます調（敬語）」で統一すること。100〜150文字程度で、読者がその音楽を聴きたくなるような魅力的な要約にすること。
+- 日本語の文章（特にsummary）は、必ず「です・ます調（敬語）」で統一すること。150字〜200字程度で、読者がその音楽を聴きたくなるような魅力的な要約にすること。「〜ぜひお楽しみください」等の安価な宣伝文句や直接的な呼びかけを絶対に使用禁止とし、音楽そのものがもたらす感情的な広がりや情景を客観的かつ美しく言い切る形にすること（例：「〜深い感動をもたらします」「〜心に強く語りかけます」など。「リスナーに」「聴き手に」といった直接的な対象語の明記は避けること）。多言語翻訳を前提とするため、文脈から主語（作曲家名や「彼の音楽は」など）を絶対に省略しないこと。
+- representativeInstruments: 作曲家自身が名手であった、または独奏曲として歴史的に重要視した楽器に限定し、最大5つまでとする。交響曲の管弦楽編成を無闇に羅列しないこと。
+- _generatorMeta.sourceRefs: 架空の個別記事URL（ディープリンク）の生成を厳禁とし、事実確認に用いた権威ある辞書・研究機関・アーカイブのトップレベルドメインのみを配列で出力すること。（例: "https://www.oxfordmusiconline.com", "https://www.britannica.com", "https://imslp.org", "https://www.beethoven.de" 等。Wikipediaは含めないこと）
 - birthDate, deathDate: **"YYYY-MM-DD" 形式の文字列（例: "1797-01-31"）。タイムゾーン情報（T00:00...）は絶対に含めないこと。** 生年月日が正確に不明で「洗礼日」のみが判明している場合は、便宜上その洗礼日を birthDate に設定すること。日付が完全に不明な場合は null またはフィールド自体を省略。
 - 各種スラグ (slug): 指定された既存のタクソノミー（ジャンル、場所等）に合致する小文字ケバブケースを使用すること。`;
 
@@ -43,16 +57,17 @@ export class ComposerDraftAgent {
 
 # 出力形式の注意
 - **_reasoning**: 音楽史的事実の整理と時代区分の根拠を記述してください。
-- **summary**: 「です・ます調（敬語）」で統一し、音楽的魅力に焦点を当てた150文字程度の要約。
 - **fullName, displayName, shortName, summary**: 日本語の文字列として直接出力してください。
-- **birthDate, deathDate**: "YYYY-MM-DD" 形式の文字列。タイムゾーンは禁止。
 
 # 重要な制約・ヒント (Taxonomy)
 1. **era (時代)**: medieval, renaissance, baroque, classical, early-romantic, mid-romantic, late-romantic, impressionism, modern, contemporary から選択。
 2. **representativeGenres**: リストから最大5つ選択: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。
    - 特に伴奏付きソナタ（ヴァイオリンソナタ等）は \`sonata-duo\`、独奏楽器のみ（ピアノソナタ等）は \`keyboard-solo\` や \`string-solo\`（無伴奏）として区別すること。
 3. **impressionDimensions**: -10から10の整数。必ず6項目すべてを出力。
-4. **places[].slug**: vienna, paris, london, rome, venice, milan, st-petersburg, warsaw, prague, budapest, berlin, leipzig, salzburg, bonn 等。`;
+4. **places[].slug**: vienna, paris, london, rome, venice, milan, st-petersburg, warsaw, prague, budapest, berlin, leipzig, salzburg, bonn 等。
+5. **tags**: 以下のリストから、作曲家を最も象徴するタグを最大5つまで選択してください。
+   - [composer-attribute]: virtuoso-composer, contrapuntist, master-orchestrator, melodist, stage-music-specialist, miniaturist, conservative-classicist, progressive-innovator, folk-music-explorer, prolific-composer, late-bloomer, polymath, child-prodigy, short-lived-genius, devout-composer, tragic-life, nationalist-figure
+   - [musical-schools]: viennese-classicism, second-viennese-school, franco-belgian-school, mighty-handful, les-six`;
 
     return await this.agent.generateObject<ComposerDraft>(prompt, ComposerDraftSchema);
   }
