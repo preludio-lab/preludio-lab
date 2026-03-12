@@ -10,13 +10,15 @@ import {
  * to focus the model's attention.
  */
 export const DraftFieldsSchema = z.object({
-  fullName: z.string().describe('作曲家の氏名（日本語フルネーム）'),
-  displayName: z.string().describe('作曲家の表示用氏名（日本語、名字のみ等）'),
-  shortName: z.string().describe('作曲家の短縮名（日本語、姓のみ等）'),
+  fullName: z.string().describe('作曲家のフルネーム（例: ヨハネス・ブラームス）'),
+  displayName: z.string().describe('カードや見出しで使用する表示名（例: ブラームス、J.S.バッハ）'),
+  shortName: z
+    .string()
+    .describe('リストや索引で使用する短縮名（原則として苗字のみ、例: ブラームス）'),
   summary: z
     .string()
     .describe(
-      '音楽的魅力に焦点を当てた、SEOに強い150〜200文字程度の要約（日本語）。人物像ではなく、提供する音楽、サウンド、感動できるポイントを端的に記述すること。文章は必ず「です・ます調」で記述。「〜ぜひお楽しみください」等の安価な宣伝文句や直接的な呼びかけを絶対に使用禁止とし、音楽そのものがもたらす感情的な広がりや情景を客観的かつ美しく言い切る形にすること（例：「〜深い感動をもたらします」「〜心に強く語りかけます」など。「リスナーに」「聴き手に」といった直接的な対象語の明記は避けること）。多言語翻訳を前提とするため、文脈から主語（作曲家名や「彼の音楽は」など）を絶対に省略しないこと。',
+      '60〜100字程度の極めて洗練された紹介文。専門用語、生没年、出身地、「〜にオススメ」といった表現は禁止。(1)通称やパブリックイメージ、(2)最大の魅力や功績、(3)代表作1〜2曲（『』で囲む）、の3要素のみを自然な日本語で組み合わせること。',
     )
     .optional(),
 });
@@ -48,7 +50,7 @@ const ReasoningSchema = z
     summaryStructure: z
       .string()
       .describe(
-        '要約執筆のため、1)音楽的魅力の核、2)革新性、3)音楽がもたらす情景や情動的深み の3つのポイントを箇条書きで整理してください。',
+        '専門用語を排し、(1)通称/イメージ、(2)魅力/功績、(3)代表作、の3要素を凝縮したミニマムなサマリーの構成案。',
       ),
   })
   .describe('最終的なデータを出力する前の思考プロセス。事実確認と分析をここで行うこと。');
@@ -78,13 +80,13 @@ export const ComposerDraftSchema = ComposerMasterSchema.omit({
     representativeInstruments: z
       .array(z.string())
       .describe(
-        '代表的な楽器。作曲家自身が名手であった、または独奏曲として歴史的に重要視した楽器に限定し、最大5つまでとする。交響曲の管弦楽編成を無闇に羅列しないこと。',
+        '代表的な楽器。作曲家自身が名手であった、または歴史的に重要視した楽器を最大5つまで選択。',
       )
       .default([]),
     representativeGenres: z
       .array(z.string())
       .describe(
-        '代表ジャンル。必ず以下のリストから最も歴史的貢献度が高いものを最大5つまで選択すること: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。注意: 例えばバロック期の協奏曲において、solo-concerto（独奏協奏曲）と concerto-grosso（合奏協奏曲）は歴史的事実に基づいて厳密に区別すること。',
+        '代表ジャンル。リストから貢献度の高いものを最大5つ選択: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。',
       )
       .default([]),
     birthDate: DateStringSchema,
