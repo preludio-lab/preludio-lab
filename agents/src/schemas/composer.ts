@@ -115,10 +115,10 @@ export type WorkflowComposerMaster = z.infer<typeof WorkflowComposerMasterSchema
  * Translation step specialized schema.
  */
 export const TranslationOutputSchema = z.object({
-  fullName: z.string().describe('翻訳されたフルネーム'),
-  displayName: z.string().describe('翻訳された表示名'),
-  shortName: z.string().describe('翻訳された短縮名'),
-  summary: z.string().describe('翻訳された要約').optional(),
+  fullName: z.string().describe('ターゲット言語における公式かつ最も一般的なフルネームの綴り'),
+  displayName: z.string().describe('ターゲット言語における標準的な教養のある表示名'),
+  shortName: z.string().describe('ターゲット言語における一般的な短縮名（原則として姓のみ）'),
+  summary: z.string().describe('ターゲット言語に翻訳・ローカライズされた要約').optional(),
 });
 
 export type TranslationOutput = z.infer<typeof TranslationOutputSchema>;
