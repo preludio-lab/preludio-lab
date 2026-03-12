@@ -84,7 +84,10 @@ async function main() {
         await updateUseCase.execute(data);
       } else {
         // 存在しない場合は新規作成ユースケースを実行
-        await createUseCase.execute(data);
+        await createUseCase.execute({
+          ...data,
+          parts: data.parts ?? [],
+        });
       }
     }
 
