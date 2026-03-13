@@ -1,0 +1,77 @@
+{
+  "fullName": {
+    "en": "Johannes Brahms",
+    "ja": "ヨハネス・ブラームス",
+    "es": "Johannes Brahms",
+    "de": "Johannes Brahms",
+    "fr": "Johannes Brahms",
+    "it": "Johannes Brahms",
+    "zh": "Johannes Brahms"
+  },
+  "displayName": {
+    "en": "Brahms",
+    "ja": "ブラームス",
+    "es": "Brahms",
+    "de": "Johannes Brahms",
+    "fr": "Brahms",
+    "it": "Brahms",
+    "zh": "勃拉姆斯"
+  },
+  "shortName": {
+    "en": "Brahms",
+    "ja": "ブラームス",
+    "es": "Brahms",
+    "de": "Brahms",
+    "fr": "Brahms",
+    "it": "Brahms",
+    "zh": "勃拉姆斯"
+  },
+  "era": "mid-romantic",
+  "summary": {
+    "en": "One of the 'Three Bs,' this German composer is celebrated for his profound, structurally masterful works. Balancing classical form with deep lyricism and passion, he created masterpieces such as 'Symphony No. 4' and the 'Hungarian Dances'.",
+    "ja": "「三大B」の一人に数えられる、重厚で構築美あふれる音楽が魅力のドイツの作曲家です。古典的な形式の中に深い叙情と情熱を宿した傑作を数多く遺しており、代表作には『交響曲第4番』や『ハンガリー舞曲集』があります。",
+    "es": "Considerado uno de los 'Tres B', este compositor alemán destaca por su música profunda y de gran rigor constructivo. Autor de obras maestras que fusionan la forma clásica con un intenso lirismo, como su 'Sinfonía n.º 4' y las 'Danzas húngaras'.",
+    "de": "Als einer der „drei B“ prägte der deutsche Komponist die Musikgeschichte durch meisterhafte Struktur und emotionale Tiefe. Zu seinen bedeutendsten Werken zählen die 'Sinfonie Nr. 4' sowie die 'Ungarischen Tänze'.",
+    "fr": "Considéré comme l'un des « trois B », ce compositeur allemand est célèbre pour son style dense et rigoureux. Alliant formes classiques et lyrisme profond, il a composé des chefs-d'œuvre tels que la « Symphonie n° 4 » et les « Danses hongroises ».",
+    "it": "Compositore tedesco tra i pilastri della musica classica, celebre per la profondità lirica e il rigore formale delle sue opere. Tra i suoi capolavori si annoverano la 'Sinfonia n. 4' e le 'Danze ungheresi'.",
+    "zh": "德国作曲家勃拉姆斯位列“德国三B”之一，其作品以厚重的音响效果与严谨的结构美著称。他将深沉的抒情与热情融入古典形式之中，代表作包括《第四交响曲》与《匈牙利舞曲集》。"
+  },
+  "nationalityCode": "DE",
+  "representativeInstruments": ["piano", "violin", "cello", "clarinet", "viola"],
+  "representativeGenres": ["symphony", "chamber-strings", "sonata-duo", "keyboard-solo", "lied"],
+  "places": [
+    {
+      "slug": "hamburg",
+      "type": "birth",
+      "countryCode": "DE"
+    },
+    {
+      "slug": "vienna",
+      "type": "activity",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "death",
+      "countryCode": "AT"
+    }
+  ],
+  "portrait": "/composers/brahms/images/portrait.webp",
+  "tags": ["conservative-classicist", "contrapuntist", "melodist", "viennese-classicism"],
+  "impressionDimensions": {
+    "innovation": -2,
+    "emotionality": 6,
+    "nationalism": 2,
+    "scale": 7,
+    "complexity": 8,
+    "theatricality": -9
+  },
+  "slug": "brahms",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T06:51:47.777Z"
+  },
+  "birthDate": "1833-05-07T00:00:00.000Z",
+  "deathDate": "1897-04-03T00:00:00.000Z",
+  "_schemaVersion": "1.1.0"
+}

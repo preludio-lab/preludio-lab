@@ -1,0 +1,77 @@
+{
+  "fullName": {
+    "en": "Claude-Achille Debussy",
+    "ja": "クロード・アシル・ドビュッシー",
+    "es": "Claude-Achille Debussy",
+    "de": "Claude Achille Debussy",
+    "fr": "Claude-Achille Debussy",
+    "it": "Claude-Achille Debussy",
+    "zh": "Claude-Achille Debussy"
+  },
+  "displayName": {
+    "en": "Claude Debussy",
+    "ja": "クロード・ドビュッシー",
+    "es": "Claude Debussy",
+    "de": "Claude Debussy",
+    "fr": "Claude Debussy",
+    "it": "Claude Debussy",
+    "zh": "Claude Debussy"
+  },
+  "shortName": {
+    "en": "Debussy",
+    "ja": "ドビュッシー",
+    "es": "Debussy",
+    "de": "Debussy",
+    "fr": "Debussy",
+    "it": "Debussy",
+    "zh": "Debussy"
+  },
+  "era": "impressionism",
+  "summary": {
+    "en": "A French composer known as the pioneer of musical impressionism. He broke traditional harmonic boundaries, creating evocative soundscapes that transport listeners to a dreamlike world. His most celebrated works include 'Clair de lune' and 'La mer'.",
+    "ja": "「印象派音楽の創始者」として知られるフランスの作曲家です。従来の調性概念を打破し、色彩豊かな響きで聴衆を夢幻の世界へと誘う音楽を作り上げました。代表作に『月の光』や『海』があります。",
+    "es": "Compositor francés, considerado el padre del impresionismo musical. Rompió con las reglas tonales tradicionales para crear una sonoridad envolvente y evocadora. Entre sus obras maestras destacan 'Clair de lune' y 'La mer'.",
+    "de": "Als Wegbereiter des Impressionismus revolutionierte Debussy die Harmonik und schuf mit farbenreichen Klangwelten atmosphärische Meisterwerke. Zu seinen bedeutendsten Werken zählen 'Clair de lune' und 'La Mer'.",
+    "fr": "Considéré comme le père de l'impressionnisme musical, ce compositeur français a révolutionné l'harmonie par ses sonorités évocatrices. Parmi ses chefs-d'œuvre figurent « Clair de lune » et « La Mer ».",
+    "it": "Compositore francese, pioniere dell'impressionismo musicale. Ha rivoluzionato l'armonia tradizionale creando atmosfere oniriche e timbri ricchi di colore. Tra i suoi capolavori figurano 'Clair de lune' e 'La Mer'.",
+    "zh": "作为“印象派音乐的开创者”，他是法国伟大的作曲家。他打破了传统的调性束缚，通过色彩丰富的音响构建起如梦似幻的音乐世界。代表作包括《月光》与《海》。"
+  },
+  "nationalityCode": "FR",
+  "representativeInstruments": ["piano"],
+  "representativeGenres": ["keyboard-solo", "tone-poem", "sonata-duo", "ballet", "opera"],
+  "places": [
+    {
+      "slug": "paris",
+      "type": "birth",
+      "countryCode": "FR"
+    },
+    {
+      "slug": "paris",
+      "type": "activity",
+      "countryCode": "FR"
+    },
+    {
+      "slug": "paris",
+      "type": "death",
+      "countryCode": "FR"
+    }
+  ],
+  "portrait": "/composers/debussy/images/portrait.webp",
+  "tags": ["progressive-innovator", "master-orchestrator", "miniaturist"],
+  "impressionDimensions": {
+    "innovation": 9,
+    "emotionality": -2,
+    "nationalism": -3,
+    "scale": -4,
+    "complexity": 4,
+    "theatricality": 7
+  },
+  "slug": "debussy",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T06:34:56.768Z"
+  },
+  "birthDate": "1862-08-22T00:00:00.000Z",
+  "deathDate": "1918-03-25T00:00:00.000Z",
+  "_schemaVersion": "1.1.0"
+}

@@ -1,48 +1,50 @@
 {
-  "slug": "beethoven",
-  "_schemaVersion": "1.1.0",
-  "_generatorMeta": {
-    "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-02-01T00:00:00Z",
-    "promptVersion": "1.1.0",
-    "confidenceScore": 0.99,
-    "sourceRefs": [
-      "https://en.wikipedia.org/wiki/Ludwig_van_Beethoven",
-      "https://de.wikipedia.org/wiki/Ludwig_van_Beethoven",
-      "https://imslp.org/wiki/Category:Beethoven,_Ludwig_van"
-    ]
-  },
   "fullName": {
     "en": "Ludwig van Beethoven",
     "ja": "ルートヴィヒ・ヴァン・ベートーヴェン",
+    "es": "Ludwig van Beethoven",
     "de": "Ludwig van Beethoven",
     "fr": "Ludwig van Beethoven",
     "it": "Ludwig van Beethoven",
-    "es": "Ludwig van Beethoven",
-    "zh": "路德维希·凡·贝多芬"
+    "zh": "Ludwig van Beethoven"
   },
   "displayName": {
-    "en": "L. v. Beethoven",
+    "en": "Beethoven",
     "ja": "ベートーヴェン",
-    "de": "L. v. Beethoven",
-    "fr": "L. v. Beethoven",
-    "it": "L. v. Beethoven",
-    "es": "L. v. Beethoven",
+    "es": "Beethoven",
+    "de": "Beethoven",
+    "fr": "Beethoven",
+    "it": "Beethoven",
     "zh": "贝多芬"
   },
   "shortName": {
     "en": "Beethoven",
     "ja": "ベートーヴェン",
+    "es": "Beethoven",
     "de": "Beethoven",
     "fr": "Beethoven",
     "it": "Beethoven",
-    "es": "Beethoven",
     "zh": "贝多芬"
   },
   "era": "classical",
-  "birthDate": "1770-12-16",
-  "deathDate": "1827-03-26",
+  "summary": {
+    "en": "Known as the 'Titan of Music,' Beethoven bridged the Classical and Romantic eras. His masterpieces, such as the 'Fate' Symphony and the 'Ninth,' transform personal struggle into universal passion and continue to resonate globally.",
+    "ja": "「楽聖」と称えられ、音楽の歴史を古典派からロマン派へと切り拓いた偉大な作曲家です。苦難に満ちた人生の中で魂の叫びを音楽に昇華させ、圧倒的な情熱と革新性を体現した『運命』や『第九』は、今も世界中で聴く者の心に深く響き続けています。",
+    "es": "Considerado el «genio de la música», Beethoven marcó la transición del Clasicismo al Romanticismo. Sus obras maestras, como la «Quinta» y la «Novena», son una expresión sublime de pasión e innovación que perduran en el corazón del mundo.",
+    "de": "Als Wegbereiter der Romantik transformierte er persönliches Leid in zeitlose Musik. Werke wie die Fünfte Sinfonie und die Neunte begeistern noch heute mit ihrer revolutionären Kraft.",
+    "fr": "Pionnier du passage du classicisme au romantisme, Beethoven a sublimé ses épreuves personnelles en chefs-d'œuvre. Ses symphonies « Destin » et « Neuvième » incarnent une passion révolutionnaire qui résonne encore universellement.",
+    "it": "Compositore leggendario che traghettò la musica dal Classicismo al Romanticismo. Opere come la 'Quinta' e la 'Nona' incarnano passione e innovazione, toccando profondamente gli animi di tutto il mondo ancora oggi.",
+    "zh": "被誉为“乐圣”，是将古典主义推向浪漫主义的伟大作曲家。他将苦难的人生转化为音乐，以强烈的激情与创新精神创作了《命运》与《第九交响曲》，其作品至今仍深深震撼着全世界听众的心灵。"
+  },
   "nationalityCode": "DE",
+  "representativeInstruments": ["piano", "violin"],
+  "representativeGenres": [
+    "symphony",
+    "keyboard-solo",
+    "sonata-duo",
+    "chamber-strings",
+    "piano-concerto"
+  ],
   "places": [
     {
       "slug": "bonn",
@@ -53,27 +55,29 @@
       "slug": "vienna",
       "type": "activity",
       "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "death",
+      "countryCode": "AT"
     }
   ],
-  "representativeInstruments": ["piano", "violin", "viola"],
-  "representativeGenres": ["symphony", "sonata", "chamber-strings", "piano-concerto", "opera"],
+  "portrait": "/composers/beethoven/images/portrait.webp",
+  "tags": ["progressive-innovator", "viennese-classicism", "tragic-life", "virtuoso-composer"],
   "impressionDimensions": {
-    "innovation": 10,
-    "emotionality": 9,
-    "nationalism": 2,
-    "scale": 9,
-    "complexity": 8,
+    "innovation": 9,
+    "emotionality": 7,
+    "nationalism": -2,
+    "scale": 8,
+    "complexity": 4,
     "theatricality": 6
   },
-  "portrait": "/composers/beethoven/images/portrait.webp",
-  "tags": ["deafness", "titan", "transition-to-romanticism", "vienna"],
-  "summary": {
-    "en": "A German composer and pianist. A crucial figure in the transition between the Classical and Romantic eras in classical music, he remains one of the most recognized and influential musicians of all time. His career is typically divided into early, middle, and late periods, famously continuing to compose even after losing his hearing.",
-    "ja": "ドイツの作曲家、ピアニスト。古典派音楽の集大成を築き、ロマン派音楽への道を開いた音楽史上最も重要な人物の一人。20代後半から始まった難聴という逆境に立ち向かい、交響曲第5番「運命」や第9番「合唱付き」など、不屈の精神と崇高な響きを備えた数々の傑作を残した。その独創性と劇的な作風は、後のあらゆる作曲家に多大な影響を与えた。",
-    "de": "Ein deutscher Komponist und Pianist. Er war eine entscheidende Figur beim Übergang zwischen der Ära der Klassik und der Romantik in der klassischen Musik und bleibt einer der anerkanntesten und einflussreichsten Musiker aller Zeiten. Seine Karriere wird typischerweise in frühe, mittlere und späte Perioden unterteilt, wobei er bekanntlich auch nach dem Verlust seines Gehörs weiter komponierte.",
-    "fr": "Compositeur et pianiste allemand. Figure cruciale de la transition entre les époques classique et romantique dans la musique classique, il reste l'un des musiciens les plus reconnus et les plus influents de tous les temps. Sa carrière est généralement divisée en périodes initiale, moyenne et tardive, et il a continué à composer même après avoir perdu l'ouïe.",
-    "it": "Compositore e pianista tedesco. Figura cruciale nella transizione tra l'era classica e quella romantica nella musica classica, rimane uno dei musicisti più riconosciuti e influenti di tutti i tempi. La sua carriera è tipicamente divisa in periodi iniziale, intermedio e tardo, e continuò a comporre anche dopo aver perso l'udito.",
-    "es": "Compositor y pianista alemán. Figura crucial en la transición entre las eras clásica y romántica en la música clásica, sigue siendo uno de los músicos más reconocidos e influyentes de todos los tiempos. Su carrera se divide típicamente en periodos temprano, medio y tardío, y es famoso por seguir componiendo incluso después de perder el oído.",
-    "zh": "德国作曲家和钢琴家。他是古典音乐中古典主义和浪漫主义过渡时期的关键人物，也是有史以来最受认可和最有影响力的音乐家之一。他的职业生涯通常分为早期、中期和后期，最为人所知的是在失去听力后仍继续创作。"
-  }
+  "slug": "beethoven",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T07:53:07.541Z"
+  },
+  "birthDate": "1770-12-17T00:00:00.000Z",
+  "deathDate": "1827-03-26T00:00:00.000Z",
+  "_schemaVersion": "1.1.0"
 }

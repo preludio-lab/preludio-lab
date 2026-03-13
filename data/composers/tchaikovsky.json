@@ -1,0 +1,77 @@
+{
+  "fullName": {
+    "en": "Pyotr Ilyich Tchaikovsky",
+    "ja": "ピョートル・イリイチ・チャイコフスキー",
+    "es": "Piotr Ilich Chaikovski",
+    "de": "Pjotr Iljitsch Tschaikowski",
+    "fr": "Piotr Ilitch Tchaïkovski",
+    "it": "Pëtr Il'ič Čajkovskij",
+    "zh": "Пётр Ильич Чайковский"
+  },
+  "displayName": {
+    "en": "Tchaikovsky",
+    "ja": "チャイコフスキー",
+    "es": "Chaikovski",
+    "de": "Tschaikowski",
+    "fr": "Tchaïkovski",
+    "it": "Čajkovskij",
+    "zh": "柴可夫斯基"
+  },
+  "shortName": {
+    "en": "Tchaikovsky",
+    "ja": "チャイコフスキー",
+    "es": "Chaikovski",
+    "de": "Tschaikowski",
+    "fr": "Tchaïkovski",
+    "it": "Čajkovskij",
+    "zh": "柴可夫斯基"
+  },
+  "era": "late-romantic",
+  "summary": {
+    "en": "Renowned for his lyrical melodies and emotional depth, Tchaikovsky is a master of Russian Romanticism. His sophisticated orchestration and enduring works, such as 'Swan Lake' and 'The Nutcracker', continue to enchant audiences worldwide.",
+    "ja": "「ロシア音楽の至宝」と称えられる、叙情的な旋律美で聴衆を魅了する作曲家です。洗練された管弦楽法と溢れんばかりの感情表現が世界中で愛され、『白鳥の湖』や『くるみ割り人形』などの名作を数多く残しました。",
+    "es": "Considerado una joya de la música rusa, este compositor cautiva al público con su lirismo y refinada orquestación. Sus emotivas obras, como 'El lago de los cisnes' y 'El cascanueces', son piezas fundamentales del repertorio universal.",
+    "de": "Als Juwel der russischen Musik fasziniert Tschaikowski durch seine lyrische Melodik und tiefgründige Emotionalität. Seine meisterhafte Orchestrierung prägte zeitlose Werke wie 'Schwanensee' und 'Der Nussknacker', die weltweit geliebt werden.",
+    "fr": "Surnommé le « joyau de la musique russe », ce compositeur séduit par ses mélodies lyriques et son orchestration raffinée. Auteur de chefs-d'œuvre mondiaux comme « Le Lac des cygnes » et « Casse-Noisette », il est admiré pour la profondeur de son expression émotionnelle.",
+    "it": "Compositore celebrato per la sua melodia lirica e il profondo vigore emotivo. Maestro dell'orchestrazione, ha lasciato capolavori immortali come 'Il lago dei cigni' e 'Lo schiaccianoci', amati in tutto il mondo per la loro intensità narrativa.",
+    "zh": "被誉为“俄罗斯音乐瑰宝”的柴可夫斯基，以抒情优美的旋律闻名于世。他凭借精湛的管弦乐法与充沛的情感表达俘获了全球听众，留下了《天鹅湖》与《胡桃夹子》等众多传世经典。"
+  },
+  "nationalityCode": "RU",
+  "representativeInstruments": ["piano", "violin", "cello"],
+  "representativeGenres": ["symphony", "ballet", "piano-concerto", "violin-concerto", "tone-poem"],
+  "places": [
+    {
+      "slug": "st-petersburg",
+      "type": "activity",
+      "countryCode": "RU"
+    },
+    {
+      "slug": "moscow",
+      "type": "activity",
+      "countryCode": "RU"
+    },
+    {
+      "slug": "klin",
+      "type": "other",
+      "countryCode": "RU"
+    }
+  ],
+  "portrait": "/composers/tchaikovsky/images/portrait.webp",
+  "tags": ["melodist", "master-orchestrator", "tragic-life", "prolific-composer"],
+  "impressionDimensions": {
+    "innovation": 2,
+    "emotionality": 9,
+    "nationalism": 5,
+    "scale": 8,
+    "complexity": 4,
+    "theatricality": 7
+  },
+  "slug": "tchaikovsky",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T06:34:48.702Z"
+  },
+  "birthDate": "1840-05-07T00:00:00.000Z",
+  "deathDate": "1893-11-06T00:00:00.000Z",
+  "_schemaVersion": "1.1.0"
+}

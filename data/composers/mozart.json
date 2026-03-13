@@ -1,48 +1,44 @@
 {
-  "slug": "mozart",
-  "_schemaVersion": "1.1.0",
-  "_generatorMeta": {
-    "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-01-31T13:08:00Z",
-    "promptVersion": "1.1.0",
-    "confidenceScore": 0.98,
-    "sourceRefs": [
-      "https://ja.wikipedia.org/wiki/ヴォルフガング・アマデウス・モーツァルト",
-      "https://en.wikipedia.org/wiki/Wolfgang_Amadeus_Mozart",
-      "https://imslp.org/wiki/Category:Mozart,_Wolfgang_Amadeus"
-    ]
-  },
   "fullName": {
     "en": "Wolfgang Amadeus Mozart",
     "ja": "ヴォルフガング・アマデウス・モーツァルト",
+    "es": "Wolfgang Amadeus Mozart",
     "de": "Wolfgang Amadeus Mozart",
     "fr": "Wolfgang Amadeus Mozart",
     "it": "Wolfgang Amadeus Mozart",
-    "es": "Wolfgang Amadeus Mozart",
-    "zh": "沃尔夫冈·阿マデウス·莫扎特"
+    "zh": "Wolfgang Amadeus Mozart"
   },
   "displayName": {
-    "en": "W. A. Mozart",
+    "en": "Mozart",
     "ja": "モーツァルト",
-    "de": "W. A. Mozart",
-    "fr": "W. A. Mozart",
-    "it": "W. A. Mozart",
-    "es": "W. A. Mozart",
+    "es": "Mozart",
+    "de": "Mozart",
+    "fr": "Mozart",
+    "it": "Mozart",
     "zh": "莫扎特"
   },
   "shortName": {
     "en": "Mozart",
     "ja": "モーツァルト",
+    "es": "Mozart",
     "de": "Mozart",
     "fr": "Mozart",
     "it": "Mozart",
-    "es": "Mozart",
     "zh": "莫扎特"
   },
   "era": "classical",
-  "birthDate": "1756-01-27",
-  "deathDate": "1791-12-05",
+  "summary": {
+    "en": "A child prodigy who perfected the Classical style. Renowned for his limpid melodies and profound emotional expression, his masterpieces include 'Eine kleine Nachtmusik' and the opera 'The Magic Flute'.",
+    "ja": "「神童」として名を馳せ、古典派音楽を完成させた天才作曲家です。澄み渡るような美しい旋律と、人間の感情を深く映し出す劇的な表現が魅力です。代表作に『アイネ・クライネ・ナハトムジーク』やオペラ『魔笛』があります。",
+    "es": "Genio del Clasicismo que perfeccionó la forma musical con una melodía sublime y una profunda expresividad humana. Entre sus obras maestras destacan 'Eine kleine Nachtmusik' y 'La flauta mágica'.",
+    "de": "Als Wunderkind berühmt, vollendete er die Musik der Wiener Klassik. Sein Werk besticht durch glasklare Melodien und tief empfundene Dramatik, etwa in der 'Kleinen Nachtmusik' oder der Oper 'Die Zauberflöte'.",
+    "fr": "Génie du classicisme, Mozart enchante par ses mélodies pures et sa profondeur dramatique. Ses chefs-d'œuvre incluent « Eine kleine Nachtmusik » et l'opéra « La Flûte enchantée ».",
+    "it": "Noto fin da bambino come 'prodigio', ha perfezionato lo stile classico con melodie cristalline e una profonda intensità drammatica. Tra i suoi capolavori spiccano 'Eine kleine Nachtmusik' e l'opera 'Il flauto magico'.",
+    "zh": "古典主义音乐巨匠，以其纯净的旋律与深刻的人性刻画闻名。代表作包括《小夜曲》与歌剧《魔笛》。"
+  },
   "nationalityCode": "AT",
+  "representativeInstruments": ["piano", "violin", "viola"],
+  "representativeGenres": ["symphony", "opera", "piano-concerto", "sonata-duo", "keyboard-solo"],
   "places": [
     {
       "slug": "salzburg",
@@ -53,42 +49,35 @@
       "slug": "vienna",
       "type": "activity",
       "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "death",
+      "countryCode": "AT"
     }
   ],
-  "representativeInstruments": [
-    "piano",
-    "violin",
-    "viola",
-    "harpsichord",
-    "organ",
-    "fortepiano",
-    "basset-horn"
-  ],
-  "representativeGenres": [
-    "opera",
-    "symphony",
-    "piano-concerto",
-    "chamber-strings",
-    "mass-requiem",
-    "serenade-divertimento"
+  "portrait": "/composers/mozart/images/portrait.webp",
+  "tags": [
+    "child-prodigy",
+    "melodist",
+    "prolific-composer",
+    "viennese-classicism",
+    "short-lived-genius"
   ],
   "impressionDimensions": {
-    "innovation": 7,
-    "emotionality": 6,
-    "nationalism": 1,
-    "scale": 6,
-    "complexity": 6,
-    "theatricality": 8
+    "innovation": 2,
+    "emotionality": 4,
+    "nationalism": -3,
+    "scale": 2,
+    "complexity": -2,
+    "theatricality": 7
   },
-  "portrait": "/composers/mozart/images/portrait.webp",
-  "tags": ["prodigy", "vienna-classicism", "enlightenment", "universal-genius"],
-  "summary": {
-    "en": "A prolific and influential composer of the Classical period. Born in Salzburg, in the Holy Roman Empire, Mozart showed prodigious ability from his earliest childhood. He excelled in every musical genre of his time and is considered one of the greatest composers in the history of Western music.",
-    "ja": "古典派音楽を代表するオーストリアの作曲家。神童として幼少期からヨーロッパ中を旅し、35年という短い生涯の中で、オペラ、交響曲、協奏曲、室内楽など、当時のあらゆるジャンルで最高の傑作を残した。比類なき旋律美と形式的な完成度を誇る作品群は、西洋音楽史における至高の到達点の一つとされる。",
-    "de": "Ein produktiver und einflussreicher Komponist der Wiener Klassik. Geboren in Salzburg, zeichnete sich Mozart bereits in seiner frühesten Kindheit durch außergewöhnliche Fähigkeiten aus. Er brillierte in jedem musikalischen Genre seiner Zeit und gilt als einer der bedeutendsten Komponisten in der Geschichte der westlichen Musik.",
-    "fr": "Compositeur prolifique et influent de la période classique. Né à Salzbourg, Mozart a fait preuve d'aptitudes prodigieuses dès son plus jeune âge. Il a excellé dans tous les genres musicaux de son époque et est considéré comme l'un des plus grands compositeurs de l'histoire de la musique occidentale.",
-    "it": "Compositore prolifico e influente del periodo classico. Nato a Salisburgo, Mozart dimostrò abilità prodigiose fin dalla prima infanzia. Eccelleva in ogni genere musicale del suo tempo ed è considerato uno dei più grandi compositori nella storia della musica occidentale.",
-    "es": "Compositor prolífico e influyente del periodo clásico. Nacido en Salzburgo, Mozart mostró una habilidad prodigiosa desde su más tierna infancia. Sobresalió en todos los géneros musicales de su época y es considerado uno de los más grandes compositores de la historia de la música occidental.",
-    "zh": "古典时期的多产且具有影响力的作曲家。莫扎特出生于神圣罗马帝国的萨尔茨堡，从幼年起就展现出非凡的才能。他在当时的每一个音乐领域都表现出色，被认为是西方音乐史上最伟大的作曲家之一。"
-  }
+  "slug": "mozart",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T07:53:02.018Z"
+  },
+  "birthDate": "1756-01-27T00:00:00.000Z",
+  "deathDate": "1791-12-05T00:00:00.000Z",
+  "_schemaVersion": "1.1.0"
 }

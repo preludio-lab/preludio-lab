@@ -30,16 +30,16 @@
 
 | Status | Era                           | Name (JP)                                | Slug                  | Birth-Death | 備考                |
 | :----: | :---------------------------- | :--------------------------------------- | :-------------------- | :---------- | :------------------ |
-|  [/]   | バロック (Baroque)            | アントニオ・ヴィヴァルディ               | vivaldi               | 1678-1741   |                     |
+|  [x]   | バロック (Baroque)            | アントニオ・ヴィヴァルディ               | vivaldi               | 1678-1741   |                     |
 |  [x]   | バロック (Baroque)            | ヨハン・セバスティアン・バッハ           | johann-sebastian-bach | 1685-1750   | Conflicts with sons |
-|  [/]   | 古典派 (Classical)            | フランツ・ヨーゼフ・ハイドン             | haydn                 | 1732-1809   |                     |
+|  [x]   | 古典派 (Classical)            | フランツ・ヨーゼフ・ハイドン             | haydn                 | 1732-1809   |                     |
 |  [x]   | 古典派 (Classical)            | ヴォルフガング・アマデウス・モーツァルト | mozart                | 1756-1791   |                     |
 |  [x]   | 古典派 (Classical)            | ルートヴィヒ・ヴァン・ベートーヴェン     | beethoven             | 1770-1827   |                     |
 |  [x]   | 前期ロマン派 (Early Romantic) | フランツ・シューベルト                   | schubert              | 1797-1828   |                     |
 |  [x]   | 前期ロマン派 (Early Romantic) | フレデリック・ショパン                   | chopin                | 1810-1849   |                     |
-|  [/]   | 中期ロマン派 (Mid Romantic)   | ヨハネス・ブラームス                     | brahms                | 1833-1897   |                     |
-|  [/]   | 後期ロマン派 (Late Romantic)  | ピョートル・イリイチ・チャイコフスキー   | tchaikovsky           | 1840-1893   |                     |
-|  [/]   | 印象主義 (Impressionism)      | クロード・ドビュッシー                   | debussy               | 1862-1918   |                     |
+|  [x]   | 中期ロマン派 (Mid Romantic)   | ヨハネス・ブラームス                     | brahms                | 1833-1897   |                     |
+|  [x]   | 後期ロマン派 (Late Romantic)  | ピョートル・イリイチ・チャイコフスキー   | tchaikovsky           | 1840-1893   |                     |
+|  [x]   | 印象主義 (Impressionism)      | クロード・ドビュッシー                   | debussy               | 1862-1918   |                     |
 
 ## P1 (11-30)
 
