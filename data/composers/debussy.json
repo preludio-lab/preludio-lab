@@ -6,7 +6,7 @@
     "de": "Claude Achille Debussy",
     "fr": "Claude-Achille Debussy",
     "it": "Claude-Achille Debussy",
-    "zh": "克洛德·德彪西"
+    "zh": "德彪西"
   },
   "displayName": {
     "en": "Claude Debussy",
@@ -71,7 +71,7 @@
     "model": "gemini-3.1-flash-lite-preview",
     "generatedAt": "2026-03-12T06:34:56.768Z"
   },
-  "birthDate": "1862-08-22T00:00:00.000Z",
-  "deathDate": "1918-03-25T00:00:00.000Z",
+  "birthDate": "1862-08-22",
+  "deathDate": "1918-03-25",
   "_schemaVersion": "1.1.0"
 }

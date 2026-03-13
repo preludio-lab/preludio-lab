@@ -6,7 +6,7 @@
     "de": "Johannes Brahms",
     "fr": "Johannes Brahms",
     "it": "Johannes Brahms",
-    "zh": "约翰内斯·勃拉姆斯"
+    "zh": "勃拉姆斯"
   },
   "displayName": {
     "en": "Brahms",
@@ -71,7 +71,7 @@
     "model": "gemini-3.1-flash-lite-preview",
     "generatedAt": "2026-03-12T06:51:47.777Z"
   },
-  "birthDate": "1833-05-07T00:00:00.000Z",
-  "deathDate": "1897-04-03T00:00:00.000Z",
+  "birthDate": "1833-05-07",
+  "deathDate": "1897-04-03",
   "_schemaVersion": "1.1.0"
 }

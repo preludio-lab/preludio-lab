@@ -6,7 +6,7 @@
     "de": "Franz Peter Schubert",
     "fr": "Franz Peter Schubert",
     "it": "Franz Peter Schubert",
-    "zh": "弗朗茨·彼得·舒伯特"
+    "zh": "舒伯特"
   },
   "displayName": {
     "en": "Franz Schubert",
@@ -71,7 +71,7 @@
     "model": "gemini-3.1-flash-lite-preview",
     "generatedAt": "2026-03-12T07:54:38.231Z"
   },
-  "birthDate": "1797-01-31T00:00:00.000Z",
-  "deathDate": "1828-11-19T00:00:00.000Z",
+  "birthDate": "1797-01-31",
+  "deathDate": "1828-11-19",
   "_schemaVersion": "1.1.0"
 }

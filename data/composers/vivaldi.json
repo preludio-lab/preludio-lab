@@ -71,7 +71,7 @@
     "model": "gemini-3.1-flash-lite-preview",
     "generatedAt": "2026-03-12T06:34:09.154Z"
   },
-  "birthDate": "1678-03-04T00:00:00.000Z",
-  "deathDate": "1741-07-28T00:00:00.000Z",
+  "birthDate": "1678-03-04",
+  "deathDate": "1741-07-28",
   "_schemaVersion": "1.1.0"
 }
