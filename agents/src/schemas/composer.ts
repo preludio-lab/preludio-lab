@@ -18,7 +18,7 @@ export const DraftFieldsSchema = z.object({
   summary: z
     .string()
     .describe(
-      '60〜100字程度の極めて洗練された紹介文。専門用語、生没年、出身地、「〜にオススメ」といった表現は禁止。(1)通称やパブリックイメージ、(2)最大の魅力や功績、(3)代表作1〜2曲（『』で囲む）、の3要素のみを自然な日本語で組み合わせること。',
+      '60〜100字程度の極めて洗練された紹介文。専門用語、生没年、出身地は禁止。 (1)通称/イメージ、(2)最大の魅力/功績、(3)代表作1〜2曲、の3要素のみを自然な日本語（です・ます調）で構成すること。',
     )
     .optional(),
 });
@@ -122,7 +122,12 @@ export const TranslationOutputSchema = z.object({
     ),
   displayName: z.string().describe('ターゲット言語における標準的な教養のある表示名'),
   shortName: z.string().describe('ターゲット言語における一般的な短縮名（原則として姓のみ）'),
-  summary: z.string().describe('ターゲット言語に翻訳・ローカライズされた要約').optional(),
+  summary: z
+    .string()
+    .describe(
+      'ターゲット言語に翻訳・ローカライズされた要約。元の日本語ドラフトの「親密でミニマム」な構成（通称・魅力・代表作）を維持すること。',
+    )
+    .optional(),
 });
 
 export type TranslationOutput = z.infer<typeof TranslationOutputSchema>;
