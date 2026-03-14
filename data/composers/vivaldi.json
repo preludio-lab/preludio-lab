@@ -1,0 +1,77 @@
+{
+  "fullName": {
+    "en": "Antonio Lucio Vivaldi",
+    "ja": "アントニオ・ルーチョ・ヴィヴァルディ",
+    "es": "Antonio Lucio Vivaldi",
+    "de": "Antonio Lucio Vivaldi",
+    "fr": "Antonio Lucio Vivaldi",
+    "it": "Antonio Lucio Vivaldi",
+    "zh": "安东尼奥·卢奇奥·维瓦尔第"
+  },
+  "displayName": {
+    "en": "Antonio Vivaldi",
+    "ja": "アントニオ・ヴィヴァルディ",
+    "es": "Antonio Vivaldi",
+    "de": "Antonio Vivaldi",
+    "fr": "Antonio Vivaldi",
+    "it": "Antonio Vivaldi",
+    "zh": "安东尼奥·维瓦尔第"
+  },
+  "shortName": {
+    "en": "Vivaldi",
+    "ja": "ヴィヴァルディ",
+    "es": "Vivaldi",
+    "de": "Vivaldi",
+    "fr": "Vivaldi",
+    "it": "Vivaldi",
+    "zh": "维瓦尔第"
+  },
+  "era": "baroque",
+  "summary": {
+    "en": "Known as the 'Red Priest,' this Baroque master shaped the modern concerto. He is celebrated for his vibrant, virtuoso compositions, most notably his famous work, 'The Four Seasons'.",
+    "ja": "「赤毛の司祭」の愛称で親しまれる、バロック音楽の巨匠です。協奏曲の形式を確立し、独奏楽器の華やかな技巧を最大限に活かした躍動感あふれる音楽で知られ、代表作に『四季』があります。",
+    "es": "Conocido como el «cura pelirrojo», este maestro del Barroco consolidó la forma del concierto. Su obra, caracterizada por un virtuosismo brillante y una vitalidad inigualable, alcanza su máxima expresión en su célebre ciclo «Las cuatro estaciones».",
+    "de": "Der als „roter Priester“ bekannte Meister des Barock prägte die Form des Solokonzerts maßgeblich. Seine Musik zeichnet sich durch virtuose Brillanz und Dynamik aus, weltberühmt ist vor allem sein Zyklus „Die vier Jahreszeiten“.",
+    "fr": "Surnommé « le prêtre roux », ce maître de la musique baroque a fixé la forme du concerto. Reconnu pour sa musique dynamique mettant en valeur la virtuosité des solistes, il est mondialement célèbre pour ses « Quatre Saisons ».",
+    "it": "Maestro del barocco, noto come il 'Prete rosso', ha definito la forma del concerto moderno. La sua musica, caratterizzata da un dinamismo vitale e dal virtuosismo strumentale, trova la massima espressione ne 'Le quattro stagioni'.",
+    "zh": "巴洛克音乐大师，因一头红发而被誉为“红发神父”。他确立了协奏曲的创作形式，其音乐以华丽的独奏技巧与生动的律动感著称，代表作包括小提琴协奏曲《四季》。"
+  },
+  "nationalityCode": "IT",
+  "representativeInstruments": ["violin"],
+  "representativeGenres": ["violin-concerto", "concerto-grosso", "sonata-duo", "opera", "cantata"],
+  "places": [
+    {
+      "slug": "venice",
+      "type": "birth",
+      "countryCode": "IT"
+    },
+    {
+      "slug": "venice",
+      "type": "activity",
+      "countryCode": "IT"
+    },
+    {
+      "slug": "vienna",
+      "type": "death",
+      "countryCode": "AT"
+    }
+  ],
+  "portrait": "/composers/vivaldi/images/portrait.webp",
+  "tags": ["virtuoso-composer", "prolific-composer", "melodist"],
+  "impressionDimensions": {
+    "innovation": 6,
+    "emotionality": 3,
+    "nationalism": -4,
+    "scale": -3,
+    "complexity": -2,
+    "theatricality": 5
+  },
+  "slug": "vivaldi",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T06:34:09.154Z"
+  },
+  "birthDate": "1678-03-04",
+  "deathDate": "1741-07-28",
+  "_schemaVersion": "1.1.0"
+}

@@ -19,7 +19,7 @@ describe('LocalizedComposerDtoSchema', () => {
   it('should fail if extra fields are introduced (strict mode)', () => {
     const dataWithExtra = {
       ...validData,
-      biography: 'Should not leak to list response',
+      summary: 'Should not leak to list response',
     };
 
     const result = LocalizedComposerDtoSchema.safeParse(dataWithExtra);

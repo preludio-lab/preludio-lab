@@ -24,7 +24,7 @@ const baseMetadata = ComposerMetadataSchema.pick({
   impressionDimensions: true,
 }).extend({
   name: z.string(),
-  biography: z.string().nullable(),
+  summary: z.string().nullable(),
   era: ComposerMetadataSchema.shape.era.nullable(),
   // DTO層での直列化の契約 (Date -> ISO String)
   birthDate: z
@@ -50,7 +50,7 @@ export const ComposerDtoSchema = baseControl
           fullName: z.string(),
           displayName: z.string(),
           shortName: z.string(),
-          biography: z.string().nullable(),
+          summary: z.string().nullable(),
         })
         .strict(),
     ),

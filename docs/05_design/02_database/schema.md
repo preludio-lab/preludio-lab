@@ -599,7 +599,7 @@ type ComposerImpressionDimensions = {
 | `full_name`         | `text`    | -       | YES      | -                                      | 正式名称 (e.g. "Ludwig van Beethoven")             |
 | `display_name`      | `text`    | -       | YES      | -                                      | 表示用名称 (e.g. "L. v. Beethoven")                |
 | `short_name`        | `text`    | -       | YES      | -                                      | 略称・検索用 (e.g. "Beethoven")                    |
-| `biography`         | `text`    | -       | NO       | -                                      | 人物伝記                                           |
+| `summary`           | `text`    | -       | NO       | -                                      | 音楽的魅力に焦点を当てた要約 (150文字程度)         |
 | `profile_embedding` | `F32BLOB` | -       | NO       | -                                      | プロフィールベクトル (384 dims, Model: `e5-small`) |
 | `created_at`        | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                           |
 | `updated_at`        | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                           |
@@ -624,7 +624,7 @@ type ComposerImpressionDimensions = {
 | **Mid**  | `representative_genres`      | 代表的なジャンル                                                  |
 | **Mid**  | `representative_instruments` | 代表的な楽器                                                      |
 | **Mid**  | `composers.era`              | 時代区分 (e.g. "Romantic Era")                                    |
-| **Low**  | `biography`                  | 人物伝記のサマリー                                                |
+| **Low**  | `summary`                    | 音楽的魅力に焦点を当てた要約                                      |
 
 > [!NOTE]
 > **連結フォーマット例**:

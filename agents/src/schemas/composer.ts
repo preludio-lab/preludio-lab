@@ -10,13 +10,15 @@ import {
  * to focus the model's attention.
  */
 export const DraftFieldsSchema = z.object({
-  fullName: z.string().describe('作曲家の氏名（日本語フルネーム）'),
-  displayName: z.string().describe('作曲家の表示用氏名（日本語、名字のみ等）'),
-  shortName: z.string().describe('作曲家の短縮名（日本語、姓のみ等）'),
-  biography: z
+  fullName: z.string().describe('作曲家のフルネーム（例: ヨハネス・ブラームス）'),
+  displayName: z.string().describe('カードや見出しで使用する表示名（例: ブラームス、J.S.バッハ）'),
+  shortName: z
+    .string()
+    .describe('リストや索引で使用する短縮名（原則として苗字のみ、例: ブラームス）'),
+  summary: z
     .string()
     .describe(
-      '作曲家の人物紹介・略歴（日本語）。可読性を高めるため、必ず3つの段落で構成し、各段落の間には改行コード "\\n\\n" を挿入すること。第1段落: 生い立ちと概要、第2段落: 音楽史における功績と代表作、第3段落: 後世への影響と現代における評価。文章は必ず「です・ます調（敬語）」で記述し、「だ・である調（常体）」は不可。',
+      '60〜100字程度の極めて洗練された紹介文。専門用語、生没年、出身地は禁止。 (1)通称/イメージ、(2)最大の魅力/功績、(3)代表作1〜2曲、の3要素のみを自然な日本語（です・ます調）で構成すること。',
     )
     .optional(),
 });
@@ -45,10 +47,10 @@ const ReasoningSchema = z
       .string()
       .describe('この作曲家の音楽史における最大の功績を事実に基づいて分析してください。'),
     eraClassification: z.string().describe('時代区分を決定した理由を記述してください。'),
-    biographyStructure: z
+    summaryStructure: z
       .string()
       .describe(
-        '伝記執筆のため、1)生い立ちと初期キャリア、2)功績と代表作、3)後世への影響 の3段落構成でのアウトライン（箇条書き）を作成してください。',
+        '専門用語を排し、(1)通称/イメージ、(2)魅力/功績、(3)代表作、の3要素を凝縮したミニマムなサマリーの構成案。',
       ),
   })
   .describe('最終的なデータを出力する前の思考プロセス。事実確認と分析をここで行うこと。');
@@ -66,7 +68,8 @@ export const ComposerDraftSchema = ComposerMasterSchema.omit({
   fullName: true,
   displayName: true,
   shortName: true,
-  biography: true,
+  summary: true,
+  representativeInstruments: true,
   representativeGenres: true,
   birthDate: true,
   deathDate: true,
@@ -74,10 +77,16 @@ export const ComposerDraftSchema = ComposerMasterSchema.omit({
   .extend(DraftFieldsSchema.shape)
   .extend({
     _reasoning: ReasoningSchema,
+    representativeInstruments: z
+      .array(z.string())
+      .describe(
+        '代表的な楽器。作曲家自身が名手であった、または歴史的に重要視した楽器を最大5つまで選択。',
+      )
+      .default([]),
     representativeGenres: z
       .array(z.string())
       .describe(
-        '代表ジャンル。必ず以下のリストから最も歴史的貢献度が高いものを最大5つまで選択すること: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。注意: 例えばバロック期の協奏曲において、solo-concerto（独奏協奏曲）と concerto-grosso（合奏協奏曲）は歴史的事実に基づいて厳密に区別すること。',
+        '代表ジャンル。リストから貢献度の高いものを最大5つ選択: [symphony, overture, tone-poem, opera, operetta, ballet, piano-concerto, violin-concerto, concerto-grosso, chamber-strings, sonata-duo, keyboard-solo, lied, song-cycle, mass-requiem, cantata, choral-others]。',
       )
       .default([]),
     birthDate: DateStringSchema,
@@ -106,10 +115,19 @@ export type WorkflowComposerMaster = z.infer<typeof WorkflowComposerMasterSchema
  * Translation step specialized schema.
  */
 export const TranslationOutputSchema = z.object({
-  fullName: z.string().describe('翻訳されたフルネーム'),
-  displayName: z.string().describe('翻訳された表示名'),
-  shortName: z.string().describe('翻訳された短縮名'),
-  biography: z.string().describe('翻訳された人物紹介・略歴').optional(),
+  fullName: z
+    .string()
+    .describe(
+      'ターゲット言語における公式かつ最も一般的なフルネームの綴り。中国語や日本語などの漢字・カタカナ圏では、必ず音訳（phonetic transliteration）された現地表記を使用すること。',
+    ),
+  displayName: z.string().describe('ターゲット言語における標準的な教養のある表示名'),
+  shortName: z.string().describe('ターゲット言語における一般的な短縮名（原則として姓のみ）'),
+  summary: z
+    .string()
+    .describe(
+      'ターゲット言語に翻訳・ローカライズされた要約。元の日本語ドラフトの「親密でミニマム」な構成（通称・魅力・代表作）を維持すること。',
+    )
+    .optional(),
 });
 
 export type TranslationOutput = z.infer<typeof TranslationOutputSchema>;

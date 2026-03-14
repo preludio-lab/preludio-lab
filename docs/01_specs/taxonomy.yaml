@@ -1730,6 +1730,104 @@ tags:
         label_en: Tribute to Cities / Places
         description: 特定の都市、風景、祖国の土地を称えるために書かれた音楽上の肖像。
 
+  # ----------------------------------------
+  # Composer Attributes: 作曲家を特徴づける属性
+  # ----------------------------------------
+  # 検索やレコメンドにおいて、共通の音楽的特徴や創作姿勢を持つ作曲家をグループ化するためのタグ。
+  # ※特定の個人を指す固有の異名（例：交響曲の父）は、メタデータの `nickname` フィールドで管理するためここには含めない。
+  - category: composer-attribute
+    items:
+      # --- 音楽的特徴・専門性 (Musical Specialties) ---
+      - id: virtuoso-composer
+        label_ja: ヴィルトゥオーゾ（名手）
+        label_en: Virtuoso Composer
+        description: 自身が圧倒的な演奏技術を持ち、その楽器の限界を押し広げる作品を残した作曲家。
+        examples: ['Liszt', 'Paganini', 'Rachmaninoff', 'Chopin']
+      - id: contrapuntist
+        label_ja: 対位法の巨匠
+        label_en: Master of Counterpoint
+        description: 複数の独立した旋律を同時に響かせるポリフォニー（多声音楽）の技術に卓越した作曲家。
+        examples: ['J.S. Bach', 'Palestrina', 'Hindemith']
+      - id: master-orchestrator
+        label_ja: 管弦楽法の大家
+        label_en: Master Orchestrator
+        description: 楽器の音色の組み合わせや、オーケストラの色彩的・立体的な響きの構築において天才的な手腕を持つ作曲家。
+        examples: ['Ravel', 'Berlioz', 'R. Strauss', 'Rimsky-Korsakov']
+      - id: melodist
+        label_ja: メロディメーカー
+        label_en: Gifted Melodist
+        description: 理屈を超えて、息の長い美しい旋律を次々と生み出す天性の才能を持った作曲家。
+        examples: ['Schubert', 'Tchaikovsky', 'Bellini', 'Puccini']
+      - id: stage-music-specialist
+        label_ja: 舞台音楽のスペシャリスト
+        label_en: Stage Music Specialist
+        description: オペラやバレエなど、生涯の創作の中心を「劇場」と「声/身体表現」に捧げた作曲家。
+        examples: ['Verdi', 'Wagner', 'Rossini', 'Minkus']
+      - id: miniaturist
+        label_ja: 小品の達人
+        label_en: Miniaturist
+        description: 交響曲のような巨大な枠組みよりも、数分間の短い形式の中に豊かな世界と感情を凝縮させた作曲家。
+        examples: ['Grieg', 'Fauré', 'Satie']
+
+      # --- 思想・創作姿勢・キャリア (Ideology & Career) ---
+      - id: conservative-classicist
+        label_ja: 保守派・古典の守護者
+        label_en: Conservative / Classicist
+        description: 同時代の新しい流行に流されず、過去の偉大な形式や伝統を重んじ、それを深化させた作曲家。
+        examples: ['Brahms', 'Mendelssohn']
+      - id: progressive-innovator
+        label_ja: 革新派・前衛
+        label_en: Progressive / Innovator
+        description: 既存のルール（調性や形式）を破壊し、次の時代の新しい音楽言語を切り拓いたパイオニア。
+        examples: ['Liszt', 'Schoenberg', 'Debussy', 'Cage']
+      - id: folk-music-explorer
+        label_ja: 民俗音楽の探求者
+        label_en: Folk Music Explorer
+        description: 祖国や特定の地域の民謡・舞曲を採集・研究し、それを芸術音楽のレベルに昇華させた作曲家。
+        examples: ['Bartók', 'Vaughan Williams', 'Kodály']
+      - id: prolific-composer
+        label_ja: 多作な作曲家
+        label_en: Prolific Composer
+        description: 驚異的なスピードで作曲を行い、数百から千を超える膨大な作品群を残した人物。
+        examples: ['Telemann', 'Vivaldi', 'Haydn']
+      - id: late-bloomer
+        label_ja: 大器晩成
+        label_en: Late Bloomer
+        description: 若い頃は別の職業に就いていた、あるいは評価されず、中年期以降に独自のスタイルを確立し歴史に名を刻んだ作曲家。
+        examples: ['Bruckner', 'Janáček', 'Franck']
+      - id: polymath
+        label_ja: 博学者・多才
+        label_en: Polymath
+        description: 音楽以外の分野（科学、文学、政治など）でも高度な専門性や実績を持っていた、多面的な知性を持つ人物。
+        examples: ['Borodin', 'Saint-Saëns', 'Paderewski']
+
+      # --- 人生・人間性 (Life & Human Nature) ---
+      - id: child-prodigy
+        label_ja: 神童
+        label_en: Child Prodigy
+        description: 幼少期から圧倒的な音楽的才能を発揮し、早熟な天才として名を馳せた作曲家。
+        examples: ['Mozart', 'Mendelssohn', 'Saint-Saëns', 'Korngold']
+      - id: short-lived-genius
+        label_ja: 夭折の天才
+        label_en: Short-lived Genius
+        description: 30代前後という若さでこの世を去りながらも、音楽史に深く名を刻む傑作を残した作曲家。
+        examples: ['Mozart', 'Schubert', 'Chopin', 'Pergolesi']
+      - id: devout-composer
+        label_ja: 信仰と祈り
+        label_en: Devout Composer
+        description: 深い信仰心を持ち、神への捧げものとしての宗教音楽や精神性の高い作品を極めた作曲家。
+        examples: ['Bruckner', 'Messiaen', 'J.S. Bach', 'Pärt']
+      - id: tragic-life
+        label_ja: 悲劇と苦悩の人生
+        label_en: Tragic Life
+        description: 病や社会との軋轢など、度重なる苦難と向き合い、それを劇的な音楽へ昇華させた作曲家。
+        examples: ['Beethoven', 'Tchaikovsky', 'Schumann', 'Mahler']
+      - id: nationalist-figure
+        label_ja: 国民的象徴
+        label_en: Nationalist Figure
+        description: 祖国の風景や歴史を音楽に込め、人々の精神的支えや国家的象徴とまでなった作曲家。
+        examples: ['Sibelius', 'Smetana', 'Chopin', 'Verdi']
+
 # -----------------------------------------------------------------------------
 # 5. Impression Scales (印象評価軸)
 # -----------------------------------------------------------------------------
