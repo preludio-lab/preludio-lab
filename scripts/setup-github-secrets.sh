@@ -16,22 +16,30 @@ fi
 
 set_secret() {
     local key=$1
-    local value=$(grep "^${key}=" .env.local | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+    local env_file=$2
+    [ -z "$env_file" ] && env_file=".env.local"
     
-    if [ -z "$value" ]; then
-        echo "Warning: .env.local 内に ${key} が見つからないか空です。スキップします。"
-    else
-        echo "Setting secret: ${key}..."
-        echo -n "$value" | gh secret set "$key"
+    if [ ! -f "$env_file" ]; then
+        return
     fi
+
+    local value=$(grep "^${key}=" "$env_file" | cut -d '=' -f2- | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+    
+    if [ -n "$value" ]; then
+        echo "Setting secret: ${key} (from $env_file)..."
+        echo -n "$value" | gh secret set "$key"
+        return 0
+    fi
+    return 1
 }
 
 # Turso (Master Data Sync に必要)
 set_secret "TURSO_DATABASE_URL"
 set_secret "TURSO_AUTH_TOKEN"
 
-# AI Agents (agent-runner.yml で使用)
-set_secret "GOOGLE_GENERATIVE_AI_API_KEY"
+# AI Agents (GEMINI_API_KEY)
+# ルートまたは agents/.env.local から検索
+set_secret "GEMINI_API_KEY" || set_secret "GEMINI_API_KEY" "agents/.env.local"
 
 # Vercel (DAST Scan / E2E Test でのバイパスに使用)
 set_secret "VERCEL_AUTOMATION_BYPASS_SECRET"
