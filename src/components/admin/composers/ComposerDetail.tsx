@@ -308,11 +308,11 @@ export function ComposerDetail({ composer, relatedWorks }: ComposerDetailProps) 
               </dl>
             </div>
 
-            {/* バイオグラフィ */}
+            {/* 要約 (Summary) */}
             <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
-              <SectionHeading>バイオグラフィ</SectionHeading>
+              <SectionHeading>要約 (Summary)</SectionHeading>
               <p className="text-sm text-admin-text-primary leading-relaxed whitespace-pre-wrap">
-                {composer.biography || '説明がありません'}
+                {composer.summary || '説明がありません'}
               </p>
             </div>
 

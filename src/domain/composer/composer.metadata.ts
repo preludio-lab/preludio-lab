@@ -45,8 +45,8 @@ export const ComposerMetadataSchema = z.object({
   shortName: createMultilingualStringSchema({ max: 50 }),
   /** 時代区分 (Taxonomy準拠) */
   era: MusicalEraSchema.optional(),
-  /** 伝記・人物紹介 */
-  biography: createMultilingualStringSchema({ max: 5000 }).optional(),
+  /** 音楽的魅力に焦点を当てた要約 (150文字程度) */
+  summary: createMultilingualStringSchema({ max: 300 }).optional(),
 
   /**
    * 生年月日

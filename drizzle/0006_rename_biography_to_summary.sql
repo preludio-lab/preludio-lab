@@ -1,0 +1,1 @@
+ALTER TABLE `composer_translations` RENAME COLUMN "biography" TO "summary";

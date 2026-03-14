@@ -1,0 +1,83 @@
+{
+  "fullName": {
+    "en": "Franz Joseph Haydn",
+    "ja": "フランツ・ヨーゼフ・ハイドン",
+    "es": "Franz Joseph Haydn",
+    "de": "Franz Joseph Haydn",
+    "fr": "Franz Joseph Haydn",
+    "it": "Franz Joseph Haydn",
+    "zh": "弗朗茨·约瑟夫·海顿"
+  },
+  "displayName": {
+    "en": "Franz Joseph Haydn",
+    "ja": "フランツ・ヨーゼフ・ハイドン",
+    "es": "Franz Joseph Haydn",
+    "de": "Franz Joseph Haydn",
+    "fr": "Franz Joseph Haydn",
+    "it": "Franz Joseph Haydn",
+    "zh": "海顿"
+  },
+  "shortName": {
+    "en": "Haydn",
+    "ja": "ハイドン",
+    "es": "Haydn",
+    "de": "Haydn",
+    "fr": "Haydn",
+    "it": "Haydn",
+    "zh": "海顿"
+  },
+  "era": "classical",
+  "summary": {
+    "en": "Known as the 'Father of the Symphony' and 'Father of the String Quartet,' Haydn established the foundations of the Classical style. His music is celebrated for its wit and formal elegance, best exemplified by works such as his 'Surprise' Symphony and the 'Emperor' Quartet.",
+    "ja": "「交響曲の父」や「弦楽四重奏曲の父」と称され、古典派音楽の様式を確立した巨匠です。親しみやすく知的な構成とユーモア溢れる作風が魅力で、代表作に『驚愕』や『皇帝』などがあります。",
+    "es": "Considerado el «padre de la sinfonía» y del «cuarteto de cuerda», este maestro estableció las formas del clasicismo. Su obra combina una estructura ingeniosa con un humor inconfundible, destacando piezas fundamentales como la Sinfonía «Sorpresa» y el Cuarteto «Emperador».",
+    "de": "Als „Vater der Sinfonie“ und des Streichquartetts begründete Haydn den klassischen Stil. Sein Werk zeichnet sich durch intellektuelle Struktur, Humor und Charme aus, wie etwa in der Sinfonie „mit dem Paukenschlag“ oder dem „Kaiserquartett“.",
+    "fr": "Considéré comme le « père de la symphonie » et du « quatuor à cordes », ce maître a établi les fondements du classicisme. Son œuvre, alliant ingéniosité et humour, est illustrée par des chefs-d'œuvre tels que « La Surprise » ou « L'Empereur ».",
+    "it": "Noto come il «padre della sinfonia» e del «quartetto d'archi», Haydn ha definito lo stile classico con ingegno e umorismo. Tra i suoi capolavori si annoverano la Sinfonia 'La sorpresa' e il Quartetto 'Imperatore'.",
+    "zh": "被誉为“交响曲之父”与“弦乐四重奏之父”，是确立古典主义音乐风格的巨匠。其作品构思精巧且充满幽默感，代表作包括《惊愕交响曲》与《皇帝四重奏》等。"
+  },
+  "nationalityCode": "AT",
+  "representativeInstruments": ["violin", "piano", "cello"],
+  "representativeGenres": ["symphony", "chamber-strings", "keyboard-solo", "mass-requiem", "opera"],
+  "places": [
+    {
+      "slug": "rohrau",
+      "type": "birth",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "vienna",
+      "type": "activity",
+      "countryCode": "AT"
+    },
+    {
+      "slug": "london",
+      "type": "activity",
+      "countryCode": "GB"
+    }
+  ],
+  "portrait": "/composers/haydn/images/portrait.webp",
+  "tags": [
+    "viennese-classicism",
+    "prolific-composer",
+    "progressive-innovator",
+    "melodist",
+    "master-orchestrator"
+  ],
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 0,
+    "nationalism": 0,
+    "scale": 5,
+    "complexity": -2,
+    "theatricality": -5
+  },
+  "slug": "haydn",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T06:34:17.854Z"
+  },
+  "birthDate": "1732-03-31",
+  "deathDate": "1809-05-31",
+  "_schemaVersion": "1.1.0"
+}

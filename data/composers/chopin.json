@@ -1,51 +1,47 @@
 {
-  "slug": "chopin",
-  "_schemaVersion": "1.1.0",
-  "_generatorMeta": {
-    "model": "gemini-3-flash-preview",
-    "generatedAt": "2026-02-01T00:00:00Z",
-    "promptVersion": "1.1.0",
-    "confidenceScore": 0.99,
-    "sourceRefs": [
-      "https://en.wikipedia.org/wiki/Frédéric_Chopin",
-      "https://pl.wikipedia.org/wiki/Fryderyk_Chopin",
-      "https://imslp.org/wiki/Category:Chopin,_Frédéric"
-    ]
-  },
   "fullName": {
     "en": "Frédéric François Chopin",
     "ja": "フレデリック・フランソワ・ショパン",
+    "es": "Frédéric François Chopin",
     "de": "Frédéric François Chopin",
     "fr": "Frédéric François Chopin",
     "it": "Frédéric François Chopin",
-    "es": "Frédéric François Chopin",
     "zh": "弗雷德里克·弗朗索瓦·肖邦"
   },
   "displayName": {
-    "en": "F. Chopin",
+    "en": "Chopin",
     "ja": "ショパン",
-    "de": "F. Chopin",
-    "fr": "F. Chopin",
-    "it": "F. Chopin",
-    "es": "F. Chopin",
+    "es": "Chopin",
+    "de": "Chopin",
+    "fr": "Chopin",
+    "it": "Chopin",
     "zh": "肖邦"
   },
   "shortName": {
     "en": "Chopin",
     "ja": "ショパン",
+    "es": "Chopin",
     "de": "Chopin",
     "fr": "Chopin",
     "it": "Chopin",
-    "es": "Chopin",
     "zh": "肖邦"
   },
   "era": "early-romantic",
-  "birthDate": "1810-03-01",
-  "deathDate": "1849-10-17",
+  "summary": {
+    "en": "Acclaimed as the 'poet of the piano,' Chopin revolutionized keyboard expression. His delicate, passionate melodies, infused with deep longing for Poland, created timeless masterpieces like 'Nocturne Op. 9, No. 2' and 'Fantaisie-Impromptu'.",
+    "ja": "「ピアノの詩人」と称えられ、鍵盤楽器の表現の可能性を極限まで広げた天才です。故郷ポーランドへの哀愁を込めた繊細かつ情熱的な旋律で世界を魅了し、『ノクターン第2番』や『幻想即興曲』などの不朽の名曲を残しました。",
+    "es": "Conocido como el «poeta del piano», Chopin expandió las posibilidades expresivas del instrumento. Su música, llena de nostalgia por su Polonia natal, nos legó obras maestras como el «Nocturno op. 9, n.º 2» y el «Impromptu Fantaisie».",
+    "de": "Als „Dichter des Klaviers“ erweiterte er die Ausdrucksmöglichkeiten des Instruments maßgeblich. Seine von polnischer Melancholie geprägten Werke wie das „Nocturne Op. 9 Nr. 2“ und die „Fantasie-Impromptu“ sind zeitlose Meisterwerke.",
+    "fr": "Surnommé le « poète du piano », il a sublimé les ressources expressives du clavier. Il fascine par ses mélodies passionnées imprégnées de nostalgie polonaise, signant des chefs-d'œuvre comme le « Nocturne op. 9 n° 2 » et la « Fantaisie-Impromptu ».",
+    "it": "Noto come il \"poeta del pianoforte\", ha rivoluzionato il linguaggio tastieristico. Ispirato dalla nostalgia per la Polonia, ha composto capolavori immortali come il 'Notturno op. 9 n. 2' e la 'Fantasia-Improvviso'.",
+    "zh": "被誉为“钢琴诗人”，他将键盘乐器的表现力发挥至极致。其作品充满对祖国波兰的深情与忧郁，代表作《夜曲第2号》与《幻想即兴曲》至今仍广受世界听众喜爱。"
+  },
   "nationalityCode": "PL",
+  "representativeInstruments": ["piano"],
+  "representativeGenres": ["keyboard-solo", "piano-concerto"],
   "places": [
     {
-      "slug": "zelazowa-wola",
+      "slug": "warsaw",
       "type": "birth",
       "countryCode": "PL"
     },
@@ -53,32 +49,30 @@
       "slug": "paris",
       "type": "activity",
       "countryCode": "FR"
-    },
-    {
-      "slug": "warsaw",
-      "type": "activity",
-      "countryCode": "PL"
     }
   ],
-  "representativeInstruments": ["piano"],
-  "representativeGenres": ["keyboard-solo", "piano-concerto"],
+  "portrait": "/composers/chopin/images/portrait.webp",
+  "tags": [
+    "virtuoso-composer",
+    "melodist",
+    "miniaturist",
+    "nationalist-figure",
+    "short-lived-genius"
+  ],
   "impressionDimensions": {
     "innovation": 8,
-    "emotionality": 10,
-    "nationalism": 7,
-    "scale": 3,
-    "complexity": 7,
-    "theatricality": 4
+    "emotionality": 8,
+    "nationalism": 6,
+    "scale": -7,
+    "complexity": 4,
+    "theatricality": -4
   },
-  "portrait": "https://cdn.preludiolab.com/composers/chopin/images/portrait.webp",
-  "tags": ["poet-of-the-piano", "poland", "romanticism", "virtuoso"],
-  "biography": {
-    "en": "A Polish composer and virtuoso pianist of the Romantic era who wrote primarily for solo piano. He has maintained worldwide renown as a leading musician of his era, one whose 'poetic genius was based on a professional technique that was without equal in his generation.' Poland's greatest composer, he spent most of his professional life in Paris.",
-    "ja": "ポーランド出身のロマン派音楽を代表する作曲家、ピアニスト。生涯のほとんどの作品をピアノ独奏曲に捧げ、「ピアノの詩人」と称される。繊細で詩的な旋律美、革新的な和声法、そして母国ポーランドの民族舞踊（マズルカやポロネーズ）を取り入れた独自の作風を確立した。その情熱的かつ憂いを帯びた音楽は、ピアノ音楽の表現力を極限まで高めたとされる。",
-    "de": "Ein polnischer Komponist und virtuoser Pianist der Romantik, der hauptsächlich für Soloklavier schrieb. Er genießt weltweit Ansehen als führender Musiker seiner Ära, dessen 'poetisches Genie auf einer professionellen Technik basierte, die in seiner Generation ihresgleichen suchte.' Als größter Komponist Polens verbrachte er den Großteil seines Berufslebens in Paris.",
-    "fr": "Compositeur et pianiste virtuose polonais de l'époque romantique qui a écrit principalement pour piano seul. Il a conservé une renommée mondiale en tant que musicien majeur de son époque, dont le 'génie poétique reposait sur une technique professionnelle sans égale dans sa génération'. Plus grand compositeur de Pologne, il a passé la majeure parte de sa vie professionnelle à Paris.",
-    "it": "Compositore e pianista virtuoso polacco dell'era romantica che scrisse principalmente per pianoforte solista. Ha mantenuto la fama mondiale come musicista di punta della sua epoca, il cui 'genio poetico era basato su una tecnica professionale senza eguali nella sua generazione'. Il più grande compositore polacco, trascorse la maggior parte della sua vita professionale a Parigi.",
-    "es": "Compositor polaco y virtuoso pianista de la era romántica que escribió principalmente para piano solo. Ha mantenido renombre mundial como músico líder de su era, cuyo 'genio poético se basó en una técnica profesional que no tuvo igual en su generación'. El compositor más grande de Polonia, pasó la mayor parte de su vida profesional en París.",
-    "zh": "浪漫主义时期的波兰作曲家和钢琴演奏家，主要创作钢琴独奏曲。他因“其诗意天才建立在这一代人中无与伦比的专业技巧之上”而享誉全球。他是波兰最伟大的作曲家，职业生涯的大部分时间在巴黎度过。"
-  }
+  "slug": "chopin",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-12T07:54:25.858Z"
+  },
+  "birthDate": "1810-03-01",
+  "deathDate": "1849-10-17",
+  "_schemaVersion": "1.1.0"
 }
