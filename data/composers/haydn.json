@@ -41,6 +41,11 @@
   "representativeGenres": ["symphony", "chamber-strings", "keyboard-solo", "mass-requiem", "opera"],
   "places": [
     {
+      "slug": "rohrau",
+      "type": "birth",
+      "countryCode": "AT"
+    },
+    {
       "slug": "vienna",
       "type": "activity",
       "countryCode": "AT"
@@ -49,11 +54,6 @@
       "slug": "london",
       "type": "activity",
       "countryCode": "GB"
-    },
-    {
-      "slug": "eisenach",
-      "type": "other",
-      "countryCode": "AT"
     }
   ],
   "portrait": "/composers/haydn/images/portrait.webp",
