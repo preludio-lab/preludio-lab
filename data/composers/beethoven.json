@@ -6,7 +6,7 @@
     "de": "Ludwig van Beethoven",
     "fr": "Ludwig van Beethoven",
     "it": "Ludwig van Beethoven",
-    "zh": "路德维希·凡·贝多芬"
+    "zh": "路德维希·范·贝多芬"
   },
   "displayName": {
     "en": "Beethoven",
@@ -28,13 +28,13 @@
   },
   "era": "classical",
   "summary": {
-    "en": "Known as the 'Titan of Music,' Beethoven bridged the Classical and Romantic eras. His masterpieces, such as the 'Fate' Symphony and the 'Ninth,' transform personal struggle into universal passion and continue to resonate globally.",
+    "en": "Known as the 'Titan of Music,' Beethoven bridged the Classical and Romantic eras. His masterpieces, such as the 'Fifth Symphony' and the 'Ninth,' transform personal struggle into universal passion and continue to resonate globally.",
     "ja": "「楽聖」と称えられ、音楽の歴史を古典派からロマン派へと切り拓いた偉大な作曲家です。苦難に満ちた人生の中で魂の叫びを音楽に昇華させ、圧倒的な情熱と革新性を体現した『運命』や『第九』は、今も世界中で聴く者の心に深く響き続けています。",
     "es": "Considerado el «genio de la música», Beethoven marcó la transición del Clasicismo al Romanticismo. Sus obras maestras, como la «Quinta» y la «Novena», son una expresión sublime de pasión e innovación que perduran en el corazón del mundo.",
     "de": "Als Wegbereiter der Romantik transformierte er persönliches Leid in zeitlose Musik. Werke wie die Fünfte Sinfonie und die Neunte begeistern noch heute mit ihrer revolutionären Kraft.",
-    "fr": "Pionnier du passage du classicisme au romantisme, Beethoven a sublimé ses épreuves personnelles en chefs-d'œuvre. Ses symphonies « Destin » et « Neuvième » incarnent une passion révolutionnaire qui résonne encore universellement.",
+    "fr": "Pionnier du passage du classicisme au romantisme, Beethoven a sublimé ses épreuves personnelles en chefs-d'œuvre. Ses symphonies « La Cinquième » et « Neuvième » incarnent une passion révolutionnaire qui résonne encore universellement.",
     "it": "Compositore leggendario che traghettò la musica dal Classicismo al Romanticismo. Opere come la 'Quinta' e la 'Nona' incarnano passione e innovazione, toccando profondamente gli animi di tutto il mondo ancora oggi.",
-    "zh": "被誉为“乐圣”，是将古典主义推向浪漫主义的伟大作曲家。他将苦难的人生转化为音乐，以强烈的激情与创新精神创作了《命运》与《第九交响曲》，其作品至今仍深深震撼着全世界听众的心灵。"
+    "zh": "被誉为“乐圣”，是将古典主义推向浪漫主义的伟大作曲家。他将苦難的人生转化为音乐，以强烈的激情与创新精神创作了《c小调第五交响曲》与《第九交响曲》，其作品至今仍深深震撼着全世界听众的心灵。"
   },
   "nationalityCode": "DE",
   "representativeInstruments": ["piano", "violin"],
