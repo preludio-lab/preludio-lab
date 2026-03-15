@@ -262,7 +262,7 @@ export function ComposerEditForm({ composer, onCancel }: ComposerEditFormProps) 
         </div>
         <div>
           <label className="block text-sm font-medium text-admin-text-secondary mb-1">
-            要約 / Summary (150文字程度)
+            要約 / Summary (100文字程度)
           </label>
           <textarea
             rows={5}

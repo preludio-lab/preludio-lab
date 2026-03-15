@@ -39,5 +39,5 @@ jobs:
       - name: Run Agent Script
         working-directory: ./agents
         env:
-          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: pnpm run ${{ inputs.script_name }}

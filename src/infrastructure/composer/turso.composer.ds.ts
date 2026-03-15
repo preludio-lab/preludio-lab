@@ -9,7 +9,7 @@ export class TursoComposerDataSource implements IComposerDataSource {
   constructor(private db: LibSQLDatabase<typeof schema>) {}
 
   async findById(id: string, ctx?: TransactionContext): Promise<ComposerRows | null> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const result = await db.query.composers.findFirst({
       where: eq(schema.composers.id, id),
       with: {
@@ -30,7 +30,7 @@ export class TursoComposerDataSource implements IComposerDataSource {
   }
 
   async findBySlug(slug: string, ctx?: TransactionContext): Promise<ComposerRows | null> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const result = await db.query.composers.findFirst({
       where: eq(schema.composers.slug, slug),
       with: {
@@ -49,7 +49,7 @@ export class TursoComposerDataSource implements IComposerDataSource {
 
   async findBySlugs(slugs: string[], ctx?: TransactionContext): Promise<ComposerRows[]> {
     if (slugs.length === 0) return [];
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
 
     const results: ComposerRows[] = [];
     const chunkSize = 100;
@@ -76,7 +76,7 @@ export class TursoComposerDataSource implements IComposerDataSource {
     params?: { limit?: number; offset?: number },
     ctx?: TransactionContext,
   ): Promise<ComposerRows[]> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const result = await db.query.composers.findMany({
       limit: params?.limit,
       offset: params?.offset,
@@ -160,13 +160,13 @@ export class TursoComposerDataSource implements IComposerDataSource {
   }
 
   async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     await db.delete(schema.composers).where(eq(schema.composers.id, id));
   }
 
   async deleteBySlugs(slugs: string[], ctx?: TransactionContext): Promise<void> {
     if (slugs.length === 0) return;
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
 
     // Chunking for IN clause
     for (let i = 0; i < slugs.length; i += 100) {
