@@ -12,7 +12,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
    * 検索用IDで作品を取得し、関連する作曲家、翻訳、構成楽曲情報を結合して返します。
    */
   async findById(id: string, ctx?: TransactionContext): Promise<WorkRows | null> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const workResult = await db.query.works.findFirst({
       where: eq(schema.works.id, id),
       with: {
@@ -67,7 +67,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
     slug: string,
     ctx?: TransactionContext,
   ): Promise<WorkRows | null> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const workResult = await db.query.works.findFirst({
       where: and(eq(schema.works.composerId, composerId), eq(schema.works.slug, slug)),
       with: {
@@ -143,7 +143,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
    * 指定されたIDの作品を削除します。
    */
   async deleteById(id: string, ctx?: TransactionContext): Promise<void> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     await db.delete(schema.works).where(eq(schema.works.id, id));
   }
 
@@ -229,7 +229,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
    * 指定された作品IDに紐づく全ての構成楽曲（楽章）を削除します。
    */
   async deletePartsByWorkId(workId: string, ctx?: TransactionContext): Promise<void> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     await db.delete(schema.workParts).where(eq(schema.workParts.workId, workId));
   }
 
@@ -237,7 +237,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
    * IDでWorkPartを検索し、翻訳データも含めて返します。
    */
   async findPartById(partId: string, ctx?: TransactionContext): Promise<WorkPartRows | null> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     const part = await db.query.workParts.findFirst({
       where: eq(schema.workParts.id, partId),
     });
@@ -258,7 +258,7 @@ export class TursoWorkDataSource implements IWorkDataSource {
    * IDでWorkPartを削除します。
    */
   async deletePartById(partId: string, ctx?: TransactionContext): Promise<void> {
-    const db = getDb(ctx);
+    const db = getDb(this.db, ctx);
     await db.delete(schema.workParts).where(eq(schema.workParts.id, partId));
   }
 }

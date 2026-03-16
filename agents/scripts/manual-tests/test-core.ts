@@ -3,9 +3,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { consola } from 'consola';
 
 async function runCoreTest() {
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    consola.error('GOOGLE_GENERATIVE_AI_API_KEY is not set');
+    consola.error('GEMINI_API_KEY is not set');
     return;
   }
 
