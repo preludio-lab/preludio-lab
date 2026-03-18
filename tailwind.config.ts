@@ -6,11 +6,30 @@ const config: Config = {
     extend: {
       fontFamily: {
         'serif-en': ['var(--font-playfair)', 'serif'],
-        'serif-ja': ['var(--font-zen-old-mincho)', 'serif'],
+        'serif-ja': [
+          'var(--font-zen-old-mincho)',
+          'Hiragino Mincho ProN',
+          'BIZ UDPMincho',
+          'MS Mincho',
+          'serif',
+        ],
         'sans-en': ['var(--font-inter)', 'sans-serif'],
-        'sans-ja': ['var(--font-noto-sans-jp)', 'sans-serif'],
-        'sans-zh': ['var(--font-noto-sans-sc)', 'sans-serif'],
-        'serif-zh': ['var(--font-noto-serif-sc)', 'serif'],
+        'sans-ja': [
+          'var(--font-noto-sans-jp)',
+          'Hiragino Sans',
+          'Hiragino Kaku Gothic ProN',
+          'Yu Gothic',
+          'Meiryo',
+          'sans-serif',
+        ],
+        'sans-zh': [
+          'var(--font-noto-sans-sc)',
+          '"PingFang SC"',
+          '"Source Han Sans SC"',
+          '"Microsoft YaHei"',
+          'sans-serif',
+        ],
+        'serif-zh': ['var(--font-noto-serif-sc)', '"Source Han Serif SC"', '"Songti SC"', 'serif'],
       },
       colors: {
         'classic-gold': '#C5A059',
