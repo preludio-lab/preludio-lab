@@ -60,18 +60,18 @@ export const NicknamesSchema = z.array(z.string().max(100)).max(20);
  * 6軸の印象評価値 (-10 to +10 の整数)
  */
 export const ImpressionDimensionsSchema = z.object({
-  /** 明るさ (Brightness) */
-  brightness: DimensionSchema,
-  /** 躍動感 (Vibrancy) */
-  vibrancy: DimensionSchema,
+  /** 革新性 (Innovation) */
+  innovation: DimensionSchema,
+  /** 情動性 (Emotionality) */
+  emotionality: DimensionSchema,
+  /** 民族性 (Nationalism) */
+  nationalism: DimensionSchema,
   /** 規模感 (Scale) */
   scale: DimensionSchema,
-  /** 深み (Depth) */
-  depth: DimensionSchema,
-  /** ドラマ性 (Drama) */
-  drama: DimensionSchema,
-  /** 通俗性・人気度 (Popularity) */
-  popularity: DimensionSchema,
+  /** 複雑性 (Complexity) */
+  complexity: DimensionSchema,
+  /** 演劇性 (Theatricality) */
+  theatricality: DimensionSchema,
 });
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
@@ -125,7 +125,7 @@ export const MetronomeUnitSchema = z.enum(
  * 曲が何に基づいているか、どのように派生したかを示す。
  */
 export const ArrangeType = {
-  TRANSCRIPTION: 'transcription', // 編曲
+  TRANSCRIPTION: 'transcription', // 編編
   VARIATION: 'variation', // 変奏
   PARAPHRASE: 'paraphrase', // パラフレーズ
   ORCHESTRATION: 'orchestration', // 管弦楽化
@@ -147,7 +147,7 @@ export const BasedOnSchema = z.object({
   originalWorkSlug: z.string().max(100),
   /** 編曲・派生タイプ */
   arrangeType: ArrangeTypeSchema,
-  /** 編曲者 (Slug) */
+  /** 編曲者 (名前またはSlug) */
   arranger: z.string().max(100).optional(),
 });
 

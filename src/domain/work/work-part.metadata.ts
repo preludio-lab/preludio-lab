@@ -79,8 +79,8 @@ export const WorkPartMetadataBaseSchema = z.object({
       originalWorkSlug: SlugSchema,
       /** 編曲・派生タイプ */
       arrangeType: ArrangeTypeSchema,
-      /** 編曲者 (Slug) */
-      arranger: SlugSchema.optional(),
+      /** 編曲者 (名前またはSlug) */
+      arranger: z.string().max(100).optional(),
     })
     .optional(),
 });

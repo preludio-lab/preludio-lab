@@ -1,0 +1,75 @@
+{
+  "slug": "mov-2",
+  "order": 2,
+  "titleComponents": {
+    "title": {
+      "ja": "第2楽章 変ニ長調 Allegretto",
+      "zh": "《第14号钢琴奏鸣曲》"
+    },
+    "prefix": {
+      "ja": "第2楽章",
+      "zh": "第二乐章"
+    },
+    "content": {
+      "ja": "変ニ長調 Allegretto",
+      "zh": "降D大调，小快板"
+    },
+    "nickname": {
+      "ja": "月光",
+      "zh": "月光奏鸣曲"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "27-2",
+      "isPrimary": true
+    }
+  ],
+  "type": "movement",
+  "isNameStandard": true,
+  "description": {
+    "ja": "二つの深い情動の間に置かれた優美な間奏曲です。軽やかな舞曲風の旋律が心の休息をもたらし、作品全体の緩急のコントラストを際立たせています。",
+    "zh": "这是一首优雅的间奏曲，置于两段深沉的情感之间。轻盈的舞曲风格旋律带来心灵的休憩，突显了整部作品在速度与力度上的对比。"
+  },
+  "performanceDifficulty": 2,
+  "impressionDimensions": {
+    "innovation": 0,
+    "emotionality": 2,
+    "nationalism": 0,
+    "scale": -6,
+    "complexity": 2,
+    "theatricality": 0
+  },
+  "nicknames": [],
+  "tags": ["elegant", "afternoon-tea", "playful", "serene"],
+  "instruments": ["piano"],
+  "basedOn": {
+    "originalWorkSlug": "piano-sonata-no-14",
+    "arrangeType": "transcription",
+    "arranger": "None"
+  },
+  "genres": ["minuet", "ternary-form"],
+  "key": "d-flat-major",
+  "tempo": "Allegretto",
+  "tempoTranslation": {
+    "ja": "アレグレット（少し速く、軽やかに）"
+  },
+  "timeSignature": {
+    "numerator": 3,
+    "denominator": 4
+  },
+  "bpm": 120,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.0.0",
+  "_generatorMeta": {
+    "model": "gpt-4o",
+    "generatedAt": "2024-05-23T10:00:00Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 1,
+    "sourceRefs": ["https://imslp.org/wiki/Piano_Sonata_No.14_Op.27_No.2_(Beethoven,_Ludwig_van)"],
+    "executionId": "beethoven-ps14-mov2"
+  },
+  "composerSlug": "beethoven",
+  "workSlug": "piano-sonata-no-14"
+}

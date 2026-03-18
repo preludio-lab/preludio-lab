@@ -3,7 +3,6 @@ import { WorkControlSchema } from '@/domain/work/work.control';
 import { WorkMetadataBaseSchema } from '@/domain/work/work.metadata';
 import { MusicalIdentitySchema } from '@/domain/work/work.shared';
 import { MasterSystemMetadataSchema } from '../../shared/master-data.schema';
-import { WorkPartMasterSchema } from './work-part-master.schema';
 
 /** 楽曲マスタースキーマの現在バージョン */
 export const WORK_MASTER_VERSION = '1.1.0';
@@ -48,8 +47,6 @@ export const WorkMasterBaseSchema = WorkControlSchema.pick({
   .extend({
     /** スキーマバージョン (個別管理) */
     _schemaVersion: z.string().default(WORK_MASTER_VERSION),
-    /** 構成楽曲（楽章）のリスト (Workから分離されたが、旧データや生成時の互換性のために許容) */
-    parts: z.array(WorkPartMasterSchema).optional(),
   });
 
 /**

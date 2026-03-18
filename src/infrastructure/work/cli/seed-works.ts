@@ -10,7 +10,6 @@ import { TursoComposerDataSource } from '@/infrastructure/composer/turso.compose
 import { TursoWorkDataSource } from '@/infrastructure/work/turso.work.ds';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
 import { WorkRepositoryImpl } from '@/infrastructure/work/work.repository';
-import { WorkPartRepositoryImpl } from '@/infrastructure/work/work-part.repository';
 import { CreateWorkUseCase } from '@/application/work/usecase/create-work.usecase';
 import { UpdateWorkUseCase } from '@/application/work/usecase/update-work.usecase';
 import { WorkMaster } from '@/application/work/master/work-master.schema';
@@ -26,20 +25,17 @@ async function main() {
   // リポジトリの初期化
   const composerRepo = new ComposerRepositoryImpl(composerDS);
   const workRepo = new WorkRepositoryImpl(workDS, composerDS);
-  const workPartRepo = new WorkPartRepositoryImpl(workDS);
   const txManager = new TursoTransactionManager(db);
 
   // アプリケーション層のユースケース初期化
   const createUseCase = new CreateWorkUseCase(
     workRepo,
-    workPartRepo,
     composerRepo,
     txManager,
     logger,
   );
   const updateUseCase = new UpdateWorkUseCase(
     workRepo,
-    workPartRepo,
     composerRepo,
     txManager,
     logger,
@@ -84,10 +80,7 @@ async function main() {
         await updateUseCase.execute(data);
       } else {
         // 存在しない場合は新規作成ユースケースを実行
-        await createUseCase.execute({
-          ...data,
-          parts: data.parts ?? [],
-        });
+        await createUseCase.execute(data);
       }
     }
 

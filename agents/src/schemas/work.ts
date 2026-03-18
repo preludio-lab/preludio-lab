@@ -1,11 +1,20 @@
 import { z } from 'zod';
 import {
+  BasedOnDraftSchema,
+  CatalogueDraftSchema,
+  CommonDescriptions,
+  EraDraftSchema,
+  ImpressionDimensionsDraftSchema,
+  InstrumentIdDraftSchema,
+  InstrumentationFlagsDraftSchema,
+  MusicalIdentityDraftSchema,
+  TagIdDraftSchema,
+  TitleComponentsDraftSchema,
+} from './work-shared.js';
+import {
   WorkMasterBaseSchema,
   WORK_MASTER_VERSION,
 } from '@/application/work/master/work-master.schema.js';
-import { CatalogueSchema } from '@/domain/work/work.shared.js';
-
-import { WorkPartDraftSchema } from './work-part.js';
 
 /**
  * AIの思考プロセスを格納するスキーマ (Work用)
@@ -25,7 +34,7 @@ export const WorkReasoningSchema = z
     structureAnalysis: z
       .string()
       .describe(
-        '楽曲の全体構成（楽章数、曲目リスト）を特定してください。各要素のタイトル、標準的なテンポ指定、および役割（序奏、終曲など）を確認してください。',
+        '楽曲全体の構造（ソナタ形式、変奏曲、組曲など）と、主要な調性や拍子の推移を特定してください。',
       ),
     instrumentationAnalysis: z
       .string()
@@ -34,7 +43,9 @@ export const WorkReasoningSchema = z
       ),
     impressionAnalysis: z
       .string()
-      .describe('印象評価（6軸データ）を決定した理由を、音楽的特徴に基づいて記述してください。'),
+      .describe(
+        '以下の6軸の印象評価（-10〜+10）について、根拠を整理してください。 (1)革新性: 伝統からの脱却度、(2)情動性: 感情の表出度（対 知的）、(3)民族性: 郷土色の強さ（対 普遍的）、(4)規模感: 響きの壮大さ（対 親密）、(5)複雑性: 構造の難解さ（対 簡潔）、(6)演劇性: 劇的・標題的性格（対 絶対音楽）。',
+      ),
   })
   .describe('最終的なデータを出力する前の思考プロセス。');
 
@@ -44,51 +55,44 @@ export const WorkReasoningSchema = z
 export const WorkDraftSchema = WorkMasterBaseSchema.omit({
   titleComponents: true,
   description: true,
+  basedOn: true,
+  catalogues: true,
+  instrumentationFlags: true,
   _schemaVersion: true,
-}).extend({
-  titleComponents: z.object({
-    title: z.string().describe('作品の本題。日本語で入力してください（例: "交響曲第5番"）。'),
-    prefix: z.string().optional().describe('接頭辞や言語別タイトル（例: "Symphony No. 5"）。'),
-    content: z.string().optional().describe('内容（例: "ハ短調", "Op. 67"）。'),
-    nickname: z.string().optional().describe('愛称・通称（例: "運命"）。'),
-  }),
-  description: z
-    .string()
-    .optional()
-    .describe(
-      '作品全体の概要・解説。歴史的背景や楽曲の独自性を2-3段落の日本語で記述してください。',
-    ),
-  parts: z.array(WorkPartDraftSchema).default([]),
-  _reasoning: WorkReasoningSchema,
-});
+  // Redefine flat musical identity fields via merge
+  key: true,
+  tempo: true,
+  tempoTranslation: true,
+  timeSignature: true,
+  genres: true,
+  bpm: true,
+  metronomeUnit: true,
+})
+  .extend({
+    titleComponents: TitleComponentsDraftSchema,
+    catalogues: z.array(CatalogueDraftSchema).describe('作品番号・カタログ情報。'),
+    era: EraDraftSchema.optional().describe(CommonDescriptions.era),
+    compositionYear: z.number().optional().describe(CommonDescriptions.compositionYear),
+    compositionPeriod: z.string().optional().describe(CommonDescriptions.compositionPeriod),
+    instrumentation: z.string().optional().describe(CommonDescriptions.instrumentation),
+    instruments: z.array(InstrumentIdDraftSchema).describe(CommonDescriptions.instruments),
+    instrumentationFlags: InstrumentationFlagsDraftSchema,
+    performanceDifficulty: z.number().optional().describe(CommonDescriptions.performanceDifficulty),
+    impressionDimensions: ImpressionDimensionsDraftSchema.optional(),
+    tags: z.array(TagIdDraftSchema).max(10).describe(CommonDescriptions.tags),
+    nicknames: z.array(z.string()).describe(CommonDescriptions.nicknames),
+    basedOn: BasedOnDraftSchema.optional(),
+    description: z
+      .string()
+      .optional()
+      .describe(
+        '60〜80文字で、検索結果や一覧画面からユーザーが「詳細な解説を読みたくなる」洗練された紹介文（SEO最適化）を作成してください。(1)客観的輪郭（作曲年、通称、歴史的背景などの事実）、(2)魅力の核心（聴覚体験や音楽的特徴）、(3)探求心の刺激（コントラストや構成美の提示）の3要素を自然な日本語（です・ます調）で凝縮すること。直接的な煽り（必聴です等）は避けてください。',
+      ),
+    _reasoning: WorkReasoningSchema,
+  })
+  .merge(MusicalIdentityDraftSchema.partial());
 
 export type WorkDraft = z.infer<typeof WorkDraftSchema>;
-
-/**
- * 作品の骨組み（構成案）のみを生成するためのスキーマ。
- * 大規模作品の第1段階（Structureフェーズ）で使用。
- */
-export const WorkStructureSchema = z.object({
-  _reasoning: WorkReasoningSchema,
-  titleComponents: z.object({
-    title: z.string().describe('作品の本題。日本語で入力してください。'),
-    nickname: z.string().optional().describe('愛称・通称がある場合。'),
-  }),
-  compositionYear: z.number().optional().describe('（推測される）作曲年。'),
-  catalogues: z.array(CatalogueSchema).default([]).describe('関連するカタログ番号リスト。'),
-  partsOutline: z
-    .array(
-      z.object({
-        slug: z.string().describe('楽章・曲目のURLスラグ案（例: "1st-mov", "overture"）。'),
-        order: z.number().describe('表示順（1, 2, 3...）。'),
-        title: z.string().describe('楽章・曲目のタイトル案。'),
-        expectedTempo: z.string().optional().describe('想定されるテンポ指定。'),
-      }),
-    )
-    .describe('楽曲を構成する楽章や曲目のリスト案、および構成の根拠。'),
-});
-
-export type WorkStructure = z.infer<typeof WorkStructureSchema>;
 
 /**
  * Workflow output & persistence specialized schema.
@@ -111,19 +115,6 @@ export const WorkTranslationOutputSchema = z.object({
   }),
   description: z.string().optional(),
   tempoTranslation: z.string().optional(),
-  parts: z.array(
-    z.object({
-      slug: z.string(),
-      titleComponents: z.object({
-        title: z.string(),
-        prefix: z.string().optional(),
-        content: z.string().optional(),
-        nickname: z.string().optional(),
-      }),
-      description: z.string().optional(),
-      tempoTranslation: z.string().optional(),
-    }),
-  ),
 });
 
 export type WorkTranslationOutput = z.infer<typeof WorkTranslationOutputSchema>;

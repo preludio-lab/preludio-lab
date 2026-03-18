@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "tsx watch",
     "test": "vitest",
-    "workflow:composer": "tsx --tsconfig tsconfig.json src/workflows/generate-composer-workflow.ts"
+    "workflow:composer": "tsx --tsconfig tsconfig.json src/workflows/generate-composer-workflow.ts",
+    "workflow:work": "tsx --tsconfig tsconfig.json src/workflows/generate-work-workflow.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

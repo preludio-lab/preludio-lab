@@ -229,7 +229,7 @@ export class BaseAgent {
     const jsonSchema = convertZodToJsonSchema(schema);
     const geminiSchema = convertToGeminiSchema(jsonSchema);
 
-    const history: { role: string; parts: { text: string }[] }[] = [
+    const history: Content[] = [
       { role: 'user', parts: [{ text: currentPrompt }] },
     ];
 

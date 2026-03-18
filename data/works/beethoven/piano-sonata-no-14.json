@@ -1,0 +1,124 @@
+{
+  "slug": "piano-sonata-no-14",
+  "composerSlug": "beethoven",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Sonata No. 14 in C-sharp minor, Op. 27, No. 2",
+      "ja": "ピアノ・ソナタ第14番 嬰ハ短調「月光」",
+      "es": "Sonata para piano n.º 14 en do sostenido menor, op. 27, n.º 2",
+      "de": "Klaviersonate Nr. 14 in cis-Moll op. 27 Nr. 2",
+      "fr": "Sonate pour piano nº 14 en ut dièse mineur, op. 27, nº 2",
+      "it": "Sonata per pianoforte n. 14 in do diesis minore, op. 27 n. 2",
+      "zh": "《第14号钢琴奏鸣曲》"
+    },
+    "prefix": {
+      "en": "Piano Sonata",
+      "ja": "ピアノ・ソナタ第14番",
+      "es": "Ludwig van Beethoven",
+      "de": "Ludwig van Beethoven",
+      "fr": "Ludwig van Beethoven",
+      "it": "Sonata",
+      "zh": "升c小调"
+    },
+    "content": {
+      "en": "No. 14 in C-sharp minor",
+      "ja": "嬰ハ短調",
+      "es": "Sonata para piano n.º 14",
+      "de": "„Mondscheinsonate“",
+      "fr": "Sonate pour piano nº 14",
+      "it": "n. 14 in do diesis minore",
+      "zh": "“月光”"
+    },
+    "nickname": {
+      "en": "Moonlight",
+      "ja": "月光",
+      "es": "Claro de luna",
+      "de": "Mondscheinsonate",
+      "fr": "Clair de lune",
+      "it": "Al chiaro di luna",
+      "zh": "月光"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "27-2",
+      "isPrimary": true
+    }
+  ],
+  "era": "early-romantic",
+  "compositionYear": 1801,
+  "compositionPeriod": {
+    "ja": "1801年"
+  },
+  "instrumentation": "piano",
+  "instruments": ["piano"],
+  "instrumentationFlags": {
+    "isSolo": true,
+    "isChamber": false,
+    "isOrchestral": false,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "performanceDifficulty": 5,
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 9,
+    "nationalism": -2,
+    "scale": 1,
+    "complexity": 7,
+    "theatricality": 8
+  },
+  "nicknames": ["月光", "Moonlight Sonata"],
+  "description": {
+    "en": "Composed in 1801, this Beethoven masterpiece is renowned for its innovative 'sonata quasi una fantasia' structure. From the tranquil first movement to the overwhelming intensity of the finale, its dramatic contrast serves as a profound bridge between the Classical and Romantic eras.",
+    "ja": "1801年作曲、幻想曲風の構成が革新的なベートーヴェンの傑作です。静謐な第1楽章から、終楽章の圧倒的な激情へ至る劇的な対比が聴く者の心を揺さぶり、古典からロマン派への架け橋として深い感動をもたらします。",
+    "es": "Compuesta en 1801, esta obra maestra de Beethoven destaca por su innovadora estructura «quasi una fantasia». El contraste dramático entre el sereno movimiento inicial y la apasionada intensidad del final conmueve profundamente, marcando un puente esencial entre el Clasicismo y el Romanticismo.",
+    "de": "Das 1801 komponierte Meisterwerk zeichnet sich durch seine innovative, quasi una fantasia konzipierte Form aus. Von der kontemplativen Ruhe des ersten Satzes bis zur entfesselten Leidenschaft des Finales schlägt dieses Werk eine Brücke von der Klassik zur Romantik.",
+    "fr": "Composée en 1801, cette œuvre magistrale de Beethoven innove par sa forme « quasi una fantasia ». Du premier mouvement d'une sérénité absolue à la fougue dramatique du final, le contraste saisissant marque un pont entre classicisme et romantisme.",
+    "it": "Composta nel 1801, questa pietra miliare di Beethoven stupisce per la sua struttura quasi di fantasia. Dal sereno primo movimento fino all'impetuosa passione del finale, il contrasto drammatico scuote l'ascoltatore, ponendosi come ponte ideale tra classicismo e romanticismo.",
+    "zh": "贝多芬创作于1801年的杰作，以极具革新性的幻想曲式结构著称。从静谧的第一乐章到终章震撼人心的激情，强烈的戏剧性对比震撼人心，作为连接古典主义与浪漫主义的桥梁，具有深远的艺术感染力。"
+  },
+  "tags": [
+    "night",
+    "melancholic",
+    "serene",
+    "dramatic",
+    "passionate",
+    "virtuoso",
+    "standard-repertoire",
+    "nicknamed-work"
+  ],
+  "basedOn": {
+    "originalWorkSlug": "piano-sonata-no-14",
+    "arrangeType": "transcription",
+    "arranger": "None"
+  },
+  "genres": ["sonata", "keyboard-solo", "fantasia"],
+  "key": "c-sharp-minor",
+  "tempo": "Adagio sostenuto",
+  "tempoTranslation": {
+    "en": "Adagio sostenuto",
+    "ja": "アダージョ・ソステヌート（控えめに、音を保って）",
+    "es": "Adagio sostenuto",
+    "de": "Adagio sostenuto",
+    "fr": "Adagio sostenuto",
+    "it": "Adagio sostenuto",
+    "zh": "Adagio sostenuto"
+  },
+  "timeSignature": {
+    "numerator": 2,
+    "denominator": 2
+  },
+  "bpm": 60,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gpt-4o",
+    "generatedAt": "2024-05-23T12:00:00Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 1,
+    "sourceRefs": ["https://www.beethoven.de", "https://www.oxfordmusiconline.com"],
+    "executionId": "exec-beethoven-pno-14"
+  }
+}

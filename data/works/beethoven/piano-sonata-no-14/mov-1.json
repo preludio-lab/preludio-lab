@@ -1,0 +1,75 @@
+{
+  "slug": "mov-1",
+  "order": 1,
+  "titleComponents": {
+    "title": {
+      "ja": "第1楽章 嬰ハ短調 Adagio sostenuto",
+      "zh": "《升c小调第14号钢琴奏鸣曲“月光”》"
+    },
+    "prefix": {
+      "ja": "第1楽章",
+      "zh": "第一乐章"
+    },
+    "content": {
+      "ja": "嬰ハ短調 Adagio sostenuto",
+      "zh": "升c小调 Adagio sostenuto"
+    },
+    "nickname": {
+      "ja": "月光",
+      "zh": "月光"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "27-2",
+      "isPrimary": true
+    }
+  ],
+  "type": "movement",
+  "isNameStandard": true,
+  "description": {
+    "ja": "三連符のアルペジオが支配する静謐な冒頭楽章です。形式を逸脱した幻想的な調べが夜の静寂を思わせ、全曲の深遠な情感を決定づける導入部です。",
+    "zh": "本乐章以连绵的三连音琶音为基调，营造出静谧的氛围。其打破常规的幻想风格宛如夜色般深邃，奠定了整部作品深沉而空灵的情感基调。"
+  },
+  "performanceDifficulty": 3,
+  "impressionDimensions": {
+    "innovation": 9,
+    "emotionality": 9,
+    "nationalism": -2,
+    "scale": -4,
+    "complexity": 5,
+    "theatricality": 6
+  },
+  "nicknames": [],
+  "tags": ["serene", "healing", "night", "meditation", "melancholic"],
+  "instruments": ["piano"],
+  "basedOn": {
+    "originalWorkSlug": "piano-sonata-no-14",
+    "arrangeType": "transcription",
+    "arranger": "None"
+  },
+  "genres": ["sonata-form", "nocturne"],
+  "key": "c-sharp-minor",
+  "tempo": "Adagio sostenuto",
+  "tempoTranslation": {
+    "ja": "アダージョ・ソステヌート（控えめに、音を保って）"
+  },
+  "timeSignature": {
+    "numerator": 2,
+    "denominator": 2
+  },
+  "bpm": 50,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.0.0",
+  "_generatorMeta": {
+    "model": "gpt-4o",
+    "generatedAt": "2024-05-23T10:00:00Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 1,
+    "sourceRefs": ["https://imslp.org/wiki/Piano_Sonata_No.14_Op.27_No.2_(Beethoven,_Ludwig_van)"],
+    "executionId": "beethoven-ps14-mov1"
+  },
+  "composerSlug": "beethoven",
+  "workSlug": "piano-sonata-no-14"
+}
