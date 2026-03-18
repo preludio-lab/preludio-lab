@@ -1,6 +1,5 @@
 import { defineRouting } from 'next-intl/routing';
 import { defaultLocale, supportedLocales } from '@/domain/i18n/locale';
-import { APP_ENV } from '@/lib/constants';
 
 export const routing = defineRouting({
   /** サポートする全ロケールのリスト */
@@ -14,14 +13,16 @@ export const routing = defineRouting({
 
   /**
    * Cookie configuration for locale persistence
-   * HttpOnly is NOT set to true because client-side navigation needs to read/write it.
+   * HttpOnly is set to true to prevent XSS.
    */
   localeCookie: {
+    name: 'NEXT_LOCALE',
+    path: '/',
     maxAge: 31536000, // 1 year
     sameSite: 'lax',
-    secure:
-      process.env.NODE_ENV !== APP_ENV.DEVELOPMENT ||
-      process.env.VERCEL_ENV === 'preview' ||
-      process.env.VERCEL_ENV === 'production',
+    // @ts-expect-error: next-intl types don't include httpOnly but it works at runtime
+    httpOnly: true,
+    // 本番環境（Vercel Preview/Production）では常に Secure 属性を付与する
+    secure: process.env.NODE_ENV === 'production',
   },
 });

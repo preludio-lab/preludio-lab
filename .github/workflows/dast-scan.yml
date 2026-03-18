@@ -19,8 +19,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Prepare workspace permissions
         run: chmod -R 777 ${{ github.workspace }}
+
+      - name: Validate ZAP Rules (Shift-Left)
+        run: pnpm run validate:zap-rules
 
       - name: Pre-pull ZAP Image (Resilience)
         run: |
@@ -102,18 +115,6 @@ jobs:
                     const alertId = String(alert.pluginid || alert.pluginId);
                     let action = ignoreRules.get(alertId);
                     
-                    // Specific ignore for NEXT_LOCALE HttpOnly flag (Alert 10010)
-                    // We only ignore this for the NEXT_LOCALE cookie as it is required for client-side routing.
-                    if (alertId === '10010' && alert.instances) {
-                      const originalCount = alert.instances.length;
-                      alert.instances = alert.instances.filter(instance => instance.param !== 'NEXT_LOCALE');
-                      
-                      if (originalCount > 0 && alert.instances.length === 0) {
-                        console.log(`Alert ${alertId} (${alert.name}) is IGNORED because all instances were NEXT_LOCALE`);
-                        return;
-                      }
-                    }
-
                     if (action === 'IGNORE') {
                       console.log(`Alert ${alertId} (${alert.name}) is IGNORED by zap-rules.conf`);
                       return; // スキップ
@@ -142,28 +143,24 @@ jobs:
 
             // Risk: 0=Info, 1=Low, 2=Medium, 3=High
             // Low以上 (>= 1) の場合のみIssueを作成
-            if (maxRisk >= 1) {
-              console.log('Vulnerabilities found (Risk Level >= Low). Creating issue...');
-              
-              const issueTitle = 'DAST Scan Report - ${{ github.event.deployment.sha }}';
-              let issueBody = '## DAST Scan Found Vulnerabilities (Risk Level >= Low)\n\n';
-              issueBody += validAlerts.join('\n\n');
-              
-              if (fs.existsSync('report_md.md')) {
-                issueBody += '\n\n---\n### Full Markdown Report\n\n' + fs.readFileSync('report_md.md', 'utf8');
-              } else {
-                issueBody += '\n\nNo markdown report generated.';
-              }
+              if (maxRisk >= 1) {
+                console.log('Vulnerabilities found (Risk Level >= Low). Creating issue...');
+                
+                const issueTitle = 'DAST Scan Report - ${{ github.event.deployment.sha }}';
+                let issueBody = '## DAST Scan Found Vulnerabilities (Risk Level >= Low)\n\n';
+                issueBody += '> [!NOTE]\n';
+                issueBody += '> 詳細なレポートは GitHub Actions の Artifacts から確認してください。\n\n';
+                issueBody += validAlerts.join('\n\n');
 
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: issueTitle,
-                body: issueBody
-              });
-            } else {
-              console.log('Only Informational alerts found (or none). Skipping issue creation.');
-            }
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: issueTitle,
+                  body: issueBody
+                });
+              } else {
+                console.log('Only Informational alerts found (or none). Skipping issue creation.');
+              }
 
       - name: Upload DAST Report
         if: always()
