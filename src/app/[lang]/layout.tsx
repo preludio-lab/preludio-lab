@@ -1,13 +1,13 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import {
-  Inter,
-  Playfair_Display,
-  Noto_Sans_JP,
-  Zen_Old_Mincho,
-  Noto_Sans_SC,
-  Noto_Serif_SC,
-} from 'next/font/google';
+  inter,
+  playfair,
+  notoSansJP,
+  zenOldMincho,
+  notoSansSC,
+  notoSerifSC,
+} from '@/shared/i18n/fonts';
 
 import '../globals.css';
 import { Header } from '@/components/layout/Header';
@@ -22,46 +22,7 @@ import { ConsentBanner } from '@/components/layout/ConsentBanner';
 import { Toaster } from 'react-hot-toast';
 import { supportedLocales, AppLocale } from '@/domain/i18n/locale';
 
-// フォント設定
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-});
-
-const notoSansJP = Noto_Sans_JP({
-  weight: ['400', '500', '700'],
-  variable: '--font-noto-sans-jp',
-  display: 'swap',
-  preload: false,
-});
-
-const zenOldMincho = Zen_Old_Mincho({
-  weight: ['400', '600', '700'],
-  variable: '--font-zen-old-mincho',
-  display: 'swap',
-  preload: false,
-});
-
-const notoSansSC = Noto_Sans_SC({
-  weight: ['400', '500', '700'],
-  variable: '--font-noto-sans-sc',
-  display: 'swap',
-  preload: false,
-});
-
-const notoSerifSC = Noto_Serif_SC({
-  weight: ['400', '600', '700'],
-  variable: '--font-noto-serif-sc',
-  display: 'swap',
-  preload: false,
-});
+// フォント設定は @/shared/i18n/fonts/ で一括管理
 
 import { BASE_URL } from '@/lib/constants';
 
