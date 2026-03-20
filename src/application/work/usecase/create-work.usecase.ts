@@ -98,7 +98,6 @@ export class CreateWorkUseCase {
 
         await this.workRepo.save(workEntity, ctx);
         this.logger.info('Created Work Core', { slug, workId });
-
       });
     } catch (err) {
       this.logger.error('Failed to create work', err as Error, { composerSlug, slug });

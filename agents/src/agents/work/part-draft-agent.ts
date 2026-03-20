@@ -25,13 +25,8 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 # JSON出力の制約
 - **impressionDimensions**: 作品全体の評価を基準とし、その楽章特有の性格（例：アレグロ楽章なら情動性や規模感が高め、アダージョなら親密感が高い等）を相対的に反映させてください。
 - **instruments**: 特別な指示（例：この楽章のみトロンボーンが入る等）がない限り、親作品の編成を継承してください。
-- **Slug命名規則**: 構造的な識別子（原則として [型プレフィックス]-[インデックス] または [型プレフィックス]-[役割]）を厳格に守ってください。
-    - movement -> mov-1, mov-intro
-    - variation -> var-1, var-theme
-    - number -> no-1, no-2
-    - act/scene -> act-1, scene-1
-    - 意味的な単語（速度記号やタイトル）をSlugに含めないでください。
-    - 数字は常にアラビア数字（1, 2, 3...）に正規化してください。`;
+- **Slugの遵守**: 入力として与えられた \`workSlug\` および各楽章の \`slug\` を厳格に守ってください。エージェント側でスラグを生成・改変してはいけません。
+- **数字の正規化**: タイトル等に含まれる数字は、日本語（ja）では原則としてアラビア数字（1, 2, 3...）を使用してください。`;
 
 export class WorkPartDraftAgent {
   private agent: BaseAgent;
@@ -65,7 +60,7 @@ export class WorkPartDraftAgent {
 ${targetParts.map((p) => `- ${p.order}: ${p.title} (${p.type})`).join('\n')}
 
 # 補足
-- 各パーツの \`composerSlug\` と \`workSlug\` は、親作品のスラグに基づいて正確に設定してください。
+- 各パーツの \`composerSlug\`, \`workSlug\`, および個別の \`slug\` は、入力されたスラグに基づいて正確に設定してください。
 - 楽器編成は親作品と異なる場合（例：独奏楽章、特定の楽器の休み）のみ、適切に上書きしてください。`;
 
     return await this.agent.generateObject<{ parts: WorkPartDraft[] }>(

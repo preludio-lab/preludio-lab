@@ -115,7 +115,6 @@ export class UpdateWorkUseCase {
 
         await this.workRepo.save(workEntity, ctx);
         this.logger.info(`Updated Work Core`, { slug, workId });
-
       });
     } catch (err) {
       this.logger.error(`Failed to update work`, err as Error, { composerSlug, slug });

@@ -69,6 +69,12 @@
   - Good: `bach-prelude-c-major`
   - Bad: `the-prelude-in-c-major-by-johann-sebastian-bach` (長すぎる)
 
+### 2.1. Music Metadata Slugs (Works & Parts)
+
+楽曲および楽章の詳細な命名規則については、以下を参照すること。
+
+- [work-slug-naming.md](file:///agents/docs/rules/work-slug-naming.md)
+
 ## 3. Code Identifiers
 
 - **Variables / Functions:** `camelCase` (e.g., `isValid`, `fetchData`)

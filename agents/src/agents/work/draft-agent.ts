@@ -26,7 +26,8 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 - **印象評価値**: 必ず -10 から +10 の整数。
 - **instruments**: \`musical-instrument.ts\` に定義された有効なIDのみ。
 - **tags**: \`musical-tag.ts\` から最大10個。
-- **catalogues**: 主要な作品番号（Op., BWV, K.等）を \`isPrimary: true\` として含めること。`;
+- **catalogues**: 主要な作品番号（Op., BWV, K.等）を \`isPrimary: true\` として含めること。
+- **Slugの遵守**: 入力された \`composerSlug\` および \`slug\` を厳格に守り、エージェント側で生成や改変を行わないでください。`;
 
 export class WorkDraftAgent {
   private agent: BaseAgent;

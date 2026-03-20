@@ -28,18 +28,8 @@ async function main() {
   const txManager = new TursoTransactionManager(db);
 
   // アプリケーション層のユースケース初期化
-  const createUseCase = new CreateWorkUseCase(
-    workRepo,
-    composerRepo,
-    txManager,
-    logger,
-  );
-  const updateUseCase = new UpdateWorkUseCase(
-    workRepo,
-    composerRepo,
-    txManager,
-    logger,
-  );
+  const createUseCase = new CreateWorkUseCase(workRepo, composerRepo, txManager, logger);
+  const updateUseCase = new UpdateWorkUseCase(workRepo, composerRepo, txManager, logger);
 
   // 楽曲データが格納されているディレクトリ
   const dataDir = path.join(process.cwd(), 'data', 'works');

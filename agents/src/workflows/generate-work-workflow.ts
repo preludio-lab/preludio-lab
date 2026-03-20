@@ -5,12 +5,14 @@ import { parseArgs } from 'node:util';
 import { z } from 'zod';
 import { consola } from 'consola';
 import { GeminiModels, type GeminiModelName } from '@/core/models.js';
-import { WorkflowWorkMasterSchema, type WorkDraft } from '@/schemas/work.js';
-import { WorkflowWorkPartMasterSchema, type WorkPartDraft } from '@/schemas/work-part.js';
+import {
+  WorkflowWorkMasterSchema,
+  type WorkDraft,
+  type WorkTranslationOutput,
+} from '@/schemas/work.js';
 import { fileURLToPath } from 'node:url';
 
 import { WorkDraftAgent } from '@/agents/work/draft-agent.js';
-import { WorkPartDraftAgent } from '@/agents/work/part-draft-agent.js';
 import { WorkRefineAgent } from '@/agents/work/refine-agent.js';
 import { WorkTranslateAgent } from '@/agents/work/translate-agent.js';
 
@@ -34,15 +36,6 @@ const StepEnumSchema = z.enum([
 ]);
 
 /**
- * 楽章（Part）の入力定義
- */
-const PartInputSchema = z.object({
-  title: z.string(),
-  order: z.number(),
-  type: z.string().default('movement'),
-});
-
-/**
  * 楽曲生成ワークフローの入力スキーマ
  */
 export const GenerateWorkInputSchema = z.object({
@@ -50,8 +43,6 @@ export const GenerateWorkInputSchema = z.object({
   composerName: z.string().min(1),
   workSlug: z.string().min(1),
   workTitle: z.string().min(1),
-  /** 楽章リスト (draft時のみ必須。未指定時は単一楽章曲として扱う) */
-  parts: z.array(PartInputSchema).optional().default([]),
   step: StepEnumSchema.optional(),
   review: z.string().optional(),
   auto: z.boolean().default(false),
@@ -108,8 +99,7 @@ export class GenerateWorkWorkflow {
       return;
     }
 
-    let currentWork: any = null;
-    let currentParts: any[] = [];
+    let currentWork: unknown = null;
 
     const isStepActive = (step: WorkWorkflowStep) => {
       if (input.auto) {
@@ -122,18 +112,13 @@ export class GenerateWorkWorkflow {
 
     // ----- STEP 1: DRAFT -----
     if (isStepActive(WORK_WORKFLOW_STEPS.DRAFT)) {
-      ({ work: currentWork, parts: currentParts } = await this.executeDraftStep(input, modelName));
+      currentWork = await this.executeDraftStep(input, modelName);
       if (!input.auto) return;
     }
 
     // ----- STEP 2: REFINE -----
     if (isStepActive(WORK_WORKFLOW_STEPS.REFINE)) {
-      ({ work: currentWork, parts: currentParts } = await this.executeRefineStep(
-        input,
-        modelName,
-        currentWork,
-        currentParts,
-      ));
+      currentWork = await this.executeRefineStep(input, modelName, currentWork);
       if (!input.auto) return;
     }
 
@@ -143,7 +128,7 @@ export class GenerateWorkWorkflow {
         consola.info(`Waiting 5 seconds before translation...`);
         await new Promise((r) => setTimeout(r, 5000));
       }
-      currentWork = await this.executeTranslateStep(input, modelName, currentWork, currentParts);
+      currentWork = await this.executeTranslateStep(input, modelName, currentWork);
       if (!input.auto) return;
     }
 
@@ -165,30 +150,10 @@ export class GenerateWorkWorkflow {
       slug: input.workSlug,
     });
 
-    // 2. Part-level Draft (Chunking)
-    let allParts: WorkPartDraft[] = [];
-    if (input.parts.length > 0) {
-      const partAgent = new WorkPartDraftAgent({ modelName });
-      const chunkSize = 5;
-      for (let i = 0; i < input.parts.length; i += chunkSize) {
-        const chunk = input.parts.slice(i, i + chunkSize);
-        consola.info(`[Step: draft] Generating parts chunk ${Math.floor(i / chunkSize) + 1}...`);
-        const chunkResult = await partAgent.execute(workDraft, chunk);
-        allParts = [...allParts, ...chunkResult.parts];
-
-        // Wait to prevent rate limit
-        if (i + chunkSize < input.parts.length) {
-          await new Promise((r) => setTimeout(r, 3000));
-        }
-      }
-    }
-
     const { _reasoning: _, ...cleanWork } = workDraft;
-    const cleanParts = allParts.map(({ _reasoning: __, ...p }) => p);
 
     const result = {
       ...cleanWork,
-      parts: cleanParts,
       _generatorMeta: {
         model: modelName,
         generatedAt: new Date().toISOString(),
@@ -199,65 +164,61 @@ export class GenerateWorkWorkflow {
     await fs.writeFile(outPath, JSON.stringify(result, null, 2), 'utf-8');
     consola.success(`[Step: draft] Saved draft to ${outPath}`);
 
-    return { work: workDraft, parts: allParts };
+    return workDraft;
   }
 
   private async executeRefineStep(
     input: GenerateWorkInput,
     modelName: GeminiModelName,
-    work: any,
-    parts: any[],
+    work: unknown,
   ) {
     consola.start(`[Step: refine] Performing consistency cross-check and applying reviews...`);
 
     let targetWork = work;
-    let targetParts = parts;
 
     if (!targetWork) {
       const sourcePath = this.getDraftPath(input.workSlug);
-      const draftObj = (await this.loadAndParseJson(sourcePath)) as any;
+      const draftObj = (await this.loadAndParseJson(sourcePath)) as WorkDraft;
       targetWork = draftObj;
-      targetParts = draftObj.parts || [];
     }
 
     const agent = new WorkRefineAgent({ modelName });
 
     if (input.review) {
       consola.info(`[Step: refine] Applying human review feedback...`);
-      targetWork = await agent.refineWithReview(targetWork, input.review, false);
+      targetWork = (await agent.refineWithReview(
+        targetWork as WorkDraft,
+        input.review,
+        false,
+      )) as WorkDraft;
     } else {
       consola.info(`[Step: refine] Running automated global consistency cross-check...`);
-      const refined = await agent.refineGlobalConsistency(targetWork, targetParts);
-      targetWork = refined.work;
-      targetParts = refined.parts;
+      const refined = await agent.refineGlobalConsistency(targetWork as WorkDraft, []);
+      targetWork = refined.work as WorkDraft;
     }
 
-    const result = { ...targetWork, parts: targetParts };
     const outPath = this.getRefinedPath(input.workSlug);
-    await fs.writeFile(outPath, JSON.stringify(result, null, 2), 'utf-8');
+    await fs.writeFile(outPath, JSON.stringify(targetWork, null, 2), 'utf-8');
     consola.success(`[Step: refine] Saved refined data to ${outPath}`);
 
-    return { work: targetWork, parts: targetParts };
+    return targetWork;
   }
 
   private async executeTranslateStep(
     input: GenerateWorkInput,
     modelName: GeminiModelName,
-    work: any,
-    parts: any[],
+    work: unknown,
   ) {
     consola.start(`[Step: translate] Translating metadata...`);
 
     let targetWork = work;
-    let targetParts = parts;
 
     if (!targetWork) {
       const sourcePath = fsSync.existsSync(this.getRefinedPath(input.workSlug))
         ? this.getRefinedPath(input.workSlug)
         : this.getDraftPath(input.workSlug);
-      const sourceObj = (await this.loadAndParseJson(sourcePath)) as any;
+      const sourceObj = (await this.loadAndParseJson(sourcePath)) as Record<string, unknown>;
       targetWork = sourceObj;
-      targetParts = sourceObj.parts || [];
     }
 
     const agent = new WorkTranslateAgent({ modelName });
@@ -267,18 +228,11 @@ export class GenerateWorkWorkflow {
     for (const lang of targetLangs) {
       consola.start(`[Step: translate] Translating into ${lang}...`);
 
-      const workTrans = await agent.translateWork(targetWork, lang);
-      translatedWork = this.mergeTranslation(translatedWork, workTrans, lang);
-
-      if (targetParts && targetParts.length > 0) {
-        const translatedParts = [];
-        for (const p of targetParts) {
-          const partTrans = await agent.translatePart(p as any, lang, targetWork as any);
-          translatedParts.push(this.mergeTranslation(p, partTrans, lang));
-          await new Promise((r) => setTimeout(r, 1000));
-        }
-        translatedWork.parts = translatedParts;
-      }
+      const workTrans = await agent.translateWork(targetWork as WorkDraft, lang);
+      translatedWork = this.mergeTranslation(translatedWork, workTrans, lang) as Record<
+        string,
+        unknown
+      >;
 
       await new Promise((r) => setTimeout(r, 5000));
     }
@@ -290,7 +244,7 @@ export class GenerateWorkWorkflow {
     return translatedWork;
   }
 
-  private async executeFinalizeStep(input: GenerateWorkInput, work: any) {
+  private async executeFinalizeStep(input: GenerateWorkInput, work: unknown) {
     consola.start(`[Step: finalize] Persisting work data...`);
 
     let targetJson = work;
@@ -299,7 +253,7 @@ export class GenerateWorkWorkflow {
     }
 
     // 最終バリデーション前に多言語フィールドを強制的にオブジェクト化
-    const ensureMultilingual = (obj: any) => {
+    const ensureMultilingual = (obj: Record<string, unknown>) => {
       if (!obj) return;
 
       // Description
@@ -315,23 +269,20 @@ export class GenerateWorkWorkflow {
         obj.tempoTranslation = { ja: obj.tempoTranslation };
       }
       // Title Components
-      if (obj.titleComponents) {
+      if (obj['titleComponents'] && typeof obj['titleComponents'] === 'object') {
+        const tc = obj['titleComponents'] as Record<string, unknown>;
         ['title', 'prefix', 'content', 'nickname'].forEach((key) => {
-          if (typeof obj.titleComponents[key] === 'string') {
-            obj.titleComponents[key] = { ja: obj.titleComponents[key] };
+          if (typeof tc[key] === 'string') {
+            tc[key] = { ja: tc[key] };
           }
         });
       }
     };
 
-    ensureMultilingual(targetJson);
-    if (targetJson.parts) {
-      targetJson.parts.forEach((p: any) => ensureMultilingual(p));
-    }
+    ensureMultilingual(targetJson as Record<string, unknown>);
 
-    const workData = { ...targetJson };
-    const parts = targetJson.parts || [];
-    delete workData.parts;
+    const workData = { ...(targetJson as Record<string, unknown>) };
+    delete workData['parts'];
 
     const finalWork = WorkflowWorkMasterSchema.parse(workData);
 
@@ -343,21 +294,6 @@ export class GenerateWorkWorkflow {
     const workPath = path.join(composerDir, `${input.workSlug}.json`);
     await fs.writeFile(workPath, JSON.stringify(finalWork, null, 2), 'utf-8');
     consola.success(`[Step: finalize] Work Master Data persisted to ${workPath}`);
-
-    // Persist WorkParts separately
-    if (parts.length > 0) {
-      const partsDir = path.join(composerDir, input.workSlug);
-      if (!fsSync.existsSync(partsDir)) {
-        await fs.mkdir(partsDir, { recursive: true });
-      }
-
-      for (const p of parts) {
-        const finalPart = WorkflowWorkPartMasterSchema.parse(p);
-        const partPath = path.join(partsDir, `${finalPart.slug}.json`);
-        await fs.writeFile(partPath, JSON.stringify(finalPart, null, 2), 'utf-8');
-      }
-      consola.success(`[Step: finalize] ${parts.length} WorkPart files persisted to ${partsDir}/`);
-    }
   }
 
   private async loadAndParseJson(filePath: string): Promise<unknown> {
@@ -370,80 +306,50 @@ export class GenerateWorkWorkflow {
     }
   }
 
-  private mergeTranslation(base: any, translated: any, lang: string): any {
-    const result = JSON.parse(JSON.stringify(base));
+  private mergeTranslation(base: unknown, translated: unknown, lang: string): unknown {
+    const result = JSON.parse(JSON.stringify(base)) as Record<string, unknown>;
+    const trans = translated as WorkTranslationOutput;
 
-    const setMultilingual = (obj: any, key: string, value: string, targetLang: string) => {
+    const setMultilingual = (
+      obj: Record<string, unknown>,
+      key: string,
+      value: string,
+      targetLang: string,
+    ) => {
       if (!obj[key]) {
         obj[key] = { [targetLang]: value };
         return;
       }
       if (typeof obj[key] === 'string') {
-        const jaValue = obj[key];
+        const jaValue = obj[key] as string;
         obj[key] = {
           ja: jaValue,
           [targetLang]: value,
         };
-      } else if (typeof obj[key] === 'object') {
-        obj[key][targetLang] = value;
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        (obj[key] as Record<string, string>)[targetLang] = value;
       }
     };
 
     // Title components
-    if (translated.titleComponents) {
-      const tc = result.titleComponents || {};
-      if (translated.titleComponents.title)
-        setMultilingual(tc, 'title', translated.titleComponents.title, lang);
-      if (translated.titleComponents.prefix)
-        setMultilingual(tc, 'prefix', translated.titleComponents.prefix, lang);
-      if (translated.titleComponents.content)
-        setMultilingual(tc, 'content', translated.titleComponents.content, lang);
-      if (translated.titleComponents.nickname)
-        setMultilingual(tc, 'nickname', translated.titleComponents.nickname, lang);
-      result.titleComponents = tc;
+    if (trans.titleComponents) {
+      const tc = (result['titleComponents'] || {}) as Record<string, unknown>;
+      const transTC = trans.titleComponents as Record<string, string | undefined>;
+      if (transTC['title']) setMultilingual(tc, 'title', transTC['title'], lang);
+      if (transTC['prefix']) setMultilingual(tc, 'prefix', transTC['prefix'], lang);
+      if (transTC['content']) setMultilingual(tc, 'content', transTC['content'], lang);
+      if (transTC['nickname']) setMultilingual(tc, 'nickname', transTC['nickname'], lang);
+      result['titleComponents'] = tc;
     }
 
     // Description
-    if (translated.description) {
-      setMultilingual(result, 'description', translated.description, lang);
+    if (trans.description) {
+      setMultilingual(result, 'description', trans.description, lang);
     }
 
     // Tempo translation (for work)
-    if (translated.tempoTranslation) {
-      setMultilingual(result, 'tempoTranslation', translated.tempoTranslation, lang);
-    }
-
-    // Parts
-    if (translated.parts && result.parts && Array.isArray(translated.parts)) {
-      for (let i = 0; i < translated.parts.length; i++) {
-        const transPart = translated.parts[i];
-        const basePart = result.parts[i];
-        if (!transPart || !basePart) continue;
-
-        // Part Title components
-        if (transPart.titleComponents) {
-          const ptc = basePart.titleComponents || {};
-          if (transPart.titleComponents.title)
-            setMultilingual(ptc, 'title', transPart.titleComponents.title, lang);
-          if (transPart.titleComponents.prefix)
-            setMultilingual(ptc, 'prefix', transPart.titleComponents.prefix, lang);
-          if (transPart.titleComponents.content)
-            setMultilingual(ptc, 'content', transPart.titleComponents.content, lang);
-          if (transPart.titleComponents.nickname)
-            setMultilingual(ptc, 'nickname', transPart.titleComponents.nickname, lang);
-          basePart.titleComponents = ptc;
-        }
-
-        // Part Description
-        if (transPart.description) {
-          setMultilingual(basePart, 'description', transPart.description, lang);
-        }
-
-        // Part Tempo translation
-        if (transPart.tempoTranslation) {
-          setMultilingual(basePart, 'tempoTranslation', transPart.tempoTranslation, lang);
-        }
-      }
+    if (trans.tempoTranslation) {
+      setMultilingual(result, 'tempoTranslation', trans.tempoTranslation, lang);
     }
 
     return result;
@@ -468,23 +374,20 @@ async function main() {
       strict: false,
     });
 
-    if (!values['composer-slug'] || !values['work-slug']) {
+    if (!values['composer-slug'] || !values['composer-name'] || !values['work-slug']) {
       consola.error(
-        `Usage: pnpm run workflow:work --composer-slug <slug> --work-slug <slug> [...]`,
+        `Usage: pnpm run workflow:work --composer-slug <slug> --composer-name <name> --work-slug <slug> [...]`,
       );
       process.exit(1);
     }
 
-    const parts = values.parts ? JSON.parse(values.parts as string) : [];
-
     const workflow = new GenerateWorkWorkflow();
     const input = {
       composerSlug: values['composer-slug'] as string,
-      composerName: (values['composer-name'] as string) || (values['composer-slug'] as string),
+      composerName: values['composer-name'] as string,
       workSlug: values['work-slug'] as string,
       workTitle: (values['work-title'] as string) || (values['work-slug'] as string),
-      parts,
-      step: values.step as any,
+      step: values.step as GenerateWorkInput['step'],
       review: values.review as string,
       auto: !!values.auto,
       dryRun: !!values['dry-run'],
