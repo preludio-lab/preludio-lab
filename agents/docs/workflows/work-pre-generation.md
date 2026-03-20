@@ -25,10 +25,12 @@ gemini run --prompt agents/docs/prompts/work-pre-generation-prompt.md "ベート
 
 ## 3. 出力の保存
 
-AIが生成した構造化Markdownを、以下の場所に保存します。
+AIが生成した構造化Markdownを、以下の規則に従って保存します。AIエージェント（Antigravity等）がツールを使用できる場合は、自動的に保存するよう指示してください。
 
-- **保存先**: `agents/workspace/work-lists/{composer-slug}.md`
-  - 特定のカテゴリに限定する場合は `{composer-slug}-{category}.md` としても構いません。
+- **保存先ディレクトリ**: `agents/workspace/work-lists/`
+- **ファイル命名規則**:
+  - 単一楽曲の場合: `{composer-slug}-{work-slug}.md` (例: `mozart-piano-concerto-no-20.md`)
+  - 複数楽曲（一括）の場合: `{composer-slug}-{category}.md` (例: `beethoven-piano-sonatas.md`)
 
 ## 4. 次のステップ
 

@@ -29,7 +29,12 @@
 
 ## 出力形式
 
-以下のMarkdown形式で出力してください。
+以下のMarkdown形式で出力してください。もしあなたがファイル作成ツール（`write_to_file` 等）を使用できる場合は、生成したMarkdownを以下の規則で保存してください。
+
+- **保存先ディレクトリ**: `agents/workspace/work-lists/`
+- **保存ファイル名**:
+  - 単一楽曲の場合: `{composer-slug}-{work-slug}.md` (例: `mozart-piano-concerto-no-20.md`)
+  - 複数楽曲（一括）の場合: `{composer-slug}-{category}.md` (例: `beethoven-piano-sonatas.md`)
 
 ```markdown
 ### [作曲家名] ([作曲家スラグ])
