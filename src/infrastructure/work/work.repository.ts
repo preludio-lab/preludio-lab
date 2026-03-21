@@ -1,10 +1,11 @@
-import { WorkRepository, WorkSearchCriteria } from '@/domain/work/work.repository';
+import { WorkRepository } from '@/domain/work/work.repository';
 import { Work } from '@/domain/work/work';
 import { IWorkDataSource } from './interfaces/work.ds.interface';
 import { IComposerDataSource } from '@/infrastructure/composer/interfaces/composer.ds.interface';
 import { TursoWorkMapper } from './turso.work.mapper';
 import { AppError } from '@/domain/shared/app-error';
 import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
+import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 export class WorkRepositoryImpl implements WorkRepository {
   constructor(
@@ -18,6 +19,7 @@ export class WorkRepositoryImpl implements WorkRepository {
       if (!rows) return null;
       return TursoWorkMapper.toDomain(rows);
     } catch (err) {
+      logger.error(`[WorkRepository.findById] Error: ${id}`, err as Error);
       if (err instanceof AppError) throw err;
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
@@ -33,14 +35,19 @@ export class WorkRepositoryImpl implements WorkRepository {
       if (!rows) return null;
       return TursoWorkMapper.toDomain(rows);
     } catch (err) {
+      logger.error(`[WorkRepository.findBySlug] Error: ${composerId}/${slug}`, err as Error);
       if (err instanceof AppError) throw err;
       throw new AppError('Database error', 'INFRASTRUCTURE_ERROR', 500, err);
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async findMany(criteria: WorkSearchCriteria): Promise<Work[]> {
-    throw new Error('Method not implemented.');
+  async findMany(
+    _criteria: { composerId?: string; genre?: string; era?: string },
+    _ctx?: TransactionContext,
+  ): Promise<Work[]> {
+    // 参照系（一覧）は SearchWorksUseCase / WorkQueryService が担当するため、
+    // 集約リストを必要とするドメイン要件があるまで未実装とします。
+    return [];
   }
 
   async save(work: Work, ctx?: TransactionContext): Promise<void> {

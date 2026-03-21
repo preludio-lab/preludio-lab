@@ -2,55 +2,52 @@
 
 import React from 'react';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { Badge, EyeIcon } from '@/components/ui/admin/CommonIcons';
+import { EyeIcon } from '@/components/ui/admin/CommonIcons';
+import { WorkListItemDto } from '@/application/work/dto/search-works.dto';
 
-export interface WorkListItem {
-  id: string;
-  title: string;
-  slug: string;
-  composerName: string;
-  year: string;
-  phrasesCount: number;
-  status: 'published' | 'draft';
-}
+import { useRouter } from 'next/navigation';
 
 interface WorkListProps {
-  works: WorkListItem[];
-  onViewDetail: (work: WorkListItem) => void;
+  works: WorkListItemDto[];
+  onViewDetail?: (work: WorkListItemDto) => void;
 }
 
 /**
  * WorkList - 作品一覧 (Presentational Component)
  */
 export function WorkList({ works, onViewDetail }: WorkListProps) {
-  const columns: DataTableColumn<WorkListItem>[] = [
+  const router = useRouter();
+
+  const handleViewDetail = (item: WorkListItemDto) => {
+    if (onViewDetail) {
+      onViewDetail(item);
+    } else {
+      router.push(`/admin/works/${item.slug}`);
+    }
+  };
+
+  const columns: DataTableColumn<WorkListItemDto>[] = [
     {
       header: '作品タイトル',
       accessor: (item) => (
         <div className="flex flex-col">
-          <span className="font-medium text-admin-text-primary">{item.title}</span>
+          <span className="font-medium text-admin-text-primary">{item.localizedTitle}</span>
           <span className="text-xs text-admin-text-secondary">{item.slug}</span>
         </div>
       ),
     },
     {
       header: '作曲家',
-      accessor: 'composerName',
+      accessor: (item) => item.composer.name,
     },
     {
       header: '制作年',
-      accessor: 'year',
+      accessor: (item) => item.compositionYear ?? '-',
     },
     {
-      header: 'フレーズ数',
-      accessor: (item) => <span className="text-admin-text-secondary">{item.phrasesCount}</span>,
-    },
-    {
-      header: 'ステータス',
+      header: '共通ID',
       accessor: (item) => (
-        <Badge variant={item.status === 'published' ? 'success' : 'warning'}>
-          {item.status === 'published' ? '公開' : '下書き'}
-        </Badge>
+        <code className="text-xs bg-admin-bg-secondary px-1 rounded">{item.id}</code>
       ),
     },
     {
@@ -59,7 +56,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onViewDetail(item);
+            handleViewDetail(item);
           }}
           className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
         >
@@ -78,7 +75,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
           新規作品追加
         </button>
       </div>
-      <DataTable data={works} columns={columns} onRowClick={onViewDetail} />
+      <DataTable data={works} columns={columns} onRowClick={handleViewDetail} />
     </div>
   );
 }

@@ -25,6 +25,15 @@ export interface WorkRows {
   };
 }
 
+export interface WorkSummaryRow {
+  work: WorkRow;
+  translation: WorkTranslationRow;
+  composer: {
+    slug: string;
+    displayName: string;
+  };
+}
+
 export interface IWorkDataSource {
   /**
    * Find work by ID
@@ -37,9 +46,32 @@ export interface IWorkDataSource {
   findBySlug(composerId: string, slug: string, ctx?: TransactionContext): Promise<WorkRows | null>;
 
   /**
+   * Search works with filters and pagination
+   */
+  search(
+    params: {
+      lang: string;
+      limit: number;
+      offset: number;
+      filter?: {
+        composerId?: string;
+        genre?: string;
+        era?: string;
+        keyword?: string;
+      };
+      sort?: {
+        field: 'title' | 'compositionYear' | 'createdAt';
+        direction: 'asc' | 'desc';
+      };
+    },
+    ctx?: TransactionContext,
+  ): Promise<{ rows: WorkSummaryRow[]; totalCount: number }>;
+
+  /**
    * Upsert Work Chain (Atomic Transaction)
    */
   save(rows: WorkRows, ctx?: TransactionContext): Promise<void>;
+  // ... (rest of interface unchanged)
 
   /**
    * Delete Work
