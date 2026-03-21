@@ -1,67 +1,61 @@
-# Phrase Generation Workflow
+# Phrase Generation Workflow (Refined)
 
-このディレクトリは、高品質な譜例（musical phrases）を自動生成するためのワークフローを管理します。
-MusicXMLソースの取得から、フレーズの抽出、ABC記法への変換、およびSVGレンダリングまでの一連のプロセスを自動化します。
+本ワークフローは、高品質な譜例（musical phrases）を自動生成するためのパイプラインです。 MusicXMLを標準形式とし、ソース取得、フレーズ抽出、 VerovioによるSVGレンダリング、およびCloudflare R2への永続化を自動化します。
 
 ## ワークフローの全体像
 
-本ワークフローは、複数の独立したステップ（スクリプト）で構成され、各ステップは中間成果物を介して連携します。これは「File Bucket Relay」方式に基づいています。
+「File Bucket Relay」方式に基づき、各ステップは独立したスクリプトとして実装されます。
 
 ### ディレクトリ構成案
 
 ```text
 phrase/
 ├── README.md                 # 本ドキュメント
-├── 01-source-retrieval.ts     # OpenScore等からMusicXMLを取得
-├── 02-phrase-extraction.ts    # 指定された小節範囲を抽出
-├── 03-notation-conversion.ts  # MusicXML -> ABC記法への変換
-├── 04-svg-render.ts           # Verovioを使用したSVG生成
-└── 05-validation.ts           # 音楽的・視覚的な品質検証
+├── 01-source-retrieval.ts     # データ取得・XML正規化・R2保存（Original）
+├── 02-phrase-extraction.ts    # 小節抽出 + 属性（Clef/Key/Time）注入
+├── 03-svg-render.ts           # Verovioを使用した MusicXML -> SVG 生成
+└── 04-validation-publish.ts   # 品質検証 + R2へのアップロード（Phrase XML & SVG）
 ```
 
-## 各ステップの詳細
+## 各ステップの詳細仕様
 
 ### 1. Source Retrieval (`01-source-retrieval.ts`)
 
-- **役割**: 信頼できるリポジトリから MusicXML データを取得する。
+- **役割**: 信頼できるリポジトリからデータを取得し、MusicXML形式に正規化してR2に保存する。
 - **データソース**:
-  - `OpenScore` (GitHub): 合唱、歌曲などの高品質なソース。
-  - `KernScores`: 対応楽曲が豊富なリサーチデータベース。
-- **出力**: `workspace/cache/{composer}/{work}.musicxml`
+  - `OpenScore` (GitHub): MusicXML
+  - `Mutopia Project`: MusicXML
+  - `KernScores`: Humdrum (`*.krn`) -> MusicXMLへの自動変換。
+- **永続化 (R2)**:
+  - パス: `sources/{composer_id}/{work_id}/full.musicxml`
+- **出力**: `workspace/cache/full.musicxml`
 
 ### 2. Phrase Extraction (`02-phrase-extraction.ts`)
 
-- **役割**: 巨大なスコアから、譜例として適切な小節（通常4-8小節）を抽出する。
-- **ロジック**:
-  - LLM エージェント（Composer）が、楽曲の「代表的なテーマ」の小節番号を特定する。
-  - プログラマティックなパーサーが、指定範囲の `<measure>` タグを抽出・再構成する。
-- **出力**: `workspace/temp/{work}-snippet.musicxml`
+- **役割**: 指定された小節範囲を抽出し、レンダリングに必要な属性情報を再構築する。
+- **重要ロジック (Attribute Injection)**:
+  - 単に小節を切り出すだけでなく、抽出範囲の直前までに定義されている最新の **音部記号 (Clef)**、**調号 (Key)**、**拍子記号 (Time)** を特定し、抽出したフレーズの先頭小節に注入する。これを行わないとレンダリングが崩れます。
+- **出力**: `workspace/temp/phrase.musicxml`
 
-### 3. Notation Conversion (`03-notation-conversion.ts`)
+### 3. SVG Rendering (`03-svg-render.ts`)
 
-- **役割**: MusicXML をプロジェクト標準の ABC 記法に変換する。
-- **理由**: MDX 内での管理や、人間による微調整を容易にするため。
-- **準規則**: `docs/02_guidelines/score-notation-guidelines.md` に従い、`%%scale` やコードネームを付与。
-- **出力**: `workspace/temp/{work}-phrase.abc`
+- **役割**: `Verovio` を使用して MusicXML から直接 SVG を生成する。
+- **注意**: ABC記法は表現力の欠落リスクがあるため使用しません。MusicXMLの微細なアーティキュレーションをそのままSVGに反映します。
+- **スタイリング**: `score-notation-guidelines.md` に基づき、モバイル最適化設定を適用。
+- **出力**: `workspace/temp/phrase.svg`
 
-### 4. SVG Rendering (`04-svg-render.ts`)
+### 4. Validation & Publish (`04-validation-publish.ts`)
 
-- **役割**: `Verovio` を使用して、モバイル対応の高品質 SVG を出力する。
-- **設定**:
-  - `%%staffwidth 100%`
-  - `%%scale 0.7` (Mobile optimization)
-- **出力**: `workspace/outputs/phrases/{work}.svg`
-
-### 5. Validation (`05-validation.ts`)
-
-- **役割**: 生成物の品質を最終チェックする。
+- **役割**: 生成物の品質チェックを行い、合格したものを R2 に永続化する。
 - **チェック項目**:
-  - SVG が正常にレンダリング可能か。
-  - 音楽的に中途半端な位置で切れていないか（LLMによる音楽的判断）。
-  - メタデータ（作品名、小節番号等）との整合性。
+  - 属性情報の欠落による描画崩れがないか。
+  - 音楽的な文脈（終止感など）の妥当性。
+- **永続化 (R2)**:
+  - パス: `phrases/{composer_id}/{work_id}/{phrase_id}.svg`
+  - パス: `phrases/{composer_id}/{work_id}/{phrase_id}.musicxml`
 
-## 設計思想
+## 設計思想の更新
 
-- **Thin Orchestrator**: エージェント（推論）とツール（副作用）を分離し、ワークフロー側が実行順序と冪等性を管理します。
-- **Resumability**: 各ステップがファイルを出力するため、エラー発生時に途中から再開可能です。
-- **Quality First**: 単なる機械変換ではなく、LLM による「音楽的な文脈の理解」を抽出ステップに組み込みます。
+- **Standardization on MusicXML**: クラシック音楽の精密な表現を維持するため、パイプライン全体で MusicXML を「正」のフォーマットとして扱います。
+- **R2 Persistence**: 一時ファイルではなく、再利用性と配信コストを考慮して Cloudflare R2 を中心とした永続化を行います。
+- **Human-in-the-Loop**: 自動抽出が困難な場合は、MDX側から小節番号を指定してワークフローを再トリガーできる冪等性を確保します。
