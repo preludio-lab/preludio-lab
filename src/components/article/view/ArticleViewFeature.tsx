@@ -10,7 +10,7 @@ import { MDXRemoteProps } from 'next-mdx-remote/rsc';
 import rehypeSlug from 'rehype-slug';
 import { ArticleYoutubePlayer } from './ArticleYoutubePlayer';
 import { ArticleListeningGuide } from './ArticleListeningGuide';
-import { Playback } from '@/domain/article/article.metadata';
+import type { Playback } from '@/domain/article/article.metadata';
 import { PlayerProvider } from '@/domain/player/player.shared';
 
 interface ArticleViewFeatureProps {

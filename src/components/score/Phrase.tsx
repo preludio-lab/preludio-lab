@@ -1,8 +1,8 @@
 'use client';
 
 import { useId } from 'react';
-import { NotationFormat } from '@/domain/score/score';
-import { Phrase } from '@/domain/score/phrase';
+import type { NotationFormat } from '@/domain/score/score';
+import type { Phrase } from '@/domain/score/phrase';
 import { usePhraseRenderer } from './usePhraseRenderer';
 
 interface PhraseProps {

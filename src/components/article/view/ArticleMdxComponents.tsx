@@ -6,7 +6,7 @@ import { PlayerFlatProperties } from '@/components/player/AudioPlayerContext';
 import { ComponentProps, isValidElement, ReactElement } from 'react';
 import Image from 'next/image';
 
-import { ArticleMetadata } from '@/domain/article/article.metadata';
+import type { ArticleMetadata } from '@/domain/article/article.metadata';
 
 /**
  * createArticleMdxComponents
