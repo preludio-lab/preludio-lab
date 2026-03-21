@@ -2,8 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { NotationFormat } from '@/domain/score/score';
-import { Phrase } from '@/domain/score/phrase';
+import type { NotationFormat } from '@/domain/score/score';
+import type { Phrase } from '@/domain/score/phrase';
 
 const PhraseView = dynamic(() => import('./Phrase').then((mod) => mod.Phrase), {
   ssr: false,
