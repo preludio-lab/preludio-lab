@@ -1,4 +1,4 @@
-import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn } from 'drizzle-orm';
+import { eq, and, desc, asc, inArray, like, or, sql, AnyColumn, SQL } from 'drizzle-orm';
 import { db } from '../../database/turso.client';
 import { articles, articleTranslations } from '../../database/schema';
 import { ArticleCategory } from '@/domain/article/article.metadata';
@@ -9,6 +9,7 @@ import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
 
 import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metadata.ds';
+import pLimit from 'p-limit';
 
 /**
  * Turso (SQLite/libSQL) をバックエンドとした記事メタデータのデータソース実装。
@@ -17,6 +18,8 @@ import { IArticleMetadataDataSource, ArticleMetadataRow } from './article.metada
  * 翻訳テーブル (article_translations) の結合（JOIN）や検索を処理します。
  */
 export class TursoArticleMetadataDataSource implements IArticleMetadataDataSource {
+  private readonly _limiter = pLimit(5); // Turso への同時接続数を制限
+
   constructor(private readonly logger: Logger) {}
 
   /**
@@ -28,15 +31,17 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    */
   async findById(id: string, lang: string): Promise<ArticleMetadataRow | undefined> {
     try {
-      const result = await db
-        .select({
-          articles: articles,
-          article_translations: articleTranslations,
-        })
-        .from(articles)
-        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
-        .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
-        .limit(1);
+      const result = await this._limiter(() =>
+        db
+          .select({
+            articles: articles,
+            article_translations: articleTranslations,
+          })
+          .from(articles)
+          .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+          .where(and(eq(articles.id, id), eq(articleTranslations.lang, lang)))
+          .limit(1),
+      );
 
       return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
@@ -85,15 +90,17 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         filters.push(eq(articles.category, category));
       }
 
-      const result = await db
-        .select({
-          articles: articles,
-          article_translations: articleTranslations,
-        })
-        .from(articles)
-        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
-        .where(and(...filters))
-        .limit(1);
+      const result = await this._limiter(() =>
+        db
+          .select({
+            articles: articles,
+            article_translations: articleTranslations,
+          })
+          .from(articles)
+          .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+          .where(and(...filters))
+          .limit(1),
+      );
 
       return result[0] as ArticleMetadataRow | undefined;
     } catch (error) {
@@ -123,7 +130,7 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
   ): Promise<{ rows: ArticleMetadataRow[]; totalCount: number }> {
     try {
       const { filter, sort, pagination } = criteria;
-      const filters = [];
+      const filters: SQL[] = [];
 
       // 1. 基本フィルタ (言語、ステータス)
       filters.push(eq(articleTranslations.lang, filter.lang));
@@ -145,12 +152,13 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       if (filter.keyword) {
         const pattern = `%${filter.keyword}%`;
         const scope = filter.keywordScope || ArticleKeywordScope.ALL;
-        const keywordConditions = [];
 
         const searchTitle =
           scope === ArticleKeywordScope.TITLE || scope === ArticleKeywordScope.ALL;
         const searchSummary =
           scope === ArticleKeywordScope.SUMMARY || scope === ArticleKeywordScope.ALL;
+
+        const keywordConditions: SQL[] = [];
 
         if (searchTitle) {
           keywordConditions.push(like(articleTranslations.title, pattern));
@@ -163,7 +171,10 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
         }
 
         if (keywordConditions.length > 0) {
-          filters.push(or(...keywordConditions));
+          const condition = or(...keywordConditions);
+          if (condition) {
+            filters.push(condition);
+          }
         }
       }
 
@@ -181,23 +192,27 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
       const orderByClause = direction(targetColumn);
 
       // 5. データ取得とカウントの並列実行
-      const rowsPromise = db
-        .select({
-          articles: articles,
-          article_translations: articleTranslations,
-        })
-        .from(articles)
-        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
-        .where(and(...filters))
-        .orderBy(orderByClause)
-        .limit(pagination.limit)
-        .offset(pagination.offset);
+      const rowsPromise = this._limiter(() =>
+        db
+          .select({
+            articles: articles,
+            article_translations: articleTranslations,
+          })
+          .from(articles)
+          .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+          .where(and(...filters))
+          .orderBy(orderByClause)
+          .limit(pagination.limit)
+          .offset(pagination.offset),
+      );
 
-      const countPromise = db
-        .select({ count: sql<number>`count(*)` })
-        .from(articles)
-        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
-        .where(and(...filters));
+      const countPromise = this._limiter(() =>
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(articles)
+          .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+          .where(and(...filters)),
+      );
 
       const [rows, countResult] = await Promise.all([rowsPromise, countPromise]);
 
@@ -245,9 +260,11 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    */
   async deleteTranslation(id: string, lang: string): Promise<void> {
     try {
-      await db
-        .delete(articleTranslations)
-        .where(and(eq(articleTranslations.articleId, id), eq(articleTranslations.lang, lang)));
+      await this._limiter(() =>
+        db
+          .delete(articleTranslations)
+          .where(and(eq(articleTranslations.articleId, id), eq(articleTranslations.lang, lang))),
+      );
       this.logger.info(`Deleted translation for article: ${id} [${lang}]`);
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.deleteTranslation error', error as Error, {
@@ -271,10 +288,12 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    */
   async countTranslations(id: string): Promise<number> {
     try {
-      const result = await db
-        .select({ count: sql<number>`count(*)` })
-        .from(articleTranslations)
-        .where(eq(articleTranslations.articleId, id));
+      const result = await this._limiter(() =>
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(articleTranslations)
+          .where(eq(articleTranslations.articleId, id)),
+      );
 
       return Number(result[0]?.count || 0);
     } catch (error) {
@@ -298,14 +317,16 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
    */
   async findAllTranslations(id: string): Promise<ArticleMetadataRow[]> {
     try {
-      const result = await db
-        .select({
-          articles: articles,
-          article_translations: articleTranslations,
-        })
-        .from(articles)
-        .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
-        .where(eq(articles.id, id));
+      const result = await this._limiter(() =>
+        db
+          .select({
+            articles: articles,
+            article_translations: articleTranslations,
+          })
+          .from(articles)
+          .innerJoin(articleTranslations, eq(articles.id, articleTranslations.articleId))
+          .where(eq(articles.id, id)),
+      );
 
       return result as ArticleMetadataRow[];
     } catch (error) {
@@ -335,10 +356,12 @@ export class TursoArticleMetadataDataSource implements IArticleMetadataDataSourc
     try {
       // 外部キー制約（ON DELETE CASCADE）が設定されている場合は articles を消すだけで良いが、
       // 念のため明示的に両方消す。
-      await db.transaction(async (tx) => {
-        await tx.delete(articleTranslations).where(eq(articleTranslations.articleId, id));
-        await tx.delete(articles).where(eq(articles.id, id));
-      });
+      await this._limiter(() =>
+        db.transaction(async (tx) => {
+          await tx.delete(articleTranslations).where(eq(articleTranslations.articleId, id));
+          await tx.delete(articles).where(eq(articles.id, id));
+        }),
+      );
       this.logger.info(`Permanently deleted article and all translations: ${id}`);
     } catch (error) {
       this.logger.error('TursoArticleMetadataDataSource.deleteAll error', error as Error, { id });

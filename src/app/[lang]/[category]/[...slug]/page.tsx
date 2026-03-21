@@ -5,7 +5,8 @@ import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 import { ArticleViewFeature } from '@/components/article/view/ArticleViewFeature';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { LOCALES } from '@/lib/constants';
+import { APP_ENV, LOCALES } from '@/lib/constants';
+import pLimit from 'p-limit';
 
 import { ArticleDto } from '@/application/article/dto/get-article.dto';
 import { ArticleCardDto } from '@/application/article/dto/get-articles.dto';
@@ -25,27 +26,34 @@ type Props = {
  */
 export async function generateStaticParams() {
   const useCase = new ListArticlesUseCase(articleRepository);
-  const params: { lang: string; category: string; slug: string[] }[] = [];
+  const limit = pLimit(3); // 静的パラメータ生成の同時実行数を制限
 
-  for (const lang of LOCALES) {
-    try {
-      const response = await useCase.execute({
-        filter: { lang },
-        pagination: { limit: 1000, offset: 0 },
-      });
+  // 開発環境ではビルド/起動速度を優先し、取得件数を大幅に絞る
+  const fetchLimit = process.env.NEXT_PUBLIC_APP_ENV === APP_ENV.DEVELOPMENT ? 10 : 1000;
 
-      for (const item of response.items) {
-        params.push({
-          lang,
-          category: item.category,
-          slug: [item.slug],
-        });
-      }
-    } catch (e) {
-      logger.warn(`Failed to generate static params for ${lang}`, { error: e });
-    }
-  }
-  return params;
+  const results = await Promise.all(
+    LOCALES.map((lang) =>
+      limit(async () => {
+        try {
+          const response = await useCase.execute({
+            filter: { lang },
+            pagination: { limit: fetchLimit, offset: 0 },
+          });
+
+          return response.items.map((item) => ({
+            lang,
+            category: item.category,
+            slug: [item.slug],
+          }));
+        } catch (e) {
+          logger.warn(`Failed to generate static params for ${lang}`, { error: e });
+          return [];
+        }
+      }),
+    ),
+  );
+
+  return results.flat();
 }
 
 /**

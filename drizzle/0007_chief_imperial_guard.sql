@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `idx_art_trans_slug_lookup` ON `article_translations` (`lang`,`sl_category`,`sl_slug`);
