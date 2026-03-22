@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { EyeIcon } from '@/components/ui/admin/CommonIcons';
+import { DetailButton } from '@/components/ui/admin/DetailButton';
 import { WorkListItemDto } from '@/application/work/dto/search-works.dto';
 
 import { useRouter } from 'next/navigation';
@@ -72,15 +72,12 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
     {
       header: 'アクション',
       accessor: (item) => (
-        <button
+        <DetailButton
           onClick={(e) => {
             e.stopPropagation();
             handleViewDetail(item);
           }}
-          className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
-        >
-          <EyeIcon />
-        </button>
+        />
       ),
       className: 'text-right',
     },

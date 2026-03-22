@@ -3,6 +3,7 @@
 import React from 'react';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
 import { Badge } from '@/components/ui/admin/CommonIcons';
+import { DetailButton } from '@/components/ui/admin/DetailButton';
 
 interface RelatedPhrase {
   id: string;
@@ -83,6 +84,7 @@ export function WorkDetail({ work, relatedPhrases }: WorkDetailProps) {
                 <th className="px-6 py-4">フレーズ名</th>
                 <th className="px-6 py-4">小節範囲</th>
                 <th className="px-6 py-4">ステータス</th>
+                <th className="px-6 py-4 text-right">アクション</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-admin-border">
@@ -111,6 +113,9 @@ export function WorkDetail({ work, relatedPhrases }: WorkDetailProps) {
                       <Badge variant={phrase.status === 'published' ? 'success' : 'warning'}>
                         {phrase.status === 'published' ? '公開' : '下書き'}
                       </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <DetailButton onClick={() => {}} />
                     </td>
                   </tr>
                 ))

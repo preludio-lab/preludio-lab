@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { ChevronRightIcon } from '@/components/ui/admin/CommonIcons';
+import { DetailButton } from '@/components/ui/admin/DetailButton';
 import { LocalizedComposerDto } from '@/application/composer/dto/localized-composer.dto';
 
 interface ComposerListProps {
@@ -81,16 +81,12 @@ export function ComposerList({ composers }: ComposerListProps) {
     {
       header: '',
       accessor: (item) => (
-        <button
+        <DetailButton
           onClick={(e) => {
             e.stopPropagation();
             handleRowClick(item);
           }}
-          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-admin-primary border border-admin-primary/60 rounded-md bg-transparent hover:bg-admin-primary-light hover:border-admin-primary transition-all active:scale-95 group"
-        >
-          <span>詳細</span>
-          <ChevronRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-        </button>
+        />
       ),
       className: 'text-right',
     },
