@@ -42,6 +42,9 @@ export const WorkSearchResponseSchema = z.object({
       slug: SlugSchema,
       localizedTitle: z.string(),
       compositionYear: z.number().nullable(),
+      cataloguePrefix: z.string().nullable(),
+      catalogueNumber: z.string().nullable(),
+      genres: z.array(z.string()),
       composer: z.object({
         slug: SlugSchema,
         name: z.string(),

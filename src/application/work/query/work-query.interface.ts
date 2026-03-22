@@ -12,6 +12,9 @@ export interface RawWorkSummary {
   slug: string;
   localizedTitle: string;
   compositionYear: number | null;
+  cataloguePrefix: string | null;
+  catalogueNumber: string | null;
+  genres: string[];
   composer: {
     slug: string;
     name: string;

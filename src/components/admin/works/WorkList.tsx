@@ -28,27 +28,46 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
 
   const columns: DataTableColumn<WorkListItemDto>[] = [
     {
-      header: '作品タイトル',
-      accessor: (item) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-admin-text-primary">{item.localizedTitle}</span>
-          <span className="text-xs text-admin-text-secondary">{item.slug}</span>
-        </div>
-      ),
-    },
-    {
       header: '作曲家',
       accessor: (item) => item.composer.name,
     },
     {
-      header: '制作年',
-      accessor: (item) => item.compositionYear ?? '-',
+      header: '作品タイトル',
+      accessor: (item) => (
+        <span className="font-medium text-admin-text-primary">{item.localizedTitle}</span>
+      ),
     },
     {
-      header: '共通ID',
+      header: 'スラッグ',
+      accessor: (item) => <span className="text-xs text-admin-text-secondary">{item.slug}</span>,
+    },
+    {
+      header: '作品番号',
       accessor: (item) => (
-        <code className="text-xs bg-admin-bg-secondary px-1 rounded">{item.id}</code>
+        <span className="text-sm font-mono">
+          {item.cataloguePrefix && item.catalogueNumber
+            ? `${item.cataloguePrefix}${item.catalogueNumber}`
+            : item.catalogueNumber || item.cataloguePrefix || '-'}
+        </span>
       ),
+    },
+    {
+      header: 'ジャンル',
+      accessor: (item) => (
+        <div className="flex flex-wrap gap-1">
+          {item.genres.length > 0
+            ? item.genres.map((g) => (
+                <span key={g} className="text-xs bg-admin-bg-secondary px-1.5 py-0.5 rounded">
+                  {g}
+                </span>
+              ))
+            : '-'}
+        </div>
+      ),
+    },
+    {
+      header: '制作年',
+      accessor: (item) => item.compositionYear ?? '-',
     },
     {
       header: 'アクション',

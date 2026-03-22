@@ -106,6 +106,9 @@ export class TursoWorkQueryService implements WorkQueryService {
       slug: string;
       localizedTitle: string;
       compositionYear: number | null;
+      cataloguePrefix: string | null;
+      catalogueNumber: string | null;
+      genres: string[];
       composerSlug: string;
       composerName: string;
     }
@@ -116,6 +119,9 @@ export class TursoWorkQueryService implements WorkQueryService {
         slug: schema.works.slug,
         localizedTitle: schema.workTranslations.title,
         compositionYear: schema.works.compositionYear,
+        cataloguePrefix: schema.works.cataloguePrefix,
+        catalogueNumber: schema.works.catalogueNumber,
+        genres: schema.works.genres,
         composerSlug: schema.composers.slug,
         composerName: schema.composerTranslations.displayName,
       })
@@ -152,6 +158,9 @@ export class TursoWorkQueryService implements WorkQueryService {
       slug: row.slug,
       localizedTitle: row.localizedTitle,
       compositionYear: row.compositionYear,
+      cataloguePrefix: row.cataloguePrefix,
+      catalogueNumber: row.catalogueNumber,
+      genres: row.genres,
       composer: {
         slug: row.composerSlug,
         name: row.composerName,
