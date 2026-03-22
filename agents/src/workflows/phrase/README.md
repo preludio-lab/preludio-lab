@@ -60,7 +60,8 @@
 ### 3. Rendering & Infrastructure Tools
 
 - **`VerovioRenderer`**: モバイル最適化された SVG 生成。
-- **`R2BucketTool`**: プレフィックスベースのライフサイクル管理（Move / Publish）。
+- **`PhraseAssetTool`**:
+  - R2上の `sources/`、`staging/`、`public/` プレフィックスを使い分け、譜例資産のライフサイクル（保存・移動・公開）を管理する。
 
 ---
 
