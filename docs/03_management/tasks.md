@@ -237,18 +237,29 @@ Status: `[/]` 進行中
   - [ ] **[実装]** 管理UI実装 (Optional)
 
 - [ ] **7.2 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
-  - [ ] **[設計]** AIエージェントワークフロー設計
-  - [ ] **[仕様策定]** 最適なレンダー構成の検討
+  - [x] **[設計]** AIエージェントワークフロー設計 (Step 1-5 の I/O 規格および HITL フローの定義)
+  - [x] **[仕様策定]** 最適なレンダー構成の検討
     - [x] **Score Snippet Strategy**: MusicXML対応、Verovio等のレンダリング手法、SSGによるSVG化とキャッシュ配置も含めた、ユーザー体験と保守運用性を考慮した最適な構成を検討する。
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `ScoreRenderer`, `YouTubeSearchTool` etc.)
-  - [ ] **[実装]** 生成・検証システムの構築
-    - [ ] **Visual Verification**: 生成された譜面を画像化/レンダリングして即座に品質確認できるフローの構築。
-    - [ ] エラー修正ループ（Self-Correction）のプロンプト実装
+  - [ ] **[Tools]** Core Toolsの実装
+    - [ ] **Data Retrieval Tools (Fetchers)**: `KernScoresTool` (hum2xml内包), `OpenScoreTool`, `MutopiaTool` 等のデータ取得・正規化ツール
+    - [ ] **`MusicXMLProcessor`**: PartID抽出（getPartMap）、小節切り出し（extractMeasures）、属性同期（syncAttributes）、および品質最適化（optimizeQuality）
+    - [ ] **`VerovioRenderer`**: モバイル最適化された SVG 生成、スタイル適用
+    - [ ] **`PhraseAssetTool`**: R2上の `sources/`, `staging/`, `public/` プレフィックス間の資産移動・公開管理
+  - [ ] **[実装]** パイプライン・各ステップの実装
+    - [ ] **Step 1: Source Retrieval**: `hum2xml` 等を用いた MusicXML への正規化と R2 `sources/` への保存
+    - [ ] **Step 2: Metadata Extraction**: MusicXML から PartID と楽器名のマッピングリストを抽出
+    - [ ] **Step 3: Phrase Extraction**: 指定範囲の抽出、属性（Clef/Key/Time）の再注入、品質最適化ルールの適用
+    - [ ] **Step 4: SVG Render (Staging)**: プレビュー画面用の SVG 生成と R2 `staging/` への配置
+    - [ ] **Step 5: Publish**: 最終承認後の R2 `public/` への移動と Turso DB (published status) の同期
+  - [ ] **[実装]** 高度な品質最適化ルール (`optimizeQuality`)
+    - [ ] **レイアウト・印刷設定のリセット**: `<defaults>`, `<credit>`, `<print>` 要素の削除
+    - [ ] **座標情報のクリーンアップ**: `@default-x/y` 等の絶対座標を削除し、Verovio の自動配置を優先
+    - [ ] **記号配置のタイミング調整**: 強弱記号やテンポ記号の演奏タイミング・配置位置の物理的補正
   - [ ] **[実装]** 音源選定・キュレーションの自動化
     - [ ] 自動収集検索クエリ（YouTube Data API）の設計
     - [ ] **Human-in-the-Loop選定フロー**: AIが推奨リストを出し、人間が最終承認する管理画面またはCLIツールの整備
   - [ ] **[実装]** 管理UI実装 (Optional)
-  - [ ] **[検証]** 複雑な楽曲での生成テスト
+  - [ ] **[検証]** 複雑な楽曲（大編成・複数段）での生成テストおよび SVG 品質検証
 
 - [ ] **7.3 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
   - [ ] **[設計]** AIエージェントワークフロー設計 (複数エージェントによる共同制作)
