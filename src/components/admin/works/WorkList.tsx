@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
 import { DetailButton } from '@/components/ui/admin/DetailButton';
 import { WorkListItemDto } from '@/application/work/dto/search-works.dto';
-
-import { useRouter } from 'next/navigation';
 
 interface WorkListProps {
   works: WorkListItemDto[];
@@ -17,12 +16,14 @@ interface WorkListProps {
  */
 export function WorkList({ works, onViewDetail }: WorkListProps) {
   const router = useRouter();
+  const params = useParams();
+  const lang = (params?.lang as string) || 'ja';
 
   const handleViewDetail = (item: WorkListItemDto) => {
     if (onViewDetail) {
       onViewDetail(item);
     } else {
-      router.push(`/admin/works/${item.slug}`);
+      router.push(`/${lang}/admin/works/${item.slug}`);
     }
   };
 
@@ -56,7 +57,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
       accessor: (item) => (
         <div className="flex flex-wrap gap-1">
           {item.genres.length > 0
-            ? item.genres.map((g) => (
+            ? item.genres.map((g: string) => (
                 <span key={g} className="text-xs bg-admin-bg-secondary px-1.5 py-0.5 rounded">
                   {g}
                 </span>
@@ -70,7 +71,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
       accessor: (item) => item.compositionYear ?? '-',
     },
     {
-      header: 'アクション',
+      header: '',
       accessor: (item) => (
         <DetailButton
           onClick={(e) => {

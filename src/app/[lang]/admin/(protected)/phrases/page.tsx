@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { PhraseList, type PhraseListItem } from '@/components/admin/phrases/PhraseList';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 const MOCK_PHRASES: PhraseListItem[] = [
   {
@@ -33,9 +33,11 @@ const MOCK_PHRASES: PhraseListItem[] = [
 
 export default function PhrasesManagementPage() {
   const router = useRouter();
+  const params = useParams();
+  const lang = (params?.lang as string) || 'ja';
 
   const handleViewDetail = (phrase: PhraseListItem) => {
-    router.push(`/admin/phrases/${phrase.id}`);
+    router.push(`/${lang}/admin/phrases/${phrase.id}`);
   };
 
   return (

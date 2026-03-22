@@ -52,7 +52,7 @@ export function PhraseList({ phrases, onViewDetail }: PhraseListProps) {
       ),
     },
     {
-      header: 'アクション',
+      header: '',
       accessor: (item) => (
         <DetailButton
           onClick={(e) => {
