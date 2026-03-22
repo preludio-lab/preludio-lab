@@ -54,12 +54,30 @@
   - **`getPartMap(xml)`**: PartID と楽器名の一覧を返却。
   - **`extractMeasures(start, end, partId)`**: 正確な切り出し。
   - **`syncAttributes(xml, measure)`**: 最新の属性（Clef/Key/Time）の自動注入。
+  - **`optimizeQuality(xml)`**: 視覚的な品質向上のためのクリーンアップ（後続の最適化ルールを参照）。
 - **`MusicXMLValidator`**: DTD/Schema 準拠チェックおよび視認性検証。
 
 ### 3. Rendering & Infrastructure Tools
 
 - **`VerovioRenderer`**: モバイル最適化された SVG 生成。
 - **`R2BucketTool`**: プレフィックスベースのライフサイクル管理（Move / Publish）。
+
+---
+
+## 品質向上のための最適化ルール (Quality Optimization)
+
+過去の試作（Beethoven 5th等）での知見に基づき、機械的な印象を排除し、美しくコンパクトな譜例を生成するために以下の処理を `optimizeQuality` で自動実行します。
+
+### (1) 余白の削減とレイアウトのリセット
+
+- **デフォルトレイアウトの削除**: `<defaults>` (全体マージン設定等) や `<credit>` (タイトル/著作権表示等) を削除し、Verovio による自由な動的配置を優先させます。
+- **印刷設定の排除**: 各小節内の `<print>` 要素（強制的な改行や位置指定）を削除し、不自然な余白や意図しないシステムブレイクを防止します。
+
+### (2) 記号配置の適正化
+
+- **絶対座標のリセット**: `<direction>`, `<words>`, `<dynamics>` 等に付与されている `@default-x/y` や `@relative-x/y` を削除します。これにより、元のMusicXMLに埋め込まれた不正確な位置情報をリセットし、Verovio の高度な自動配置エンジンに委ねます。
+- **強弱記号のタイミング調整**: 小節内の最初の音符に対して、休符などに引きずられている強弱記号を正しい演奏タイミング（音符の直前）へ物理的に移動させ、描画の乱れを防ぎます。
+- **テンポ記号の正規化**: テンポ指示を小節の先頭（属性情報の直後）に一貫して配置し、視認性を高めます。
 
 ---
 

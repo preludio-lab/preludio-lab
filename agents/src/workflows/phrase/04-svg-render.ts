@@ -12,7 +12,7 @@ export async function main() {
   consola.info('Rendering SVG for Preview (Staging)...');
   // TODO:
   // 1. Verovio でレンダリング
-  // 2. モバイル最適化設定を適用
+  // 2. モバイル最適化設定を適用 (pageWidth, adjustPageHeight, border: 0 等)
   // 3. Staging 領域 (R2 or Local) に出力
 }
 

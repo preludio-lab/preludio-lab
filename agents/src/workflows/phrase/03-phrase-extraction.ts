@@ -20,11 +20,15 @@ const _ExtractionSchema = z.object({
 });
 
 export async function main() {
-  consola.info('Executing Phrase Extraction with PartID and Attributes...');
+  consola.info('Executing Phrase Extraction with PartID, Attributes, and Optimization...');
   // TODO:
   // 1. 指定パート・小節・拍を抽出
   // 2. 直前の最新属性を注入 (syncAttributes)
-  // 3. スニペット XML を暫定保存
+  // 3. 品質最適化規則の適用 (optimizeQuality):
+  //    - 不要な余白 (defaults/print) の削除
+  //    - 絶対・相対座標 (default-x/y) のリセット
+  //    - 強弱記号やテンポ指示の配置適正化
+  // 4. スニペット XML を暫定保存
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
