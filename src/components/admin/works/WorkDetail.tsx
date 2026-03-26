@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
+import { DimensionBar } from '@/components/ui/admin/DimensionBar';
 import type { WorkDetailDto } from '@/application/work/dto/work-detail.dto';
 import type { SupportedLanguage } from '@/application/work/dto/work-detail.dto';
 
@@ -176,8 +177,18 @@ export function WorkDetail({ work }: WorkDetailProps) {
               <FieldDisplay label="時代 (Era)">{work.era || '未設定'}</FieldDisplay>
               <FieldDisplay label="カタログ番号">{catalogueDisplay}</FieldDisplay>
               <FieldDisplay label="調性">{work.keyTonality || '未設定'}</FieldDisplay>
-              <FieldDisplay label="テンポ">{work.tempoText || '未設定'}</FieldDisplay>
               <FieldDisplay label="作曲年">{work.compositionYear ?? '不明'}</FieldDisplay>
+              <FieldDisplay label="作曲時期">
+                {workTranslation?.compositionPeriod || '未設定'}
+              </FieldDisplay>
+              <FieldDisplay label="拍子">
+                {work.tsDisplayString ||
+                  `${work.tsNumerator ?? ''}/${work.tsDenominator ?? ''}`.replace(/^\/$/, '') ||
+                  '未設定'}
+              </FieldDisplay>
+              <FieldDisplay label="メトロノーム指定">
+                {work.bpm && work.metronomeUnit ? `${work.metronomeUnit}=${work.bpm}` : '未設定'}
+              </FieldDisplay>
               <FieldDisplay label="楽器編成">{work.instrumentation || '未設定'}</FieldDisplay>
               <FieldDisplay label="演奏難易度">
                 {work.performanceDifficulty ? `${work.performanceDifficulty}/5` : '未設定'}
@@ -206,6 +217,9 @@ export function WorkDetail({ work }: WorkDetailProps) {
               </FieldDisplay>
               <FieldDisplay label="通称 (Nickname)">
                 {workTranslation?.titleNickname || '-'}
+              </FieldDisplay>
+              <FieldDisplay label="別名 (Nicknames)">
+                {workTranslation?.nicknames?.length ? workTranslation.nicknames.join(', ') : '-'}
               </FieldDisplay>
             </dl>
           </div>
@@ -255,8 +269,34 @@ export function WorkDetail({ work }: WorkDetailProps) {
                   <span className="text-admin-text-secondary">未設定</span>
                 )}
               </FieldDisplay>
+              <FieldDisplay label="編成に関する特徴">
+                {Object.keys(work.instrumentationFlags).filter((k) => work.instrumentationFlags[k])
+                  .length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 mt-1">
+                    {Object.entries(work.instrumentationFlags)
+                      .filter(([_, v]) => v)
+                      .map(([k, _]) => (
+                        <TagBadge key={k}>{k}</TagBadge>
+                      ))}
+                  </div>
+                ) : (
+                  <span className="text-admin-text-secondary">未設定</span>
+                )}
+              </FieldDisplay>
             </dl>
           </div>
+
+          {/* Impression Dimensions */}
+          {work.impressionDimensions && Object.keys(work.impressionDimensions).length > 0 && (
+            <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
+              <SectionHeading>印象次元 (Impression)</SectionHeading>
+              <div className="space-y-1">
+                {Object.entries(work.impressionDimensions).map(([key, value]) => (
+                  <DimensionBar key={key} dimensionKey={key} value={value} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* WorkParts Section */}
           {work.parts.length > 0 && (
@@ -309,8 +349,24 @@ export function WorkDetail({ work }: WorkDetailProps) {
                             <FieldDisplay label="通称">
                               {partTranslation?.titleNickname || '-'}
                             </FieldDisplay>
+                            <FieldDisplay label="別名">
+                              {part.nicknames?.length ? part.nicknames.join(', ') : '-'}
+                            </FieldDisplay>
                             <FieldDisplay label="調性">{part.keyTonality || '-'}</FieldDisplay>
                             <FieldDisplay label="テンポ">{part.tempoText || '-'}</FieldDisplay>
+                            <FieldDisplay label="拍子">
+                              {part.tsDisplayString ||
+                                `${part.tsNumerator ?? ''}/${part.tsDenominator ?? ''}`.replace(
+                                  /^\/$/,
+                                  '',
+                                ) ||
+                                '-'}
+                            </FieldDisplay>
+                            <FieldDisplay label="メトロノーム指定">
+                              {part.bpm && part.metronomeUnit
+                                ? `${part.metronomeUnit}=${part.bpm}`
+                                : '-'}
+                            </FieldDisplay>
                             <FieldDisplay label="テンポ翻訳">
                               {partTranslation?.tempoTranslation || '-'}
                             </FieldDisplay>
@@ -335,6 +391,25 @@ export function WorkDetail({ work }: WorkDetailProps) {
                                 </div>
                               </FieldDisplay>
                             )}
+                            {part.impressionDimensions &&
+                              Object.keys(part.impressionDimensions).length > 0 && (
+                                <div className="sm:col-span-2 mt-2">
+                                  <span className="text-xs font-semibold text-admin-text-secondary uppercase tracking-wider mb-2 block">
+                                    印象次元
+                                  </span>
+                                  <div className="space-y-1 bg-admin-sidebar-bg/50 p-3 rounded-lg border border-admin-border">
+                                    {Object.entries(part.impressionDimensions).map(
+                                      ([key, value]) => (
+                                        <DimensionBar
+                                          key={`${part.id}-${key}`}
+                                          dimensionKey={key}
+                                          value={value}
+                                        />
+                                      ),
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                           </dl>
                           <div className="mt-3 pt-3 border-t border-admin-border">
                             <span className="text-[11px] font-mono text-admin-text-secondary/60 break-all">

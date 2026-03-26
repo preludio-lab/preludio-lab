@@ -68,6 +68,8 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
         titleContent: string | null;
         titleNickname: string | null;
         description: string | null;
+        nicknames: string[];
+        compositionPeriod: string | null;
       }
     >;
     const supportedSet = new Set<string>(SUPPORTED_LANGUAGES);
@@ -79,6 +81,8 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
         titleContent: t.titleContent,
         titleNickname: t.titleNickname,
         description: t.description,
+        nicknames: (t.nicknames as string[]) ?? [],
+        compositionPeriod: t.compositionPeriod,
       };
     }
 
@@ -120,8 +124,15 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
         })),
         keyTonality: part.keyTonality,
         tempoText: part.tempoText,
+        tsNumerator: part.tsNumerator,
+        tsDenominator: part.tsDenominator,
+        tsDisplayString: part.tsDisplayString,
+        bpm: part.bpm,
+        metronomeUnit: part.metronomeUnit,
+        impressionDimensions: (part.impressionDimensions as Record<string, number>) ?? null,
         genres: (part.genres as string[]) ?? [],
         instruments: (part.instruments as string[]) ?? [],
+        nicknames: (part.nicknames as string[]) ?? [],
         performanceDifficulty: part.performanceDifficulty,
         translations: partTransRecord,
         createdAt: part.createdAt,
@@ -146,6 +157,13 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
       compositionYear: work.compositionYear,
       keyTonality: work.keyTonality,
       tempoText: work.tempoText,
+      tsNumerator: work.tsNumerator,
+      tsDenominator: work.tsDenominator,
+      tsDisplayString: work.tsDisplayString,
+      bpm: work.bpm,
+      metronomeUnit: work.metronomeUnit,
+      impressionDimensions: (work.impressionDimensions as Record<string, number>) ?? null,
+      instrumentationFlags: (work.instrumentationFlags as Record<string, boolean>) ?? {},
       catalogues: (work.catalogues ?? []).map((c) => ({
         prefix: c.prefix,
         number: c.number,
