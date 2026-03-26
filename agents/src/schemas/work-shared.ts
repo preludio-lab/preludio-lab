@@ -221,7 +221,7 @@ export const InstrumentationFlagsDraftSchema = z
  * Common Metadata Descriptions
  */
 export const CommonDescriptions = {
-  era: '時代区分。',
+  era: '時代区分。作曲年に基づいて厳格に判定してください（例: classical=1730-1820, early-romantic=1815-1850, mid-romantic=1850-1890等）。ショパンやメンデルスゾーン等は early-romantic に分類されます。',
   compositionYear: '数値による作曲年。ソートに使用。',
   compositionPeriod: '「1805年頃」などの作曲時期テキスト。{"ja": "1805年頃"} 形式で出力。',
   instrumentation: '楽器編成のテキスト。例: "2.2.2.2 - 4.2.3.0 - tmp - str"。',

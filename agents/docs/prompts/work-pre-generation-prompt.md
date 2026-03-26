@@ -80,7 +80,7 @@
 
 - **ポロネーズ第6番 変イ長調 作品53 「英雄」** (slug: `polonaise-no-6`)
   - **Metadata Specification**:
-    - era: `romantic`
+    - era: `early-romantic`
     - genres: [`polonaise`]
     - compositionYear: 1842
     - compositionPeriod: "1842年"
