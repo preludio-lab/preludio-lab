@@ -231,9 +231,10 @@ Status: `[/]` 進行中
 
 - [/] **7.1 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
   - [x] **[設計]** AIエージェントワークフロー設計 (Ref: `docs/05_design/data-workflow-architecture.md`, `ai-agent-strategy.md`)
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
-  - [ ] **[実装]** 作曲家データ作成ワークフロー (Json -> Turso)
-  - [ ] **[実装]** 作品データ作成ワークフロー (Json -> Turso)
+  - [x] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
+  - [x] **[実装]** 作曲家データ作成ワークフロー: Composer (Json -> Turso)
+  - [x] **[実装]** 作品データ作成ワークフロー: Work (Json -> Turso)
+  - [/] **[実装]** 作品パーツ作成ワークフロー: WorkParts (Json -> Turso)
   - [ ] **[実装]** 管理UI実装 (Optional)
 
 - [ ] **7.2 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
