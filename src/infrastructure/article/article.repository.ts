@@ -9,6 +9,7 @@ import { AppError } from '@/domain/shared/app-error';
 import { BasePayloadRepository } from '../shared/base.repository';
 import { IObjectStorage } from '../storage/storage.interface';
 import { IArticlePathStrategy } from './content/article.path.strategy';
+import pLimit from 'p-limit';
 
 /**
  * ArticleRepository の実装クラス。
@@ -229,13 +230,17 @@ export class ArticleRepositoryImpl
       const translations = await this.metadataDS.findAllTranslations(id);
 
       // 2. 各言語の MDX ペイロードを削除
-      for (const row of translations) {
-        const summary = this._reconstituteMetadata(row);
-        const key = this.resolveStorageKey(summary);
-        if (key) {
-          await this.deletePayload(key);
-        }
-      }
+      const limit = pLimit(5);
+      const deletePromises = translations.map((row) =>
+        limit(async () => {
+          const summary = this._reconstituteMetadata(row);
+          const key = this.resolveStorageKey(summary);
+          if (key) {
+            await this.deletePayload(key);
+          }
+        }),
+      );
+      await Promise.all(deletePromises);
 
       // 3. DB の Master レコードと全翻訳を削除
       await this.metadataDS.deleteAll(id);

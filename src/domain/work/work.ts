@@ -18,6 +18,7 @@ export class Work {
     this.control = props.control;
     this.metadata = props.metadata;
   }
+  // ... (rest of Work class unchanged)
 
   // --- Shortcuts for Convenience ---
   get id() {

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { Badge, EyeIcon } from '@/components/ui/admin/CommonIcons';
+import { Badge } from '@/components/ui/admin/CommonIcons';
+import { DetailButton } from '@/components/ui/admin/DetailButton';
 
 export interface PhraseListItem {
   id: string;
@@ -51,17 +52,14 @@ export function PhraseList({ phrases, onViewDetail }: PhraseListProps) {
       ),
     },
     {
-      header: 'アクション',
+      header: '',
       accessor: (item) => (
-        <button
+        <DetailButton
           onClick={(e) => {
             e.stopPropagation();
             onViewDetail(item);
           }}
-          className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
-        >
-          <EyeIcon />
-        </button>
+        />
       ),
       className: 'text-right',
     },
