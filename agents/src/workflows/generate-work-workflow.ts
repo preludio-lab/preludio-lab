@@ -45,6 +45,7 @@ export const GenerateWorkInputSchema = z.object({
   workTitle: z.string().min(1).optional(),
   step: StepEnumSchema.optional(),
   review: z.string().optional(),
+  model: z.nativeEnum(GeminiModels).optional(),
   auto: z.boolean().default(false),
   dryRun: z.boolean().default(false),
   force: z.boolean().default(false),
@@ -85,7 +86,7 @@ export class GenerateWorkWorkflow {
   async execute(rawInput: unknown) {
     const input = GenerateWorkInputSchema.parse(rawInput);
     const startStep = input.step || WORK_WORKFLOW_STEPS.DRAFT;
-    const modelName = GeminiModels.FLASH_LITE;
+    const modelName = input.model || GeminiModels.FLASH_LITE;
 
     // Fail-fast
     const finalPath = this.getFinalPath(input.composerSlug, input.workSlug);
@@ -392,6 +393,7 @@ async function main() {
         parts: { type: 'string' },
         step: { type: 'string' },
         review: { type: 'string' },
+        model: { type: 'string' },
         auto: { type: 'boolean', default: false },
         'dry-run': { type: 'boolean', default: false },
         force: { type: 'boolean', default: false },
@@ -401,7 +403,7 @@ async function main() {
 
     if (!values['composer-slug'] || !values['work-slug']) {
       consola.error(
-        `Usage: pnpm run workflow:work --composer-slug <slug> --work-slug <slug> [--composer-name <name> --work-title <title> for draft]`,
+        `Usage: pnpm run workflow:work --composer-slug <slug> --work-slug <slug> [--composer-name <name> --work-title <title> for draft] [--model <model-name>]`,
       );
       process.exit(1);
     }
@@ -414,6 +416,7 @@ async function main() {
       workTitle: (values['work-title'] as string | undefined) || (values['work-slug'] as string),
       step: values.step as GenerateWorkInput['step'],
       review: values.review as string,
+      model: values.model as GeminiModelName | undefined,
       auto: !!values.auto,
       dryRun: !!values['dry-run'],
       force: !!values.force,
