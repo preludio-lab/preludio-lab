@@ -22,11 +22,6 @@ export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 
  */
 export const TitleComponentsSchema = z.object({
   /**
-   * 統合済みタイトル (Consolidated Title)
-   * 規則: {prefix} {content} {nickname}
-   */
-  title: TitleSchema,
-  /**
    * 接頭辞 (Systematic Identifier)
    * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
    * 例: "第1楽章", "交響曲第5番", "No. 1"
@@ -48,6 +43,25 @@ export const TitleComponentsSchema = z.object({
 });
 
 export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
+
+/**
+ * TitleComponents から各言語のフルタイトルを合成します。
+ */
+export function synthesizeTitle(tc: TitleComponents): z.infer<typeof TitleSchema> {
+  const result: Record<string, string | undefined> = {};
+  const langs = ['en', 'ja', 'es', 'de', 'fr', 'it', 'zh'] as const;
+
+  for (const lang of langs) {
+    const p = tc.prefix?.[lang];
+    const c = tc.content?.[lang];
+    const combined = [p, c].filter(Boolean).join(' ');
+    if (combined) {
+      result[lang] = combined;
+    }
+  }
+
+  return result;
+}
 
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);

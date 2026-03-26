@@ -17,7 +17,7 @@ describe('Work Entity', () => {
 
   const validMetadata = {
     titleComponents: {
-      title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      content: { ja: '交響曲第5番', en: 'Symphony No. 5' },
       nickname: { ja: '運命', en: 'Fate' },
     },
     catalogues: [

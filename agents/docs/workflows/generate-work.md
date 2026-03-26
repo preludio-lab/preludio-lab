@@ -33,39 +33,39 @@
 #### 1. 素案の作成
 
 ```bash
-pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-5 --work-title "交響曲第5番" --step draft
+pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-no-5 --work-title "交響曲第5番" --step draft
 ```
 
 #### 2. レビューの反映
 
 ```bash
-pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-5 --step refine --review "編成にトロンボーンとピッコロを追加してください"
+pnpm run workflow:work --composer-slug beethoven --work-slug symphony-5 --step refine --review "編成にトロンボーンとピッコロを追加してください"
 ```
 
 #### 3. 翻訳の実行
 
 ```bash
-pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-5 --step translate
+pnpm run workflow:work --composer-slug beethoven --work-slug symphony-5 --step translate
 ```
 
 #### 4. データの確定（永続化）
 
 ```bash
-pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-5 --step finalize
+pnpm run workflow:work --composer-slug beethoven --work-slug symphony-5 --step finalize
 ```
 
 #### 5. 全自動実行 (Auto Mode)
 
 ```bash
-pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-5 --work-title "交響曲第5番" --auto
+pnpm run workflow:work --composer-slug beethoven --composer-name "Ludwig van Beethoven" --work-slug symphony-no-5 --work-title "交響曲第5番" --auto
 ```
 
 ## 主要なオプション
 
 - `--composer-slug`: 作曲家のスラッグ（必須）。
-- `--composer-name`: 作曲家のフルネーム（必須）。AIエージェントの認識精度向上のために使用。
+- `--composer-name`: 作曲家のフルネーム。AIエージェントの認識精度向上のために使用。`draft` ステップまたは `auto` 実行時のみ必須。
 - `--work-slug`: 楽曲のスラッグ（必須）。
-- `--work-title`: 楽曲の日本語正式名称。
+- `--work-title`: 楽曲の日本語正式名称。`draft` ステップまたは `auto` 実行時のみ有効（指定がない場合は `work-slug` が使用される）。
 - `--dry-run`: 実際のAPIコールや書き込みを行わず、バリデーションのみ実施。
 - `--auto`: `draft` -> `translate` -> `finalize` を一括で実行。
 - `--force`: 既存のマスターデータが存在する場合でも強制的に再生成。

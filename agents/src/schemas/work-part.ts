@@ -12,6 +12,7 @@ import {
   MusicalIdentityDraftSchema,
   TagIdDraftSchema,
   TitleComponentsDraftSchema,
+  MultilingualDraftSchema,
 } from './work-shared.js';
 
 /**
@@ -70,12 +71,9 @@ export const WorkPartDraftSchema = WorkPartMasterBaseSchema.omit({
     impressionDimensions: ImpressionDimensionsDraftSchema.optional(),
     tags: z.array(TagIdDraftSchema).max(10).describe(CommonDescriptions.tags),
     basedOn: BasedOnDraftSchema.optional(),
-    description: z
-      .string()
-      .optional()
-      .describe(
-        '60〜80文字で、楽章・曲目の「詳細な解説を読みたくなる」簡潔な紹介文を作成してください。(1)客観的事実（テンポ感や形式）、(2)魅力の核心（主題の性格や響き）、(3)探求心の刺激（役割や対比の提示）を自然な日本語（です・ます調）で凝縮すること。情緒的な煽りを避け、音楽的な期待感を高めてください。',
-      ),
+    description: MultilingualDraftSchema.optional().describe(
+      '60〜80文字で、楽章・曲目の「詳細な解説を読みたくなる」簡潔な紹介文を作成してください。(1)客観的事実（テンポ感や形式）、(2)魅力の核心（主題の性格や響き）、(3)探求心の刺激（役割や対比の提示）を凝縮すること。情緒的な煽りを避け、音楽的な期待感を高めてください。',
+    ),
     _reasoning: WorkPartReasoningSchema.optional(),
   })
   .merge(MusicalIdentityDraftSchema.partial());
@@ -102,12 +100,12 @@ export const WorkPartChunkDraftSchema = z.object({
  */
 export const WorkPartTranslationOutputSchema = z.object({
   titleComponents: z.object({
-    title: z.string(),
     prefix: z.string().optional(),
     content: z.string().optional(),
     nickname: z.string().optional(),
   }),
   description: z.string().optional(),
+  tempoTranslation: z.string().optional(),
 });
 
 export type WorkPartTranslationOutput = z.infer<typeof WorkPartTranslationOutputSchema>;

@@ -12,6 +12,9 @@ import {
   ArrangeTypeSchema,
 } from './work.shared';
 
+// Re-export common types and schemas for convenience
+export * from './work.shared';
+
 /**
  * Work Part Type
  * 楽章や構成楽曲などの分類

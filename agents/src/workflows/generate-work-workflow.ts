@@ -40,9 +40,9 @@ const StepEnumSchema = z.enum([
  */
 export const GenerateWorkInputSchema = z.object({
   composerSlug: z.string().min(1),
-  composerName: z.string().min(1),
+  composerName: z.string().min(1).optional(),
   workSlug: z.string().min(1),
-  workTitle: z.string().min(1),
+  workTitle: z.string().min(1).optional(),
   step: StepEnumSchema.optional(),
   review: z.string().optional(),
   auto: z.boolean().default(false),
@@ -139,6 +139,11 @@ export class GenerateWorkWorkflow {
   }
 
   private async executeDraftStep(input: GenerateWorkInput, modelName: GeminiModelName) {
+    if (!input.composerName || !input.workTitle) {
+      throw new Error(
+        `[Step: draft] Missing required arguments: --composer-name and --work-title are mandatory for drafting.`,
+      );
+    }
     consola.start(`[Step: draft] Generating metadata for ${input.workTitle}...`);
 
     // 1. Work-level Draft
@@ -152,13 +157,39 @@ export class GenerateWorkWorkflow {
 
     const { _reasoning: _, ...cleanWork } = workDraft;
 
-    const result = {
+    const result = this.prune({
       ...cleanWork,
       _generatorMeta: {
         model: modelName,
         generatedAt: new Date().toISOString(),
       },
-    };
+    });
+
+    // ドメイン知識に基づいたさらに厳格なクリーンアップ (Draftレベル)
+    if (result && typeof result === 'object') {
+      const res = result as Record<string, unknown> & { genres?: string[]; slug?: string };
+      // 多楽章形式（公認）の場合は、Workレベルの演奏情報を強制削除
+      const isMultiMovement =
+        res.genres?.some((g: string) =>
+          ['symphony', 'concerto', 'sonata', 'suite', 'mass', 'opera', 'oratorio'].includes(g),
+        ) ||
+        res.slug?.includes('concerto') ||
+        res.slug?.includes('symphony');
+
+      if (isMultiMovement) {
+        delete res['tempo'];
+        delete res['bpm'];
+        delete res['timeSignature'];
+        delete res['tempoTranslation'];
+        delete res['metronomeUnit'];
+      }
+
+      // basedOn が不完全（原曲スラグがない）場合は削除
+      const basedOn = res['basedOn'] as Record<string, unknown> | undefined;
+      if (basedOn && !basedOn['originalWorkSlug']) {
+        delete res['basedOn'];
+      }
+    }
 
     const outPath = this.getDraftPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify(result, null, 2), 'utf-8');
@@ -199,7 +230,7 @@ export class GenerateWorkWorkflow {
 
     const outPath = this.getRefinedPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify(targetWork, null, 2), 'utf-8');
-    consola.success(`[Step: refine] Saved refined data to ${outPath}`);
+    consola.success(`[Step: refine] Saved refined data to ${targetWork}`);
 
     return targetWork;
   }
@@ -252,37 +283,10 @@ export class GenerateWorkWorkflow {
       targetJson = await this.loadAndParseJson(this.getTranslatedPath(input.workSlug));
     }
 
-    // 最終バリデーション前に多言語フィールドを強制的にオブジェクト化
-    const ensureMultilingual = (obj: Record<string, unknown>) => {
-      if (!obj) return;
-
-      // Description
-      if (typeof obj.description === 'string') {
-        obj.description = { ja: obj.description };
-      }
-      // Composition Period
-      if (typeof obj.compositionPeriod === 'string') {
-        obj.compositionPeriod = { ja: obj.compositionPeriod };
-      }
-      // Tempo Translation
-      if (typeof obj.tempoTranslation === 'string') {
-        obj.tempoTranslation = { ja: obj.tempoTranslation };
-      }
-      // Title Components
-      if (obj['titleComponents'] && typeof obj['titleComponents'] === 'object') {
-        const tc = obj['titleComponents'] as Record<string, unknown>;
-        ['title', 'prefix', 'content', 'nickname'].forEach((key) => {
-          if (typeof tc[key] === 'string') {
-            tc[key] = { ja: tc[key] };
-          }
-        });
-      }
-    };
-
-    ensureMultilingual(targetJson as Record<string, unknown>);
-
-    const workData = { ...(targetJson as Record<string, unknown>) };
-    delete workData['parts'];
+    const cleanedJson = this.prune(targetJson);
+    const workData =
+      cleanedJson && typeof cleanedJson === 'object' ? { ...(cleanedJson as object) } : {};
+    delete (workData as Record<string, unknown>)['parts'];
 
     const finalWork = WorkflowWorkMasterSchema.parse(workData);
 
@@ -294,6 +298,33 @@ export class GenerateWorkWorkflow {
     const workPath = path.join(composerDir, `${input.workSlug}.json`);
     await fs.writeFile(workPath, JSON.stringify(finalWork, null, 2), 'utf-8');
     consola.success(`[Step: finalize] Work Master Data persisted to ${workPath}`);
+  }
+
+  private prune(obj: unknown): unknown {
+    if (Array.isArray(obj)) {
+      const prunedArr = obj.map((v) => this.prune(v)).filter((v) => v !== undefined && v !== null);
+      return prunedArr.length > 0 ? prunedArr : undefined;
+    }
+    if (typeof obj === 'object' && obj !== null) {
+      const newObj: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(obj)) {
+        const pruned = this.prune(value);
+        if (
+          pruned === undefined ||
+          pruned === null ||
+          pruned === '' ||
+          pruned === 'none' ||
+          pruned === 'なし' ||
+          pruned === 'null' ||
+          (Array.isArray(pruned) && pruned.length === 0)
+        ) {
+          continue;
+        }
+        newObj[key] = pruned;
+      }
+      return Object.keys(newObj).length > 0 ? newObj : undefined;
+    }
+    return obj;
   }
 
   private async loadAndParseJson(filePath: string): Promise<unknown> {
@@ -335,7 +366,6 @@ export class GenerateWorkWorkflow {
     if (trans.titleComponents) {
       const tc = (result['titleComponents'] || {}) as Record<string, unknown>;
       const transTC = trans.titleComponents as Record<string, string | undefined>;
-      if (transTC['title']) setMultilingual(tc, 'title', transTC['title'], lang);
       if (transTC['prefix']) setMultilingual(tc, 'prefix', transTC['prefix'], lang);
       if (transTC['content']) setMultilingual(tc, 'content', transTC['content'], lang);
       if (transTC['nickname']) setMultilingual(tc, 'nickname', transTC['nickname'], lang);
@@ -345,11 +375,6 @@ export class GenerateWorkWorkflow {
     // Description
     if (trans.description) {
       setMultilingual(result, 'description', trans.description, lang);
-    }
-
-    // Tempo translation (for work)
-    if (trans.tempoTranslation) {
-      setMultilingual(result, 'tempoTranslation', trans.tempoTranslation, lang);
     }
 
     return result;
@@ -374,9 +399,9 @@ async function main() {
       strict: false,
     });
 
-    if (!values['composer-slug'] || !values['composer-name'] || !values['work-slug']) {
+    if (!values['composer-slug'] || !values['work-slug']) {
       consola.error(
-        `Usage: pnpm run workflow:work --composer-slug <slug> --composer-name <name> --work-slug <slug> [...]`,
+        `Usage: pnpm run workflow:work --composer-slug <slug> --work-slug <slug> [--composer-name <name> --work-title <title> for draft]`,
       );
       process.exit(1);
     }
@@ -384,9 +409,9 @@ async function main() {
     const workflow = new GenerateWorkWorkflow();
     const input = {
       composerSlug: values['composer-slug'] as string,
-      composerName: values['composer-name'] as string,
+      composerName: values['composer-name'] as string | undefined,
       workSlug: values['work-slug'] as string,
-      workTitle: (values['work-title'] as string) || (values['work-slug'] as string),
+      workTitle: (values['work-title'] as string | undefined) || (values['work-slug'] as string),
       step: values.step as GenerateWorkInput['step'],
       review: values.review as string,
       auto: !!values.auto,

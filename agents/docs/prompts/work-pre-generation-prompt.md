@@ -40,8 +40,18 @@
 ### [作曲家名] ([作曲家スラグ])
 
 - **[楽曲正式日本語タイトル]** (slug: `[work-slug]`)
-  - [順番]: [パートタイトル] (slug: `[work-part-slug]`, type: `movement|variation|number|act|scene`)
-  - ...
+  - **Metadata Specification**:
+    - era: `[era]`
+    - genres: [`[genre]`, ...]
+    - compositionYear: [year]
+    - compositionPeriod: "[period]"
+    - catalogues: [{"prefix": "[prefix]", "number": "[number]", "isPrimary": true}]
+  - **i18n Titles**:
+    - ja: [日本語名]
+    - en: [英語名]
+  - **Parts**:
+    - [順番]: [パートタイトル] (slug: `[work-part-slug]`, type: `movement|variation|number|act|scene`)
+    - ...
 ```
 
 ## 例
@@ -49,15 +59,20 @@
 ### ルートヴィヒ・ヴァン・ベートーヴェン (beethoven)
 
 - **交響曲第5番 ハ短調 作品67** (slug: `symphony-no-5`)
-  - 1: 第1楽章 Allegro con brio (slug: `mov-1`, type: `movement`)
-  - 2: 第2楽章 Andante con moto (slug: `mov-2`, type: `movement`)
-  - 3: 第3楽章 Allegro (slug: `mov-3`, type: `movement`)
-  - 4: 第4楽章 Allegro (slug: `mov-4`, type: `movement`)
-
-- **ピアノソナタ第14番 嬰ハ短調 作品27-2 『月光』** (slug: `piano-sonata-no-14`)
-  - 1: 第1楽章 Adagio sostenuto (slug: `mov-1`, type: `movement`)
-  - 2: 第2楽章 Allegretto (slug: `mov-2`, type: `movement`)
-  - 3: 第3楽章 Presto agitato (slug: `mov-3`, type: `movement`)
+  - **Metadata Specification**:
+    - era: `classical`
+    - genres: [`symphony`]
+    - compositionYear: 1808
+    - compositionPeriod: "1804年-1808年"
+    - catalogues: [{"prefix": "op", "number": "67", "isPrimary": true}]
+  - **i18n Titles**:
+    - ja: 交響曲第5番 ハ短調 作品67
+    - en: Symphony No. 5 in C minor, Op. 67
+  - **Parts**:
+    - 1: 第1楽章 Allegro con brio (slug: `mov-1`, type: `movement`)
+    - 2: 第2楽章 Andante con moto (slug: `mov-2`, type: `movement`)
+    - 3: 第3楽章 Allegro (slug: `mov-3`, type: `movement`)
+    - 4: 第4楽章 Allegro (slug: `mov-4`, type: `movement`)
 
 ```
 

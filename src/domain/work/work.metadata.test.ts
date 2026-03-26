@@ -9,7 +9,7 @@ import { MusicalKey, MusicalKeySchema } from './musical-key';
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
     titleComponents: {
-      title: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      prefix: { ja: '交響曲第5番', en: 'Symphony No. 5' },
     },
     catalogues: [
       {
@@ -36,17 +36,17 @@ describe('WorkMetadataSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should validate title max length (150)', () => {
+  it('should validate title prefix max length (150)', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        titleComponents: { title: { ja: 'A'.repeat(150) } },
+        titleComponents: { prefix: { ja: 'A'.repeat(150) } },
       }).success,
     ).toBe(true);
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        titleComponents: { title: { ja: 'A'.repeat(151) } },
+        titleComponents: { prefix: { ja: 'A'.repeat(151) } },
       }).success,
     ).toBe(false);
   });
@@ -113,7 +113,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate movement-specific genres directly via WorkPartMetadataSchema', () => {
     const partWithForm = {
       titleComponents: {
-        title: { ja: '1st' },
+        prefix: { ja: '1st' },
       },
       type: 'movement',
       musicalIdentity: { genres: [MusicalGenre.FORM.SONATA_FORM] },
@@ -127,7 +127,7 @@ describe('WorkMetadataSchema', () => {
 
   it('should validate WorkPartMetadataSchema max limits indirectly', () => {
     const partValid = {
-      titleComponents: { title: { ja: '1st' } },
+      titleComponents: { prefix: { ja: '1st' } },
       type: 'movement',
     };
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
@@ -176,11 +176,11 @@ describe('WorkMetadataSchema', () => {
 
   it('should validate WorkPartMetadata via schema directly', () => {
     const partValid = {
-      titleComponents: { title: { ja: '1st' } },
+      titleComponents: { prefix: { ja: '1st' } },
       type: 'movement',
     };
     const partInvalid = {
-      titleComponents: { title: { ja: 'A'.repeat(151) } },
+      titleComponents: { prefix: { ja: 'A'.repeat(151) } },
       type: 'movement',
     };
 

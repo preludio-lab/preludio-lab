@@ -10,6 +10,7 @@ import {
   MusicalIdentityDraftSchema,
   TagIdDraftSchema,
   TitleComponentsDraftSchema,
+  MultilingualDraftSchema,
 } from './work-shared.js';
 import {
   WorkMasterBaseSchema,
@@ -73,21 +74,30 @@ export const WorkDraftSchema = WorkMasterBaseSchema.omit({
     catalogues: z.array(CatalogueDraftSchema).describe('作品番号・カタログ情報。'),
     era: EraDraftSchema.optional().describe(CommonDescriptions.era),
     compositionYear: z.number().optional().describe(CommonDescriptions.compositionYear),
-    compositionPeriod: z.string().optional().describe(CommonDescriptions.compositionPeriod),
-    instrumentation: z.string().optional().describe(CommonDescriptions.instrumentation),
+    compositionPeriod: MultilingualDraftSchema.optional().describe(
+      '【最重要】必ず {"ja": "..."} の形式で出力してください。' +
+        CommonDescriptions.compositionPeriod,
+    ),
+    instrumentation: z
+      .string()
+      .optional()
+      .describe(
+        '楽器編成のテキスト。例: "2.2.2.2 - 4.2.3.0 - tmp - str"。値がない場合はこのフィールド自体を出力しないでください。',
+      ),
     instruments: z.array(InstrumentIdDraftSchema).describe(CommonDescriptions.instruments),
     instrumentationFlags: InstrumentationFlagsDraftSchema,
     performanceDifficulty: z.number().optional().describe(CommonDescriptions.performanceDifficulty),
     impressionDimensions: ImpressionDimensionsDraftSchema.optional(),
     tags: z.array(TagIdDraftSchema).max(10).describe(CommonDescriptions.tags),
     nicknames: z.array(z.string()).describe(CommonDescriptions.nicknames),
-    basedOn: BasedOnDraftSchema.optional(),
-    description: z
-      .string()
+    basedOn: BasedOnDraftSchema.nullable()
       .optional()
       .describe(
-        '60〜80文字で、検索結果や一覧画面からユーザーが「詳細な解説を読みたくなる」洗練された紹介文（SEO最適化）を作成してください。(1)客観的輪郭（作曲年、通称、歴史的背景などの事実）、(2)魅力の核心（聴覚体験や音楽的特徴）、(3)探求心の刺激（コントラストや構成美の提示）の3要素を自然な日本語（です・ます調）で凝縮すること。直接的な煽り（必聴です等）は避けてください。',
+        '編曲・派生元情報。オリジナル作品（編曲でない）の場合は、情報を捏造せず必ず null を出力してください。',
       ),
+    description: MultilingualDraftSchema.optional().describe(
+      '【最重要】必ず {"ja": "..." } の形式で出力してください。60〜80文字で、検索結果や一覧画面からユーザーが「詳細な解説を読みたくなる」洗練された紹介文（SEO最適化）を作成してください。(1)客観的輪郭、(2)魅力の核心、(3)探求心の刺激の3要素を凝縮すること。直接的な煽りは避けてください。',
+    ),
     _reasoning: WorkReasoningSchema,
   })
   .merge(MusicalIdentityDraftSchema.partial());
@@ -108,13 +118,11 @@ export type WorkflowWorkMaster = z.infer<typeof WorkflowWorkMasterSchema>;
  */
 export const WorkTranslationOutputSchema = z.object({
   titleComponents: z.object({
-    title: z.string(),
     prefix: z.string().optional(),
     content: z.string().optional(),
     nickname: z.string().optional(),
   }),
   description: z.string().optional(),
-  tempoTranslation: z.string().optional(),
 });
 
 export type WorkTranslationOutput = z.infer<typeof WorkTranslationOutputSchema>;

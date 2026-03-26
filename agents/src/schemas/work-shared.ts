@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { consola } from 'consola';
 import { ArrangeTypeSchema, MetronomeUnitSchema } from '@/domain/work/work.shared.js';
 import { MusicalCataloguePrefixSchema } from '@/domain/work/musical-catalogue-prefix.js';
 import { MusicalKeySchema } from '@/domain/work/musical-key.js';
@@ -11,6 +12,40 @@ import { MusicalTag } from '@/domain/shared/musical-tag.js';
  * AIエージェントに向けた共通のスキーマ定義
  * Work (作品) と WorkPart (楽章) の両方で共有される AI 指示文 (.describe) を集約します。
  */
+
+/** 多言語対応ドラフト用の基本構造 (Gemini Flash Lite への強制 & 自動成形) */
+export const MultilingualDraftSchema = z.preprocess(
+  (val) => {
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      // Handle stringified JSON hallucination: { "ja": "..." }
+      if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && typeof parsed === 'object' && 'ja' in parsed) {
+            return parsed;
+          }
+        } catch (_e) {
+          // Fallback to wrapping if not valid JSON
+        }
+      }
+
+      consola.warn(
+        `[Schema Recovery] LLM output a flat string instead of an object. Wrapping into { ja: ... }: "${val.slice(0, 30)}${val.length > 30 ? '...' : ''}"`,
+      );
+      return { ja: val };
+    }
+    return val;
+  },
+  z.object({
+    ja: z
+      .string()
+      .min(1)
+      .describe(
+        '【重要】必ず {"ja": "値"} というオブジェクト形式で出力してください。文字列を直接出力するとエラーになります。',
+      ),
+  }),
+);
 
 /** Era Enum for strict constraints */
 const ERAS = Object.values(MusicalEra) as [string, ...string[]];
@@ -28,28 +63,16 @@ export const TagIdDraftSchema = z.enum(TAGS);
  * Title Components Draft Schema
  */
 export const TitleComponentsDraftSchema = z.object({
-  prefix: z
-    .string()
+  prefix: MultilingualDraftSchema.optional().describe(
+    '体系的識別子（ジャンル名 + 番号）。例: {"ja": "交響曲第5番"}, {"ja": "第1楽章"}。',
+  ),
+  content: MultilingualDraftSchema.optional().describe(
+    '固有タイトル、または識別子を補完する調性や速度記号。例: {"ja": "春の祭典"}, {"ja": "ハ短調"}。',
+  ),
+  nickname: MultilingualDraftSchema.nullable()
     .optional()
     .describe(
-      '体系的識別子（ジャンル名 + 番号）。例: "交響曲第5番", "ピアノ・ソナタ第14番", "12の練習曲", "第1楽章", "Act I"。',
-    ),
-  content: z
-    .string()
-    .optional()
-    .describe(
-      '固有タイトル、または識別子を補完する調性や速度記号。例: "春の祭典", "ハ短調", "Allegro con brio"。',
-    ),
-  nickname: z
-    .string()
-    .optional()
-    .describe(
-      '一般的に親しまれている愛称・通称。例: "運命", "月光", "合唱"。広く知られた通称が存在しない場合は、このフィールド自体を出力しないでください。',
-    ),
-  title: z
-    .string()
-    .describe(
-      '統合済みタイトル。原則として `{prefix} {content} {nickname}` を適切な空白で結合した最終的な表示名称。',
+      '一般的に親しまれている愛称・通称。例: {"ja": "運命"}, {"ja": "月光"}。「ニ短調」のような調性や、「弦楽四重奏曲」のような形式名をここに入力してはいけません。広く知られた固有の愛称が存在しない場合は、必ず null を出力してください。',
     ),
 });
 
@@ -58,12 +81,14 @@ export const TitleComponentsDraftSchema = z.object({
  */
 export const CatalogueDraftSchema = z.object({
   prefix: MusicalCataloguePrefixSchema.optional().describe(
-    'カタログの接頭辞。選択肢: op, op-posth, woo, bwv, rv, hwv, twv, z, f, k, kv, d, kk, wq, h, g, hob-i, hob-ia, hob-ii, hob-iii, hob-iv, hob-v, hob-vi, hob-vii, hob-viii, hob-ix, hob-x, hob-xi, hob-xii, hob-xiii, hob-xiv, hob-xv, hob-xva, hob-xvi, hob-xvii, hob-xviii, hob-xix, hob-xx, hob-xxi, hob-xxii, hob-xxiii, hob-xxiv, hob-xxv, hob-xxvi, hob-xxvii, hob-xxviii, hob-xxix, hob-xxx, hob-xxxi, s, l, m, sz, bb, b, anh, hess, custom。',
+    'カタログの接頭辞。選択肢: op, op-posth, woo, bwv, rv, hwv, twv, z, f, k, kv, d, kk, wq, h, g, hob-i, ...（注: 同様の目録で複数の表記がある場合（例: k と kv）、プロジェクト標準の短い表記（例: k）を優先してください）。値がない場合はこのフィールド自体を出力しないでください。',
   ),
   number: z
     .string()
     .optional()
-    .describe('番号部分。例: "67", "331a", "I:1"。枝番やローマ数字を含む。'),
+    .describe(
+      '番号部分。例: "67", "331a", "I:1"。枝番やローマ数字を含む。値がない場合はこのフィールド自体を出力しないでください。',
+    ),
   isPrimary: z
     .boolean()
     .default(true)
@@ -74,41 +99,52 @@ export const CatalogueDraftSchema = z.object({
  * Musical Identity Draft Schema (Specialized for Agent)
  */
 export const MusicalIdentityDraftSchema = z.object({
-  key: MusicalKeySchema.optional().describe(
-    '調性。選択肢: c-major, c-sharp-major, d-flat-major, d-major, e-flat-major, e-major, f-major, f-sharp-major, g-flat-major, g-major, a-flat-major, a-major, b-flat-major, b-major, c-flat-major, c-minor, c-sharp-minor, d-minor, d-sharp-minor, e-flat-minor, e-minor, f-minor, f-sharp-minor, g-minor, g-sharp-minor, a-minor, a-sharp-minor, b-flat-minor, b-minor, a-flat-minor, c, c-sharp, d-flat, d, d-sharp, e-flat, e, f, f-sharp, g-flat, g, g-sharp, a-flat, a, a-sharp, b-flat, b, c-flat, atonal。',
-  ),
-  tempo: z
-    .string()
+  key: MusicalKeySchema.nullable()
     .optional()
     .describe(
-      'テンポ・速度記号（原語）。詳細な速度指定や表情付けを含めて記述してください。例: "Allegro", "Andante cantabile", "Adagio non troppo", "Allegro con brio", "Molto vivace"。',
+      '調性。選択肢: c-major, c-minor 等。多楽章形式の作品（交響曲・ソナタ等）の場合、楽曲全体(Work)のメタデータとしては主調のみを記述し、各楽章(WorkPart)でそれぞれの調性を指定してください。該当しない場合は null を出力してください。',
+    ),
+  tempo: z
+    .string()
+    .nullable()
+    .optional()
+    .describe(
+      'テンポ・速度記号（原語）。例: "Allegro", "Andante"。多楽章形式の作品の場合、楽曲全体(Work)では情報を捏造せず、必ず null を出力してください。',
     ),
   timeSignature: z
     .object({
       numerator: z.number().int().min(1).max(64),
       denominator: z.number().int().min(1).max(64),
     })
+    .nullable()
     .optional()
-    .describe('拍子 (e.g. 4/4)'),
+    .describe(
+      '拍子 (e.g. 4/4)。多楽章形式の作品の場合、楽曲全体(Work)では必ず null を出力してください。',
+    ),
   genres: z
     .array(MusicalGenreSchema)
     .max(5)
     .describe(
-      'ジャンル・形式（最大5つ）。選択肢: symphony, overture, tone-poem, suite-orch, serenade-divertimento, incidental-music, opera, operetta, ballet, piano-concerto, violin-concerto, cello-concerto, wind-concerto, concerto-grosso, concerted-work, chamber-strings, chamber-piano, sonata-duo, keyboard-ensemble, chamber-wind, chamber-mixed, keyboard-solo, string-solo, wind-solo, solo-other-inst, lied, song-cycle, mass-requiem, oratorio-passion, cantata, early-vocal, choral-others, sonata, sonata-form, variations, fugue-counterpoint, suite-partita, rondo, ternary-form, binary-form, cyclic-form, aria, recitative, vocal-ensemble, chorus-piece, mass-ordinary, requiem-form, passion-structure, chorale, motet, madrigal, lied-song, song-cycle-structure, strophic, through-composed, vocalise, prelude, nocturne, impromptu, scherzo, ballade, fantasia, intermezzo, bagatelle, humoresque, romance, arabesque, barcarolle-berceuse, elegy, etude, toccata, caprice-capriccio, rhapsody, transcription-paraphrase, concert-piece, cadenza, style-brillant, allemande, courante, sarabande, gigue, gavotte, bourree, passepied, minuet, waltz, polonaise, mazurka, march, tarantella, bolero-habanera, czardas, polka, galop, pavane-galliard, passacaglia, chaconne, basso-ostinato, folia, symphonic-poem-structure, program-symphony-form, leitmotif-system, idee-fixe, melodrame, word-painting。',
+      'ジャンル・形式（最大5つ）。楽曲全体のジャンルを指定します。多楽章形式の作品において、特定の楽章のみの形式（sonata-form, rondo 等）はここには含めず、各楽章のタグや形式として指定してください。',
     ),
   bpm: z
     .number()
     .int()
     .min(10)
     .max(500)
+    .nullable()
     .optional()
     .describe(
-      'メトロノーム記号（BPM数値）。作曲者によって楽譜等で具体的に指定されている場合のみ出力し、そうでない場合は項目自体を出力しないでください。',
+      'メトロノーム記号（BPM数値）。多楽章形式の楽曲全体 (Work) や、指定がない場合は null を出力してください。',
     ),
-  metronomeUnit: MetronomeUnitSchema.optional().describe(
-    'BPMの基準点。BPMと同様に指定がある場合のみ出力してください。選択肢: whole, half, quarter, eighth, sixteenth, dotted-half, dotted-quarter, dotted-eighth, dotted-sixteenth。',
-  ),
-  tempoTranslation: z.string().optional().describe('テンポ指定や速度記号の日本語訳。'),
+  metronomeUnit: MetronomeUnitSchema.nullable()
+    .optional()
+    .describe(
+      'BPMの基準点。BPMと同様に指定がある場合のみ出力し、そうでない場合は null を出力してください。',
+    ),
+  tempoTranslation: MultilingualDraftSchema.nullable()
+    .optional()
+    .describe('テンポ指定や速度記号の日本語訳。該当しない場合は null。'),
 });
 
 /**
@@ -187,11 +223,11 @@ export const InstrumentationFlagsDraftSchema = z
 export const CommonDescriptions = {
   era: '時代区分。',
   compositionYear: '数値による作曲年。ソートに使用。',
-  compositionPeriod: '「1805年頃」などのローカライズされた作曲時期。',
+  compositionPeriod: '「1805年頃」などの作曲時期テキスト。{"ja": "1805年頃"} 形式で出力。',
   instrumentation: '楽器編成のテキスト。例: "2.2.2.2 - 4.2.3.0 - tmp - str"。',
   tags: '検索・分類用の自由タグ（最大10個まで）。「情緒」「利用シーン」「音楽用語」など異なるカテゴリから、楽曲の特徴を多角的に表すタグを選択してください。',
   nicknames:
-    '検索用の別名・愛称のリスト（JSONの文字列配列）。広く知られた通称が存在しない場合は空配列 `[]` を出力してください。',
+    '検索用の別名・愛称のリスト（JSONの文字列配列）。広く知られた通称が存在しない場合は、空配列を出力するのではなく、フィールド自体を省略してください。',
   performanceDifficulty: '演奏難易度（1-5）。',
   instruments: '使用楽器のIDリスト。',
 };

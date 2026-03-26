@@ -1,5 +1,5 @@
 import { WorkPartControl, WorkPartId } from './work-part.control';
-import { WorkPartMetadata } from './work-part.metadata';
+import { WorkPartMetadata, synthesizeTitle } from './work-part.metadata';
 
 export type { WorkPartControl, WorkPartMetadata, WorkPartId };
 
@@ -34,7 +34,7 @@ export class WorkPart {
   }
 
   get title() {
-    return this.metadata.titleComponents.title;
+    return synthesizeTitle(this.metadata.titleComponents);
   }
 
   get popularTitle() {
