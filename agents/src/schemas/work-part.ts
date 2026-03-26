@@ -99,13 +99,42 @@ export const WorkPartChunkDraftSchema = z.object({
  * Translation step specialized schema (WorkPart).
  */
 export const WorkPartTranslationOutputSchema = z.object({
+  _reasoning: z
+    .object({
+      identityCheck: z
+        .string()
+        .describe('この楽章・小曲は誰の何という親楽曲に属しているか。他の楽曲と混同しないこと。'),
+      languageCheck: z.string().describe('これから翻訳するターゲット言語は何か。'),
+    })
+    .describe('翻訳を行う前のセルフチェック（Chain of Thought）。'),
   titleComponents: z.object({
-    prefix: z.string().optional(),
-    content: z.string().optional(),
-    nickname: z.string().optional(),
+    prefix: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。翻訳不要な場合はプロパティごと省略すること。',
+      ),
+    content: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+      ),
+    nickname: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+      ),
   }),
-  description: z.string().optional(),
-  tempoTranslation: z.string().optional(),
+  description: z
+    .string()
+    .optional()
+    .describe('純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不能な場合は省略。'),
+  tempoTranslation: z
+    .string()
+    .optional()
+    .describe('純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不能な場合は省略。'),
 });
 
 export type WorkPartTranslationOutput = z.infer<typeof WorkPartTranslationOutputSchema>;

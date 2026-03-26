@@ -117,12 +117,38 @@ export type WorkflowWorkMaster = z.infer<typeof WorkflowWorkMasterSchema>;
  * Translation step specialized schema.
  */
 export const WorkTranslationOutputSchema = z.object({
+  _reasoning: z
+    .object({
+      identityCheck: z
+        .string()
+        .describe('この曲は誰の何という曲か。絶対に他の作曲家や類似の有名楽曲と混同しないこと。'),
+      languageCheck: z.string().describe('これから翻訳するターゲット言語は何か。'),
+    })
+    .describe('翻訳を行う前のセルフチェック（Chain of Thought）。'),
   titleComponents: z.object({
-    prefix: z.string().optional(),
-    content: z.string().optional(),
-    nickname: z.string().optional(),
+    prefix: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。該当なし・翻訳不要な場合はプロパティごと省略すること。',
+      ),
+    content: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+      ),
+    nickname: z
+      .string()
+      .optional()
+      .describe(
+        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+      ),
   }),
-  description: z.string().optional(),
+  description: z
+    .string()
+    .optional()
+    .describe('純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不能な場合は省略。'),
 });
 
 export type WorkTranslationOutput = z.infer<typeof WorkTranslationOutputSchema>;

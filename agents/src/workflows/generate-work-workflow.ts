@@ -260,7 +260,11 @@ export class GenerateWorkWorkflow {
     for (const lang of targetLangs) {
       consola.start(`[Step: translate] Translating into ${lang}...`);
 
-      const workTrans = await agent.translateWork(targetWork as WorkDraft, lang);
+      const workTrans = await agent.translateWork(
+        targetWork as WorkDraft,
+        lang,
+        input.composerName,
+      );
       translatedWork = this.mergeTranslation(translatedWork, workTrans, lang) as Record<
         string,
         unknown
@@ -345,21 +349,44 @@ export class GenerateWorkWorkflow {
     const setMultilingual = (
       obj: Record<string, unknown>,
       key: string,
-      value: string,
+      value: unknown,
       targetLang: string,
     ) => {
+      // Data Sanitization
+      if (value === undefined || value === null) return;
+      if (typeof value === 'string') {
+        const lower = value.toLowerCase().trim();
+        if (
+          lower === 'undefined' ||
+          lower === 'null' ||
+          lower === '[object object]' ||
+          lower === ''
+        ) {
+          return;
+        }
+      } else if (typeof value === 'object') {
+        consola.warn(
+          `[mergeTranslation] Object mixed in translation string for key ${key}: ${JSON.stringify(value)}`,
+        );
+        return; // skip dirty object to prevent [object Object] serialization
+      } else {
+        return;
+      }
+
+      const strValue = value as string;
+
       if (!obj[key]) {
-        obj[key] = { [targetLang]: value };
+        obj[key] = { [targetLang]: strValue };
         return;
       }
       if (typeof obj[key] === 'string') {
         const jaValue = obj[key] as string;
         obj[key] = {
           ja: jaValue,
-          [targetLang]: value,
+          [targetLang]: strValue,
         };
       } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-        (obj[key] as Record<string, string>)[targetLang] = value;
+        (obj[key] as Record<string, string>)[targetLang] = strValue;
       }
     };
 
