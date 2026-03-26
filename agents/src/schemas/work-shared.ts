@@ -225,7 +225,7 @@ export const CommonDescriptions = {
   compositionYear: '数値による作曲年。ソートに使用。',
   compositionPeriod: '「1805年頃」などの作曲時期テキスト。{"ja": "1805年頃"} 形式で出力。',
   instrumentation: '楽器編成のテキスト。例: "2.2.2.2 - 4.2.3.0 - tmp - str"。',
-  tags: '検索・分類用の自由タグ（最大10個まで）。「情緒」「利用シーン」「音楽用語」など異なるカテゴリから、楽曲の特徴を多角的に表すタグを選択してください。',
+  tags: '検索・分類用の自由タグ（最大10個まで）。「情緒(mood)」「利用シーン(situation)」「音楽用語(terminology)」「文化的文脈(heritage)」など異なるカテゴリから、楽曲の特徴を多角的に表すタグを選択してください。【重要】ジャンル・形式のID（polonaise, waltz, nocturne等）は genres フィールドに出力してください。tags にジャンル名を含めるとバリデーションエラーになります。',
   nicknames:
     '検索用の別名・愛称のリスト（JSONの文字列配列）。広く知られた通称が存在しない場合は、空配列を出力するのではなく、フィールド自体を省略してください。',
   performanceDifficulty: '演奏難易度（1-5）。',
