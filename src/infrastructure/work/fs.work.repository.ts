@@ -1,10 +1,11 @@
 import fs from 'fs';
 import path from 'path';
-import { WorkRepository, WorkSearchCriteria } from '@/domain/work/work.repository';
+import { WorkRepository } from '@/domain/work/work.repository';
 import { Work, WorkControl } from '@/domain/work/work';
 import { WorkMetadataSchema } from '@/domain/work/work.metadata';
 import { WorkControlSchema } from '@/domain/work/work.control';
 import { MusicalGenre } from '@/domain/shared/musical-genre';
+import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 import { serverLogger as logger } from '@/infrastructure/logging/server.logger';
 
 /**
@@ -21,7 +22,7 @@ export class FsWorkRepository implements WorkRepository {
     }
   }
 
-  async findById(id: string): Promise<Work | null> {
+  async findById(id: string, _ctx?: TransactionContext): Promise<Work | null> {
     const filePath = path.join(this.dataDirectory, `${id}.json`);
     if (fs.existsSync(filePath)) {
       return this.parseWorkFile(filePath);
@@ -29,33 +30,38 @@ export class FsWorkRepository implements WorkRepository {
     return null;
   }
 
-  async findBySlug(composerId: string, slug: string): Promise<Work | null> {
+  async findBySlug(
+    composerId: string,
+    slug: string,
+    _ctx?: TransactionContext,
+  ): Promise<Work | null> {
     const works = await this.getAllWorks();
     return works.find((w) => w.composerSlug === composerId && w.slug === slug) || null;
   }
 
-  async findMany(criteria: WorkSearchCriteria): Promise<Work[]> {
-    let works = await this.getAllWorks();
+  async findMany(
+    criteria: { composerId?: string; genre?: string; era?: string },
+    _ctx?: TransactionContext,
+  ): Promise<Work[]> {
+    const works = await this.getAllWorks();
+    let filtered = works;
 
     if (criteria.composerId) {
-      works = works.filter((w) => w.composerSlug === criteria.composerId);
+      filtered = filtered.filter((w) => w.composerSlug === criteria.composerId);
     }
     if (criteria.genre) {
-      works = works.filter((w) =>
+      filtered = filtered.filter((w) =>
         w.metadata.musicalIdentity?.genres.includes(criteria.genre as MusicalGenre),
       );
     }
     if (criteria.era) {
-      works = works.filter((w) => w.metadata.era === criteria.era);
+      filtered = filtered.filter((w) => w.metadata.era === criteria.era);
     }
 
-    const offset = criteria.offset || 0;
-    const limit = criteria.limit || 20;
-
-    return works.slice(offset, offset + limit);
+    return filtered;
   }
 
-  async save(work: Work): Promise<void> {
+  async save(work: Work, _ctx?: TransactionContext): Promise<void> {
     const filePath = path.join(this.dataDirectory, `${work.id}.json`);
     const data = {
       control: work.control,
@@ -64,12 +70,13 @@ export class FsWorkRepository implements WorkRepository {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
   }
 
-  async deleteById(id: string): Promise<void> {
+  async deleteById(id: string, _ctx?: TransactionContext): Promise<void> {
     const filePath = path.join(this.dataDirectory, `${id}.json`);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
   }
+
   private async getAllWorks(): Promise<Work[]> {
     const files = fs.readdirSync(this.dataDirectory).filter((f) => f.endsWith('.json'));
     const works: Work[] = [];

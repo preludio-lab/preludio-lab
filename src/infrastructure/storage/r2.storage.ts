@@ -7,12 +7,14 @@ import {
 import { r2Client } from './r2.client';
 import { IObjectStorage, ObjectNotFoundError, StorageError } from './storage.interface';
 import { env } from '@/lib/env';
+import pLimit from 'p-limit';
 
 /**
  * IObjectStorage の R2 (S3互換) 実装クラス
  */
 export class R2StorageService implements IObjectStorage {
   private readonly bucketName: string;
+  private readonly _limiter = pLimit(5); // R2 への同時接続数を制限
 
   constructor(
     bucketName?: string,
@@ -37,7 +39,7 @@ export class R2StorageService implements IObjectStorage {
         Key: fullKey,
       });
 
-      const response = await r2Client.send(command);
+      const response = await this._limiter(() => r2Client.send(command));
 
       if (!response.Body) {
         return null;
@@ -74,7 +76,7 @@ export class R2StorageService implements IObjectStorage {
         ContentType: 'text/markdown', // 本文は通常 MDX/Markdown
       });
 
-      await r2Client.send(command);
+      await this._limiter(() => r2Client.send(command));
     } catch (error: unknown) {
       throw new StorageError(`Failed to upload object to R2: ${key}`, error);
     }
@@ -92,7 +94,7 @@ export class R2StorageService implements IObjectStorage {
         Key: fullKey,
       });
 
-      await r2Client.send(command);
+      await this._limiter(() => r2Client.send(command));
     } catch (error: unknown) {
       throw new StorageError(`Failed to delete object from R2: ${key}`, error);
     }

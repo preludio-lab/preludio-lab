@@ -1,70 +1,84 @@
 'use client';
 
 import React from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { DataTable, type DataTableColumn } from '@/components/ui/admin/DataTable';
-import { Badge, EyeIcon } from '@/components/ui/admin/CommonIcons';
-
-export interface WorkListItem {
-  id: string;
-  title: string;
-  slug: string;
-  composerName: string;
-  year: string;
-  phrasesCount: number;
-  status: 'published' | 'draft';
-}
+import { DetailButton } from '@/components/ui/admin/DetailButton';
+import { WorkListItemDto } from '@/application/work/dto/search-works.dto';
 
 interface WorkListProps {
-  works: WorkListItem[];
-  onViewDetail: (work: WorkListItem) => void;
+  works: WorkListItemDto[];
+  onViewDetail?: (work: WorkListItemDto) => void;
 }
 
 /**
  * WorkList - 作品一覧 (Presentational Component)
  */
 export function WorkList({ works, onViewDetail }: WorkListProps) {
-  const columns: DataTableColumn<WorkListItem>[] = [
+  const router = useRouter();
+  const params = useParams();
+  const lang = (params?.lang as string) || 'ja';
+
+  const handleViewDetail = (item: WorkListItemDto) => {
+    if (onViewDetail) {
+      onViewDetail(item);
+    } else {
+      router.push(`/${lang}/admin/works/${item.slug}`);
+    }
+  };
+
+  const columns: DataTableColumn<WorkListItemDto>[] = [
+    {
+      header: '作曲家',
+      accessor: (item) => item.composer.name,
+    },
     {
       header: '作品タイトル',
       accessor: (item) => (
-        <div className="flex flex-col">
-          <span className="font-medium text-admin-text-primary">{item.title}</span>
-          <span className="text-xs text-admin-text-secondary">{item.slug}</span>
+        <span className="font-medium text-admin-text-primary">{item.localizedTitle}</span>
+      ),
+    },
+    {
+      header: 'スラッグ',
+      accessor: (item) => <span className="text-xs text-admin-text-secondary">{item.slug}</span>,
+    },
+    {
+      header: '作品番号',
+      accessor: (item) => (
+        <span className="text-sm font-mono">
+          {item.cataloguePrefix && item.catalogueNumber
+            ? `${item.cataloguePrefix}${item.catalogueNumber}`
+            : item.catalogueNumber || item.cataloguePrefix || '-'}
+        </span>
+      ),
+    },
+    {
+      header: 'ジャンル',
+      accessor: (item) => (
+        <div className="flex flex-wrap gap-1">
+          {item.genres.length > 0
+            ? item.genres.map((g: string) => (
+                <span key={g} className="text-xs bg-admin-bg-secondary px-1.5 py-0.5 rounded">
+                  {g}
+                </span>
+              ))
+            : '-'}
         </div>
       ),
     },
     {
-      header: '作曲家',
-      accessor: 'composerName',
-    },
-    {
       header: '制作年',
-      accessor: 'year',
+      accessor: (item) => item.compositionYear ?? '-',
     },
     {
-      header: 'フレーズ数',
-      accessor: (item) => <span className="text-admin-text-secondary">{item.phrasesCount}</span>,
-    },
-    {
-      header: 'ステータス',
+      header: '',
       accessor: (item) => (
-        <Badge variant={item.status === 'published' ? 'success' : 'warning'}>
-          {item.status === 'published' ? '公開' : '下書き'}
-        </Badge>
-      ),
-    },
-    {
-      header: 'アクション',
-      accessor: (item) => (
-        <button
+        <DetailButton
           onClick={(e) => {
             e.stopPropagation();
-            onViewDetail(item);
+            handleViewDetail(item);
           }}
-          className="p-2 text-admin-text-secondary hover:text-admin-primary transition-colors"
-        >
-          <EyeIcon />
-        </button>
+        />
       ),
       className: 'text-right',
     },
@@ -78,7 +92,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
           新規作品追加
         </button>
       </div>
-      <DataTable data={works} columns={columns} onRowClick={onViewDetail} />
+      <DataTable data={works} columns={columns} onRowClick={handleViewDetail} />
     </div>
   );
 }

@@ -40,6 +40,7 @@ export interface IWorkDataSource {
    * Upsert Work Chain (Atomic Transaction)
    */
   save(rows: WorkRows, ctx?: TransactionContext): Promise<void>;
+  // ... (rest of interface unchanged)
 
   /**
    * Delete Work

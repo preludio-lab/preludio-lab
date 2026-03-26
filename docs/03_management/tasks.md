@@ -235,7 +235,11 @@ Status: `[/]` 進行中
   - [x] **[実装]** 作曲家データ作成ワークフロー: Composer (Json -> Turso)
   - [x] **[実装]** 作品データ作成ワークフロー: Work (Json -> Turso)
   - [/] **[実装]** 作品パーツ作成ワークフロー: WorkParts (Json -> Turso)
-  - [ ] **[実装]** 管理UI実装 (Optional)
+  - [/] **[実装]** 管理UI実装
+    - [x] 作育家一覧 (Composer List)
+    - [x] 作育家詳細 (Composer Detail)
+    - [x] 作品一覧 (Work List)
+    - [ ] 作品詳細 (Work Detail)
 
 - [ ] **7.2 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
   - [x] **[設計]** AIエージェントワークフロー設計 (Step 1-5 の I/O 規格および HITL フローの定義)

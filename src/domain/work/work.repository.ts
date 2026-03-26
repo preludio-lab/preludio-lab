@@ -2,18 +2,6 @@ import { Work } from './work';
 import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 /**
- * Work Search Criteria
- * 作品の検索条件 (将来的に公開範囲やカテゴリ等が増えることを想定)
- */
-export interface WorkSearchCriteria {
-  composerId?: string;
-  genre?: string;
-  era?: string;
-  limit?: number;
-  offset?: number;
-}
-
-/**
  * WorkRepository
  * 作品 (Piece / Composition) リポジトリのインターフェース。
  * 作品全体のマスタメタデータを管理します。
@@ -36,11 +24,14 @@ export interface WorkRepository {
   findBySlug(composerId: string, slug: string, ctx?: TransactionContext): Promise<Work | null>;
 
   /**
-   * 条件に一致する作品を取得
-   * @param criteria 検索条件
+   * 確定的条件に基づいて作品の一覧（フルエンティティ）を取得
+   * @param criteria 抽出条件
    * @param ctx トランザクションコンテキスト（オプション）
    */
-  findMany(criteria: WorkSearchCriteria, ctx?: TransactionContext): Promise<Work[]>;
+  findMany(
+    criteria: { composerId?: string; genre?: string; era?: string },
+    ctx?: TransactionContext,
+  ): Promise<Work[]>;
 
   /**
    * 作品の保存

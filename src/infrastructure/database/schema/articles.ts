@@ -109,6 +109,11 @@ export const articleTranslations = sqliteTable(
     genreIdx: index('idx_art_trans_search_genre').on(table.lang, table.slGenre),
     eraIdx: index('idx_art_trans_search_era').on(table.lang, table.slEra),
     compIdx: index('idx_art_trans_search_comp').on(table.lang, table.slComposerName),
+    slugLookupIdx: uniqueIndex('idx_art_trans_slug_lookup').on(
+      table.lang,
+      table.slCategory,
+      table.slSlug,
+    ),
     compoundFilterIdx: index('idx_art_trans_compound_filter').on(
       table.lang,
       table.status,

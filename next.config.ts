@@ -187,10 +187,14 @@ const nextConfig: NextConfig = {
         // 静的アセット用: 長期間キャッシュ＆CORS制限
         source: '/_next/static/:path*',
         headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
+          ...(process.env.NODE_ENV === APP_ENV.PRODUCTION
+            ? [
+                {
+                  key: 'Cache-Control',
+                  value: 'public, max-age=31536000, immutable',
+                },
+              ]
+            : []),
           // DAST Alert: Cross-Domain Misconfiguration
           // ワイルドカード許可をやめ、同一オリジンポリシーを推奨する形へ
           {

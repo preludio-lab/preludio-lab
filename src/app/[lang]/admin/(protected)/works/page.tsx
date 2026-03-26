@@ -1,45 +1,33 @@
-'use client';
-
 import React from 'react';
-import { WorkList, type WorkListItem } from '@/components/admin/works/WorkList';
-import { useRouter } from 'next/navigation';
+import { WorkList } from '@/components/admin/works/WorkList';
+import { SearchWorksUseCase } from '@/application/work/usecase/search-works.usecase';
+import { TursoWorkQueryService } from '@/infrastructure/work/turso.work.query.service';
+import { db } from '@/infrastructure/database/turso.client';
 
-const MOCK_WORKS: WorkListItem[] = [
-  {
-    id: '1',
-    title: '交響曲第5番 ハ短調 作品67「運命」',
-    slug: 'symphony-no-5',
-    composerName: 'Ludwig van Beethoven',
-    year: '1808',
-    phrasesCount: 24,
-    status: 'published',
-  },
-  {
-    id: '2',
-    title: '交響曲第9番 ニ短調 作品125「合唱付き」',
-    slug: 'symphony-no-9',
-    composerName: 'Ludwig van Beethoven',
-    year: '1824',
-    phrasesCount: 42,
-    status: 'published',
-  },
-  {
-    id: '3',
-    title: 'ピアノ・ソナタ第14番 嬰ハ短調 作品27-2「月光」',
-    slug: 'piano-sonata-no-14',
-    composerName: 'Ludwig van Beethoven',
-    year: '1801',
-    phrasesCount: 8,
-    status: 'draft',
-  },
-];
+export default async function WorksManagementPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { lang } = await params;
+  const sParams = await searchParams;
 
-export default function WorksManagementPage() {
-  const router = useRouter();
+  // 1. Setup DI (Pure CQRS: Read handled by QueryService)
+  const queryService = new TursoWorkQueryService(db);
+  const useCase = new SearchWorksUseCase(queryService);
 
-  const handleViewDetail = (work: WorkListItem) => {
-    router.push(`/admin/works/${work.slug}`);
-  };
+  // 2. Fetch Data
+  const page = Number(sParams.page) || 1;
+  const limit = 20;
+  const offset = (page - 1) * limit;
+
+  const response = await useCase.execute({
+    lang: lang,
+    sort: { field: 'createdAt', direction: 'desc' }, // Mandatory sort
+    pagination: { limit, offset },
+  });
 
   return (
     <div className="space-y-6">
@@ -50,7 +38,7 @@ export default function WorksManagementPage() {
         </p>
       </div>
 
-      <WorkList works={MOCK_WORKS} onViewDetail={handleViewDetail} />
+      <WorkList works={response.items} />
     </div>
   );
 }

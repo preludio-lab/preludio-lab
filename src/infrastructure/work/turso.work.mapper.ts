@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Work, WorkId } from '@/domain/work/work';
+import { WorkMetadata } from '@/domain/work/work.metadata';
 import { generateId } from '@/shared/id';
 import { WorkRow, WorkTranslationRow, WorkRows } from './interfaces/work.ds.interface';
 
 function aggregateTranslations(
-  translations: { lang: string; [key: string]: any }[],
+  translations: { lang: string; [key: string]: unknown }[],
   targetField: string,
 ): Record<string, string> {
   const result: Record<string, string> = {};
@@ -75,7 +75,7 @@ export class TursoWorkMapper {
         tags: work.tags || [],
         instruments: work.instruments || [],
         basedOn: work.basedOn || undefined,
-      } as any,
+      } as unknown as WorkMetadata,
     });
   }
 
@@ -89,7 +89,6 @@ export class TursoWorkMapper {
       composerId: '', // To be filled by Repository
       slug: ctrl.slug,
       catalogues: meta.catalogues,
-      // Generated Columns: cataloguePrefix, catalogueNumber, catalogueSortOrder are handled by DB
       era: meta.era || null,
       instrumentation: meta.instrumentation || null,
       instrumentationFlags: meta.instrumentationFlags,
@@ -108,9 +107,9 @@ export class TursoWorkMapper {
       metronomeUnit: mid?.metronomeUnit || null,
 
       impressionDimensions: meta.impressionDimensions || null,
-      genres: (mid?.genres as any) || [],
-      tags: meta.tags as any,
-      instruments: meta.instruments as any,
+      genres: (mid?.genres as unknown as string[]) || [],
+      tags: (meta.tags as unknown as string[]) || [],
+      instruments: (meta.instruments as unknown as string[]) || [],
       compositionYear: meta.compositionYear || null,
       compositionPeriod: null,
       basedOn: meta.basedOn || null,
@@ -119,11 +118,7 @@ export class TursoWorkMapper {
       updatedAt: new Date().toISOString(),
     } as unknown as WorkRow;
 
-    // Decompose Translations
-    // Fields: title(Req), titlePrefix, titleContent, titleNickname, compositionPeriod, description
     const tc = meta.titleComponents;
-
-    // Gather all langs
     const langs = new Set<string>([
       ...Object.keys(tc.prefix || {}),
       ...Object.keys(tc.content || {}),
@@ -135,7 +130,8 @@ export class TursoWorkMapper {
     const translations: WorkTranslationRow[] = [];
 
     for (const lang of langs) {
-      const getVal = (obj: any): string | null => (obj && obj[lang]) || null;
+      const getVal = (obj: Record<string, string> | undefined): string | null =>
+        (obj && obj[lang]) || null;
 
       const prefix = getVal(tc.prefix);
       const content = getVal(tc.content);
@@ -154,22 +150,7 @@ export class TursoWorkMapper {
         titleNickname: getVal(tc.nickname),
         compositionPeriod: getVal(meta.compositionPeriod),
         description: getVal(meta.description),
-        nicknames: [], // json column. meta.nicknames is string[] not multilingual?
-        // `workTranslations.nicknames` in schema is `string[]` (JSON).
-        // But `meta.nicknames` is defined as `NicknamesSchema` which is `string[]` (Multilingual/Alias list).
-        // Is `meta.nicknames` language specific? No, it's global aliases usually?
-        // Schema says `workTranslations` has `nicknames` (JSON).
-        // And `workParts` has `nicknames` (JSON).
-        // Domain `WorkMetadata` has `nicknames`.
-        // If `nicknames` is global, it should be in `works` table.
-        // Wait, Schema `works` table DOES NOT have `nicknames`.
-        // `workTranslations` table HAS `nicknames`.
-        // This implies nicknames are per language?
-        // But Domain `nicknames` is flat `string[]`.
-        // I will save `meta.nicknames` to ALL translation rows? Or just primary?
-        // Or `meta.nicknames` is actually not mapped to translation nicknames?
-        // Be safe: save [] for now.
-
+        nicknames: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
