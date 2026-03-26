@@ -1,4 +1,4 @@
-import { eq, and, or, like, desc, asc, count, SQL } from 'drizzle-orm';
+import { eq, and, or, like, desc, asc, count } from 'drizzle-orm';
 import { LibSQLDatabase } from 'drizzle-orm/libsql';
 import * as schema from '@/infrastructure/database/schema';
 import {
@@ -25,68 +25,39 @@ export class TursoWorkQueryService implements WorkQueryService {
     const db = this.db;
 
     // 1. フィルタ条件の構築
-    const conditions: SQL[] = [
-      (eq as unknown as (a: unknown, b: unknown) => SQL)(schema.workTranslations.lang, lang),
-      (eq as unknown as (a: unknown, b: unknown) => SQL)(schema.composerTranslations.lang, lang),
+    const conditions = [
+      eq(schema.workTranslations.lang, lang),
+      eq(schema.composerTranslations.lang, lang),
     ];
 
     if (filter?.composerId) {
-      conditions.push(
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.works.composerId,
-          filter.composerId,
-        ),
-      );
+      conditions.push(eq(schema.works.composerId, filter.composerId));
     }
     if (filter?.era) {
-      conditions.push(
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(schema.works.era, filter.era),
-      );
+      conditions.push(eq(schema.works.era, filter.era));
     }
     if (filter?.keyword) {
-      const keywordMatch = (or as unknown as (...args: unknown[]) => SQL)(
-        (like as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.workTranslations.title,
-          `%${filter.keyword}%`,
-        ),
-        (like as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.composerTranslations.displayName,
-          `%${filter.keyword}%`,
-        ),
+      conditions.push(
+        or(
+          like(schema.workTranslations.title, `%${filter.keyword}%`),
+          like(schema.composerTranslations.displayName, `%${filter.keyword}%`),
+        )!,
       );
-      if (keywordMatch) {
-        conditions.push(keywordMatch);
-      }
     }
 
-    const where = (and as unknown as (...args: unknown[]) => SQL)(...conditions);
+    const where = and(...conditions);
 
     // 2. 総件数の取得
-    const countResult = (await (db
-      .select({ val: (count as unknown as () => SQL)() })
+    const countResult = await db
+      .select({ val: count() })
       .from(schema.works)
-      .innerJoin(
-        schema.workTranslations,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.works.id,
-          schema.workTranslations.workId,
-        ),
-      )
-      .innerJoin(
-        schema.composers,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.works.composerId,
-          schema.composers.id,
-        ),
-      )
+      .innerJoin(schema.workTranslations, eq(schema.works.id, schema.workTranslations.workId))
+      .innerJoin(schema.composers, eq(schema.works.composerId, schema.composers.id))
       .innerJoin(
         schema.composerTranslations,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.composers.id,
-          schema.composerTranslations.composerId,
-        ),
+        eq(schema.composers.id, schema.composerTranslations.composerId),
       )
-      .where(where) as unknown as Promise<{ val: number }[]>)) as { val: number }[];
+      .where(where!);
 
     const totalCount = Number(countResult[0]?.val ?? 0);
 
@@ -94,26 +65,14 @@ export class TursoWorkQueryService implements WorkQueryService {
     const orderFn = sort.direction === 'desc' ? desc : asc;
     const orderBy = [];
     if (sort.field === 'title') {
-      orderBy.push((orderFn as unknown as (a: unknown) => SQL)(schema.workTranslations.title));
+      orderBy.push(orderFn(schema.workTranslations.title));
     } else if (sort.field === 'compositionYear') {
-      orderBy.push((orderFn as unknown as (a: unknown) => SQL)(schema.works.compositionYear));
+      orderBy.push(orderFn(schema.works.compositionYear));
     } else {
-      orderBy.push((orderFn as unknown as (a: unknown) => SQL)(schema.works.createdAt));
+      orderBy.push(orderFn(schema.works.createdAt));
     }
 
-    interface QueryRow {
-      id: string;
-      slug: string;
-      localizedTitle: string;
-      compositionYear: number | null;
-      cataloguePrefix: string | null;
-      catalogueNumber: string | null;
-      genres: string[];
-      composerSlug: string;
-      composerName: string;
-    }
-
-    const rows = (await (db
+    const rows = await db
       .select({
         id: schema.works.id,
         slug: schema.works.slug,
@@ -126,31 +85,16 @@ export class TursoWorkQueryService implements WorkQueryService {
         composerName: schema.composerTranslations.displayName,
       })
       .from(schema.works)
-      .innerJoin(
-        schema.workTranslations,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.works.id,
-          schema.workTranslations.workId,
-        ),
-      )
-      .innerJoin(
-        schema.composers,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.works.composerId,
-          schema.composers.id,
-        ),
-      )
+      .innerJoin(schema.workTranslations, eq(schema.works.id, schema.workTranslations.workId))
+      .innerJoin(schema.composers, eq(schema.works.composerId, schema.composers.id))
       .innerJoin(
         schema.composerTranslations,
-        (eq as unknown as (a: unknown, b: unknown) => SQL)(
-          schema.composers.id,
-          schema.composerTranslations.composerId,
-        ),
+        eq(schema.composers.id, schema.composerTranslations.composerId),
       )
-      .where(where)
+      .where(where!)
       .orderBy(...orderBy)
       .limit(limit)
-      .offset(offset) as unknown as Promise<QueryRow[]>)) as QueryRow[];
+      .offset(offset);
 
     // 4. Raw レスポンスへのマッピング
     const items: RawWorkSummary[] = rows.map((row) => ({

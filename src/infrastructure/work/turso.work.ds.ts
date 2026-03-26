@@ -1,114 +1,12 @@
-import { eq, and, or, like, desc, asc, count } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { LibSQLDatabase } from 'drizzle-orm/libsql';
 import * as schema from '@/infrastructure/database/schema';
-import {
-  IWorkDataSource,
-  WorkRows,
-  WorkPartRows,
-  WorkSummaryRow,
-} from './interfaces/work.ds.interface';
+import { IWorkDataSource, WorkRows, WorkPartRows } from './interfaces/work.ds.interface';
 import { getDb } from '@/infrastructure/database/drizzle-utils';
 import { TransactionContext } from '@/domain/shared/transaction-manager.interface';
 
 export class TursoWorkDataSource implements IWorkDataSource {
   constructor(private db: LibSQLDatabase<typeof schema>) {}
-
-  /**
-   * 検索条件に基づいて作品の一覧（サマリー用行データ）を取得します。
-   */
-  async search(
-    params: {
-      lang: string;
-      limit: number;
-      offset: number;
-      filter?: {
-        composerId?: string;
-        genre?: string;
-        era?: string;
-        keyword?: string;
-      };
-      sort?: {
-        field: 'title' | 'compositionYear' | 'createdAt';
-        direction: 'asc' | 'desc';
-      };
-    },
-    ctx?: TransactionContext,
-  ): Promise<{ rows: WorkSummaryRow[]; totalCount: number }> {
-    const db = getDb(this.db, ctx);
-    const { lang, limit, offset, filter, sort } = params;
-
-    // 1. 基本的な結合条件とフィルタの構築
-    const conditions = [
-      eq(schema.workTranslations.lang, lang),
-      eq(schema.composerTranslations.lang, lang),
-    ];
-
-    if (filter?.composerId) {
-      conditions.push(eq(schema.works.composerId, filter.composerId));
-    }
-    if (filter?.era) {
-      conditions.push(eq(schema.works.era, filter.era));
-    }
-    if (filter?.keyword) {
-      const keywordMatch = or(
-        like(schema.workTranslations.title, `%${filter.keyword}%`),
-        like(schema.composerTranslations.displayName, `%${filter.keyword}%`),
-      );
-      if (keywordMatch) {
-        conditions.push(keywordMatch);
-      }
-    }
-
-    const where = and(...conditions);
-
-    // 2. 総件数の取得
-    const countResult = await db
-      .select({ val: count() })
-      .from(schema.works)
-      .innerJoin(schema.workTranslations, eq(schema.works.id, schema.workTranslations.workId))
-      .innerJoin(schema.composers, eq(schema.works.composerId, schema.composers.id))
-      .innerJoin(
-        schema.composerTranslations,
-        eq(schema.composers.id, schema.composerTranslations.composerId),
-      )
-      .where(where!);
-
-    const totalCount = countResult[0]?.val ?? 0;
-
-    // 3. データの取得
-    const orderFn = sort?.direction === 'desc' ? desc : asc;
-    const orderBy = [];
-    if (sort?.field === 'title') {
-      orderBy.push(orderFn(schema.workTranslations.title));
-    } else if (sort?.field === 'compositionYear') {
-      orderBy.push(orderFn(schema.works.compositionYear));
-    } else {
-      orderBy.push(desc(schema.works.createdAt));
-    }
-
-    const rows = await db
-      .select({
-        work: schema.works,
-        translation: schema.workTranslations,
-        composer: {
-          slug: schema.composers.slug,
-          displayName: schema.composerTranslations.displayName,
-        },
-      })
-      .from(schema.works)
-      .innerJoin(schema.workTranslations, eq(schema.works.id, schema.workTranslations.workId))
-      .innerJoin(schema.composers, eq(schema.works.composerId, schema.composers.id))
-      .innerJoin(
-        schema.composerTranslations,
-        eq(schema.composers.id, schema.composerTranslations.composerId),
-      )
-      .where(where!)
-      .orderBy(...orderBy)
-      .limit(limit)
-      .offset(offset);
-
-    return { rows, totalCount };
-  }
 
   /**
    * 検索用IDで作品を取得し、関連する作曲家、翻訳、構成楽曲情報を結合して返します。
