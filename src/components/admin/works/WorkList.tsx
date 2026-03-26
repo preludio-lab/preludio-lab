@@ -23,7 +23,7 @@ export function WorkList({ works, onViewDetail }: WorkListProps) {
     if (onViewDetail) {
       onViewDetail(item);
     } else {
-      router.push(`/${lang}/admin/works/${item.slug}`);
+      router.push(`/${lang}/admin/works/${item.id}`);
     }
   };
 
