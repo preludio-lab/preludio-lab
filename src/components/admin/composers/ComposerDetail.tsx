@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
 import { ComposerEditForm } from './ComposerEditForm';
-import { DimensionBar } from '@/components/ui/admin/DimensionBar';
+import { DimensionBar, DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
 
 import { ComposerDto } from '@/application/composer/dto/composer.dto';
 
@@ -318,16 +318,22 @@ export function ComposerDetail({ composer, relatedWorks }: ComposerDetailProps) 
             )}
 
             {/* 印象次元 */}
-            {composer.impressionDimensions && (
-              <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
-                <SectionHeading>印象次元</SectionHeading>
-                <div className="space-y-1">
-                  {Object.entries(composer.impressionDimensions).map(([key, value]) => (
-                    <DimensionBar key={key} dimensionKey={key} value={value} />
-                  ))}
-                </div>
+            <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
+              <SectionHeading>印象次元</SectionHeading>
+              <div className="space-y-1">
+                {Object.keys(DIMENSION_LABELS).map((key) => (
+                  <DimensionBar
+                    key={key}
+                    dimensionKey={key}
+                    value={
+                      (composer.impressionDimensions as Record<string, number> | undefined)?.[
+                        key
+                      ] ?? 0
+                    }
+                  />
+                ))}
               </div>
-            )}
+            </div>
           </div>
 
           {/* サイドバー領域 (1/3) */}

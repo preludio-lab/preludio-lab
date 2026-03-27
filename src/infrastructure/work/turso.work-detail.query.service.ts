@@ -96,6 +96,7 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
           titleContent: string | null;
           titleNickname: string | null;
           tempoTranslation: string | null;
+          description: string | null;
         }
       >;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,6 +108,7 @@ export class TursoWorkDetailQueryService implements IWorkDetailQueryService {
           titleContent: t.titleContent,
           titleNickname: t.titleNickname,
           tempoTranslation: t.tempoTranslation,
+          description: t.description,
         };
       }
 

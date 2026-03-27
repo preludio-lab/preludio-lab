@@ -30,6 +30,7 @@ const WorkPartTranslationDtoSchema = z
     titleContent: z.string().nullable(),
     titleNickname: z.string().nullable(),
     tempoTranslation: z.string().nullable(),
+    description: z.string().nullable(),
   })
   .strict();
 

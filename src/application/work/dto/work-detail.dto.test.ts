@@ -17,6 +17,7 @@ const createValidPartTranslation = () => ({
   titleContent: 'Allegro con brio',
   titleNickname: null,
   tempoTranslation: null,
+  description: null,
 });
 
 const createValidPart = (overrides = {}) => ({

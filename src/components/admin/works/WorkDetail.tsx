@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
-import { DimensionBar } from '@/components/ui/admin/DimensionBar';
-import type { WorkDetailDto } from '@/application/work/dto/work-detail.dto';
-import type { SupportedLanguage } from '@/application/work/dto/work-detail.dto';
+import { DimensionBar, DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
+import type { WorkDetailDto, SupportedLanguage } from '@/application/work/dto/work-detail.dto';
+import { WorkEditForm } from './WorkEditForm';
 
 // --- Helper Components ---
 
@@ -104,8 +104,6 @@ interface WorkDetailProps {
 
 /**
  * WorkDetail - 作品詳細 (Presentational Component)
- * ComposerDetail.tsx と同様のパターンで実装。
- * 閲覧 / 編集モードの切り替え、多言語連動、WorkPartアコーディオンを提供。
  */
 export function WorkDetail({ work }: WorkDetailProps) {
   const router = useRouter();
@@ -115,6 +113,7 @@ export function WorkDetail({ work }: WorkDetailProps) {
   const targetLang = (searchParams.get('contentLang') || 'ja') as SupportedLanguage;
 
   const [expandedParts, setExpandedParts] = useState<Set<string>>(new Set());
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleBackToList = () => {
     router.push(`/${lang}/admin/works`);
@@ -177,17 +176,16 @@ export function WorkDetail({ work }: WorkDetailProps) {
               <FieldDisplay label="時代 (Era)">{work.era || '未設定'}</FieldDisplay>
               <FieldDisplay label="カタログ番号">{catalogueDisplay}</FieldDisplay>
               <FieldDisplay label="調性">{work.keyTonality || '未設定'}</FieldDisplay>
+              <FieldDisplay label="テンポ">{work.tempoText || '未設定'}</FieldDisplay>
               <FieldDisplay label="作曲年">{work.compositionYear ?? '不明'}</FieldDisplay>
-              <FieldDisplay label="作曲時期">
-                {workTranslation?.compositionPeriod || '未設定'}
-              </FieldDisplay>
               <FieldDisplay label="拍子">
                 {work.tsDisplayString ||
-                  `${work.tsNumerator ?? ''}/${work.tsDenominator ?? ''}`.replace(/^\/$/, '') ||
-                  '未設定'}
+                  (work.tsNumerator && work.tsDenominator
+                    ? `${work.tsNumerator}/${work.tsDenominator}`
+                    : '未設定')}
               </FieldDisplay>
-              <FieldDisplay label="メトロノーム指定">
-                {work.bpm && work.metronomeUnit ? `${work.metronomeUnit}=${work.bpm}` : '未設定'}
+              <FieldDisplay label="BPM">
+                {work.bpm ? `♩ = ${work.bpm} ${work.metronomeUnit || ''}` : '未設定'}
               </FieldDisplay>
               <FieldDisplay label="楽器編成">{work.instrumentation || '未設定'}</FieldDisplay>
               <FieldDisplay label="演奏難易度">
@@ -200,6 +198,18 @@ export function WorkDetail({ work }: WorkDetailProps) {
               </FieldDisplay>
             </dl>
           </div>
+
+          {/* Impression Dimensions */}
+          {work.impressionDimensions && (
+            <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
+              <SectionHeading>印象評価 (Impression)</SectionHeading>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+                {Object.entries(work.impressionDimensions).map(([key, value]) => (
+                  <DimensionBar key={key} dimensionKey={key} value={value} />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Title (i18n) */}
           <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
@@ -218,9 +228,18 @@ export function WorkDetail({ work }: WorkDetailProps) {
               <FieldDisplay label="通称 (Nickname)">
                 {workTranslation?.titleNickname || '-'}
               </FieldDisplay>
-              <FieldDisplay label="別名 (Nicknames)">
-                {workTranslation?.nicknames?.length ? workTranslation.nicknames.join(', ') : '-'}
+              <FieldDisplay label="作曲時期 (Period)">
+                {workTranslation?.compositionPeriod || '-'}
               </FieldDisplay>
+              {workTranslation?.nicknames && workTranslation.nicknames.length > 0 && (
+                <FieldDisplay label="検索用別名" className="sm:col-span-2">
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {workTranslation.nicknames.map((n) => (
+                      <TagBadge key={n}>{n}</TagBadge>
+                    ))}
+                  </div>
+                </FieldDisplay>
+              )}
             </dl>
           </div>
 
@@ -269,34 +288,22 @@ export function WorkDetail({ work }: WorkDetailProps) {
                   <span className="text-admin-text-secondary">未設定</span>
                 )}
               </FieldDisplay>
-              <FieldDisplay label="編成に関する特徴">
-                {Object.keys(work.instrumentationFlags).filter((k) => work.instrumentationFlags[k])
-                  .length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 mt-1">
-                    {Object.entries(work.instrumentationFlags)
-                      .filter(([_, v]) => v)
-                      .map(([k, _]) => (
-                        <TagBadge key={k}>{k}</TagBadge>
-                      ))}
-                  </div>
-                ) : (
-                  <span className="text-admin-text-secondary">未設定</span>
-                )}
+              <FieldDisplay label="編成フラグ">
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {work.instrumentationFlags.isSolo && <TagBadge>独奏 (Solo)</TagBadge>}
+                  {work.instrumentationFlags.isChamber && <TagBadge>室内楽 (Chamber)</TagBadge>}
+                  {work.instrumentationFlags.isOrchestral && (
+                    <TagBadge>管弦楽 (Orchestral)</TagBadge>
+                  )}
+                  {work.instrumentationFlags.hasVocal && <TagBadge>声楽あり (Vocal)</TagBadge>}
+                  {work.instrumentationFlags.hasChorus && <TagBadge>合唱あり (Chorus)</TagBadge>}
+                  {!Object.values(work.instrumentationFlags).some(Boolean) && (
+                    <span className="text-admin-text-secondary italic">なし</span>
+                  )}
+                </div>
               </FieldDisplay>
             </dl>
           </div>
-
-          {/* Impression Dimensions */}
-          {work.impressionDimensions && Object.keys(work.impressionDimensions).length > 0 && (
-            <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
-              <SectionHeading>印象次元 (Impression)</SectionHeading>
-              <div className="space-y-1">
-                {Object.entries(work.impressionDimensions).map(([key, value]) => (
-                  <DimensionBar key={key} dimensionKey={key} value={value} />
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* WorkParts Section */}
           {work.parts.length > 0 && (
@@ -349,30 +356,40 @@ export function WorkDetail({ work }: WorkDetailProps) {
                             <FieldDisplay label="通称">
                               {partTranslation?.titleNickname || '-'}
                             </FieldDisplay>
-                            <FieldDisplay label="別名">
-                              {part.nicknames?.length ? part.nicknames.join(', ') : '-'}
-                            </FieldDisplay>
                             <FieldDisplay label="調性">{part.keyTonality || '-'}</FieldDisplay>
                             <FieldDisplay label="テンポ">{part.tempoText || '-'}</FieldDisplay>
-                            <FieldDisplay label="拍子">
-                              {part.tsDisplayString ||
-                                `${part.tsNumerator ?? ''}/${part.tsDenominator ?? ''}`.replace(
-                                  /^\/$/,
-                                  '',
-                                ) ||
-                                '-'}
-                            </FieldDisplay>
-                            <FieldDisplay label="メトロノーム指定">
-                              {part.bpm && part.metronomeUnit
-                                ? `${part.metronomeUnit}=${part.bpm}`
-                                : '-'}
-                            </FieldDisplay>
                             <FieldDisplay label="テンポ翻訳">
                               {partTranslation?.tempoTranslation || '-'}
                             </FieldDisplay>
                             <FieldDisplay label="標準名称">
                               {part.isNameStandard ? 'はい' : 'いいえ'}
                             </FieldDisplay>
+                            <FieldDisplay label="演奏難易度">
+                              {part.performanceDifficulty ? `${part.performanceDifficulty}/5` : '-'}
+                            </FieldDisplay>
+                            {part.catalogues.length > 0 && (
+                              <FieldDisplay label="カタログ番号">
+                                {part.catalogues
+                                  .map((c) => `${c.prefix ?? ''}${c.number ?? ''}`)
+                                  .join(', ')}
+                              </FieldDisplay>
+                            )}
+
+                            <div className="sm:col-span-2 mt-2 pt-2 border-t border-admin-border/50">
+                              <dt className="text-[10px] font-semibold text-admin-text-secondary uppercase mb-2">
+                                印象次元
+                              </dt>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                                {Object.keys(DIMENSION_LABELS).map((key) => (
+                                  <DimensionBar
+                                    key={key}
+                                    dimensionKey={key}
+                                    value={part.impressionDimensions?.[key] ?? 0}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+
                             {part.genres.length > 0 && (
                               <FieldDisplay label="ジャンル" className="sm:col-span-2">
                                 <div className="flex flex-wrap gap-1 mt-0.5">
@@ -391,26 +408,17 @@ export function WorkDetail({ work }: WorkDetailProps) {
                                 </div>
                               </FieldDisplay>
                             )}
-                            {part.impressionDimensions &&
-                              Object.keys(part.impressionDimensions).length > 0 && (
-                                <div className="sm:col-span-2 mt-2">
-                                  <span className="text-xs font-semibold text-admin-text-secondary uppercase tracking-wider mb-2 block">
-                                    印象次元
-                                  </span>
-                                  <div className="space-y-1 bg-admin-sidebar-bg/50 p-3 rounded-lg border border-admin-border">
-                                    {Object.entries(part.impressionDimensions).map(
-                                      ([key, value]) => (
-                                        <DimensionBar
-                                          key={`${part.id}-${key}`}
-                                          dimensionKey={key}
-                                          value={value}
-                                        />
-                                      ),
-                                    )}
-                                  </div>
-                                </div>
-                              )}
                           </dl>
+                          {partTranslation?.description && (
+                            <div className="mt-4 pt-4 border-t border-admin-border">
+                              <dt className="text-xs font-semibold text-admin-text-secondary uppercase tracking-wider mb-2">
+                                解説
+                              </dt>
+                              <dd className="text-sm text-admin-text-primary leading-relaxed whitespace-pre-wrap">
+                                {partTranslation.description}
+                              </dd>
+                            </div>
+                          )}
                           <div className="mt-3 pt-3 border-t border-admin-border">
                             <span className="text-[11px] font-mono text-admin-text-secondary/60 break-all">
                               ID: {part.id} | Slug: {part.slug}
@@ -495,24 +503,33 @@ export function WorkDetail({ work }: WorkDetailProps) {
             管理画面 / 作品管理 / <span className="text-admin-primary">{displayTitle}</span>
           </nav>
           <h1 className="text-2xl font-bold text-admin-text-primary">
-            {displayTitle}
-            <UntranslatedBadge shown={isUntranslated} />
+            {isEditing ? `作品を編集: ${displayTitle}` : displayTitle}
+            {!isEditing && <UntranslatedBadge shown={isUntranslated} />}
           </h1>
-          <p className="text-sm text-admin-text-secondary mt-0.5">{work.composerName}</p>
-          <p className="text-xs text-admin-text-secondary/70 font-mono mt-1">{work.slug}</p>
+          {!isEditing && (
+            <>
+              <p className="text-sm text-admin-text-secondary mt-0.5">{work.composerName}</p>
+              <p className="text-xs text-admin-text-secondary/70 font-mono mt-1">{work.slug}</p>
+            </>
+          )}
         </div>
-        {/* Edit button placeholder - will be wired to WorkEditForm later */}
         <div className="flex gap-3 pt-1">
-          <button
-            disabled
-            className="inline-flex items-center gap-2 px-4 py-2 bg-admin-primary text-white text-sm font-medium rounded-lg hover:bg-admin-primary-hover disabled:bg-admin-primary-disabled disabled:cursor-not-allowed transition-colors"
-          >
-            編集 (準備中)
-          </button>
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-admin-primary text-white text-sm font-medium rounded-lg hover:bg-admin-primary-hover transition-colors shadow-md shadow-admin-primary/20"
+            >
+              編集
+            </button>
+          )}
         </div>
       </div>
 
-      <Tabs tabs={tabs} />
+      {isEditing ? (
+        <WorkEditForm work={work} onCancel={() => setIsEditing(false)} />
+      ) : (
+        <Tabs tabs={tabs} />
+      )}
     </div>
   );
 }
