@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { Tabs, type TabItem } from '@/components/ui/admin/Tabs';
-import { DimensionBar, DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
+import { DimensionBar, WORK_DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
 import type { WorkDetailDto, SupportedLanguage } from '@/application/work/dto/work-detail.dto';
 import { WorkEditForm } from './WorkEditForm';
 
@@ -204,10 +204,11 @@ export function WorkDetail({ work }: WorkDetailProps) {
             <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
               <SectionHeading>印象評価 (Impression)</SectionHeading>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                {Object.keys(DIMENSION_LABELS).map((key) => (
+                {Object.keys(WORK_DIMENSION_LABELS).map((key) => (
                   <DimensionBar
                     key={key}
                     dimensionKey={key}
+                    labels={WORK_DIMENSION_LABELS}
                     value={work.impressionDimensions?.[key] ?? 0}
                   />
                 ))}
@@ -384,10 +385,11 @@ export function WorkDetail({ work }: WorkDetailProps) {
                                 印象次元
                               </dt>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
-                                {Object.keys(DIMENSION_LABELS).map((key) => (
+                                {Object.keys(WORK_DIMENSION_LABELS).map((key) => (
                                   <DimensionBar
                                     key={key}
                                     dimensionKey={key}
+                                    labels={WORK_DIMENSION_LABELS}
                                     value={part.impressionDimensions?.[key] ?? 0}
                                   />
                                 ))}

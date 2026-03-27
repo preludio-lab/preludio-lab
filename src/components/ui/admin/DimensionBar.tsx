@@ -13,12 +13,33 @@ export const DIMENSION_LABELS: Record<
   theatricality: { label: '演劇性', negativeLabel: '絶対音楽', positiveLabel: '演劇的' },
 };
 
+/** 作品用の印象評価軸ラベル定義 */
+export const WORK_DIMENSION_LABELS: Record<
+  string,
+  { label: string; negativeLabel: string; positiveLabel: string }
+> = {
+  brightness: { label: '明るさ', negativeLabel: '暗鬱・重厚', positiveLabel: '明朗・輝き' },
+  vibrancy: { label: '躍動感', negativeLabel: '静寂・停滞', positiveLabel: '躍動・爆発' },
+  scale: { label: 'スケール', negativeLabel: '親密・個人', positiveLabel: '壮大・宇宙' },
+  depth: { label: '聴きごたえ', negativeLabel: '軽快・BGM', positiveLabel: '深遠・哲学' },
+  drama: { label: 'ドラマ性', negativeLabel: '純音楽・抽象', positiveLabel: '劇的・物語' },
+  popularity: { label: '知名度', negativeLabel: '通好み・ニッチ', positiveLabel: '世界的定番' },
+};
+
 /**
  * DimensionBar
  * -10 から +10 の値を中央基準のバーチャートで表示する
  */
-export function DimensionBar({ dimensionKey, value }: { dimensionKey: string; value: number }) {
-  const config = DIMENSION_LABELS[dimensionKey];
+export function DimensionBar({
+  dimensionKey,
+  value,
+  labels = DIMENSION_LABELS,
+}: {
+  dimensionKey: string;
+  value: number;
+  labels?: typeof DIMENSION_LABELS;
+}) {
+  const config = labels[dimensionKey];
   if (!config) return null;
 
   return (

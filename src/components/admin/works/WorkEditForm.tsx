@@ -8,7 +8,7 @@ import {
 } from '@/application/work/dto/work-detail.dto';
 import { updateWorkAction } from '@/actions/work.action';
 import { ComposerTypeahead } from '../shared/ComposerTypeahead';
-import { DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
+import { WORK_DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
 
 interface WorkEditFormProps {
   work: WorkDetailDto;
@@ -50,12 +50,12 @@ interface WorkFormState {
   };
   catalogues: Array<{ prefix: string; number: string; sortOrder: number; isPrimary: boolean }>;
   impressionDimensions: {
-    innovation: number;
-    emotionality: number;
-    nationalism: number;
+    brightness: number;
+    vibrancy: number;
     scale: number;
-    complexity: number;
-    theatricality: number;
+    depth: number;
+    drama: number;
+    popularity: number;
   };
   translations: Record<
     SupportedLanguage,
@@ -78,6 +78,14 @@ interface WorkFormState {
     performanceDifficulty: number;
     genres: string[];
     instruments: string[];
+    impressionDimensions: {
+      brightness: number;
+      vibrancy: number;
+      scale: number;
+      depth: number;
+      drama: number;
+      popularity: number;
+    };
     translations: Record<
       SupportedLanguage,
       {
@@ -124,12 +132,12 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
       isPrimary: !!c.isPrimary,
     })),
     impressionDimensions: {
-      innovation: work.impressionDimensions?.innovation || 0,
-      emotionality: work.impressionDimensions?.emotionality || 0,
-      nationalism: work.impressionDimensions?.nationalism || 0,
+      brightness: work.impressionDimensions?.brightness || 0,
+      vibrancy: work.impressionDimensions?.vibrancy || 0,
       scale: work.impressionDimensions?.scale || 0,
-      complexity: work.impressionDimensions?.complexity || 0,
-      theatricality: work.impressionDimensions?.theatricality || 0,
+      depth: work.impressionDimensions?.depth || 0,
+      drama: work.impressionDimensions?.drama || 0,
+      popularity: work.impressionDimensions?.popularity || 0,
     },
     translations: SUPPORTED_LANGUAGES.reduce(
       (acc, lang) => {
@@ -156,6 +164,14 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
       performanceDifficulty: p.performanceDifficulty || 3,
       genres: p.genres,
       instruments: p.instruments,
+      impressionDimensions: {
+        brightness: p.impressionDimensions?.brightness || 0,
+        vibrancy: p.impressionDimensions?.vibrancy || 0,
+        scale: p.impressionDimensions?.scale || 0,
+        depth: p.impressionDimensions?.depth || 0,
+        drama: p.impressionDimensions?.drama || 0,
+        popularity: p.impressionDimensions?.popularity || 0,
+      },
       translations: SUPPORTED_LANGUAGES.reduce(
         (acc, lang) => {
           const t = p.translations[lang];
@@ -259,6 +275,14 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
       performanceDifficulty: 3,
       genres: [],
       instruments: [],
+      impressionDimensions: {
+        brightness: 0,
+        vibrancy: 0,
+        scale: 0,
+        depth: 0,
+        drama: 0,
+        popularity: 0,
+      },
       translations: SUPPORTED_LANGUAGES.reduce(
         (acc, lang) => {
           acc[lang] = {
@@ -502,36 +526,43 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
             印象評価 (-10 〜 +10)
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-            {Object.keys(DIMENSION_LABELS).map((key) => (
-              <div key={key}>
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[11px] text-admin-text-primary capitalize">{key}</span>
-                  <span className="text-[11px] font-mono text-admin-primary font-bold">
-                    {formData.impressionDimensions[
-                      key as keyof typeof formData.impressionDimensions
-                    ] > 0
-                      ? '+'
-                      : ''}
-                    {
+            {Object.keys(WORK_DIMENSION_LABELS).map((key) => {
+              const config = WORK_DIMENSION_LABELS[key];
+              return (
+                <div key={key}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] text-admin-text-primary">
+                      {config.label} ({key})
+                    </span>
+                    <span className="text-[11px] font-mono text-admin-primary font-bold">
+                      {formData.impressionDimensions[
+                        key as keyof typeof formData.impressionDimensions
+                      ] > 0
+                        ? '+'
+                        : ''}
+                      {
+                        formData.impressionDimensions[
+                          key as keyof typeof formData.impressionDimensions
+                        ]
+                      }
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="-10"
+                    max="10"
+                    step="1"
+                    value={
                       formData.impressionDimensions[
                         key as keyof typeof formData.impressionDimensions
                       ]
                     }
-                  </span>
+                    onChange={(e) => handleDimensionChange(key, parseInt(e.target.value, 10))}
+                    className="w-full accent-admin-primary h-1.5"
+                  />
                 </div>
-                <input
-                  type="range"
-                  min="-10"
-                  max="10"
-                  step="1"
-                  value={
-                    formData.impressionDimensions[key as keyof typeof formData.impressionDimensions]
-                  }
-                  onChange={(e) => handleDimensionChange(key, parseInt(e.target.value, 10))}
-                  className="w-full accent-admin-primary h-1.5"
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -802,6 +833,61 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div className="md:col-span-3 pt-2 border-t border-admin-border/50">
+                  <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-3">
+                    楽章の印象評価 (-10 〜 +10)
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3">
+                    {Object.keys(WORK_DIMENSION_LABELS).map((key) => {
+                      const config = WORK_DIMENSION_LABELS[key];
+                      return (
+                        <div key={key}>
+                          <div className="flex justify-between items-center mb-0.5">
+                            <span className="text-[10px] text-admin-text-primary">
+                              {config.label}
+                            </span>
+                            <span className="text-[10px] font-mono text-admin-primary">
+                              {part.impressionDimensions[
+                                key as keyof typeof part.impressionDimensions
+                              ] > 0
+                                ? '+'
+                                : ''}
+                              {
+                                part.impressionDimensions[
+                                  key as keyof typeof part.impressionDimensions
+                                ]
+                              }
+                            </span>
+                          </div>
+                          <input
+                            type="range"
+                            min="-10"
+                            max="10"
+                            step="1"
+                            value={
+                              part.impressionDimensions[
+                                key as keyof typeof part.impressionDimensions
+                              ]
+                            }
+                            onChange={(e) => {
+                              const nextParts = [...formData.parts];
+                              nextParts[index] = {
+                                ...nextParts[index],
+                                impressionDimensions: {
+                                  ...nextParts[index].impressionDimensions,
+                                  [key]: parseInt(e.target.value, 10),
+                                },
+                              };
+                              setFormData((prev) => ({ ...prev, parts: nextParts }));
+                            }}
+                            className="w-full accent-admin-primary h-1"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-1">
