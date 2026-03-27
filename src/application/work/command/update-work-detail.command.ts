@@ -26,6 +26,7 @@ const WorkPartInputSchema = z.object({
   tempoText: z.string().nullable().optional(),
   genres: z.array(z.string()).default([]),
   instruments: z.array(z.string()).default([]),
+  impressionDimensions: z.record(z.string(), z.number()).nullable().optional(),
   performanceDifficulty: z.number().min(1).max(5).nullable().optional(),
   translations: z.record(SupportedLanguageSchema, WorkPartTranslationInputSchema),
 });
@@ -77,6 +78,8 @@ export const UpdateWorkDetailCommandSchema = z.object({
   genres: z.array(z.string()).default([]),
   tags: z.array(z.string()).default([]),
   instruments: z.array(z.string()).default([]),
+  instrumentationFlags: z.record(z.string(), z.boolean()).optional(),
+  impressionDimensions: z.record(z.string(), z.number()).nullable().optional(),
 
   // Multilingual
   translations: z.record(SupportedLanguageSchema, WorkTranslationInputSchema),

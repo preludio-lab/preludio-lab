@@ -94,7 +94,8 @@ export async function updateWorkAction(
         catalogues: command.catalogues,
         era: command.era ?? null,
         instrumentation: command.instrumentation ?? null,
-        instrumentationFlags: existingRows!.work.instrumentationFlags,
+        instrumentationFlags:
+          command.instrumentationFlags ?? existingRows!.work.instrumentationFlags,
         performanceDifficulty: command.performanceDifficulty ?? null,
         keyTonality: command.keyTonality ?? null,
         tempoText: command.tempoText ?? null,
@@ -103,7 +104,8 @@ export async function updateWorkAction(
         tsDisplayString: existingRows!.work.tsDisplayString,
         bpm: existingRows!.work.bpm,
         metronomeUnit: existingRows!.work.metronomeUnit,
-        impressionDimensions: existingRows!.work.impressionDimensions,
+        impressionDimensions:
+          command.impressionDimensions ?? existingRows!.work.impressionDimensions,
         genres: command.genres,
         tags: command.tags,
         instruments: command.instruments,
@@ -148,7 +150,7 @@ export async function updateWorkAction(
           tsDisplayString: null,
           bpm: null,
           metronomeUnit: null,
-          impressionDimensions: null,
+          impressionDimensions: p.impressionDimensions ?? null,
           genres: p.genres,
           instruments: p.instruments,
           nicknames: [] as string[],
