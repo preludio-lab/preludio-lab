@@ -204,8 +204,12 @@ export function WorkDetail({ work }: WorkDetailProps) {
             <div className="bg-admin-card-bg rounded-lg border border-admin-border p-6">
               <SectionHeading>印象評価 (Impression)</SectionHeading>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                {Object.entries(work.impressionDimensions).map(([key, value]) => (
-                  <DimensionBar key={key} dimensionKey={key} value={value} />
+                {Object.keys(DIMENSION_LABELS).map((key) => (
+                  <DimensionBar
+                    key={key}
+                    dimensionKey={key}
+                    value={work.impressionDimensions?.[key] ?? 0}
+                  />
                 ))}
               </div>
             </div>
