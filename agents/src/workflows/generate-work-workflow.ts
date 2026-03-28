@@ -405,6 +405,14 @@ export class GenerateWorkWorkflow {
       setMultilingual(result, 'description', trans.description, lang);
     }
 
+    // Metadata
+    if (trans.compositionPeriod) {
+      setMultilingual(result, 'compositionPeriod', trans.compositionPeriod, lang);
+    }
+    if (trans.tempoTranslation) {
+      setMultilingual(result, 'tempoTranslation', trans.tempoTranslation, lang);
+    }
+
     return result;
   }
 }

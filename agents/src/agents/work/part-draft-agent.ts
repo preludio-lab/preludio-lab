@@ -51,8 +51,8 @@ export class WorkPartDraftAgent {
     const prompt = `以下の楽曲に含まれる楽章・曲目の詳細データを生成してください。
 
 【親楽曲情報】
-作曲家: ${workData.titleComponents.prefix ?? ''} (slug: ${workData.composerSlug})
-作品名: ${workData.titleComponents.title} (slug: ${workData.slug})
+作曲家: ${workData.composerSlug}
+作品名: ${[workData.titleComponents.prefix?.ja, workData.titleComponents.content?.ja].filter(Boolean).join(' ')} (slug: ${workData.slug})
 編成/時代: ${workData.instrumentation ?? ''} / ${workData.era}
 全体の印象: ${JSON.stringify(workData.impressionDimensions)}
 

@@ -1,0 +1,114 @@
+{
+  "slug": "polonaise-no-6",
+  "composerSlug": "chopin",
+  "titleComponents": {
+    "prefix": {
+      "en": "Polonaise",
+      "ja": "ポロネーズ",
+      "es": "Polonesa",
+      "de": "Polonaise",
+      "fr": "Polonaise",
+      "it": "Polacca",
+      "zh": "波兰舞曲"
+    },
+    "content": {
+      "en": "No. 6 in A-flat major, Op. 53 'Heroic'",
+      "ja": "第6番 変イ長調 作品53「英雄」",
+      "es": "n.º 6 en la bemol mayor, Op. 53 «Heroica»",
+      "de": "Nr. 6 As-Dur, op. 53 „Heroische“",
+      "fr": "n° 6 en la bémol majeur, op. 53",
+      "it": "n. 6 in La bemolle maggiore, op. 53",
+      "zh": "第6号 降A大调 作品53"
+    },
+    "nickname": {
+      "en": "Heroic",
+      "ja": "英雄",
+      "es": "Heroica",
+      "de": "Heroische",
+      "fr": "« Héroïque »",
+      "it": "Eroica",
+      "zh": "英雄"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "53",
+      "isPrimary": true
+    }
+  ],
+  "era": "early-romantic",
+  "compositionYear": 1842,
+  "compositionPeriod": {
+    "en": "early-romantic",
+    "ja": "1842年",
+    "es": "Primer Romanticismo",
+    "de": "Frühromantik",
+    "fr": "Début de la période romantique",
+    "it": "Primo romanticismo",
+    "zh": "浪漫主义早期"
+  },
+  "instrumentation": "piano",
+  "instruments": ["piano"],
+  "instrumentationFlags": {
+    "isSolo": true,
+    "isChamber": false,
+    "isOrchestral": false,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "performanceDifficulty": 5,
+  "impressionDimensions": {
+    "innovation": 6,
+    "emotionality": 9,
+    "nationalism": 8,
+    "scale": 7,
+    "complexity": 7,
+    "theatricality": 8
+  },
+  "nicknames": ["Heroic"],
+  "description": {
+    "en": "One of Chopin's most renowned and beloved polonaises. The brilliant A-flat major tonality and the intense sequence of left-hand octaves in the middle section embody both fierce patriotism and virtuoso brilliance, living up to the 'Heroic' title.",
+    "ja": "ショパンのポロネーズの中でも圧倒的な知名度と人気を誇る傑作。華麗な変イ長調の響きと、中間部での左手の凄まじいオクターブの連続は、まさに「英雄」の名の通り力強い愛国心とヴィルトゥオーゾ的な輝きを放っています。",
+    "es": "Una de las obras más famosas y aclamadas de Chopin. Su brillante sonoridad en la bemol mayor y la exigente serie de octavas en la mano izquierda durante la sección central evocan un poderoso patriotismo y el virtuosismo que justifican plenamente su sobrenombre de «Heroica».",
+    "de": "Eines der bekanntesten und beliebtesten Werke unter Chopins Polonaisen. Der brillante Klang in As-Dur und die gewaltigen Oktavenfolgen in der linken Hand im Mittelteil strahlen heldenhaften Patriotismus und virtuose Brillanz aus.",
+    "fr": "L'une des œuvres les plus célèbres et les plus appréciées de Chopin. Avec sa sonorité brillante en la bémol majeur et ses octaves redoutables à la main gauche dans l'épisode central, cette pièce incarne, par sa puissance et son éclat virtuose, le patriotisme ardent évoqué par son titre.",
+    "it": "Uno dei capolavori più celebri e amati di Chopin. La brillante tonalità di La bemolle maggiore e la serie virtuosistica di ottave alla mano sinistra nella sezione centrale evocano, come suggerisce il titolo, un potente spirito patriottico e un eccezionale vigore virtuosistico.",
+    "zh": "萧邦波兰舞曲中最具代表性的杰作。华丽的降A大调旋律，与中段左手激昂的连续八度，恰如其名地展现了英雄般的爱国豪情与精湛的演奏技巧。"
+  },
+  "tags": ["virtuoso", "passionate", "dramatic"],
+  "basedOn": {
+    "originalWorkSlug": "polonaise-no-6",
+    "arrangeType": "transcription"
+  },
+  "genres": ["keyboard-solo"],
+  "key": "a-flat-major",
+  "tempo": "Maestoso",
+  "tempoTranslation": {
+    "en": "Maestoso",
+    "ja": "堂々と",
+    "es": "Maestoso",
+    "de": "Maestoso",
+    "fr": "Maestoso",
+    "it": "Maestoso",
+    "zh": "庄严地"
+  },
+  "timeSignature": {
+    "numerator": 3,
+    "denominator": 4
+  },
+  "bpm": 108,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gemini-2.5-flash-lite",
+    "generatedAt": "2026-03-26T15:52:30.243Z",
+    "promptVersion": "v1.0",
+    "confidenceScore": 0.98,
+    "sourceRefs": [
+      "https://en.chopin.nifc.pl/chopin/composition/detail/id/150",
+      "https://www.oxfordmusiconline.com"
+    ],
+    "executionId": "exec-chopin-pol-06"
+  }
+}

@@ -149,6 +149,16 @@ export const WorkTranslationOutputSchema = z.object({
     .string()
     .optional()
     .describe('純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不能な場合は省略。'),
+  compositionPeriod: z
+    .string()
+    .optional()
+    .describe('純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。'),
+  tempoTranslation: z
+    .string()
+    .optional()
+    .describe(
+      '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。イタリア語等の速度記号の訳語。翻訳不要な場合は省略。',
+    ),
 });
 
 export type WorkTranslationOutput = z.infer<typeof WorkTranslationOutputSchema>;
