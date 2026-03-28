@@ -2,6 +2,7 @@ import { MusicalEra } from './musical-era';
 import { MusicalGenre } from './musical-genre';
 import { MusicalInstrument } from './musical-instrument';
 import { MusicalKey } from '../work/musical-key';
+import { WorkPartType } from '../work/work-part.metadata';
 
 /**
  * 時代 (MusicalEra) のラベル定義
@@ -326,4 +327,19 @@ export const MUSICAL_INSTRUMENT_LABELS: Record<MusicalInstrument, string> = {
   // Others
   [MusicalInstrument.BASSO_CONTINUO]: '通奏低音 (Basso Continuo)',
   [MusicalInstrument.ELECTRONICS]: '電子音響 (Electronics)',
+};
+
+/**
+ * 楽章タイプ (WorkPartType) のラベル定義
+ */
+export const WORK_PART_TYPE_LABELS: Record<WorkPartType, string> = {
+  movement: '楽章 (Movement)',
+  number: '番号 (Number)',
+  act: '幕 (Act)',
+  scene: '場 (Scene)',
+  variation: '変奏 (Variation)',
+  section: 'セクション (Section)',
+  part: '部 (Part)',
+  interlude: '間奏曲 (Interlude)',
+  supplement: '付録/補遺 (Supplement)',
 };

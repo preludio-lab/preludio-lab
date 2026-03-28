@@ -13,24 +13,13 @@ import { MusicalKeySelect } from './fields/MusicalKeySelect';
 import { MusicalEraSelect } from './fields/MusicalEraSelect';
 import { MusicalGenreMultiSelect } from './fields/MusicalGenreMultiSelect';
 import { MusicalInstrumentMultiSelect } from './fields/MusicalInstrumentMultiSelect';
+import { WorkPartTypeSelect } from './fields/WorkPartTypeSelect';
 
 interface WorkEditFormProps {
   work: WorkDetailDto;
   onCancel: () => void;
   onSuccess?: () => void;
 }
-
-const PART_TYPE_OPTIONS = [
-  { value: 'movement', label: '楽章' },
-  { value: 'number', label: '番号' },
-  { value: 'act', label: '幕' },
-  { value: 'scene', label: '場' },
-  { value: 'variation', label: '変奏' },
-  { value: 'section', label: 'セクション' },
-  { value: 'part', label: '部' },
-  { value: 'interlude', label: '間奏曲' },
-  { value: 'supplement', label: '付録' },
-];
 
 interface WorkFormState {
   composerId: string;
@@ -775,22 +764,10 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
                     className="w-full bg-admin-card-bg border border-admin-border rounded px-2 py-1.5 text-sm font-mono"
                   />
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-1">
-                    種別
-                  </label>
-                  <select
-                    value={part.type}
-                    onChange={(e) => handlePartChange(index, 'type', e.target.value)}
-                    className="w-full bg-admin-card-bg border border-admin-border rounded px-2 py-1.5 text-sm"
-                  >
-                    {PART_TYPE_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <WorkPartTypeSelect
+                  value={part.type}
+                  onChange={(val) => handlePartChange(index, 'type', val)}
+                />
 
                 <div className="md:col-span-3 pt-2 border-t border-admin-border/50">
                   <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-3">
