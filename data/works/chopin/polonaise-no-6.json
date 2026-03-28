@@ -12,11 +12,11 @@
       "zh": "波兰舞曲"
     },
     "content": {
-      "en": "No. 6 in A-flat major, Op. 53 'Heroic'",
+      "en": "No. 6 in A-flat major, Op. 53",
       "ja": "第6番 変イ長調 作品53「英雄」",
-      "es": "n.º 6 en la bemol mayor, Op. 53 «Heroica»",
-      "de": "Nr. 6 As-Dur, op. 53 „Heroische“",
-      "fr": "n° 6 en la bémol majeur, op. 53",
+      "es": "n.º 6 en la bemol mayor, op. 53 'Heroica'",
+      "de": "Nr. 6 As-Dur, op. 53",
+      "fr": "nº 6 en la bémol majeur, op. 53 « Héroïque »",
       "it": "n. 6 in La bemolle maggiore, op. 53",
       "zh": "第6号 降A大调 作品53"
     },
@@ -25,7 +25,7 @@
       "ja": "英雄",
       "es": "Heroica",
       "de": "Heroische",
-      "fr": "« Héroïque »",
+      "fr": "Héroïque",
       "it": "Eroica",
       "zh": "英雄"
     }
@@ -40,12 +40,12 @@
   "era": "early-romantic",
   "compositionYear": 1842,
   "compositionPeriod": {
-    "en": "early-romantic",
+    "en": "Early Romantic",
     "ja": "1842年",
-    "es": "Primer Romanticismo",
+    "es": "Romanticismo temprano",
     "de": "Frühromantik",
-    "fr": "Début de la période romantique",
-    "it": "Primo romanticismo",
+    "fr": "Début du romantisme",
+    "it": "Primo Romanticismo",
     "zh": "浪漫主义早期"
   },
   "instrumentation": "piano",
@@ -68,27 +68,27 @@
   },
   "nicknames": ["Heroic"],
   "description": {
-    "en": "One of Chopin's most renowned and beloved polonaises. The brilliant A-flat major tonality and the intense sequence of left-hand octaves in the middle section embody both fierce patriotism and virtuoso brilliance, living up to the 'Heroic' title.",
-    "ja": "ショパンのポロネーズの中でも圧倒的な知名度と人気を誇る傑作。華麗な変イ長調の響きと、中間部での左手の凄まじいオクターブの連続は、まさに「英雄」の名の通り力強い愛国心とヴィルトゥオーゾ的な輝きを放っています。",
-    "es": "Una de las obras más famosas y aclamadas de Chopin. Su brillante sonoridad en la bemol mayor y la exigente serie de octavas en la mano izquierda durante la sección central evocan un poderoso patriotismo y el virtuosismo que justifican plenamente su sobrenombre de «Heroica».",
-    "de": "Eines der bekanntesten und beliebtesten Werke unter Chopins Polonaisen. Der brillante Klang in As-Dur und die gewaltigen Oktavenfolgen in der linken Hand im Mittelteil strahlen heldenhaften Patriotismus und virtuose Brillanz aus.",
-    "fr": "L'une des œuvres les plus célèbres et les plus appréciées de Chopin. Avec sa sonorité brillante en la bémol majeur et ses octaves redoutables à la main gauche dans l'épisode central, cette pièce incarne, par sa puissance et son éclat virtuose, le patriotisme ardent évoqué par son titre.",
-    "it": "Uno dei capolavori più celebri e amati di Chopin. La brillante tonalità di La bemolle maggiore e la serie virtuosistica di ottave alla mano sinistra nella sezione centrale evocano, come suggerisce il titolo, un potente spirito patriottico e un eccezionale vigore virtuosistico.",
-    "zh": "萧邦波兰舞曲中最具代表性的杰作。华丽的降A大调旋律，与中段左手激昂的连续八度，恰如其名地展现了英雄般的爱国豪情与精湛的演奏技巧。"
+    "en": "One of the pinnacles of Chopin's solo piano repertoire. This masterpiece projects the pride of his native Poland through powerful rhythms and brilliant A-flat major melodies, demanding virtuosity to match its 'Heroic' subtitle and grand scale.",
+    "ja": "ショパンのピアノ独奏曲の頂点に立つ傑作の一つ。祖国ポーランドの誇りを投影した力強いリズムと、変イ長調の華麗な旋律が融合し、ピアニストの卓越した技巧を要求する「英雄」の名に相応しい壮大なスケールで描かれています。",
+    "es": "Una de las obras maestras para piano de Chopin. Combina ritmos enérgicos que evocan el orgullo polaco con melodías brillantes en la bemol mayor, exigiendo una técnica virtuosa y ofreciendo una escala grandiosa digna de su sobrenombre.",
+    "de": "Eines der herausragenden Meisterwerke für Klavier von Chopin. Das kraftvolle, den polnischen Nationalstolz widerspiegelnde Rhythmusgefühl verbindet sich mit der brillanten Melodik in As-Dur und stellt höchste Anforderungen an die pianistische Virtuosität; ein Werk von monumentaler Größe, das seinem Beinamen „Heroische“ vollauf gerecht wird.",
+    "fr": "L'un des chefs-d'œuvre les plus aboutis pour piano seul de Chopin. Alliant un rythme puissant imprégné de la fierté polonaise à une mélodie brillante en la bémol majeur, cette pièce exige une virtuosité exceptionnelle et déploie une envergure épique à la hauteur de son surnom.",
+    "it": "Uno dei capolavori pianistici di Chopin, simbolo di virtuosismo e fierezza. Con i suoi ritmi incalzanti e la grandiosa melodia in La bemolle maggiore, evoca lo spirito patriottico polacco, richiedendo al pianista una tecnica magistrale e una notevole potenza espressiva.",
+    "zh": "肖邦钢琴独奏曲中的巅峰杰作之一。作品投射出波兰民族的自豪感，强有力的节奏与降A大调的华丽旋律交相辉映。这部作品对钢琴家的卓越技巧提出了极高要求，以“英雄”之名呈现出宏伟壮阔的艺术境界。"
   },
-  "tags": ["virtuoso", "passionate", "dramatic"],
+  "tags": ["virtuoso", "passionate", "dramatic", "majestic", "nostalgic"],
   "basedOn": {
     "originalWorkSlug": "polonaise-no-6",
     "arrangeType": "transcription"
   },
-  "genres": ["keyboard-solo"],
+  "genres": ["keyboard-solo", "variations"],
   "key": "a-flat-major",
   "tempo": "Maestoso",
   "tempoTranslation": {
     "en": "Maestoso",
     "ja": "堂々と",
     "es": "Maestoso",
-    "de": "Maestoso",
+    "de": "maestoso",
     "fr": "Maestoso",
     "it": "Maestoso",
     "zh": "庄严地"
@@ -103,12 +103,9 @@
   "_generatorMeta": {
     "model": "gemini-2.5-flash-lite",
     "generatedAt": "2026-03-26T15:52:30.243Z",
-    "promptVersion": "v1.0",
-    "confidenceScore": 0.98,
-    "sourceRefs": [
-      "https://en.chopin.nifc.pl/chopin/composition/detail/id/150",
-      "https://www.oxfordmusiconline.com"
-    ],
-    "executionId": "exec-chopin-pol-06"
+    "promptVersion": "1.0",
+    "confidenceScore": 1,
+    "sourceRefs": ["https://www.chopin.org", "https://imslp.org"],
+    "executionId": "exec-9988776655"
   }
 }

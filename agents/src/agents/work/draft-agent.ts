@@ -13,6 +13,7 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
    - 必ず **\`{"ja": "..."}\` というオブジェクト形式** で出力してください。
    - **ドラフト生成段階では日本語 (ja) のみを出力してください。** \`en\`, \`de\`, \`fr\` などの他言語フィールドは絶対に出力しないでください。
    - 万が一、指示に従えず文字列（"..."）を出力する場合でも、**内容は必ず日本語（ja）** としてください。
+   - **言語ロック**: 情報源や検索結果が英語であっても、必ず日本語に翻訳・翻案して格納してください。
 4. **不要なフィールドの省略 (厳格・警告)**:
    - 値がない、不明、あるいは適用されないフィールドは、絶対に **空文字 ("")、空配列 ([])、あるいは "none" などの文字列を出力しないでください。**
    - **編曲作品でない場合 (原曲の場合)**: \`basedOn\` フィールドは捏造せず、必ず **null** を出力してください。
@@ -21,11 +22,14 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 5. **楽曲(Work)と楽章(WorkPart)の役割分離 (厳格)**:
    - 交響曲、協奏曲、ソナタなどの多楽章形式の作品では、特定の楽章の情報はWorkレベルに含めないでください。
    - **Workレベルで情報を捏造してはいけないもの**: \`tempo\`, \`bpm\`, \`timeSignature\`, \`tempoTranslation\`, \`metronomeUnit\`。これらはWorkPart（楽章）のデータであるため、Workレベルでは原則として **null** を出力してください。
-6. **タイトルの構成とニックネーム**:
-   - \`titleComponents\` には \`prefix\`, \`content\`, \`nickname\` のみを含めます。\`title\` フィールドは含めないでください。
-   - **ニックネームの定義**: 『英雄』や『悲愴』のような、作品に定着した独自の固有名称のみを指します。
-   - **ニックネームではないもの (出力禁止)**: 調性（「ニ短調」）、作品番号（「K. 466」「Op. 13」）、形式名（「ピアノ協奏曲第20番」）。これらは \`prefix\`, \`content\`, \`catalogues\` に記述すべきであり、\`nickname\` に含めてはいけません。
-   - 作品が非常に有名な愛称（例: 「運命」）を持つ場合のみ \`nickname\` を出力し、それ以外は \`null\` にしてください。調性や楽曲形式をここに含めてはいけません。
+6. **タイトルの構成と正規化 (重要)**:
+   - \`titleComponents\` には \`prefix\`, \`content\`, \`nickname\` のみを含めます。
+   - **UI整合性**: UI側で \`content\` と \`nickname\` を自動的に結合して表示するため（例：タイトル (ニックネーム)）、情報の重複を厳禁とします。
+   - **ニックネームの分離**: ニックネーム（英雄、運命等）は絶対に \`content\` に含めず、\`nickname\` フィールドのみに出力してください。
+   - **翻訳ルール**: 「No. 6」→「第6番」、「in A-flat major」→「変イ長調」のように、音楽用語を適切に日本語訳してください。
+   - **正規化の例**:
+      - **Bad**: \`prefix: { "ja": "Polonaise" }, content: { "ja": "No. 6 in A-flat major, Op. 53 'Heroic'" }, nickname: { "ja": "Heroic" }\`
+      - **Good**: \`prefix: { "ja": "ポロネーズ" }, content: { "ja": "第6番 変イ長調 作品53" }, nickname: { "ja": "英雄" }\`
    - 作品番号（カタログ番号）のプレフィックスに複数の選択肢がある場合（例: k と kv, op と op.）、プロジェクト標準の短い表記（例: k, op）を常に優先してください。
    - 楽曲形式(\`genres\`)は、\`taxonomy.yaml\` の定義に基づいて、多角的に付与してください（例: ["piano-concerto", "sonata-form", "rondo"]）。単なる形式（例: "ternary-form"）のみを出力して終わらせず、必ず実際の楽曲ジャンル（例: "polonaise", "waltz", "symphony"）も含めてください。
    - 時代区分(\`era\`)は作曲年に基づいて厳格に判定してください（例: 古典派 classical=1730-1820, 前期ロマン派 early-romantic=1815-1850, 中期ロマン派 mid-romantic=1850-1890等）。特にショパンやシューベルト等は「前期ロマン派 (early-romantic)」に分類されます。
@@ -83,7 +87,7 @@ export class WorkDraftAgent {
 - \`description\`: { "ja": "解説文" }
 - \`compositionPeriod\`: { "ja": "作曲時期" }
 - \`titleComponents\`: 各子要素（\`prefix\`, \`content\`, \`nickname\`）を個別に多言語オブジェクトとしてください。
-  例: \`"prefix": { "ja": "交響曲第5番" }\`
+  例: \`"prefix": { "ja": "交響曲第3番" }\`
 
 # 参考：正しい出力形式 (One-shot Example)
 \`\`\`json
@@ -106,7 +110,7 @@ export class WorkDraftAgent {
   "compositionPeriod": { "ja": "1803年-1804年" },
   "genres": ["symphony"],
   "catalogues": [
-    { "prefix": "op", "number": "55", "isPrimary": true }
+    { "prefix": "op", "number": "55", "isPrimary: true }
   ],
   "instruments": ["flute", "oboe", "clarinet", "bassoon", "horn", "trumpet", "timpani", "violin", "viola", "cello", "double-bass"],
   "instrumentationFlags": {

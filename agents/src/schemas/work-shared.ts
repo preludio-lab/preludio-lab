@@ -60,19 +60,19 @@ const TAGS = Object.values(MusicalTag) as [string, ...string[]];
 export const TagIdDraftSchema = z.enum(TAGS);
 
 /**
- * Title Components Draft Schema
+ * タイトル構成ドラフトスキーマ
  */
 export const TitleComponentsDraftSchema = z.object({
   prefix: MultilingualDraftSchema.optional().describe(
-    '体系的識別子（ジャンル名 + 番号）。例: {"ja": "交響曲第5番"}, {"ja": "第1楽章"}。',
+    '【日本語固定】体系的識別子（ジャンル名）。「Polonaise」ではなく「ポロネーズ」、「Symphony」ではなく「交響曲」のように必ず日本語で出力してください。',
   ),
   content: MultilingualDraftSchema.optional().describe(
-    '固有タイトル、または識別子を補完する調性や速度記号。例: {"ja": "春の祭典"}, {"ja": "ハ短調"}。',
+    '【日本語固定】番号、調性、作品番号。★重要：ニックネーム（英雄、運命等）は絶対にここには含めず、nicknameフィールドに分離してください。また、「No. 6」は「第6番」、「in A-flat major」は「変イ長調」のように日本語に翻訳して出力してください。',
   ),
   nickname: MultilingualDraftSchema.nullable()
     .optional()
     .describe(
-      '一般的に親しまれている愛称・通称。例: {"ja": "運命"}, {"ja": "月光"}。「ニ短調」のような調性や、「弦楽四重奏曲」のような形式名をここに入力してはいけません。広く知られた固有の愛称が存在しない場合は、必ず null を出力してください。',
+      '【日本語固定】楽曲の独自の愛称（例：英雄、月光）。UI側でcontentと自動結合して表示するため、contentとの重複は厳禁です。括弧や引用符は含めないでください。広く知られた固有の愛称が存在しない場合は、必ず null を出力してください。',
     ),
 });
 
@@ -218,12 +218,13 @@ export const InstrumentationFlagsDraftSchema = z
   .describe('編成の特徴フラグ');
 
 /**
- * Common Metadata Descriptions
+ * 共有メタデータの説明文
  */
 export const CommonDescriptions = {
   era: '時代区分。作曲年に基づいて厳格に判定してください（例: classical=1730-1820, early-romantic=1815-1850, mid-romantic=1850-1890等）。ショパンやメンデルスゾーン等は early-romantic に分類されます。',
   compositionYear: '数値による作曲年。ソートに使用。',
-  compositionPeriod: '「1805年頃」などの作曲時期テキスト。{"ja": "1805年頃"} 形式で出力。',
+  compositionPeriod:
+    '「1805年頃」などの作曲時期テキスト。必ず {"ja": "1805年頃"} の形式で、日本語で出力してください。',
   instrumentation: '楽器編成のテキスト。例: "2.2.2.2 - 4.2.3.0 - tmp - str"。',
   tags: '検索・分類用の自由タグ（最大10個まで）。「情緒(mood)」「利用シーン(situation)」「音楽用語(terminology)」「文化的文脈(heritage)」など異なるカテゴリから、楽曲の特徴を多角的に表すタグを選択してください。【重要】ジャンル・形式のID（polonaise, waltz, nocturne等）は genres フィールドに出力してください。tags にジャンル名を含めるとバリデーションエラーになります。',
   nicknames:
