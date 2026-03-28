@@ -9,6 +9,10 @@ import {
 import { updateWorkAction } from '@/actions/work.action';
 import { ComposerTypeahead } from '../shared/ComposerTypeahead';
 import { WORK_DIMENSION_LABELS } from '@/components/ui/admin/DimensionBar';
+import { MusicalKeySelect } from './fields/MusicalKeySelect';
+import { MusicalEraSelect } from './fields/MusicalEraSelect';
+import { MusicalGenreMultiSelect } from './fields/MusicalGenreMultiSelect';
+import { MusicalInstrumentMultiSelect } from './fields/MusicalInstrumentMultiSelect';
 
 interface WorkEditFormProps {
   work: WorkDetailDto;
@@ -392,17 +396,10 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
               required
             />
           </div>
-          <div>
-            <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
-              時代 (Era)
-            </label>
-            <input
-              type="text"
-              value={formData.era}
-              onChange={(e) => handleBasicChange('era', e.target.value)}
-              className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary sm:text-sm"
-            />
-          </div>
+          <MusicalEraSelect
+            value={formData.era}
+            onChange={(val) => handleBasicChange('era', val)}
+          />
           <div>
             <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
               作曲年
@@ -414,18 +411,10 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
               className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary sm:text-sm"
             />
           </div>
-          <div>
-            <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
-              調性
-            </label>
-            <input
-              type="text"
-              value={formData.keyTonality}
-              onChange={(e) => handleBasicChange('keyTonality', e.target.value)}
-              className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary sm:text-sm"
-              placeholder="e.g. D minor"
-            />
-          </div>
+          <MusicalKeySelect
+            value={formData.keyTonality}
+            onChange={(val) => handleBasicChange('keyTonality', val)}
+          />
           <div>
             <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
               テンポ記号 (原語)
@@ -568,46 +557,14 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
 
         {/* Musical Features & Tags */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-admin-border/50">
-          <div>
-            <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
-              ジャンル (カンマ区切り)
-            </label>
-            <input
-              type="text"
-              value={formData.genres.join(', ')}
-              onChange={(e) =>
-                handleBasicChange(
-                  'genres',
-                  e.target.value
-                    .split(',')
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                )
-              }
-              className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary sm:text-sm"
-              placeholder="e.g. Concerto, Piano"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
-              楽器 (カンマ区切り)
-            </label>
-            <input
-              type="text"
-              value={formData.instruments.join(', ')}
-              onChange={(e) =>
-                handleBasicChange(
-                  'instruments',
-                  e.target.value
-                    .split(',')
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                )
-              }
-              className="w-full bg-admin-sidebar-bg border border-admin-border rounded-md px-3 py-2 text-admin-text-primary focus:outline-none focus:ring-1 focus:ring-admin-primary sm:text-sm"
-              placeholder="e.g. Piano, Orchestra"
-            />
-          </div>
+          <MusicalGenreMultiSelect
+            values={formData.genres}
+            onChange={(vals) => handleBasicChange('genres', vals)}
+          />
+          <MusicalInstrumentMultiSelect
+            values={formData.instruments}
+            onChange={(vals) => handleBasicChange('instruments', vals)}
+          />
           <div className="md:col-span-2">
             <label className="block text-xs font-bold text-admin-text-secondary uppercase mb-1.5">
               タグ (カンマ区切り)
@@ -889,17 +846,10 @@ export function WorkEditForm({ work, onCancel, onSuccess }: WorkEditFormProps) {
                     })}
                   </div>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-1">
-                    調性
-                  </label>
-                  <input
-                    type="text"
-                    value={part.keyTonality}
-                    onChange={(e) => handlePartChange(index, 'keyTonality', e.target.value)}
-                    className="w-full bg-admin-card-bg border border-admin-border rounded px-2 py-1.5 text-sm"
-                  />
-                </div>
+                <MusicalKeySelect
+                  value={part.keyTonality}
+                  onChange={(val) => handlePartChange(index, 'keyTonality', val)}
+                />
                 <div>
                   <label className="block text-[10px] font-bold text-admin-text-secondary uppercase mb-1">
                     テンポ (原語)
