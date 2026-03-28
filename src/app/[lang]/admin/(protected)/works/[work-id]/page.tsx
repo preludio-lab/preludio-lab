@@ -10,10 +10,14 @@ import { notFound } from 'next/navigation';
  */
 export default async function WorkDetailPage({
   params,
+  searchParams,
 }: {
-  params: Promise<{ 'work-id': string }>;
+  params: Promise<{ 'work-id': string; lang: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { 'work-id': workId } = await params;
+  const { 'work-id': workId, lang: _lang } = await params;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const sParams = await searchParams;
 
   const queryService = new TursoWorkDetailQueryService(db);
   const work = await queryService.findById(workId);
