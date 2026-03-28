@@ -19,7 +19,7 @@ export function ComposerList({ composers }: ComposerListProps) {
   const lang = (params?.lang as string) || 'ja';
 
   const handleRowClick = (item: LocalizedComposerDto) => {
-    router.push(`/${lang}/admin/composers/${item.slug}`);
+    router.push(`/${lang}/admin/composers/${item.id}`);
   };
 
   const columns: DataTableColumn<LocalizedComposerDto>[] = [

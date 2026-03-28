@@ -1,6 +1,6 @@
 import React from 'react';
 import { ComposerDetail } from '@/components/admin/composers/ComposerDetail';
-import { GetComposerBySlugUseCase } from '@/application/composer/usecase/get-composer-by-slug.usecase';
+import { GetComposerByIdUseCase } from '@/application/composer/usecase/get-composer-by-id.usecase';
 import { ComposerRepositoryImpl } from '@/infrastructure/composer/composer.repository';
 import { TursoComposerDataSource } from '@/infrastructure/composer/turso.composer.ds';
 import { db } from '@/infrastructure/database/turso.client';
@@ -25,16 +25,16 @@ const MOCK_RELATED_WORKS = [
 export default async function ComposerDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ 'composer-id': string }>;
 }) {
-  const { slug } = await params;
+  const { 'composer-id': composerId } = await params;
 
   try {
     const dataSource = new TursoComposerDataSource(db);
     const repository = new ComposerRepositoryImpl(dataSource);
-    const useCase = new GetComposerBySlugUseCase(repository);
+    const useCase = new GetComposerByIdUseCase(repository);
 
-    const composer = await useCase.execute(slug);
+    const composer = await useCase.execute(composerId);
 
     return (
       <ComposerDetail

@@ -3,20 +3,17 @@ import { ComposerRepository } from '@/domain/composer/composer.repository';
 import { AppError } from '@/domain/shared/app-error';
 
 /**
- * 作曲家詳細取得 ユースケース
+ * 作曲家詳細取得（IDベース） ユースケース
  */
-export class GetComposerBySlugUseCase {
+export class GetComposerByIdUseCase {
   constructor(private readonly composerRepository: ComposerRepository) {}
 
-  async execute(slug: string): Promise<ComposerDto> {
-    const composer = await this.composerRepository.findBySlug(slug);
+  async execute(id: string): Promise<ComposerDto> {
+    const composer = await this.composerRepository.findById(id);
 
     if (!composer) {
-      throw new AppError(`Composer with slug '${slug}' not found`, 'NOT_FOUND', 404);
+      throw new AppError(`Composer with ID '${id}' not found`, 'NOT_FOUND', 404);
     }
-
-    // TODO: 7ヶ国語の翻訳データ、関連作品プレビュー等を取得・マージする処理は
-    // インフラ層の拡張（IComposerDataSource / Mapper）完了後に実装
 
     const rawData: ComposerDtoInput = {
       id: composer.id,
