@@ -5,13 +5,12 @@ import { parseArgs } from 'node:util';
 import { z } from 'zod';
 import { consola } from 'consola';
 import { GeminiModels, type GeminiModelName } from '@/core/models.js';
-import {
-  WorkflowWorkPartMasterSchema,
-  type WorkPartDraft,
-  type WorkPartTranslationOutput,
-} from '@/schemas/work-part.js';
+import { WORKFLOW_RPM_WAIT_MS } from '@/core/constants.js';
+import { WorkflowWorkPartMasterSchema, type WorkPartDraft } from '@/schemas/work-part.js';
 import { type WorkDraft } from '@/schemas/work.js';
 import { fileURLToPath } from 'node:url';
+import { prune, deepMergeTranslation } from '@/shared/utils/json.js';
+import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 
 import { WorkPartDraftAgent } from '@/agents/work/part-draft-agent.js';
 import { WorkRefineAgent } from '@/agents/work/refine-agent.js';
@@ -160,23 +159,15 @@ export class GenerateWorkPartWorkflow {
         allParts = [...allParts, ...chunkResult.parts];
 
         if (i + chunkSize < input.parts.length) {
-          await new Promise((r) => setTimeout(r, 3000));
+          await new Promise((r) => setTimeout(r, WORKFLOW_RPM_WAIT_MS));
         }
       }
     }
 
-    const cleanParts = allParts.map(({ _reasoning: __, ...p }) =>
-      this.prune({
-        ...p,
-        _generatorMeta: {
-          model: modelName,
-          generatedAt: new Date().toISOString(),
-        },
-      }),
-    );
+    const cleanedParts = allParts.map((p) => prune(p));
 
     const outPath = this.getDraftPath(input.workSlug);
-    await fs.writeFile(outPath, JSON.stringify({ parts: cleanParts }, null, 2), 'utf-8');
+    await fs.writeFile(outPath, JSON.stringify({ parts: cleanedParts }, null, 2), 'utf-8');
     consola.success(`[Step: draft] Saved parts draft to ${outPath}`);
 
     return allParts;
@@ -201,24 +192,12 @@ export class GenerateWorkPartWorkflow {
 
     const agent = new WorkRefineAgent({ modelName });
 
-    if (input.review) {
-      consola.info(`[Step: refine] Applying review feedback to parts...`);
-      // NOTE: WorkRefineAgent might need adjustment to handle multiple parts refinement with review
-      // For now, we apply it individually or pass the whole set if the agent supports it.
-      // Assuming refineGlobalConsistency is more appropriate for automated check.
-      const refined = await agent.refineGlobalConsistency(
-        parentWork as WorkDraft,
-        targetParts as WorkPartDraft[],
-      );
-      targetParts = refined.parts as unknown[];
-    } else {
-      consola.info(`[Step: refine] Running automated consistency check...`);
-      const refined = await agent.refineGlobalConsistency(
-        parentWork as WorkDraft,
-        targetParts as WorkPartDraft[],
-      );
-      targetParts = refined.parts as unknown[];
-    }
+    consola.info(`[Step: refine] Running consistency check...`);
+    const refined = await agent.refineGlobalConsistency(
+      parentWork as WorkDraft,
+      targetParts as WorkPartDraft[],
+    );
+    targetParts = refined.parts as unknown[];
 
     const outPath = this.getRefinedPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify({ parts: targetParts }, null, 2), 'utf-8');
@@ -252,23 +231,31 @@ export class GenerateWorkPartWorkflow {
     // Create a copy to store translations multi-lingually
     const translatedParts = JSON.parse(JSON.stringify(targetParts)) as Record<string, unknown>[];
 
-    for (const lang of targetLangs) {
-      consola.start(`[Step: translate] Translating into ${lang}...`);
+    for (let i = 0; i < targetLangs.length; i++) {
+      const lang = targetLangs[i]!;
+      consola.start(
+        `[Step: translate] Translating into ${lang} (${i + 1}/${targetLangs.length})...`,
+      );
 
-      for (let i = 0; i < translatedParts.length; i++) {
+      for (let j = 0; j < translatedParts.length; j++) {
         const transPart = await agent.translatePart(
-          targetParts[i] as WorkPartDraft,
+          targetParts[j] as WorkPartDraft,
           lang,
           parentWork as WorkDraft,
         );
-        translatedParts[i] = this.mergeTranslation(translatedParts[i], transPart, lang) as Record<
+        translatedParts[j] = deepMergeTranslation(translatedParts[j], transPart, lang) as Record<
           string,
           unknown
         >;
-        await new Promise((r) => setTimeout(r, 1000));
+
+        if (j < translatedParts.length - 1) {
+          await new Promise((r) => setTimeout(r, 1000)); // Intra-chunk delay
+        }
       }
 
-      await new Promise((r) => setTimeout(r, 3000));
+      if (i < targetLangs.length - 1) {
+        await new Promise((r) => setTimeout(r, WORKFLOW_RPM_WAIT_MS));
+      }
     }
 
     const outPath = this.getTranslatedPath(input.workSlug);
@@ -291,16 +278,18 @@ export class GenerateWorkPartWorkflow {
 
     const composerDir = path.join(this.dataDir, input.composerSlug);
     const partsDir = path.join(composerDir, input.workSlug);
-    if (!fsSync.existsSync(partsDir)) {
-      await fs.mkdir(partsDir, { recursive: true });
-    }
+
+    const writer = new AgentDataWriterTool(
+      'workPartDataWriter',
+      'WorkPartMasterDataをファイルシステムへ保存する',
+      WorkflowWorkPartMasterSchema as unknown as z.AnyZodObject,
+      partsDir,
+      'slug',
+      { prune: true },
+    );
 
     for (const p of targetParts) {
-      this.ensureMultilingual(p as Record<string, unknown>);
-      const pruned = this.prune(p);
-      const finalPart = WorkflowWorkPartMasterSchema.parse(pruned);
-      const partPath = path.join(partsDir, `${finalPart.slug}.json`);
-      await fs.writeFile(partPath, JSON.stringify(finalPart, null, 2), 'utf-8');
+      await writer.execute(p as z.infer<typeof WorkflowWorkPartMasterSchema>);
     }
 
     consola.success(
@@ -308,89 +297,10 @@ export class GenerateWorkPartWorkflow {
     );
   }
 
-  private ensureMultilingual(obj: Record<string, unknown>) {
-    if (!obj) return;
-    if (typeof obj['description'] === 'string') obj['description'] = { ja: obj['description'] };
-    if (typeof obj['tempoTranslation'] === 'string')
-      obj['tempoTranslation'] = { ja: obj['tempoTranslation'] };
-    if (obj['titleComponents'] && typeof obj['titleComponents'] === 'object') {
-      const tc = obj['titleComponents'] as Record<string, unknown>;
-      ['prefix', 'content', 'nickname'].forEach((key) => {
-        if (typeof tc[key] === 'string') tc[key] = { ja: tc[key] };
-      });
-    }
-  }
-
-  private prune(obj: unknown): unknown {
-    if (Array.isArray(obj)) {
-      const prunedArr = obj.map((v) => this.prune(v)).filter((v) => v !== undefined && v !== null);
-      return prunedArr.length > 0 ? prunedArr : undefined;
-    }
-    if (typeof obj === 'object' && obj !== null) {
-      const newObj: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(obj)) {
-        const pruned = this.prune(value);
-        if (
-          pruned === undefined ||
-          pruned === null ||
-          pruned === '' ||
-          pruned === 'none' ||
-          pruned === 'なし' ||
-          pruned === 'null' ||
-          (Array.isArray(pruned) && pruned.length === 0)
-        ) {
-          continue;
-        }
-        newObj[key] = pruned;
-      }
-      return Object.keys(newObj).length > 0 ? newObj : undefined;
-    }
-    return obj;
-  }
-
   private async loadAndParseJson(filePath: string): Promise<unknown> {
     if (!fsSync.existsSync(filePath)) throw new Error(`File not found: ${filePath}`);
     const raw = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(raw);
-  }
-
-  private mergeTranslation(base: unknown, translated: unknown, lang: string): unknown {
-    const result = JSON.parse(JSON.stringify(base)) as Record<string, unknown>;
-    const trans = translated as WorkPartTranslationOutput;
-
-    const setMultilingual = (
-      obj: Record<string, unknown>,
-      key: string,
-      value: string,
-      targetLang: string,
-    ) => {
-      if (!obj[key]) {
-        obj[key] = { [targetLang]: value };
-        return;
-      }
-      if (typeof obj[key] === 'string') {
-        const jaValue = obj[key] as string;
-        obj[key] = { ja: jaValue, [targetLang]: value };
-      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-        const field = obj[key] as Record<string, string>;
-        field[targetLang] = value;
-      }
-    };
-
-    if (trans.titleComponents) {
-      const tc = (result['titleComponents'] || {}) as Record<string, unknown>;
-      const transTC = trans.titleComponents as Record<string, string | undefined>;
-      if (transTC['prefix']) setMultilingual(tc, 'prefix', transTC['prefix'], lang);
-      if (transTC['content']) setMultilingual(tc, 'content', transTC['content'], lang);
-      if (transTC['nickname']) setMultilingual(tc, 'nickname', transTC['nickname'], lang);
-      result['titleComponents'] = tc;
-    }
-
-    if (trans.description) setMultilingual(result, 'description', trans.description, lang);
-    if (trans.tempoTranslation)
-      setMultilingual(result, 'tempoTranslation', trans.tempoTranslation, lang);
-
-    return result;
   }
 }
 

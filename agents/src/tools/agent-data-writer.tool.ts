@@ -1,8 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
 import { AgentTool, ToolContext } from '@/core/tool.js';
 import { consola } from 'consola';
+import { prune } from '@/shared/utils/json.js';
 
 /**
  * AIエージェントが生成したデータ（マスタデータ等）を、直接DBに書き込む前に
@@ -20,6 +21,7 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
 
   private outputDir: string;
   private slugField: keyof z.infer<z.ZodObject<T>>;
+  private usePrune: boolean;
 
   /**
    * @param name ツールの識別名（例: `composerDataWriter`）
@@ -27,6 +29,8 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
    * @param schema 保存対象データのZodスキーマ（例: `ComposerMasterSchema`）
    * @param outputDir 保存先ディレクトリの相対または絶対パス（例: `data/composers`）
    * @param slugField ファイル名（`[slug].json`）として使用するフィールド名。デフォルトは `'slug'`。
+   * @param options 追加オプション
+   * @param options.prune 保存前に空のフィールドを自動的に削除するかどうか。デフォルトは `true`。
    */
   constructor(
     name: string,
@@ -34,6 +38,7 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
     schema: z.ZodObject<T>,
     outputDir: string,
     slugField: keyof z.infer<z.ZodObject<T>>,
+    options: { prune?: boolean } = {},
   ) {
     this.name = name;
     this.description = description;
@@ -42,6 +47,7 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
       ? outputDir
       : path.resolve(process.cwd(), outputDir);
     this.slugField = slugField;
+    this.usePrune = options.prune !== false;
 
     // 出力先ディレクトリが存在しない場合は作成
     if (!fs.existsSync(this.outputDir)) {
@@ -57,8 +63,17 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
    * @returns 保存されたファイルの絶対パス
    */
   async execute(input: z.infer<z.ZodObject<T>>, context?: ToolContext): Promise<string> {
-    // スラグ（ファイル名）の取得
-    const slug = String(input[this.slugField]);
+    // 1. 公開データに含めてはいけない内部メタデータの除去 (_reasoning)
+    const { _reasoning: _, ...cleanInput } = input as Record<string, unknown>;
+
+    // 2. 正規化 (prune) の実行
+    const targetData = this.usePrune ? (prune(cleanInput) as Record<string, unknown>) : cleanInput;
+
+    // 3. スキーマによる再検証 (保存直前の最終ガード)
+    const validatedData = this.inputSchema.parse(targetData);
+
+    // 4. スラグ（ファイル名）の取得
+    const slug = String(validatedData[this.slugField as keyof typeof validatedData]);
     if (!slug) {
       throw new Error(
         `[AgentDataWriterTool] The input data does not contain the required slug field: ${String(this.slugField)}`,
@@ -67,20 +82,21 @@ export class AgentDataWriterTool<T extends z.ZodRawShape> implements AgentTool<
 
     const filePath = path.join(this.outputDir, `${slug}.json`);
 
-    // システムメタデータの生成 (既存のものを優先)
-    const existingMeta = (input as Record<string, unknown>)._generatorMeta as
+    // 5. システムメタデータの生成 (既存のものを優先)
+    const existingMeta = (validatedData as Record<string, unknown>)._generatorMeta as
       | Record<string, unknown>
       | undefined;
-    const metaData: Record<string, unknown> = {
+
+    const metaData = {
       _generatorMeta: {
         model: existingMeta?.model || context?.modelName || 'AgentSystem',
         generatedAt: existingMeta?.generatedAt || new Date().toISOString(),
       },
     };
 
-    // データの結合
+    // 6. 最終データの結合
     const finalData = {
-      ...input,
+      ...validatedData,
       ...metaData,
     };
 

@@ -5,19 +5,20 @@ import { parseArgs } from 'node:util';
 import { z } from 'zod';
 import { consola } from 'consola';
 import { GeminiModels, type GeminiModelName } from '@/core/models.js';
+import { WORKFLOW_RPM_WAIT_MS } from '@/core/constants.js';
 import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 import {
   ComposerMasterSchema,
   type ComposerMaster,
   COMPOSER_MASTER_VERSION,
 } from '@/application/composer/master/composer-master.schema.js';
-import { WorkflowComposerMasterSchema } from '@/schemas/composer.js';
+import { WorkflowComposerMasterSchema, type ComposerDraft } from '@/schemas/composer.js';
 import { AppLocale } from '@/domain/i18n/locale.js';
+import { deepMergeTranslation } from '@/shared/utils/json.js';
 
 import { ComposerDraftAgent } from '@/agents/composer/draft-agent.js';
 import { ComposerRefineAgent } from '@/agents/composer/refine-agent.js';
 import { ComposerTranslateAgent } from '@/agents/composer/translate-agent.js';
-import { type TranslationOutput } from '@/schemas/composer.js';
 
 /**
  * 作曲家生成ワークフローの実行ステップ定義
@@ -106,8 +107,6 @@ export class GenerateComposerWorkflow {
 
   /**
    * 厳格な JSON パースとエラーハンドリングを行うヘルパー関数。
-   * ドラフト修正時などで人間が手動編集した際のエラー（カンマ抜け、カッコの閉じ忘れ等）を検知し、
-   * トラブルシューティングしやすいエラーメッセージを提供する。
    */
   private async loadAndParseJson(filePath: string): Promise<unknown> {
     if (!fsSync.existsSync(filePath)) {
@@ -125,9 +124,6 @@ export class GenerateComposerWorkflow {
 
   /**
    * ワークフローを実行するメイン関数。
-   * 指定ステップ（draft -> refine -> translate -> finalize）からプロセスを開始する。
-   *
-   * @param rawInput ワークフロー実行パラメータ（未検証）
    */
   async execute(rawInput: unknown) {
     const input = GenerateComposerInputSchema.parse(rawInput);
@@ -145,9 +141,6 @@ export class GenerateComposerWorkflow {
       consola.warn(
         `[GenerateComposerWorkflow] Final persisted data already exists for ${input.slug}: ${this.getFinalPath(input.slug)}`,
       );
-      consola.warn(
-        `[GenerateComposerWorkflow] Workflow skipped to prevent accidental overwrite and API costs. Use --force to override.`,
-      );
       return;
     }
 
@@ -159,50 +152,32 @@ export class GenerateComposerWorkflow {
     }
 
     let currentJson: unknown = null;
-    const modelName = GeminiModels.FLASH_LITE; // 使用モデルを一元管理
+    const modelName = GeminiModels.FLASH_LITE;
 
     // ----- STEP 1: DRAFT -----
     if (startStep === COMPOSER_WORKFLOW_STEPS.DRAFT || input.auto) {
       currentJson = await this.executeDraftStep(input, modelName);
 
-      if (!input.auto) {
-        consola.info(
-          `[GenerateComposerWorkflow] If you wish to proceed to the next phase, manually edit the generated JSON if needed, and run with --step=translate or --step=refine.`,
-        );
-        return;
-      }
+      if (!input.auto) return;
     }
 
     // ----- STEP 2: REFINE -----
     if (startStep === COMPOSER_WORKFLOW_STEPS.REFINE) {
       currentJson = await this.executeRefineStep(input, modelName);
 
-      if (!input.auto) {
-        consola.info(
-          `[GenerateComposerWorkflow] To proceed to the next phase, run with --step=translate.`,
-        );
-        return;
-      }
+      if (!input.auto) return;
     }
 
     // ----- STEP 3: TRANSLATE -----
     if (startStep === COMPOSER_WORKFLOW_STEPS.TRANSLATE || input.auto) {
-      // autoモードかつ、前のステップ(draft/refine)から継続してきた場合のみウェイト(RPM対策)
       if (input.auto && startStep !== COMPOSER_WORKFLOW_STEPS.TRANSLATE) {
-        consola.info(
-          `[GenerateComposerWorkflow] Waiting 5 seconds before starting translation to prevent rate limit...`,
-        );
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        consola.info(`Waiting for rate limit clearance (${WORKFLOW_RPM_WAIT_MS}ms)...`);
+        await new Promise((resolve) => setTimeout(resolve, WORKFLOW_RPM_WAIT_MS));
       }
 
       currentJson = await this.executeTranslateStep(input, modelName, currentJson);
 
-      if (!input.auto) {
-        consola.info(
-          `[GenerateComposerWorkflow] To proceed to the next phase and finalize persistence, run with --step=finalize.`,
-        );
-        return;
-      }
+      if (!input.auto) return;
     }
 
     // ----- STEP 4: FINALIZE -----
@@ -213,7 +188,6 @@ export class GenerateComposerWorkflow {
 
   /**
    * STEP 1: DRAFT
-   * 初期データの土台を作成するステップ。歴史的事実・代表作などを集め、ベースとなる日本語(ja)でのマスターデータを生成する
    */
   private async executeDraftStep(
     input: GenerateComposerInput,
@@ -227,18 +201,12 @@ export class GenerateComposerWorkflow {
     const agent = new ComposerDraftAgent({ modelName });
     const draftResult = await agent.execute(composerName, input.slug);
 
-    // Draft 形式 (単一文字列) から Master 形式 (多言語オブジェクト) へ変換
-    // _reasoning フィールドはマスターデータには含めないため、ここで除外
-    const { _reasoning, ...draftData } = draftResult;
+    // _reasoning フィールドの除去などは Writer 側で行うが、ここで Ja 構造への変換を行う
+    const { _reasoning: _, ...draftData } = draftResult as ComposerDraft;
 
     const currentJson = {
       ...draftData,
       _schemaVersion: COMPOSER_MASTER_VERSION,
-      _generatorMeta: {
-        ...draftData._generatorMeta,
-        model: modelName,
-        generatedAt: new Date().toISOString(),
-      },
       fullName: { [AppLocale.JA]: draftData.fullName },
       displayName: { [AppLocale.JA]: draftData.displayName },
       shortName: { [AppLocale.JA]: draftData.shortName },
@@ -254,7 +222,6 @@ export class GenerateComposerWorkflow {
 
   /**
    * STEP 2: REFINE
-   * 生成されたドラフトデータに対する非エンジニアからのレビュー指摘を反映し、データを最適化する。
    */
   private async executeRefineStep(
     input: GenerateComposerInput,
@@ -271,31 +238,21 @@ export class GenerateComposerWorkflow {
       ? this.getRefinedPath(input.slug)
       : this.getDraftPath(input.slug);
 
-    if (!fsSync.existsSync(sourcePath)) {
-      throw new Error(
-        `[GenerateComposerWorkflow] Temporary file (draft or refined) not found. Please run '--step=draft' first: ${sourcePath}`,
-      );
-    }
-
     const draftObj = await this.loadAndParseJson(sourcePath);
     const draftData = ComposerMasterSchema.parse(draftObj);
 
     const agent = new ComposerRefineAgent({ modelName });
     const refinedResult = await agent.execute(draftData, input.review);
 
-    // _reasoning フィールドが含まれている可能性があるため除外（TypeScript上の型定義にはないが、AIが返す可能性がある）
-    const { _reasoning, ...currentJson } = refinedResult as Record<string, unknown>;
-
     const outPath = this.getRefinedPath(input.slug);
-    await fs.writeFile(outPath, JSON.stringify(currentJson, null, 2), 'utf-8');
+    await fs.writeFile(outPath, JSON.stringify(refinedResult, null, 2), 'utf-8');
     consola.success(`[Step: refine] Saved the refined data applying human review: ${outPath}`);
 
-    return currentJson;
+    return refinedResult;
   }
 
   /**
    * STEP 3: TRANSLATE
-   * 日本語(ja)で用意されたデータを基に多言語(en, de, fr, it, es, zh)の翻訳データを生成する
    */
   private async executeTranslateStep(
     input: GenerateComposerInput,
@@ -304,18 +261,11 @@ export class GenerateComposerWorkflow {
   ): Promise<unknown> {
     let targetJson = currentJson;
     if (!targetJson) {
-      // ステップがtranslateから開始された場合、ソースとなる一時ファイルを読み込む
       const sourcePath = fsSync.existsSync(this.getRefinedPath(input.slug))
         ? this.getRefinedPath(input.slug)
         : this.getDraftPath(input.slug);
 
-      if (!fsSync.existsSync(sourcePath)) {
-        throw new Error(
-          `[GenerateComposerWorkflow] Temporary file not found. Run '--step=draft' or similar steps first: ${sourcePath}`,
-        );
-      }
-      const rawData = await fs.readFile(sourcePath, 'utf-8');
-      targetJson = ComposerMasterSchema.parse(JSON.parse(rawData));
+      targetJson = await this.loadAndParseJson(sourcePath);
     }
 
     consola.start(
@@ -323,62 +273,20 @@ export class GenerateComposerWorkflow {
     );
 
     const targetLangs = ['en', 'de', 'fr', 'it', 'es', 'zh'];
-    const translationResults: { lang: string; data: TranslationOutput }[] = [];
     const agent = new ComposerTranslateAgent({ modelName });
 
     for (let i = 0; i < targetLangs.length; i++) {
-      const lang = targetLangs[i];
-      if (!lang) continue;
+      const lang = targetLangs[i]!;
       consola.start(
         `[Step: translate] Translating into ${lang} (${i + 1}/${targetLangs.length})...`,
       );
 
       const translatedStrings = await agent.execute(targetJson as ComposerMaster, lang);
-      translationResults.push({ lang, data: translatedStrings });
+      targetJson = deepMergeTranslation(targetJson, translatedStrings, lang) as ComposerMaster;
 
-      // レートリミット対策として待機
       if (i < targetLangs.length - 1) {
-        consola.info(`Waiting 5 seconds to prevent rate limit...`);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, WORKFLOW_RPM_WAIT_MS));
       }
-    }
-
-    /**
-     * マージ用ヘルパー関数
-     */
-    function mergeTranslation(base: unknown, translated: unknown, lang: string): unknown {
-      if (!base || typeof base !== 'object') return base;
-      if (base instanceof Date) return base;
-      if (Array.isArray(base)) {
-        const transArray = Array.isArray(translated) ? translated : [];
-        return base.map((item, i) => mergeTranslation(item, transArray[i], lang));
-      }
-      const result = { ...base } as Record<string, unknown>;
-      const transRecord = (
-        translated && typeof translated === 'object' && !Array.isArray(translated) ? translated : {}
-      ) as Record<string, unknown>;
-
-      for (const key of Object.keys(base)) {
-        const baseVal = result[key];
-        if (baseVal && typeof baseVal === 'object' && !Array.isArray(baseVal)) {
-          if ('ja' in baseVal) {
-            const multiObj = { ...baseVal } as Record<string, unknown>;
-            result[key] = multiObj;
-            const transVal = transRecord[key];
-            if (typeof transVal === 'string') {
-              multiObj[lang] = transVal;
-            }
-          } else {
-            result[key] = mergeTranslation(baseVal, transRecord[key], lang);
-          }
-        }
-      }
-      return result;
-    }
-
-    // ベースデータに対して全言語の生成結果をディープマージ
-    for (const { lang, data } of translationResults) {
-      targetJson = mergeTranslation(targetJson, data, lang) as ComposerMaster;
     }
 
     const outPath = this.getTranslatedPath(input.slug);
@@ -392,7 +300,6 @@ export class GenerateComposerWorkflow {
 
   /**
    * STEP 4: FINALIZE
-   * マスターデータの最終バリデーションを実行し、永続化用ディレクトリへ保存する
    */
   private async executeFinalizeStep(
     input: GenerateComposerInput,
@@ -402,20 +309,8 @@ export class GenerateComposerWorkflow {
 
     let targetJson = currentJson;
     if (!targetJson) {
-      // 対象データメモリ上に存在しない場合、直前の翻訳済み結果をロード
-      const sourcePath = this.getTranslatedPath(input.slug);
-      if (!fsSync.existsSync(sourcePath)) {
-        throw new Error(
-          `[GenerateComposerWorkflow] Translated temporary file not found. Please run '--step=translate' first: ${sourcePath}`,
-        );
-      }
-      const rawData = await fs.readFile(sourcePath, 'utf-8');
-      targetJson = JSON.parse(rawData);
+      targetJson = await this.loadAndParseJson(this.getTranslatedPath(input.slug));
     }
-
-    // 最終的に必要なすべてのデータがスキーマ仕様を満たしているか検証・整形
-    // 日付がDate型にキャストされないようWorkflowComposerMasterSchemaを使用
-    const finalData = WorkflowComposerMasterSchema.parse(targetJson);
 
     const writer = new AgentDataWriterTool(
       'composerDataWriter',
@@ -423,9 +318,12 @@ export class GenerateComposerWorkflow {
       WorkflowComposerMasterSchema as unknown as z.AnyZodObject,
       this.dataDir,
       'slug',
+      { prune: true },
     );
 
-    const finalPath = await writer.execute(finalData);
+    const finalPath = await writer.execute(
+      targetJson as z.infer<typeof WorkflowComposerMasterSchema>,
+    );
     consola.success(
       `[Step: finalize] Composer Master Data successfully generated and persisted! -> ${finalPath}`,
     );
@@ -460,13 +358,13 @@ async function main() {
 
     const workflow = new GenerateComposerWorkflow();
     const input = {
-      slug: values.slug,
-      name: values.name,
-      step: values.step,
-      review: values.review,
-      auto: values.auto,
-      dryRun: values['dry-run'],
-      force: values.force,
+      slug: values.slug as string,
+      name: values.name as string,
+      step: values.step as GenerateComposerInput['step'],
+      review: values.review as string,
+      auto: !!values.auto,
+      dryRun: !!values['dry-run'],
+      force: !!values.force,
     };
 
     await workflow.execute(input);

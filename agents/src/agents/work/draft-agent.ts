@@ -180,6 +180,41 @@ export class WorkDraftAgent {
 - 固有の愛称（ニックネーム）がない場合、\`nickname\` フィールドは絶対に出力しないでください。「K. 466」などの作品番号や調性を愛称に含めるのは禁止です。
 - **ドラフト生成段階では日本語 (ja) のみのデータを出力し、他言語フィールドは含めないでください。**`;
 
-    return await this.agent.generateObject<WorkDraft>(prompt, WorkDraftSchema);
+    const result = await this.agent.generateObject<WorkDraft>(prompt, WorkDraftSchema);
+    return this.normalize(result);
+  }
+
+  /**
+   * 楽曲データの正規化（音楽学的な制約に基づくクリーンアップ）を行います。
+   */
+  private normalize(data: WorkDraft): WorkDraft {
+    const res = { ...data } as Record<string, unknown>;
+
+    // 1. 多楽章形式（公認）の場合は、Workレベルの演奏情報を強制削除
+    const genres = (res['genres'] as string[]) || [];
+    const slug = (res['slug'] as string) || '';
+
+    const isMultiMovement =
+      genres.some((g) =>
+        ['symphony', 'concerto', 'sonata', 'suite', 'mass', 'opera', 'oratorio'].includes(g),
+      ) ||
+      slug.includes('concerto') ||
+      slug.includes('symphony');
+
+    if (isMultiMovement) {
+      delete res['tempo'];
+      delete res['bpm'];
+      delete res['timeSignature'];
+      delete res['tempoTranslation'];
+      delete res['metronomeUnit'];
+    }
+
+    // 2. basedOn が不完全（原曲スラグがない）場合は削除
+    const basedOn = res['basedOn'] as Record<string, unknown> | undefined;
+    if (basedOn && !basedOn['originalWorkSlug']) {
+      delete res['basedOn'];
+    }
+
+    return res as WorkDraft;
   }
 }

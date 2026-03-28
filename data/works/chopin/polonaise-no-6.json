@@ -13,18 +13,18 @@
     },
     "content": {
       "en": "No. 6 in A-flat major, Op. 53",
-      "ja": "第6番 変イ長調 作品53「英雄」",
-      "es": "n.º 6 en la bemol mayor, op. 53 'Heroica'",
+      "ja": "第6番 変イ長調 作品53",
+      "es": "n.º 6 en la bemol mayor, op. 53",
       "de": "Nr. 6 As-Dur, op. 53",
-      "fr": "nº 6 en la bémol majeur, op. 53 « Héroïque »",
-      "it": "n. 6 in La bemolle maggiore, op. 53",
-      "zh": "第6号 降A大调 作品53"
+      "fr": "n° 6 en la bémol majeur, op. 53",
+      "it": "n. 6 in La bemolle maggiore, Op. 53",
+      "zh": "第6号，降A大调，作品53"
     },
     "nickname": {
       "en": "Heroic",
       "ja": "英雄",
       "es": "Heroica",
-      "de": "Heroische",
+      "de": "„Heroische“",
       "fr": "Héroïque",
       "it": "Eroica",
       "zh": "英雄"
@@ -41,14 +41,14 @@
   "compositionYear": 1842,
   "compositionPeriod": {
     "en": "Early Romantic",
-    "ja": "1842年",
-    "es": "Romanticismo temprano",
+    "ja": "初期ロマン派",
+    "es": "Primer Romanticismo",
     "de": "Frühromantik",
-    "fr": "Début du romantisme",
+    "fr": "Début de la période romantique",
     "it": "Primo Romanticismo",
-    "zh": "浪漫主义早期"
+    "zh": "早期浪漫主义时期"
   },
-  "instrumentation": "piano",
+  "instrumentation": "piano solo",
   "instruments": ["piano"],
   "instrumentationFlags": {
     "isSolo": true,
@@ -59,53 +59,53 @@
   },
   "performanceDifficulty": 5,
   "impressionDimensions": {
-    "innovation": 6,
+    "innovation": 5,
     "emotionality": 9,
     "nationalism": 8,
-    "scale": 7,
-    "complexity": 7,
-    "theatricality": 8
+    "scale": 3,
+    "complexity": 5,
+    "theatricality": 6
   },
-  "nicknames": ["Heroic"],
+  "nicknames": ["英雄"],
   "description": {
-    "en": "One of the pinnacles of Chopin's solo piano repertoire. This masterpiece projects the pride of his native Poland through powerful rhythms and brilliant A-flat major melodies, demanding virtuosity to match its 'Heroic' subtitle and grand scale.",
-    "ja": "ショパンのピアノ独奏曲の頂点に立つ傑作の一つ。祖国ポーランドの誇りを投影した力強いリズムと、変イ長調の華麗な旋律が融合し、ピアニストの卓越した技巧を要求する「英雄」の名に相応しい壮大なスケールで描かれています。",
-    "es": "Una de las obras maestras para piano de Chopin. Combina ritmos enérgicos que evocan el orgullo polaco con melodías brillantes en la bemol mayor, exigiendo una técnica virtuosa y ofreciendo una escala grandiosa digna de su sobrenombre.",
-    "de": "Eines der herausragenden Meisterwerke für Klavier von Chopin. Das kraftvolle, den polnischen Nationalstolz widerspiegelnde Rhythmusgefühl verbindet sich mit der brillanten Melodik in As-Dur und stellt höchste Anforderungen an die pianistische Virtuosität; ein Werk von monumentaler Größe, das seinem Beinamen „Heroische“ vollauf gerecht wird.",
-    "fr": "L'un des chefs-d'œuvre les plus aboutis pour piano seul de Chopin. Alliant un rythme puissant imprégné de la fierté polonaise à une mélodie brillante en la bémol majeur, cette pièce exige une virtuosité exceptionnelle et déploie une envergure épique à la hauteur de son surnom.",
-    "it": "Uno dei capolavori pianistici di Chopin, simbolo di virtuosismo e fierezza. Con i suoi ritmi incalzanti e la grandiosa melodia in La bemolle maggiore, evoca lo spirito patriottico polacco, richiedendo al pianista una tecnica magistrale e una notevole potenza espressiva.",
-    "zh": "肖邦钢琴独奏曲中的巅峰杰作之一。作品投射出波兰民族的自豪感，强有力的节奏与降A大调的华丽旋律交相辉映。这部作品对钢琴家的卓越技巧提出了极高要求，以“英雄”之名呈现出宏伟壮阔的艺术境界。"
+    "en": "One of the most famous and magnificent of Chopin's polonaises. Featuring powerful octave passages and brilliant technical displays, it is a piano masterpiece that symbolizes Polish pride and an heroic spirit.",
+    "ja": "ショパンのポロネーズの中でも最も有名で壮麗な作品。力強いオクターヴの連打や華やかな技巧が散りばめられており、ポーランドの誇りと英雄的な精神を象徴するピアノ音楽の傑作です。",
+    "es": "La más famosa y grandiosa de las polonesas de Chopin. Con sus potentes octavas en staccato y su brillante virtuosismo, esta obra maestra para piano simboliza el orgullo polaco y el espíritu heroico.",
+    "de": "Eines der bekanntesten und prachtvollsten Werke Chopins. Mit kraftvollen Oktavpassagen und virtuoser Brillanz gilt dieses Stück als Meisterwerk, das polnischen Stolz und heroischen Geist verkörpert.",
+    "fr": "L'une des polonaises les plus célèbres et majestueuses de Chopin. Ponctuée de puissantes octaves et d'une virtuosité éclatante, cette œuvre est un chef-d'œuvre pour piano symbolisant la fierté polonaise et l'esprit héroïque.",
+    "it": "Una delle opere più celebri e magnificenti di Chopin. Caratterizzata da potenti ottave ribattute e un virtuosismo brillante, rappresenta un capolavoro della musica per pianoforte, simbolo dell'orgoglio polacco e dello spirito eroico.",
+    "zh": "肖邦波兰舞曲中最为著名且宏伟的作品之一。全曲充满强劲的八度连奏与华丽的演奏技巧，是象征波兰民族自豪感与英雄气概的钢琴杰作。"
   },
-  "tags": ["virtuoso", "passionate", "dramatic", "majestic", "nostalgic"],
+  "tags": ["passionate", "brilliant", "virtuoso"],
   "basedOn": {
     "originalWorkSlug": "polonaise-no-6",
-    "arrangeType": "transcription"
+    "arrangeType": "transcription",
+    "arranger": "N/A"
   },
-  "genres": ["keyboard-solo", "variations"],
+  "genres": ["keyboard-solo", "polonaise"],
   "key": "a-flat-major",
-  "tempo": "Maestoso",
+  "tempo": "Tempo di polacca",
   "tempoTranslation": {
-    "en": "Maestoso",
-    "ja": "堂々と",
-    "es": "Maestoso",
-    "de": "maestoso",
-    "fr": "Maestoso",
-    "it": "Maestoso",
-    "zh": "庄严地"
+    "en": "Tempo di Polacca",
+    "ja": "ポロネーズのテンポで",
+    "es": "Tempo di Polacca",
+    "de": "Im Tempo einer Polonaise",
+    "fr": "Tempo di polacca",
+    "it": "Tempo di polacca",
+    "zh": "以波兰舞曲的速度"
   },
   "timeSignature": {
     "numerator": 3,
     "denominator": 4
   },
-  "bpm": 108,
+  "bpm": 120,
   "metronomeUnit": "quarter",
   "_schemaVersion": "1.1.0",
   "_generatorMeta": {
-    "model": "gemini-2.5-flash-lite",
-    "generatedAt": "2026-03-26T15:52:30.243Z",
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-28T15:31:13.486Z",
     "promptVersion": "1.0",
-    "confidenceScore": 1,
-    "sourceRefs": ["https://www.chopin.org", "https://imslp.org"],
-    "executionId": "exec-9988776655"
+    "confidenceScore": 0.98,
+    "executionId": "exec-polonaise-no-6-001"
   }
 }
