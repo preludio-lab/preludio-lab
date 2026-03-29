@@ -20,11 +20,12 @@ export default async function WorksManagementPage({
 
   // 2. Fetch Data
   const page = Number(sParams.page) || 1;
+  const contentLang = (sParams.contentLang as string) || lang || 'ja';
   const limit = 20;
   const offset = (page - 1) * limit;
 
   const response = await useCase.execute({
-    lang: lang,
+    lang: contentLang,
     sort: { field: 'createdAt', direction: 'desc' }, // Mandatory sort
     pagination: { limit, offset },
   });

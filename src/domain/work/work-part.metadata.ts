@@ -27,6 +27,7 @@ export const WorkPartType = z.enum([
   'interlude', // 間奏曲
   'supplement', // 付録/補遺
 ]);
+export type WorkPartType = z.infer<typeof WorkPartType>;
 
 /**
  * Work Part Metadata Base
