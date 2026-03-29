@@ -266,11 +266,12 @@ Status: `[/]` 進行中
   - [ ] **[実装]** 管理UI実装 (Optional)
   - [ ] **[検証]** 複雑な楽曲（大編成・複数段）での生成テストおよび SVG 品質検証
 
-- [ ] **7.3 音源（RecordingSource）の管理UI・登録ワークフローの実装 (Recording Source Management)**
-  - [ ] **[設計]** RecordingSource データ構造と登録フローの定義
+- [ ] **7.3 音源（RecordingSource）と演奏区間（Segment）の管理UI・登録ワークフローの実装 (Recording & Segment Management)**
+  - [ ] **[設計]** RecordingSource & Segment (演奏区間) データ構造と登録フローの定義
   - [ ] **[Tools]** YouTube Data API 等を用いたメタデータ自動取得ツールの実装
-  - [ ] **[実装]** 管理UI: 音源一覧・登録・編集画面
-  - [ ] **[実装]** 作品 (Work) / 楽章 (WorkPart) への音源紐付け機能
+  - [ ] **[実装]** 管理UI: 音源一覧・登録・編集画面（再生開始・終了位置の指定 UI）
+  - [ ] **[実装]** 作品 (Work) / 楽章 (WorkPart) への音源・Segment 紐付け機能
+  - [ ] **[実装]** **Phrase & Segment 連携**: 特定の譜面フレーズ（Phrase）に対して演奏区間（Segment）を個別にマッピングする機能
   - [ ] **[検証]** 実際の音源データを用いた登録・表示テスト
 
 - [ ] **7.4 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
