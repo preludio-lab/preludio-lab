@@ -12,6 +12,9 @@ import {
   ArrangeTypeSchema,
 } from './work.shared';
 
+// Re-export common types and schemas for convenience
+export * from './work.shared';
+
 /**
  * Work Part Type
  * 楽章や構成楽曲などの分類
@@ -80,8 +83,8 @@ export const WorkPartMetadataBaseSchema = z.object({
       originalWorkSlug: SlugSchema,
       /** 編曲・派生タイプ */
       arrangeType: ArrangeTypeSchema,
-      /** 編曲者 (Slug) */
-      arranger: SlugSchema.optional(),
+      /** 編曲者 (名前またはSlug) */
+      arranger: z.string().max(100).optional(),
     })
     .optional(),
 });

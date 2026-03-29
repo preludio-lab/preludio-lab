@@ -1,0 +1,111 @@
+{
+  "slug": "polonaise-no-6",
+  "composerSlug": "chopin",
+  "titleComponents": {
+    "prefix": {
+      "en": "Polonaise",
+      "ja": "ポロネーズ",
+      "es": "Polonesa",
+      "de": "Polonaise",
+      "fr": "Polonaise",
+      "it": "Polacca",
+      "zh": "波兰舞曲"
+    },
+    "content": {
+      "en": "No. 6 in A-flat major, Op. 53",
+      "ja": "第6番 変イ長調 作品53",
+      "es": "n.º 6 en la bemol mayor, op. 53",
+      "de": "Nr. 6 As-Dur, op. 53",
+      "fr": "n° 6 en la bémol majeur, op. 53",
+      "it": "n. 6 in La bemolle maggiore, Op. 53",
+      "zh": "第6号，降A大调，作品53"
+    },
+    "nickname": {
+      "en": "Heroic",
+      "ja": "英雄",
+      "es": "Heroica",
+      "de": "„Heroische“",
+      "fr": "Héroïque",
+      "it": "Eroica",
+      "zh": "英雄"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "53",
+      "isPrimary": true
+    }
+  ],
+  "era": "early-romantic",
+  "compositionYear": 1842,
+  "compositionPeriod": {
+    "en": "Early Romantic",
+    "ja": "初期ロマン派",
+    "es": "Primer Romanticismo",
+    "de": "Frühromantik",
+    "fr": "Début de la période romantique",
+    "it": "Primo Romanticismo",
+    "zh": "早期浪漫主义时期"
+  },
+  "instrumentation": "piano solo",
+  "instruments": ["piano"],
+  "instrumentationFlags": {
+    "isSolo": true,
+    "isChamber": false,
+    "isOrchestral": false,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "performanceDifficulty": 5,
+  "impressionDimensions": {
+    "innovation": 5,
+    "emotionality": 9,
+    "nationalism": 8,
+    "scale": 3,
+    "complexity": 5,
+    "theatricality": 6
+  },
+  "nicknames": ["英雄"],
+  "description": {
+    "en": "One of the most famous and magnificent of Chopin's polonaises. Featuring powerful octave passages and brilliant technical displays, it is a piano masterpiece that symbolizes Polish pride and an heroic spirit.",
+    "ja": "ショパンのポロネーズの中でも最も有名で壮麗な作品。力強いオクターヴの連打や華やかな技巧が散りばめられており、ポーランドの誇りと英雄的な精神を象徴するピアノ音楽の傑作です。",
+    "es": "La más famosa y grandiosa de las polonesas de Chopin. Con sus potentes octavas en staccato y su brillante virtuosismo, esta obra maestra para piano simboliza el orgullo polaco y el espíritu heroico.",
+    "de": "Eines der bekanntesten und prachtvollsten Werke Chopins. Mit kraftvollen Oktavpassagen und virtuoser Brillanz gilt dieses Stück als Meisterwerk, das polnischen Stolz und heroischen Geist verkörpert.",
+    "fr": "L'une des polonaises les plus célèbres et majestueuses de Chopin. Ponctuée de puissantes octaves et d'une virtuosité éclatante, cette œuvre est un chef-d'œuvre pour piano symbolisant la fierté polonaise et l'esprit héroïque.",
+    "it": "Una delle opere più celebri e magnificenti di Chopin. Caratterizzata da potenti ottave ribattute e un virtuosismo brillante, rappresenta un capolavoro della musica per pianoforte, simbolo dell'orgoglio polacco e dello spirito eroico.",
+    "zh": "肖邦波兰舞曲中最为著名且宏伟的作品之一。全曲充满强劲的八度连奏与华丽的演奏技巧，是象征波兰民族自豪感与英雄气概的钢琴杰作。"
+  },
+  "tags": ["passionate", "brilliant", "virtuoso"],
+  "basedOn": {
+    "originalWorkSlug": "polonaise-no-6",
+    "arrangeType": "transcription",
+    "arranger": "N/A"
+  },
+  "genres": ["keyboard-solo", "polonaise"],
+  "key": "a-flat-major",
+  "tempo": "Tempo di polacca",
+  "tempoTranslation": {
+    "en": "Tempo di Polacca",
+    "ja": "ポロネーズのテンポで",
+    "es": "Tempo di Polacca",
+    "de": "Im Tempo einer Polonaise",
+    "fr": "Tempo di polacca",
+    "it": "Tempo di polacca",
+    "zh": "以波兰舞曲的速度"
+  },
+  "timeSignature": {
+    "numerator": 3,
+    "denominator": 4
+  },
+  "bpm": 120,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "gemini-3.1-flash-lite-preview",
+    "generatedAt": "2026-03-28T15:31:13.486Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 0.98,
+    "executionId": "exec-polonaise-no-6-001"
+  }
+}

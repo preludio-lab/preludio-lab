@@ -21,7 +21,6 @@ export class TursoWorkMapper {
   static toDomain(rows: WorkRows): Work {
     const { work, translations } = rows;
 
-    const title = aggregateTranslations(translations, 'title');
     const titlePrefix = aggregateTranslations(translations, 'titlePrefix');
     const titleContent = aggregateTranslations(translations, 'titleContent');
     const titleNickname = aggregateTranslations(translations, 'titleNickname');
@@ -38,7 +37,6 @@ export class TursoWorkMapper {
       },
       metadata: {
         titleComponents: {
-          title,
           prefix: titlePrefix,
           content: titleContent,
           nickname: titleNickname,
@@ -122,7 +120,6 @@ export class TursoWorkMapper {
 
     const tc = meta.titleComponents;
     const langs = new Set<string>([
-      ...Object.keys(tc.title || {}),
       ...Object.keys(tc.prefix || {}),
       ...Object.keys(tc.content || {}),
       ...Object.keys(tc.nickname || {}),
@@ -135,7 +132,12 @@ export class TursoWorkMapper {
     for (const lang of langs) {
       const getVal = (obj: Record<string, string> | undefined): string | null =>
         (obj && obj[lang]) || null;
-      const title = getVal(tc.title);
+
+      const prefix = getVal(tc.prefix);
+      const content = getVal(tc.content);
+      const title = [prefix, content].filter(Boolean).join(' ');
+
+      // title is NOT NULL in schema.
       if (!title) continue;
 
       translations.push({

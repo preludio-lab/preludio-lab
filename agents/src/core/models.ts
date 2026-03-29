@@ -18,6 +18,8 @@ export const GeminiModels = {
   STABLE_FLASH: 'gemini-2.5-flash',
   /** 開発・テスト用の安定版（軽量） */
   STABLE_FLASH_LITE: 'gemini-2.5-flash-lite',
+  /** 高度な推論・構造遵守が必要な場合の大規模モデル */
+  PRO: 'gemini-1.5-pro-latest',
   /** 試験的なGemmaベースモデル */
   GEMMA_3_12B: 'gemma-3-12b-it',
 } as const;

@@ -51,10 +51,32 @@ export const MusicalGenre = {
   CHAMBER: {
     /** 弦楽重奏 (String Ensemble) */
     CHAMBER_STRINGS: 'chamber-strings',
+    /** 弦楽四重奏曲 (String Quartet) */
+    STRING_QUARTET: 'string-quartet',
+    /** 弦楽三重奏曲 (String Trio) */
+    STRING_TRIO: 'string-trio',
+    /** 弦楽五重奏曲 (String Quintet) */
+    STRING_QUINTET: 'string-quintet',
     /** ピアノ重奏 (Piano Ensemble) */
     CHAMBER_PIANO: 'chamber-piano',
+    /** ピアノ三重奏曲 (Piano Trio) */
+    PIANO_TRIO: 'piano-trio',
+    /** ピアノ四重奏曲 (Piano Quartet) */
+    PIANO_QUARTET: 'piano-quartet',
+    /** ピアノ五重奏曲 (Piano Quintet) */
+    PIANO_QUINTET: 'piano-quintet',
     /** 独奏ソナタ（伴奏付） (Instrumental Sonata (with Piano)) */
     SONATA_DUO: 'sonata-duo',
+    /** ヴァイオリンソナタ (Violin Sonata) */
+    VIOLIN_SONATA: 'violin-sonata',
+    /** チェロソナタ (Cello Sonata) */
+    CELLO_SONATA: 'cello-sonata',
+    /** ヴィオラソナタ (Viola Sonata) */
+    VIOLA_SONATA: 'viola-sonata',
+    /** フルートソナタ (Flute Sonata) */
+    FLUTE_SONATA: 'flute-sonata',
+    /** クラリネットソナタ (Clarinet Sonata) */
+    CLARINET_SONATA: 'clarinet-sonata',
     /** 鍵盤アンサンブル（連弾・2台ピアノ） (Keyboard Ensemble (4-hands / 2 Pianos)) */
     KEYBOARD_ENSEMBLE: 'keyboard-ensemble',
     /** 管楽アンサンブル（木管五重奏等） (Wind Ensemble) */
@@ -67,6 +89,10 @@ export const MusicalGenre = {
   SOLO: {
     /** 鍵盤独奏 (Keyboard Solo) */
     KEYBOARD_SOLO: 'keyboard-solo',
+    /** ピアノソナタ (Piano Sonata) */
+    PIANO_SONATA: 'piano-sonata',
+    /** オルガンソナタ (Organ Sonata) */
+    ORGAN_SONATA: 'organ-sonata',
     /** 弦楽器独奏 (String Solo) */
     STRING_SOLO: 'string-solo',
     /** 管楽器独奏 (Wind Solo) */

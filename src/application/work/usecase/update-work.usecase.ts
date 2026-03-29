@@ -1,12 +1,9 @@
 import { Work, WorkControl, WorkMetadata } from '@/domain/work/work';
 import { WorkRepository } from '@/domain/work/work.repository';
-import { WorkPartRepository } from '@/domain/work/work-part.repository';
 import { ComposerRepository } from '@/domain/composer/composer.repository';
-import { WorkPart, WorkPartControl, WorkPartMetadata } from '@/domain/work/work-part';
 import { UpdateWorkCommand } from '../command/update-work.command';
 import { Logger } from '@/shared/logging/logger';
 import { AppError } from '@/domain/shared/app-error';
-import { generateId } from '@/shared/id';
 
 import { TransactionManager } from '@/domain/shared/transaction-manager.interface';
 
@@ -23,7 +20,6 @@ import { TransactionManager } from '@/domain/shared/transaction-manager.interfac
 export class UpdateWorkUseCase {
   constructor(
     private workRepo: WorkRepository,
-    private workPartRepo: WorkPartRepository,
     private composerRepo: ComposerRepository,
     private txManager: TransactionManager,
     private logger: Logger,
@@ -119,54 +115,6 @@ export class UpdateWorkUseCase {
 
         await this.workRepo.save(workEntity, ctx);
         this.logger.info(`Updated Work Core`, { slug, workId });
-
-        /** 4. パートの更新（全削除後に再挿入）、パートデータが提供されている場合のみ実行 */
-        if (data.parts !== undefined) {
-          /** トランザクションの安全性: 削除とその後の挿入がアトミックに行われます。 */
-          await this.workPartRepo.deleteByWorkId(workId, ctx);
-
-          const partsData = data.parts;
-          if (partsData.length > 0) {
-            const partsEntities: WorkPart[] = partsData.map((p) => {
-              const partId = generateId<'WorkPart'>();
-
-              const partControl: WorkPartControl = {
-                id: partId,
-                workId: workId,
-                slug: p.slug,
-                order: p.order,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              };
-
-              const partMetadata: WorkPartMetadata = {
-                ...p,
-                catalogues: p.catalogues ?? [],
-                isNameStandard: p.isNameStandard ?? true,
-                tags: p.tags || [],
-                musicalIdentity: {
-                  genres: p.genres ?? [],
-                  key: p.key,
-                  tempo: p.tempo,
-                  tempoTranslation: p.tempoTranslation,
-                  timeSignature: p.timeSignature,
-                  bpm: p.bpm,
-                  metronomeUnit: p.metronomeUnit,
-                },
-                nicknames: p.nicknames ?? [],
-                instruments: p.instruments ?? [],
-              };
-
-              return new WorkPart(partControl, partMetadata);
-            });
-
-            /** バルクインサートによる一括保存 */
-            await this.workPartRepo.saveAll(partsEntities, ctx);
-            this.logger.info(`Updated (Replaced) parts`, { count: partsData.length, slug });
-          } else {
-            this.logger.info(`Removed all parts`, { slug });
-          }
-        }
       });
     } catch (err) {
       this.logger.error(`Failed to update work`, err as Error, { composerSlug, slug });

@@ -231,14 +231,15 @@ Status: `[/]` 進行中
 
 - [/] **7.1 マスターデータ生成エージェントワークフロー (Master Data Generation Agent Workflow)**
   - [x] **[設計]** AIエージェントワークフロー設計 (Ref: `docs/05_design/data-workflow-architecture.md`, `ai-agent-strategy.md`)
-  - [ ] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
-  - [ ] **[実装]** 作曲家データ作成ワークフロー (Json -> Turso)
-  - [ ] **[実装]** 作品データ作成ワークフロー (Json -> Turso)
+  - [x] **[Tools]** Core Toolsの実装 (e.g. `ComposerFetcher`, `TursoUpsertTool` etc.)
+  - [x] **[実装]** 作曲家データ作成ワークフロー: Composer (Json -> Turso)
+  - [x] **[実装]** 作品データ作成ワークフロー: Work (Json -> Turso)
+  - [/] **[実装]** 作品パーツ作成ワークフロー: WorkParts (Json -> Turso)
   - [/] **[実装]** 管理UI実装
-    - [x] 作曲家一覧 (Composer List)
-    - [x] 作曲家詳細 (Composer Detail)
+    - [x] 作育家一覧 (Composer List)
+    - [x] 作育家詳細 (Composer Detail)
     - [x] 作品一覧 (Work List)
-    - [ ] 作品詳細 (Work Detail)
+    - [x] 作品詳細 (Work Detail)
 
 - [ ] **7.2 譜例コンテンツ・音源管理ワークフロー (Media Asset Workflow)**
   - [x] **[設計]** AIエージェントワークフロー設計 (Step 1-5 の I/O 規格および HITL フローの定義)
@@ -265,7 +266,15 @@ Status: `[/]` 進行中
   - [ ] **[実装]** 管理UI実装 (Optional)
   - [ ] **[検証]** 複雑な楽曲（大編成・複数段）での生成テストおよび SVG 品質検証
 
-- [ ] **7.3 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
+- [ ] **7.3 音源（RecordingSource）と演奏区間（Segment）の管理UI・登録ワークフローの実装 (Recording & Segment Management)**
+  - [ ] **[設計]** RecordingSource & Segment (演奏区間) データ構造と登録フローの定義
+  - [ ] **[Tools]** YouTube Data API 等を用いたメタデータ自動取得ツールの実装
+  - [ ] **[実装]** 管理UI: 音源一覧・登録・編集画面（再生開始・終了位置の指定 UI）
+  - [ ] **[実装]** 作品 (Work) / 楽章 (WorkPart) への音源・Segment 紐付け機能
+  - [ ] **[実装]** **Phrase & Segment 連携**: 特定の譜面フレーズ（Phrase）に対して演奏区間（Segment）を個別にマッピングする機能
+  - [ ] **[検証]** 実際の音源データを用いた登録・表示テスト
+
+- [ ] **7.4 コンテンツ生成エージェントワークフロー (Content Generation Agent Workflow)**
   - [ ] **[設計]** AIエージェントワークフロー設計 (複数エージェントによる共同制作)
   - [ ] **[仕様策定]** 分析・生成プロンプトの要件定義
     - [ ] 楽曲構造分析およびテキスト解説生成のプロンプト設計要件
@@ -279,14 +288,14 @@ Status: `[/]` 進行中
   - [ ] **[テスト・動作検証]** 生成品質の検証
     - [ ] テスト: モーツァルト「ピアノ協奏曲第20番ニ短調」を題材とした解説テキスト生成品質検証
 
-- [ ] **7.4 品質保証エージェントワークフロー (QA Automation)**
+- [ ] **7.5 品質保証エージェントワークフロー (QA Automation)**
   - [ ] **[Tools]** Core Toolsの実装 (e.g. `BrokenLinkChecker`, `ContentConsistencyChecker` etc.)
   - [ ] **[実装]** 自動巡回チェック・フェイルオーバー
     - [ ] **リンク生存**: YouTube動画の削除や著作権失効の自動チェック
     - [ ] **自動フェイルオーバー**: リンク切れ検知時に `is_default` 音源を代替ソースへ自動切り替えするロジックの実装
   - [ ] **[実装]** 異常検知時の通知・レポート機能
 
-- [ ] **7.5 翻訳エージェントワークフロー (Translator Agent Workflow)**
+- [ ] **7.6 翻訳エージェントワークフロー (Translator Agent Workflow)**
   - [ ] **[設計]** AIエージェントワークフロー設計
   - [ ] **[仕様策定]** 翻訳ルールとトーン＆マナーの定義
     - [ ] 多言語翻訳プロンプトの要件 (Tone & Style Guide) および用語集の整備
@@ -296,7 +305,7 @@ Status: `[/]` 進行中
   - [ ] **[テスト・動作検証]** 各言語の翻訳品質検証
     - [ ] 主要言語 (EN, ES, DE, FR, IT, ZH) の出力検証
 
-- [ ] **7.6 記事コンテンツ量産体制の構築と実行 (Article Operations)**
+- [ ] **7.7 記事コンテンツ量産体制の構築と実行 (Article Operations)**
   - [ ] **[仕様策定]** コンテンツ戦略とパイプライン定義
     - [ ] 初回リリース用コンテンツ選定 (Target: 10-20 articles for Launch)
     - [ ] コンテントマップ作成: Pillar Content (没入感), Guide Content (入門), Niche Content (専門性), Utility Content (実用) のバランス設計

@@ -1,7 +1,6 @@
-import { z } from 'zod';
+import { z } from '@/shared/validation/zod';
 import { WorkBaseCommandSchema } from './base.command';
-import { WorkPartMasterSchema } from '../master/work-part-master.schema';
-import { WorkControlSchema } from '@/domain/work/work.control';
+import { SlugSchema } from '@/domain/shared/common.metadata';
 
 /**
  * Create Work Command
@@ -12,11 +11,9 @@ import { WorkControlSchema } from '@/domain/work/work.control';
  */
 export const CreateWorkCommandSchema = WorkBaseCommandSchema.extend({
   /** 作品のスラグ (URL識別子)。作曲家内で一意である必要があります。 */
-  slug: WorkControlSchema.shape.slug,
+  slug: SlugSchema,
   /** 紐付ける作曲家のスラグ */
-  composerSlug: WorkControlSchema.shape.composerSlug,
-  /** 構成楽曲（楽章）のリスト */
-  parts: z.array(WorkPartMasterSchema).default([]),
+  composerSlug: SlugSchema,
 });
 
 export type CreateWorkCommand = z.infer<typeof CreateWorkCommandSchema>;

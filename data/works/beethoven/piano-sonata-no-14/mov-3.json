@@ -1,0 +1,75 @@
+{
+  "slug": "mov-3",
+  "order": 3,
+  "titleComponents": {
+    "title": {
+      "ja": "第3楽章 嬰ハ短調 Presto agitato",
+      "zh": "《第14号升C小调钢琴奏鸣曲“月光”》"
+    },
+    "prefix": {
+      "ja": "第3楽章",
+      "zh": "第三乐章"
+    },
+    "content": {
+      "ja": "嬰ハ短調 Presto agitato",
+      "zh": "升C小调，Presto agitato"
+    },
+    "nickname": {
+      "ja": "月光",
+      "zh": "月光"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "27-2",
+      "isPrimary": true
+    }
+  ],
+  "type": "movement",
+  "isNameStandard": true,
+  "description": {
+    "ja": "嵐のようなアルペジオと強烈な打鍵が支配する情熱の頂点です。極めて高い技巧を要するソナタ形式の構成が、圧倒的な劇的結末を導きます。",
+    "zh": "这是整部作品情感的巅峰，充斥着暴风雨般的琶音与强烈的击弦。极高难度的奏鸣曲式结构，引领着乐曲迈向极具戏剧性的终局。"
+  },
+  "performanceDifficulty": 5,
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 10,
+    "nationalism": -2,
+    "scale": 6,
+    "complexity": 8,
+    "theatricality": 10
+  },
+  "nicknames": [],
+  "tags": ["passionate", "dramatic", "tense", "virtuoso"],
+  "instruments": ["piano"],
+  "basedOn": {
+    "originalWorkSlug": "piano-sonata-no-14",
+    "arrangeType": "transcription",
+    "arranger": "None"
+  },
+  "genres": ["sonata-form", "sonata"],
+  "key": "c-sharp-minor",
+  "tempo": "Presto agitato",
+  "tempoTranslation": {
+    "ja": "プレスト・アジタート（非常に速く、激して）"
+  },
+  "timeSignature": {
+    "numerator": 4,
+    "denominator": 4
+  },
+  "bpm": 150,
+  "metronomeUnit": "quarter",
+  "_schemaVersion": "1.0.0",
+  "_generatorMeta": {
+    "model": "gpt-4o",
+    "generatedAt": "2024-05-23T10:00:00Z",
+    "promptVersion": "1.0",
+    "confidenceScore": 1,
+    "sourceRefs": ["https://imslp.org/wiki/Piano_Sonata_No.14_Op.27_No.2_(Beethoven,_Ludwig_van)"],
+    "executionId": "beethoven-ps14-mov3"
+  },
+  "composerSlug": "beethoven",
+  "workSlug": "piano-sonata-no-14"
+}

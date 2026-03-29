@@ -1,5 +1,5 @@
 import { WorkControl, WorkId } from './work.control';
-import { WorkMetadata } from './work.metadata';
+import { WorkMetadata, synthesizeTitle } from './work.metadata';
 
 export type { WorkControl, WorkMetadata, WorkId };
 
@@ -37,7 +37,7 @@ export class Work {
     return this.metadata.musicalIdentity?.genres ?? [];
   }
   get title() {
-    return this.metadata.titleComponents.title;
+    return synthesizeTitle(this.metadata.titleComponents);
   }
   get popularTitle() {
     return this.metadata.titleComponents.nickname;

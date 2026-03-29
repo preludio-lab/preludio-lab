@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { WorkBaseCommandSchema } from './base.command';
-import { WorkPartMasterSchema } from '../master/work-part-master.schema';
 import { WorkControlSchema } from '@/domain/work/work.control';
 
 /**
@@ -15,9 +14,7 @@ export const UpdateWorkCommandSchema = WorkBaseCommandSchema.partial().extend({
   /** 更新対象作品のスラグ */
   slug: WorkControlSchema.shape.slug,
   /** 更新対象作品の作曲家スラグ */
-  composerSlug: WorkControlSchema.shape.composerSlug,
-  /** 構成楽曲（楽章）のリスト。指定された場合、既存のリストをこの内容で全置換します。省略時は更新しません。 */
-  parts: z.array(WorkPartMasterSchema).optional(),
+  composerSlug: WorkControlSchema.shape.slug,
 });
 
 export type UpdateWorkCommand = z.infer<typeof UpdateWorkCommandSchema>;

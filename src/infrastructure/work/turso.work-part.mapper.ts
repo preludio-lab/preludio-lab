@@ -22,7 +22,6 @@ export class TursoWorkPartMapper {
   static toDomain(rows: WorkPartRows): WorkPart {
     const { part, translations } = rows;
 
-    const title = aggregateTranslations(translations, 'title');
     const titlePrefix = aggregateTranslations(translations, 'titlePrefix');
     const titleContent = aggregateTranslations(translations, 'titleContent');
     const titleNickname = aggregateTranslations(translations, 'titleNickname');
@@ -39,7 +38,6 @@ export class TursoWorkPartMapper {
       } as any as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       {
         titleComponents: {
-          title,
           prefix: titlePrefix,
           content: titleContent,
           nickname: titleNickname,
@@ -112,7 +110,6 @@ export class TursoWorkPartMapper {
 
     const tc = meta.titleComponents;
     const langs = new Set<string>([
-      ...Object.keys(tc.title || {}),
       ...Object.keys(tc.prefix || {}),
       ...Object.keys(tc.content || {}),
       ...Object.keys(tc.nickname || {}),
@@ -123,13 +120,17 @@ export class TursoWorkPartMapper {
     for (const lang of langs) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const getVal = (obj: any): string | null => (obj && obj[lang]) || null;
-      if (!getVal(tc.title)) continue;
+      const prefix = getVal(tc.prefix);
+      const content = getVal(tc.content);
+      const title = [prefix, content].filter(Boolean).join(' ');
+
+      if (!title) continue;
 
       translations.push({
         id: generateId(), // Generic ID for translation record
         workPartId: ctrl.id,
         lang,
-        title: getVal(tc.title)!,
+        title,
         titlePrefix: getVal(tc.prefix),
         titleContent: getVal(tc.content),
         titleNickname: getVal(tc.nickname),

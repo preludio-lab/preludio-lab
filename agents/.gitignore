@@ -6,10 +6,9 @@ node_modules/
 .env.local
 
 # Workspace temporary files
-workspace/temp/*
-workspace/cache/*
-!workspace/temp/.gitkeep
-!workspace/cache/.gitkeep
+workspace/**
+!workspace/**/
+!workspace/**/.gitkeep
 
 # Logs
 *.log

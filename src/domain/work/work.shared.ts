@@ -22,11 +22,6 @@ export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 
  */
 export const TitleComponentsSchema = z.object({
   /**
-   * 統合済みタイトル (Consolidated Title)
-   * 規則: {prefix} {content} {nickname}
-   */
-  title: TitleSchema,
-  /**
    * 接頭辞 (Systematic Identifier)
    * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
    * 例: "第1楽章", "交響曲第5番", "No. 1"
@@ -49,6 +44,25 @@ export const TitleComponentsSchema = z.object({
 
 export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
 
+/**
+ * TitleComponents から各言語のフルタイトルを合成します。
+ */
+export function synthesizeTitle(tc: TitleComponents): z.infer<typeof TitleSchema> {
+  const result: Record<string, string | undefined> = {};
+  const langs = ['en', 'ja', 'es', 'de', 'fr', 'it', 'zh'] as const;
+
+  for (const lang of langs) {
+    const p = tc.prefix?.[lang];
+    const c = tc.content?.[lang];
+    const combined = [p, c].filter(Boolean).join(' ');
+    if (combined) {
+      result[lang] = combined;
+    }
+  }
+
+  return result;
+}
+
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);
 
@@ -60,18 +74,18 @@ export const NicknamesSchema = z.array(z.string().max(100)).max(20);
  * 6軸の印象評価値 (-10 to +10 の整数)
  */
 export const ImpressionDimensionsSchema = z.object({
-  /** 明るさ (Brightness) */
-  brightness: DimensionSchema,
-  /** 躍動感 (Vibrancy) */
-  vibrancy: DimensionSchema,
+  /** 革新性 (Innovation) */
+  innovation: DimensionSchema,
+  /** 情動性 (Emotionality) */
+  emotionality: DimensionSchema,
+  /** 民族性 (Nationalism) */
+  nationalism: DimensionSchema,
   /** 規模感 (Scale) */
   scale: DimensionSchema,
-  /** 深み (Depth) */
-  depth: DimensionSchema,
-  /** ドラマ性 (Drama) */
-  drama: DimensionSchema,
-  /** 通俗性・人気度 (Popularity) */
-  popularity: DimensionSchema,
+  /** 複雑性 (Complexity) */
+  complexity: DimensionSchema,
+  /** 演劇性 (Theatricality) */
+  theatricality: DimensionSchema,
 });
 
 export type ImpressionDimensions = z.infer<typeof ImpressionDimensionsSchema>;
@@ -125,7 +139,7 @@ export const MetronomeUnitSchema = z.enum(
  * 曲が何に基づいているか、どのように派生したかを示す。
  */
 export const ArrangeType = {
-  TRANSCRIPTION: 'transcription', // 編曲
+  TRANSCRIPTION: 'transcription', // 編編
   VARIATION: 'variation', // 変奏
   PARAPHRASE: 'paraphrase', // パラフレーズ
   ORCHESTRATION: 'orchestration', // 管弦楽化
@@ -147,7 +161,7 @@ export const BasedOnSchema = z.object({
   originalWorkSlug: z.string().max(100),
   /** 編曲・派生タイプ */
   arrangeType: ArrangeTypeSchema,
-  /** 編曲者 (Slug) */
+  /** 編曲者 (名前またはSlug) */
   arranger: z.string().max(100).optional(),
 });
 

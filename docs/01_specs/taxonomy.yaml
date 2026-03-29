@@ -384,14 +384,47 @@ genres:
         label_ja: 弦楽重奏
         label_en: String Ensemble
         description: 弦楽器のみによるアンサンブル。編成規模（Quartet等）は `instrumentations` 軸で指定する。
+      - id: string-quartet
+        label_ja: 弦楽四重奏曲
+        label_en: String Quartet
+      - id: string-trio
+        label_ja: 弦楽三重奏曲
+        label_en: String Trio
+      - id: string-quintet
+        label_ja: 弦楽五重奏曲
+        label_en: String Quintet
       - id: chamber-piano
         label_ja: ピアノ重奏
         label_en: Piano Ensemble
         description: 独奏楽器とピアノによるアンサンブル。編成規模（Trio等）は `instrumentations` 軸で指定する。
+      - id: piano-trio
+        label_ja: ピアノ三重奏曲
+        label_en: Piano Trio
+      - id: piano-quartet
+        label_ja: ピアノ四重奏曲
+        label_en: Piano Quartet
+      - id: piano-quintet
+        label_ja: ピアノ五重奏曲
+        label_en: Piano Quintet
       - id: sonata-duo
         label_ja: 独奏ソナタ（伴奏付）
         label_en: Instrumental Sonata (with Piano)
         description: 独奏楽器とピアノのためのソナタ。
+      - id: violin-sonata
+        label_ja: ヴァイオリンソナタ
+        label_en: Violin Sonata
+      - id: cello-sonata
+        label_ja: チェロソナタ
+        label_en: Cello Sonata
+      - id: viola-sonata
+        label_ja: ヴィオラソナタ
+        label_en: Viola Sonata
+      - id: flute-sonata
+        label_ja: フルートソナタ
+        label_en: Flute Sonata
+      - id: clarinet-sonata
+        label_ja: クラリネットソナタ
+        label_en: Clarinet Sonata
       - id: keyboard-ensemble
         label_ja: 鍵盤アンサンブル（連弾・2台ピアノ）
         label_en: Keyboard Ensemble (4-hands / 2 Pianos)
@@ -413,6 +446,12 @@ genres:
         label_ja: 鍵盤独奏
         label_en: Keyboard Solo
         description: ピアノ、オルガン、チェンバロ等の鍵盤楽器一台のための作品。
+      - id: piano-sonata
+        label_ja: ピアノソナタ
+        label_en: Piano Sonata
+      - id: organ-sonata
+        label_ja: オルガンソナタ
+        label_en: Organ Sonata
       - id: string-solo
         label_ja: 弦楽器独奏
         label_en: String Solo

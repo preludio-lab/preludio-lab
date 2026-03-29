@@ -229,9 +229,7 @@ export class BaseAgent {
     const jsonSchema = convertZodToJsonSchema(schema);
     const geminiSchema = convertToGeminiSchema(jsonSchema);
 
-    const history: { role: string; parts: { text: string }[] }[] = [
-      { role: 'user', parts: [{ text: currentPrompt }] },
-    ];
+    const history: Content[] = [{ role: 'user', parts: [{ text: currentPrompt }] }];
 
     while (currentRetries <= maxRetries) {
       if (currentRetries > 0 && lastError) {
