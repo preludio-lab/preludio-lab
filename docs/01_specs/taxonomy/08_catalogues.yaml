@@ -17,7 +17,7 @@ catalogue_prefixes:
     label: WoO
     description:
       ja: 作品番号なし (Werke ohne Opuszahl)。
-      en: Works without opus number.
+      en: Works without opus number (Werke ohne Opuszahl).
   - id: bwv
     label: BWV
     description:
@@ -51,7 +51,7 @@ catalogue_prefixes:
   - id: s
     label: S.
     description:
-      ja: サール番号 (Searle)。リス。
+      ja: サール番号 (Searle)。リスト。
       en: Searle catalogue. Liszt.
   - id: l
     label: L.
@@ -66,7 +66,7 @@ catalogue_prefixes:
   - id: sz
     label: Sz.
     description:
-      ja: セーレシュ番号 (Szőllősy)。バルトーク。
+      ja: セーレシ番号 (Szőllősy)。バルトーク。
       en: Szőllősy catalogue. Bartók.
   - id: b
     label: B.
