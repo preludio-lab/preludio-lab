@@ -81,7 +81,7 @@ genres:
           fr: Musique de scène
           it: Musica di scena
           es: Música de escena
-          zh: 剧付随音乐
+          zh: 剧付随音楽
         description:
           ja: 演劇、劇作品の伴奏・挿入曲。
           en: Music for a play, including overtures, interludes, and background music.
@@ -552,7 +552,7 @@ genres:
           de: Alte Musik (Vokal)
           fr: Musique vocale ancienne
           it: Musica vocale antica
-          es: Música vocal antigua
+          es: Musica vocal antigua
           zh: 早期声乐
         description:
           ja: ルネサンス以前の形式を持つ声楽曲。
@@ -570,40 +570,31 @@ genres:
           ja: 世俗合唱曲、アカペラなど。
           en: Secular choral pieces, a cappella works, and other vocal ensemble music.
 
-  - category: musical-form
+  - category: form-led-genres
     label:
-      ja: 楽曲形式
-      en: Musical Form
-      de: Musikalische Formlehre
-      fr: Forme musicale
-      it: Forma musicale
-      es: Forma musical
-      zh: 音乐形式
+      ja: 形式主導のジャンル
+      en: Form-led Genres
+      de: Formbasierte Gattungen
+      fr: Genres basés sur la forme
+      it: Generi basati sulla forma
+      es: Géneros basados en la forma
+      zh: 形式主导的体裁
+    description:
+      ja: 特定の楽曲形式をタイトルや作品の根幹とするジャンル。
+      en: Genres where a specific musical form serves as the title or the core of the work.
     items:
       - id: sonata
         label:
-          ja: ソナタ（多楽章構成）
-          en: Sonata (Multi-movement)
+          ja: ソナタ
+          en: Sonata
           de: Sonate
           fr: Sonate
           it: Sonata
           es: Sonata
-          zh: 奏鸣曲（多乐章）
+          zh: 奏鸣曲
         description:
-          ja: 急ー緩ー（舞曲）ー急などの楽章配置を持つ多楽章形式。
-          en: A large-scale instrumental work in several movements.
-      - id: sonata-form
-        label:
-          ja: ソナタ形式
-          en: Sonata Form
-          de: Sonatenhauptsatzform
-          fr: Forme sonate
-          it: Forma-sonata
-          es: Forma sonata
-          zh: 奏鸣曲式
-        description:
-          ja: 提示部・展開部・再現部の構成原理。
-          en: A musical structure consisting of exposition, development, and recapitulation.
+          ja: 古典派以前から続く多楽章の器楽曲。独奏や伴奏付き。モーツァルトやベートーヴェンの傑作群。
+          en: A multi-movement instrumental work from the Classical era and beyond. Masterworks by Mozart, Beethoven, and others.
       - id: variations
         label:
           ja: 変奏曲
@@ -614,20 +605,20 @@ genres:
           es: Variaciones
           zh: 变奏曲
         description:
-          ja: 主題（Theme）をリズム、メロディ、和声面で変形させていく形式。
-          en: A form where a theme is transformed through rhythmic, melodic, or harmonic changes.
+          ja: 主題を様々に変奏していく作品。バッハの『ゴールドベルク変奏曲』などの不朽の名作。
+          en: A set of variations on a theme. Immortal works like Bach's "Goldberg Variations".
       - id: fugue-counterpoint
         label:
-          ja: フーガ・対位法
-          en: Fugue / Counterpoint
-          de: Fuge / Kontrapunkt
-          fr: Fugue / Contrepoint
-          it: Fuga / Contrappunto
-          es: Fuga / Contrapunto
-          zh: 赋格 / 对位
+          ja: フーガ・対位法的作品
+          en: Fugue / Contrapuntal Works
+          de: Fuge / Kontrapunktische Werke
+          fr: Fugue / Œuvres contrapuntiques
+          it: Fuga / Opere contrappuntistiche
+          es: Fuga / Obras contrapuntísticas
+          zh: 赋格 / 对位作品
         description:
-          ja: 模倣対位法に基づく形式。カノン、インヴェンション等。
-          en: Forms based on imitative counterpoint, such as canons or inventions.
+          ja: 高度な対位法に基づくジャンル。バッハの『フーガの技法』が頂点。
+          en: Genres based on advanced counterpoint. Bach's "The Art of Fugue" represents its pinnacle.
       - id: suite-partita
         label:
           ja: 組曲・パルティータ
@@ -638,8 +629,8 @@ genres:
           es: Suite / Partita
           zh: 组曲 / 帕蒂塔
         description:
-          ja: 複数の舞曲や楽曲を組み合わせた形式。
-          en: A sequence of contrasting movements, often based on dance forms.
+          ja: バロック期の『イギリス組曲』や『パルティータ』など、複数の楽曲を連ねたジャンル。
+          en: A collection of musical items, such as the Baroque "English Suites" or "Partitas".
       - id: rondo
         label:
           ja: ロンド
@@ -650,44 +641,8 @@ genres:
           es: Rondó
           zh: 回旋曲
         description:
-          ja: 共通の主題（ロンド主題）が繰り返される形式。
-          en: A musical form where a principal theme alternates with contrasting episodes.
-      - id: ternary-form
-        label:
-          ja: 三部形式
-          en: Ternary Form
-          de: Dreiteilige Liedform
-          fr: Forme ternaire
-          it: Forma ternaria
-          es: Forma ternaria
-          zh: 三部曲式
-        description:
-          ja: A-B-Aの三部構造。
-          en: 'A structure in three parts: A-B-A.'
-      - id: binary-form
-        label:
-          ja: 二部形式
-          en: Binary Form
-          de: Zweiteilige Liedform
-          fr: Forme binaire
-          it: Forma binaria
-          es: Forma binaria
-          zh: 二部曲式
-        description:
-          ja: A-Bの二部構造。
-          en: 'A structure in two parts: A-B.'
-      - id: cyclic-form
-        label:
-          ja: 循環形式
-          en: Cyclic Form
-          de: Zyklische Form
-          fr: Forme cyclique
-          it: Forma ciclica
-          es: Forma cíclica
-          zh: 循环形式
-        description:
-          ja: 特定の主題や動機を全楽章に登場させる手法。
-          en: A technique where a theme or motif recurs in multiple movements of a work.
+          ja: 主題が回帰する形式をタイトルとする独立曲。モーツァルトの『ロンド ニ長調』など。
+          en: An independent work titled after its rondo structure, such as Mozart's "Rondo in D major".
       - id: aria
         label:
           ja: アリア（詠唱）
@@ -698,8 +653,8 @@ genres:
           es: Aria
           zh: 咏叹调
         description:
-          ja: オペラやオラトリオの中で、独唱者が感情を吐露する旋律的な楽曲。
-          en: A melodic song for solo voice in an opera or oratorio.
+          ja: オペラやオラトリオの看板となる歌。ヘンデルの『私を泣かせてください』など。
+          en: The centerpiece of operas or oratorios, such as Handel's "Lascia ch'io pianga".
       - id: recitative
         label:
           ja: レチタティーヴォ（叙唱）
@@ -710,20 +665,8 @@ genres:
           es: Recitativo
           zh: 宣叙调
         description:
-          ja: 言葉のイントネーションを重視した、語るような歌唱形式。
-          en: A narrative song style that follows the natural flow of speech.
-      - id: vocal-ensemble
-        label:
-          ja: 重唱（アンサンブル）
-          en: Vocal Ensemble
-          de: Vokalensemble
-          fr: Ensemble vocal
-          it: Insieme vocale
-          es: Conjunto vocal
-          zh: 重唱
-        description:
-          ja: 複数の独唱者が異なる歌詞や感情を同時に歌う形式。
-          en: A piece for a small number of solo singers.
+          ja: ドラマの対話や状況説明を行う歌。バロック・オペラにおける重要な構成要素。
+          en: Songs used for dialogue or exposition in drama, a key component of Baroque opera.
       - id: chorus-piece
         label:
           ja: 合唱曲
@@ -734,20 +677,20 @@ genres:
           es: Coro
           zh: 合唱
         description:
-          ja: オペラやオラトリオにおける群衆の表現、または独立した合唱作品。
-          en: A movement or work for a large group of singers.
+          ja: 合唱のための作品。大規模なオラトリオ内の合唱から、小規模な世俗合唱まで。
+          en: Works for chorus, ranging from large-scale oratorio movements to smaller secular pieces.
       - id: mass-ordinary
         label:
-          ja: ミサ通常文
-          en: Ordinary of the Mass
-          de: Ordinarium Missae
-          fr: Ordinaire de la messe
-          it: Ordinarium Missae
-          es: Ordinario de la misa
-          zh: 弥撒常规
+          ja: ミサ曲
+          en: Mass
+          de: Messe
+          fr: Messe
+          it: Messa
+          es: Misa
+          zh: 弥撒
         description:
-          ja: キリエ、グロリア、クレド等、ミサの基本構造。
-          en: 'The fixed parts of the Catholic Mass: Kyrie, Gloria, Credo, Sanctus, Agnus Dei.'
+          ja: 典礼文に基づき作曲された宗教曲の主要ジャンル。バッハ、モーツァルトの傑作群。
+          en: A major genre of religious music based on liturgical texts. Masterpieces by Bach and Mozart.
       - id: requiem-form
         label:
           ja: レクイエム
@@ -758,20 +701,20 @@ genres:
           es: Réquiem
           zh: 安魂曲
         description:
-          ja: 追悼のための多楽章形式。
-          en: A mass for the dead, often in several movements.
+          ja: 死者のためのミサ。モーツァルト、ヴェルディ、フォーレなどの傑作が知られる。
+          en: Mass for the dead. Famous masterpieces by Mozart, Verdi, and Fauré.
       - id: passion-structure
         label:
-          ja: 受難曲構造
+          ja: 受難曲
           en: Passion
-          de: Passionsoratorium / Passion
+          de: Passion
           fr: Passion
           it: Passione
           es: Pasión
           zh: 受难曲
         description:
-          ja: キリストの受難を扱った形式。
-          en: A large-scale work dealing with the suffering and death of Jesus.
+          ja: キリストの受難を描く大規模なジャンル。バッハの『マタイ受難曲』が最高峰。
+          en: A large-scale genre depicting the suffering of Jesus. Bach's "St. Matthew Passion" is its peak.
       - id: chorale
         label:
           ja: コラール
@@ -782,8 +725,8 @@ genres:
           es: Coral
           zh: 赞美诗 / 圣咏
         description:
-          ja: プロテスタント教会で歌われる賛美歌。
-          en: A hymn tune of the German Protestant Church.
+          ja: 会衆歌。バッハによる和声付けが最高の手本とされる宗教曲のジャンル。
+          en: A hymn tune. Bach's harmonizations are considered the definitive examples of this genre.
       - id: motet
         label:
           ja: モテット
@@ -794,8 +737,8 @@ genres:
           es: Motete
           zh: 经文歌
         description:
-          ja: ポリフォニーによる宗教声楽曲。
-          en: A polyphonic vocal composition, usually on a religious text.
+          ja: ルネサンス・バロック期の主要な多声宗教声楽曲。パレストリーナやバッハの歴史的傑作。
+          en: A major polyphonic religious vocal genre of the Renaissance and Baroque eras.
       - id: madrigal
         label:
           ja: マドリガル
@@ -806,10 +749,8 @@ genres:
           es: Madrigal
           zh: 牧歌
         description:
-          ja: ルネサンス期の世俗声楽曲。
-          en: A secular vocal work common in the Renaissance era.
-
-      # --- 歌曲・親密な形式 (Art Song / Intimate Forms) ---
+          ja: イタリア・ルネサンス期に隆盛を極めた世俗声楽曲の主要ジャンル。
+          en: A major secular vocal genre that thrived during the Italian Renaissance.
       - id: lied-song
         label:
           ja: 歌曲・リート
@@ -820,44 +761,8 @@ genres:
           es: Canción lírica / Lied
           zh: 艺术歌曲
         description:
-          ja: 詩と音楽が密接に結びついた、主に独唱とピアノのための形式。
-          en: A lyric form for solo voice and piano, based on poetry.
-      - id: song-cycle-structure
-        label:
-          ja: 連作歌曲
-          en: Song Cycle
-          de: Liederzyklus
-          fr: Cycle de mélodies
-          it: Ciclo di liriche
-          es: Ciclo de canciones
-          zh: 连作歌曲
-        description:
-          ja: 共通の詩人や物語的テーマによって結ばれた、一連の歌曲の集合体。
-          en: A set of songs intended to be performed together, connected by a story or theme.
-      - id: strophic
-        label:
-          ja: 有節形式
-          en: Strophic Form
-          de: Strophenform
-          fr: Forme strophique
-          it: Forma strofica
-          es: Forma estrófica
-          zh: 有节形式
-        description:
-          ja: 同じ旋律を歌詞の節ごとに繰り返す、歌曲における最も基本的な構造。
-          en: A musical structure where all verses or stanzas of the text are sung to the same music.
-      - id: through-composed
-        label:
-          ja: 通奏形式
-          en: Through-composed
-          de: Durchkomponiert
-          fr: Composition continue
-          it: Durchkomponiert
-          es: Composición continua
-          zh: 通奏形式
-        description:
-          ja: 反復を排し、歌詞の流れに従って新しい音楽が連続する形式。
-          en: A form that has different music for each verse of the song.
+          ja: 詩と音楽の融合。シューベルトの『魔王』など、19世紀ドイツで芸術的頂点に達した。
+          en: The fusion of poetry and music. Reached its artistic peak in 19th-century Germany with works like Schubert's "Erlkönig".
       - id: vocalise
         label:
           ja: ヴォカリーズ
@@ -868,10 +773,8 @@ genres:
           es: Vocalización
           zh: 练声曲
         description:
-          ja: 歌詞を持たず、母音のみで歌われる楽曲。
-          en: A vocal work without words, sung on one or more vowel sounds.
-
-      # --- 性格的小品 (Character Pieces) ---
+          ja: 歌詞なしで歌われる芸術曲。ラフマニノフの『ヴォカリーズ』が世界的に著名。
+          en: An artistic song sung without words. Rachmaninoff's "Vocalise" is world-renowned.
       - id: prelude
         label:
           ja: 前奏曲
@@ -882,8 +785,8 @@ genres:
           es: Preludio
           zh: 前奏曲
         description:
-          ja: 導入的な性格、あるいは自由な即興的性格を持つ独立した小品。
-          en: An introductory piece or a short, independent work of an improvisatory nature.
+          ja: 導入、または独立小品。バッハの『平均律』やドビュッシーの傑作群。
+          en: An introductory movement or an independent piece. Featured in Bach's "Well-Tempered Clavier" and Debussy's sets.
       - id: nocturne
         label:
           ja: 夜想曲
@@ -894,8 +797,8 @@ genres:
           es: Nocturno
           zh: 夜想曲
         description:
-          ja: 夜の静寂を思わせる、抒情的な旋律を主軸とした楽曲。
-          en: A short piano piece inspired by or evocative of the night.
+          ja: 抒情的な性質。ショパンの全21曲がこのジャンルの不滅の遺産。
+          en: A lyrical genre. Chopin's 21 nocturnes are the immortal legacy of this category.
       - id: impromptu
         label:
           ja: 即興曲
@@ -906,8 +809,8 @@ genres:
           es: Impromptu / Improvisación
           zh: 即兴曲
         description:
-          ja: 即興演奏の自由さを持ちながら、一定の形式を備えた楽曲。
-          en: A character piece for piano that suggests the character of an improvisation.
+          ja: 即興性を写した性格的小品。シューベルト、ショパンの名作が知られる。
+          en: A character piece capturing an improvisatory spirit. Well-known works by Schubert and Chopin.
       - id: scherzo
         label:
           ja: スケルツォ
@@ -918,8 +821,8 @@ genres:
           es: Scherzo
           zh: 谐谑曲
         description:
-          ja: 「冗談」を意味し、急速なテンポを持つ形式。
-          en: A light, fast, and often playful movement or piece.
+          ja: 冗談を意味する。ショパンがこの名を冠した独立した傑作群として確立。
+          en: Meaning "joke". Established by Chopin as a genre of independent, large-scale masterpieces.
       - id: ballade
         label:
           ja: バラード
@@ -930,8 +833,8 @@ genres:
           es: Balada
           zh: 叙事曲
         description:
-          ja: 物語的な展開を持つ、規模の大きな器楽曲。
-          en: A large-scale instrumental work with a narrative character.
+          ja: 物語的叙事曲。ショパンが器楽ジャンルとして昇華させた。
+          en: A narrative ballad. Elevated to an instrumental genre by Chopin.
       - id: fantasia
         label:
           ja: 幻想曲
@@ -942,8 +845,8 @@ genres:
           es: Fantasía
           zh: 幻想曲
         description:
-          ja: 形式の制約が少なく、自由な楽想の展開を優先した作品。
-          en: A free-form piece of music, often in an improvisatory style.
+          ja: 自由な展開を持つ作品。モーツァルト、シューマンらの精神的深みをたたえる傑作。
+          en: A work with free-form development. Masterpieces by Mozart, Schumann, and others known for their spiritual depth.
       - id: intermezzo
         label:
           ja: 間奏曲
@@ -954,8 +857,8 @@ genres:
           es: Intermezzo / Intermedio
           zh: 间奏曲
         description:
-          ja: 楽章間やオペラの幕間に演奏される、または独立した抒情的な小品。
-          en: A short movement or piece often intended to be played between larger works or acts.
+          ja: 幕間や独立曲。ブラームス晩年の内省的な名品群がこのジャンルを象徴する。
+          en: An interlude or independent piece. Brahms's late introspective piano works define this genre.
       - id: bagatelle
         label:
           ja: バガテル
@@ -966,8 +869,8 @@ genres:
           es: Bagatela
           zh: 巴加泰勒
         description:
-          ja: 「些細なもの」を意味し、簡潔な形式の中に凝縮された楽想を持つ小品。
-          en: A short, light piece of music, usually for the piano.
+          ja: 「些細なもの」。ベートーヴェンの『エリーゼのために』などがこのジャンルに含まれる。
+          en: Meaning "trifle". Beethoven's "Für Elise" and other short gems belong to this genre.
       - id: humoresque
         label:
           ja: ユモレスク
@@ -978,8 +881,8 @@ genres:
           es: Humoresca
           zh: 幽默曲
         description:
-          ja: 気まぐれで、しばしばユーモラスな対照性を持つ小品。
-          en: A piece of a whimsical or humorous character, with sudden changes in mood.
+          ja: 風変わりな小品。ドヴォルザークの『ユモレスク 第7番』が代名詞。
+          en: A whimsical piece. Dvořák's "Humoresque No. 7" is the synonym for this genre.
       - id: romance
         label:
           ja: ロマンス
@@ -990,8 +893,8 @@ genres:
           es: Romance
           zh: 浪漫曲
         description:
-          ja: 抒情的で親密な性格を持ち、器楽で「歌」を模したような旋律が主導する小品。
-          en: A lyrical, intimate instrumental piece with an expressive melody.
+          ja: 甘美で気品のある旋律。ベートーヴェンの『ヘ長調』などが歴史的名曲。
+          en: Sweet and elegant melody. Beethoven's "Romance in F major" is a historical masterpiece.
       - id: arabesque
         label:
           ja: アラベスク
@@ -1002,8 +905,8 @@ genres:
           es: Arabesco
           zh: 阿拉伯风格曲
         description:
-          ja: 唐草模様のような装飾的な旋律線を持つ優美な作品。
-          en: A short, graceful piece characterized by delicate, flowing melodic lines.
+          ja: 唐草模様のような装飾美。ドビュッシーの『第1番』などが有名。
+          en: Ornamental beauty like an arabesque pattern. Debussy's "Arabesque No. 1" is famous.
       - id: barcarolle-berceuse
         label:
           ja: 船歌・子守歌
@@ -1014,8 +917,8 @@ genres:
           es: Barcarola / Canción de cuna
           zh: 船歌 / 摇篮曲
         description:
-          ja: 舟歌のリズムや子守歌のような抒情的な小品。
-          en: Lyrical pieces based on the rhythms of a gondolier's song or a lullaby.
+          ja: 水面の揺らぎや揺籃。ショパンの『舟歌』などが、その芸術的極地。
+          en: Ripples on water or a cradle's rocking. Chopin's "Barcarolle" represents its artistic pinnacle.
       - id: elegy
         label:
           ja: 悲歌
@@ -1026,10 +929,8 @@ genres:
           es: Elegía
           zh: 悲歌
         description:
-          ja: 哀悼や悲しみを表現した楽曲。
-          en: A melancholic work expressing sorrow or lament for the dead.
-
-      # --- 技術・華麗 (Virtuosic Forms) ---
+          ja: 哀悼。チャイコフスキーやフォーレによる深い悲しみをたたえた傑作。
+          en: A lament. Masterpieces by Tchaikovsky and Fauré filled with deep sorrow.
       - id: etude
         label:
           ja: 練習曲
@@ -1040,8 +941,8 @@ genres:
           es: Estudio
           zh: 练习曲
         description:
-          ja: 特定の演奏技法の修練、あるいはその技法を芸術的に昇華させた楽曲。
-          en: A piece designed to help a performer master a specific technical difficulty.
+          ja: 技巧の磨錬と芸術の融合。ショパン、リスト、ラフマニノフによるコンサート・レパートリー。
+          en: Fusion of technique and art. A concert staple popularized by Chopin, Liszt, and Rachmaninoff.
       - id: toccata
         label:
           ja: トッカータ
@@ -1052,8 +953,8 @@ genres:
           es: Tocata
           zh: 托卡塔
         description:
-          ja: 鍵盤楽器の速いパッセージや打鍵の技巧を誇示する、即興的な形式。
-          en: A virtuosic piece for a keyboard instrument, usually featuring fast-moving notes.
+          ja: 打鍵の技巧と即興性。バッハの『トッカータとフーガ』など。
+          en: Displays of finger dexterity and improvisation. Bach's "Toccata and Fugue" set the standard.
       - id: caprice-capriccio
         label:
           ja: 奇想曲
@@ -1064,8 +965,8 @@ genres:
           es: Capricho
           zh: 随想曲
         description:
-          ja: 気まぐれで自由な形式、または技巧的な性格の強い楽曲。
-          en: A lively, whimsical, and often technically challenging piece in a free form.
+          ja: 華やかな技巧と気まぐれな変化。パガニーニ、ブラームスの名品。
+          en: Brilliant technique and whimsical changes. Famous works by Paganini and Brahms.
       - id: rhapsody
         label:
           ja: 狂詩曲
@@ -1076,8 +977,8 @@ genres:
           es: Rapsodia
           zh: 狂诗曲
         description:
-          ja: 民族的・叙事的な主題を自由な構成で繋ぎ合わせた、幻想的かつ技巧的な楽曲。
-          en: A one-movement work that is episodic and features a wide range of highly contrasted moods.
+          ja: 民族的、即興的。リストの『ハンガリー狂詩曲』などが歴史的人気を博したジャンル。
+          en: Ethnic and improvisatory. List's "Hungarian Rhapsodies" gained immense historical popularity.
       - id: transcription-paraphrase
         label:
           ja: パラフレーズ・編曲
@@ -1088,8 +989,8 @@ genres:
           es: Transcripción / Paráfrasis
           zh: 改编曲 / 幻想变奏曲
         description:
-          ja: 他の楽曲の主題を、特定の楽器のために技巧的に再構成した作品。
-          en: An arrangement of a musical composition for a different instrument or in a simplified or elaborated form.
+          ja: 他の主題の華麗な再構築。リストのベルリーニ・パラフレーズなどがこのジャンルの代表。
+          en: Brilliant reconstructions of other themes. Liszt's Bellini paraphrases lead this genre.
       - id: concert-piece
         label:
           ja: 演奏会用楽曲
@@ -1100,8 +1001,8 @@ genres:
           es: Pieza de concierto
           zh: 音乐会曲
         description:
-          ja: 独奏楽器と管弦楽のための、華麗な技巧を特徴とする単一楽章の作品。
-          en: A short, brilliant orchestral work featuring a soloist.
+          ja: 協奏的作品の単一楽章ジャンル。ウェーバーやメンデルスゾーンの名作。
+          en: A single-movement genre for solo instrument and orchestra. Masterworks by Weber and Mendelssohn.
       - id: cadenza
         label:
           ja: カデンツァ
@@ -1112,8 +1013,8 @@ genres:
           es: Cadencia
           zh: 华彩乐段
         description:
-          ja: 協奏曲などで、独奏者が無伴奏で高度な技巧を披露する部分。
-          en: An improvised or written-out ornamental passage played or sung by soloists, usually in a free rhythmic style.
+          ja: 独奏の技巧。後の作曲家によって固定された作品群も含まれる。
+          en: Virtuosic solo displays. Includes those composed by later masters and fixed as independent items.
       - id: style-brillant
         label:
           ja: 華麗なる様式
@@ -1124,10 +1025,8 @@ genres:
           es: Estilo brillante
           zh: 华丽风格
         description:
-          ja: 19世紀前半に流行した、技巧的で華やかな装飾を特徴とする様式。
-          en: A virtuosic and brilliant style of composition and performance, popular in the early 19th century.
-
-      # --- 舞曲 (Dances) ---
+          ja: 19世紀前半のピアノ音楽の流行ジャンル。華麗な装飾と技巧。ショパンの影響。
+          en: A popular 19th-century piano genre marked by brilliant ornamentation and technique, influenced Chopin.
       - id: allemande
         label:
           ja: アルマンド
@@ -1138,8 +1037,8 @@ genres:
           es: Allemanda
           zh: 阿勒曼德
         description:
-          ja: ドイツ起源の舞曲。4/4拍子の中庸なテンポ。
-          en: A moderate-tempo German dance in quadruple meter.
+          ja: ドイツの舞曲。バロック組曲の幕開けを飾る格調高いジャンル。
+          en: A German dance. The dignified opening to many Baroque suites.
       - id: courante
         label:
           ja: クーラント
@@ -1150,8 +1049,8 @@ genres:
           es: Corrente
           zh: 库朗特
         description:
-          ja: フランス/イタリア起源。3拍子系の速い舞曲。
-          en: A fast French or Italian dance in triple meter.
+          ja: 走る舞曲。急速な変化を持つバロック音楽の主要ジャンル。
+          en: '"Running" dance. A major Baroque genre characterized by quick changes.'
       - id: sarabande
         label:
           ja: サラバンド
@@ -1162,8 +1061,8 @@ genres:
           es: Zarabanda
           zh: 萨拉班德
         description:
-          ja: スペイン起源の荘重な舞曲。遅い3拍子。
-          en: A slow, stately Spanish dance in triple meter.
+          ja: 荘重な舞曲。組曲の心臓。ヘンデルのニ短調組曲の旋律が世界的に有名。
+          en: A stately dance, the heart of the suite. Handel's melody in D minor suite is a world standard.
       - id: gigue
         label:
           ja: ジーグ
@@ -1174,8 +1073,8 @@ genres:
           es: Giga
           zh: 吉格
         description:
-          ja: イギリス起源の非常に速い舞曲。複合拍子。
-          en: A very fast British dance in compound meter.
+          ja: 急速なフィナーレ。バロック組曲の結びを飾る快活なジャンル。
+          en: A fast finale. The lively conclusion to most Baroque suites.
       - id: gavotte
         label:
           ja: ガヴォット
@@ -1186,8 +1085,8 @@ genres:
           es: Gavota
           zh: 加沃特
         description:
-          ja: フランス舞曲。4/4（2/2）拍子。アウフタクトから始まる。
-          en: A graceful French dance in quadruple meter, often starting on the half-bar.
+          ja: 典雅なフランス舞曲。バッハ、リュリによる不朽の名曲。
+          en: A graceful French dance. Immortalized by Bach and Lully.
       - id: bourree
         label:
           ja: ブーレ
@@ -1198,8 +1097,8 @@ genres:
           es: Bourrée
           zh: 布雷
         description:
-          ja: フランス舞曲。4/4拍子。非常に速いテンポ。
-          en: A fast French dance in quadruple meter, with a sharp upbeat.
+          ja: 快活なフランス舞曲。バッハのリュートやチェロ組曲の傑作が著名。
+          en: A lively French dance. Famous examples from Bach's lute and cello suites.
       - id: passepied
         label:
           ja: パスピエ
@@ -1210,8 +1109,8 @@ genres:
           es: Passepied
           zh: 帕斯比叶
         description:
-          ja: 非常に速いメヌエットのような舞曲。
-          en: A very fast dance resembling a minuet in triple meter.
+          ja: 急速な舞曲。ルイ14世時代の宮廷音楽を象徴するジャンル。
+          en: A fast dance. Symbolizes the court music of Louis XIV's era.
       - id: minuet
         label:
           ja: メヌエット
@@ -1222,8 +1121,8 @@ genres:
           es: Minueto
           zh: 小步舞曲
         description:
-          ja: 優雅な3拍子の宮廷舞曲。
-          en: A graceful palace dance in triple meter.
+          ja: 代表的な宮廷舞曲。ボッケリーニの『メヌエット』などが世界中で愛される傑作。
+          en: The iconic palace dance. Boccherini's "Minuetto" remains a globally beloved masterpiece.
       - id: waltz
         label:
           ja: ワルツ
@@ -1234,8 +1133,8 @@ genres:
           es: Vals
           zh: 圆舞曲
         description:
-          ja: 3拍子。19世紀に大流行した舞曲。
-          en: A smooth ballroom dance in triple time.
+          ja: 円舞曲。ヨハン・シュトラウスII世の『美しく青きドナウ』に代表される帝都ウィーンの華。
+          en: The waltz. Represented by Strauss II's "Blue Danube," the glory of imperial Vienna.
       - id: polonaise
         label:
           ja: ポロネーズ
@@ -1246,8 +1145,8 @@ genres:
           es: Polonesa
           zh: 波洛奈兹
         description:
-          ja: ポーランドの儀式的舞曲。荘重な3拍子。
-          en: A stately Polish processional dance in triple meter.
+          ja: ポーランドの誇り。ショパン教の『軍隊』『英雄』が不滅の芸術的頂点。
+          en: The pride of Poland. Chopin's "Military" and "Heroic" polonaises are its artistic peaks.
       - id: mazurka
         label:
           ja: マズルカ
@@ -1258,8 +1157,8 @@ genres:
           es: Mazurca
           zh: 马祖卡
         description:
-          ja: ポーランド民族舞曲。3拍子の第2または第3拍にアクセント。
-          en: A fast Polish folk dance in triple meter with strong accents on the second or third beat.
+          ja: ポーランドの民俗的情緒。ショパンの全58曲がこのジャンルの繊細さを語る。
+          en: Polish folk sentiment. Chopin's set of 58 mazurkas speaks to the delicacy of this genre.
       - id: march
         label:
           ja: 行進曲
@@ -1270,8 +1169,8 @@ genres:
           es: Marcha
           zh: 行进曲
         description:
-          ja: 歩調を合わせるための規則的な音楽。
-          en: Music with a strong, steady pulse, originally written for marching.
+          ja: 士気高揚や儀式。エルガーの『威風堂々』やスーザの傑作群。
+          en: Morale or ceremony. Elgar's "Pomp and Circumstance" and Sousa's marches lead this category.
       - id: tarantella
         label:
           ja: タランテラ
@@ -1282,8 +1181,8 @@ genres:
           es: Tarantela
           zh: 塔兰泰拉
         description:
-          ja: イタリア南部起源。6/8拍子の猛烈に速い舞曲。
-          en: A fast Italian folk dance in compound meter.
+          ja: イタリアの熱狂的舞曲。ショパンやロッシーニによる急速なピアノ名品。
+          en: A frantic Italian dance. Piano masterpieces by Chopin and Rossini are well known.
       - id: bolero-habanera
         label:
           ja: ボレロ・ハバネラ
@@ -1294,8 +1193,8 @@ genres:
           es: Bolero / Habanera
           zh: 波莱罗 / 哈巴涅拉
         description:
-          ja: スペインや中南米の色彩が強い舞曲。
-          en: Passionate Spanish or Latin American dances with distinctive rhythms.
+          ja: 西・ラテン情緒。ラベルの『ボレロ』やビゼーによる歴史的名旋律。
+          en: Spanish and Latin sentiment. Iconic melodies by Ravel and Bizet define this category.
       - id: czardas
         label:
           ja: チャールダーシュ
@@ -1306,8 +1205,8 @@ genres:
           es: Csárdás
           zh: 查尔达什
         description:
-          ja: ハンガリー舞曲。遅い部分と速い部分の対比。
-          en: A traditional Hungarian folk dance with contrasting slow and fast sections.
+          ja: ハンガリーの哀愁と情熱。モンティの『チャールダーシュ』は世界的なアンコール曲。
+          en: Hungarian melancholy and passion. Monti's "Csárdás" is a world-standard encore piece.
       - id: polka
         label:
           ja: ポルカ
@@ -1318,8 +1217,8 @@ genres:
           es: Polca
           zh: 波尔卡
         description:
-          ja: ボヘミア起源。2/4拍子の速い舞曲。
-          en: A lively Bohemian dance in duple meter.
+          ja: 快活な2拍子。シュトラウス家の舞踏会音楽として愛されるジャンル。
+          en: Lively duple meter. A staple of Strauss family ballroom music.
       - id: galop
         label:
           ja: ギャロップ
@@ -1330,8 +1229,8 @@ genres:
           es: Galope
           zh: 加洛普
         description:
-          ja: 非常に速い舞曲。社交界のフィナーレに多用された。
-          en: A quick and lively round dance in duple meter.
+          ja: 猛烈な疾走。オッフェンバックの『地獄のオルフェ』のフィナーレが典型例。
+          en: Fervent speed. The finale of Offenbach's "Orpheus in the Underworld" is a prime example.
       - id: pavane-galliard
         label:
           ja: パヴァーヌ・ガリアルド
@@ -1342,10 +1241,8 @@ genres:
           es: Pavana / Gallarda
           zh: 帕凡 / 嘉雅德
         description:
-          ja: 荘厳な2拍子と快活な3拍子のペア。
-          en: A contrasting pair of a slow, stately dance and a lively, jumping dance.
-
-      # --- 固執低音・変奏 (Ostinato Forms) ---
+          ja: 古雅な舞曲。フォーレやラベルの『亡き王女のためのパヴァーヌ』への着想。
+          en: Archaic dances. Inspiration for Fauré and Ravel's "Pavane for a Dead Princess".
       - id: passacaglia
         label:
           ja: パッサカリア
@@ -1356,8 +1253,8 @@ genres:
           es: Pasacalle
           zh: 帕萨卡利亚
         description:
-          ja: 3拍子の重厚な低音主題に基づく変奏形式。
-          en: A serious musical form based on a continuous bass theme in triple meter.
+          ja: 低音主題の変奏。バッハの『ハ短調』など、重厚な芸術ジャンルとして確立。
+          en: Variations on a bass theme. Established as a profound artistic genre like Bach's in C minor.
       - id: chaconne
         label:
           ja: シャコンヌ
@@ -1368,20 +1265,8 @@ genres:
           es: Chacona
           zh: 恰空
         description:
-          ja: 和声進行の繰り返しに重点を置いた変奏形式。
-          en: A form closely related to passacaglia, focusing on a repeated harmonic progression.
-      - id: basso-ostinato
-        label:
-          ja: バッソ・オスティナート
-          en: Basso Ostinato / Ground
-          de: Basso Ostinato
-          fr: Basse obstinée
-          it: Basso ostinato
-          es: Bajo ostinato
-          zh: 固执低音
-        description:
-          ja: 同じ低音音型を繰り返す技法。
-          en: A short, recurring melodic pattern in the bass.
+          ja: 和声の宇宙。バッハの『無伴奏バイオリンのためのニ短調』が史上最高傑作。
+          en: A harmonic universe. Bach's "Chaconne in D minor" for solo violin is the ultimate masterwork.
       - id: folia
         label:
           ja: フォリア
@@ -1392,58 +1277,8 @@ genres:
           es: La Folía
           zh: 佛利亚
         description:
-          ja: 特徴的な和声進行を持つ伝統的な舞曲。
-          en: A traditional musical theme consisting of a fixed harmonic sequence.
-
-      # --- 標題・物語的構造 (Programmatic Structures) ---
-      - id: symphonic-poem-structure
-        label:
-          ja: 交響詩的構造
-          en: Symphonic Poem Structure
-          de: Sinfonische Dichtung (Struktur)
-          fr: Structure du poème symphonique
-          it: Struttura del poema sinfonico
-          es: Estructura de poema sinfónico
-          zh: 交响诗结构
-        description:
-          ja: 単一楽章の中で文学的な物語を音楽的に描写する構造。
-          en: The structural principle of an orchestral work that portrays a story or landscape in one movement.
-      - id: program-symphony-form
-        label:
-          ja: 標題交響曲形式
-          en: Program Symphony Form
-          de: Programmsymphonie
-          fr: Symphonie à programme
-          it: Sinfonia a programma
-          es: Sinfonía de programa
-          zh: 标题交响曲形式
-        description:
-          ja: 各楽章に明確な標題と物語性が与えられた形式。
-          en: A multi-movement orchestral work that follows a literary or narrative idea.
-      - id: leitmotif-system
-        label:
-          ja: ライトモティーフ体系
-          en: Leitmotif System
-          de: Leitmotiv-System
-          fr: Système de leitmotiv
-          it: Sistema di leitmotiv
-          es: Sistema de leitmotiv
-          zh: 主导动机体系
-        description:
-          ja: 特定の概念を象徴する短い動機を変容・結合させる構造。
-          en: A compositional technique where short musical motifs represent specific characters or ideas.
-      - id: idee-fixe
-        label:
-          ja: 固定観念
-          en: Idée fixe
-          de: Idée fixe
-          fr: Idée fixe
-          it: Idea fissa
-          es: Idea fija
-          zh: 固定乐念
-        description:
-          ja: 全曲を通じて変容しながら現れる主導的なテーマ。
-          en: A recurring theme or motive associated with a person, object, or idea throughout a musical work.
+          ja: 伝統的神話旋律。コレッリやラフマニノフらによる歴史的変奏ジャンル。
+          en: A traditional mythical melody. Variations by Corelli and Rachmaninoff lead this category.
       - id: melodrame
         label:
           ja: メロドラマ
@@ -1454,17 +1289,5 @@ genres:
           es: Melodrama
           zh: 情节剧 / 配乐朗诵
         description:
-          ja: 朗読と音楽が組み合わさった形式。
-          en: A dramatic work or movement with spoken text set against a musical background.
-      - id: word-painting
-        label:
-          ja: 語画法
-          en: Word Painting
-          de: Wortmalerei
-          fr: Peinture de mots
-          it: Pittura di parole
-          es: Pintura de palabras
-          zh: 音画法
-        description:
-          ja: 歌詞の意味を音型で直接的に描写する伝統的技法。
-          en: A technique where the music directly reflects the literal meaning of the lyrics.
+          ja: 朗読と音楽の融合。シューマンやリヒャルト・シュトラウスの名品が有名。
+          en: The fusion of recitation and music. Masterpieces by Schumann and Richard Strauss.

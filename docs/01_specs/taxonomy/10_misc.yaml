@@ -43,7 +43,7 @@ work_part_types:
       zh: 乐章
   - id: scene
     label:
-      ja: 場面・景
+      ja: 場面
       en: Scene
       de: Szene
       fr: Scène
