@@ -5,6 +5,8 @@ import { MusicalKey } from '../work/musical-key';
 import { WorkPartType } from '../work/work-part.metadata';
 import { taxonomy } from './taxonomy/TaxonomyRegistry';
 import { AppLocale } from '../i18n/locale';
+import { Nationality } from './nationality';
+import { MusicalCataloguePrefix } from '../work/musical-catalogue-prefix';
 
 /**
  * 時代 (MusicalEra) のラベル取得関数のデモ
@@ -100,6 +102,16 @@ export const MUSICAL_KEY_LABELS: Record<MusicalKey, string> = {
   [MusicalKey.C_FLAT]: '変ハ調',
 
   [MusicalKey.ATONAL]: '無調',
+};
+
+/**
+ * 国籍 (Nationality) のラベル取得関数
+ */
+export const getNationalityLabel = (
+  nationality: Nationality | string,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('nationalities', nationality, locale);
 };
 
 /**
@@ -238,6 +250,16 @@ export const MUSICAL_GENRE_LABELS: Record<string, string> = {
 };
 
 /**
+ * 作品番号接頭辞 (MusicalCataloguePrefix) のラベル取得関数
+ */
+export const getCataloguePrefixLabel = (
+  prefix: MusicalCataloguePrefix | string,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('catalogue_prefixes', prefix, locale);
+};
+
+/**
  * 楽器 (MusicalInstrument) のラベル取得関数
  */
 export const getMusicalInstrumentLabel = (
@@ -367,6 +389,46 @@ export const MUSICAL_INSTRUMENT_LABELS: Record<MusicalInstrument, string> = {
   // Others
   [MusicalInstrument.BASSO_CONTINUO]: '通奏低音',
   [MusicalInstrument.ELECTRONICS]: '電子音響',
+};
+
+/**
+ * 印象スケール (ImpressionScale) のラベル取得関数
+ */
+export const getImpressionScaleLabel = (
+  scaleId: string,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('impression_scales', scaleId, locale);
+};
+
+/**
+ * 専門記事レベル (ReadingLevel) のラベル取得関数
+ */
+export const getReadingLevelLabel = (
+  level: string | number,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('reading_levels', level, locale);
+};
+
+/**
+ * 演奏難易度 (PerformanceDifficulty) のラベル取得関数
+ */
+export const getPerformanceDifficultyLabel = (
+  difficulty: string | number,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('performance_difficulty', difficulty, locale);
+};
+
+/**
+ * トレンドレベル (TrendingLevel) のラベル取得関数
+ */
+export const getTrendingLevelLabel = (
+  level: string,
+  locale: AppLocale = 'ja' as AppLocale,
+): string => {
+  return taxonomy.getLabel('trending_levels', level, locale);
 };
 
 /**
