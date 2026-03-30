@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+/* 
+  Next.js font loader (next/font/google) のタイムアウト問題を回避するため、
+  データ量の大きい CJK フォントは標準的な CSS インポートを使用します。
+*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Old+Mincho:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600;700&display=swap');
+
 @theme {
   /* Color System Mapping */
   --color-primary: var(--color-primary);
@@ -42,6 +48,12 @@
   --color-neutral-500: #78716c;
   --color-neutral-700: #44403c;
   --color-neutral-900: #1c1917;
+
+  /* CJK Fonts (Manual Variables) */
+  --font-noto-sans-jp: 'Noto Sans JP', sans-serif;
+  --font-zen-old-mincho: 'Zen Old Mincho', serif;
+  --font-noto-sans-sc: 'Noto Sans SC', sans-serif;
+  --font-noto-serif-sc: 'Noto Serif SC', serif;
 }
 
 @media (prefers-color-scheme: dark) {
