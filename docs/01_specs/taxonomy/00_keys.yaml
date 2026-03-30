@@ -1,0 +1,456 @@
+# 0. Keys / Tonality (調性)
+# ==========================
+# 西洋音楽における調性および旋律の基礎。
+
+keys:
+  # --- Major Keys (長調) ---
+  - id: c-major
+    label:
+      ja: ハ長調
+      en: C Major
+      de: C-Dur
+      fr: Ut majeur
+      it: Do maggiore
+      es: Do mayor
+      zh: C大调
+  - id: c-sharp-major
+    label:
+      ja: 嬰ハ長調
+      en: C# Major
+      de: Cis-Dur
+      fr: Ut dièse majeur
+      it: Do diesis maggiore
+      es: Do sostenido mayor
+      zh: 升C大调
+  - id: d-flat-major
+    label:
+      ja: 変ニ長調
+      en: Db Major
+      de: Des-Dur
+      fr: Ré bémol majeur
+      it: Re bemolle maggiore
+      es: Re bemol mayor
+      zh: 降D大调
+  - id: d-major
+    label:
+      ja: ニ長調
+      en: D Major
+      de: D-Dur
+      fr: Ré majeur
+      it: Re maggiore
+      es: Re mayor
+      zh: D大调
+  - id: e-flat-major
+    label:
+      ja: 変ホ長調
+      en: Eb Major
+      de: Es-Dur
+      fr: Mi bémol majeur
+      it: Mi bemolle maggiore
+      es: Mi bemol mayor
+      zh: 降E大调
+  - id: e-major
+    label:
+      ja: ホ長調
+      en: E Major
+      de: E-Dur
+      fr: Mi majeur
+      it: Mi maggiore
+      es: Mi mayor
+      zh: E大调
+  - id: f-major
+    label:
+      ja: ヘ長調
+      en: F Major
+      de: F-Dur
+      fr: Fa majeur
+      it: Fa maggiore
+      es: Fa mayor
+      zh: F大调
+  - id: f-sharp-major
+    label:
+      ja: 嬰ヘ長調
+      en: F# Major
+      de: Fis-Dur
+      fr: Fa dièse majeur
+      it: Fa diesis maggiore
+      es: Fa sostenido mayor
+      zh: 升F大调
+  - id: g-flat-major
+    label:
+      ja: 変ト長調
+      en: Gb Major
+      de: Ges-Dur
+      fr: Sol bémol majeur
+      it: Sol bemolle maggiore
+      es: Sol bemol mayor
+      zh: 降G大调
+  - id: g-major
+    label:
+      ja: ト長調
+      en: G Major
+      de: G-Dur
+      fr: Sol majeur
+      it: Sol maggiore
+      es: Sol mayor
+      zh: G大调
+  - id: a-flat-major
+    label:
+      ja: 変イ長調
+      en: Ab Major
+      de: As-Dur
+      fr: La bémol majeur
+      it: La bemolle maggiore
+      es: La bemol mayor
+      zh: 降A大调
+  - id: a-major
+    label:
+      ja: イ長調
+      en: A Major
+      de: A-Dur
+      fr: La majeur
+      it: La maggiore
+      es: La mayor
+      zh: A大调
+  - id: b-flat-major
+    label:
+      ja: 変ロ長調
+      en: Bb Major
+      de: B-Dur
+      fr: Si bémol majeur
+      it: Si bemolle maggiore
+      es: Si bemol mayor
+      zh: 降B大调
+  - id: b-major
+    label:
+      ja: ロ長調
+      en: B Major
+      de: H-Dur
+      fr: Si majeur
+      it: Si maggiore
+      es: Si mayor
+      zh: B大调
+  - id: c-flat-major
+    label:
+      ja: 変ハ長調
+      en: Cb Major
+      de: Ces-Dur
+      fr: Ut bémol majeur
+      it: Do bemolle maggiore
+      es: Do bemol mayor
+      zh: 降C大调
+
+  # --- Minor Keys (短調) ---
+  - id: c-minor
+    label:
+      ja: ハ短調
+      en: C Minor
+      de: c-Moll
+      fr: Ut mineur
+      it: Do minore
+      es: Do menor
+      zh: C小调
+  - id: c-sharp-minor
+    label:
+      ja: 嬰ハ短調
+      en: C# Minor
+      de: cis-Moll
+      fr: Ut dièse mineur
+      it: Do diesis minore
+      es: Do sostenido menor
+      zh: 升C小调
+  - id: d-minor
+    label:
+      ja: ニ短調
+      en: D Minor
+      de: d-Moll
+      fr: Ré mineur
+      it: Re minore
+      es: Re menor
+      zh: D小调
+  - id: d-sharp-minor
+    label:
+      ja: 嬰ニ短調
+      en: D# Minor
+      de: dis-Moll
+      fr: Ré dièse mineur
+      it: Re diesis minore
+      es: Re sostenido menor
+      zh: 升D小调
+  - id: e-flat-minor
+    label:
+      ja: 変ホ短調
+      en: Eb Minor
+      de: es-Moll
+      fr: Mi bémol mineur
+      it: Mi bemolle minore
+      es: Mi bemol mayor
+      zh: 降E小调
+  - id: e-minor
+    label:
+      ja: ホ短調
+      en: E Minor
+      de: e-Moll
+      fr: Mi mineur
+      it: Mi minore
+      es: Mi menor
+      zh: E小调
+  - id: f-minor
+    label:
+      ja: ヘ短調
+      en: F Minor
+      de: f-Moll
+      fr: Fa mineur
+      it: Fa minore
+      es: Fa menor
+      zh: F小调
+  - id: f-sharp-minor
+    label:
+      ja: 嬰ヘ短調
+      en: F# Minor
+      de: fis-Moll
+      fr: Fa dièse mineur
+      it: Fa diesis minore
+      es: Fa sostenido menor
+      zh: 升F小调
+  - id: g-minor
+    label:
+      ja: ト短調
+      en: G Minor
+      de: g-Moll
+      fr: Sol mineur
+      it: Sol minore
+      es: Sol menor
+      zh: G小调
+  - id: g-sharp-minor
+    label:
+      ja: 嬰ト短調
+      en: G# Minor
+      de: gis-Moll
+      fr: Sol dièse mineur
+      it: Sol diesis minore
+      es: Sol sostenido menor
+      zh: 升G小调
+  - id: a-minor
+    label:
+      ja: イ短調
+      en: A Minor
+      de: a-Moll
+      fr: La mineur
+      it: La minore
+      es: La menor
+      zh: A小调
+  - id: a-sharp-minor
+    label:
+      ja: 嬰イ短調
+      en: A# Minor
+      de: ais-Moll
+      fr: La dièse mineur
+      it: La diesis minore
+      es: La sostenido menor
+      zh: 升A小调
+  - id: b-flat-minor
+    label:
+      ja: 変ロ短調
+      en: Bb Minor
+      de: b-Moll
+      fr: Si bémol mineur
+      it: Si bemolle minore
+      es: Si bemol menor
+      zh: 降B小调
+  - id: b-minor
+    label:
+      ja: ロ短調
+      en: B Minor
+      de: h-Moll
+      fr: Si mineur
+      it: Si minore
+      es: Si menor
+      zh: B小调
+  - id: a-flat-minor
+    label:
+      ja: 変イ短調
+      en: Ab Minor
+      de: as-Moll
+      fr: La bémol mineur
+      it: La bemolle minore
+      es: La bemol mayor
+      zh: 降A小调
+
+  # --- Plain Notes / Modeless (主音のみ / 指定なし) ---
+  - id: c
+    label:
+      ja: ハ調
+      en: in C
+      de: in C
+      fr: en ut
+      it: in Do
+      es: en Do
+      zh: C调
+  - id: c-sharp
+    label:
+      ja: 嬰ハ調
+      en: in C#
+      de: in Cis
+      fr: en ut dièse
+      it: in Do diesis
+      es: en Do sostenido
+      zh: 升C调
+  - id: d-flat
+    label:
+      ja: 変ニ調
+      en: in Db
+      de: in Des
+      fr: en ré bémol
+      it: in Re bemolle
+      es: en Re bemol
+      zh: 降D调
+  - id: d
+    label:
+      ja: ニ調
+      en: in D
+      de: in D
+      fr: en ré
+      it: in Re
+      es: en Re
+      zh: D调
+  - id: d-sharp
+    label:
+      ja: 嬰ニ調
+      en: in D#
+      de: in Dis
+      fr: en ré dièse
+      it: in Re diesis
+      es: en Re sostenido
+      zh: 升D调
+  - id: e-flat
+    label:
+      ja: 変ホ調
+      en: in Eb
+      de: in Es
+      fr: en mi bémol
+      it: in Mi bemolle
+      es: en Mi bemol
+      zh: 降E调
+  - id: e
+    label:
+      ja: ホ調
+      en: in E
+      de: in E
+      fr: en mi
+      it: in Mi
+      es: en Mi
+      zh: E调
+  - id: f
+    label:
+      ja: ヘ調
+      en: in F
+      de: in F
+      fr: en fa
+      it: in Fa
+      es: en Fa
+      zh: F调
+  - id: f-sharp
+    label:
+      ja: 嬰ヘ調
+      en: in F#
+      de: in Fis
+      fr: en fa dièse
+      it: in Fa diesis
+      es: en Fa sostenido
+      zh: 升F调
+  - id: g-flat
+    label:
+      ja: 変ト調
+      en: in Gb
+      de: in Ges
+      fr: en sol bémol
+      it: in Sol bemolle
+      es: en Sol bemol
+      zh: 降G调
+  - id: g
+    label:
+      ja: ト調
+      en: in G
+      de: in G
+      fr: en sol
+      it: in Sol
+      es: en Sol
+      zh: G调
+  - id: g-sharp
+    label:
+      ja: 嬰ト調
+      en: in G#
+      de: in Gis
+      fr: en sol dièse
+      it: in Sol diesis
+      es: en Sol sostenido
+      zh: 升G调
+  - id: a-flat
+    label:
+      ja: 変イ調
+      en: in Ab
+      de: in As
+      fr: en la bémol
+      it: in La bemolle
+      es: en La bemol
+      zh: 降A调
+  - id: a
+    label:
+      ja: イ調
+      en: in A
+      de: in A
+      fr: en la
+      it: in La
+      es: en La
+      zh: A调
+  - id: a-sharp
+    label:
+      ja: 嬰イ調
+      en: in A#
+      de: in Ais
+      fr: en la dièse
+      it: in La diesis
+      es: en La sostenido
+      zh: 升A调
+  - id: b-flat
+    label:
+      ja: 変ロ調
+      en: in Bb
+      de: in B
+      fr: en si bémol
+      it: in Si bemolle
+      es: en Si bemol
+      zh: 降B调
+  - id: b
+    label:
+      ja: ロ調
+      en: in B
+      de: in H
+      fr: en si
+      it: in Si
+      es: en Si
+      zh: B调
+  - id: c-flat
+    label:
+      ja: 変ハ調
+      en: in Cb
+      de: in Ces
+      fr: en ut bémol
+      it: in Do bemolle
+      es: en Do bemol
+      zh: 降C调
+
+  # --- Other ---
+  - id: atonal
+    label:
+      ja: 無調
+      en: Atonal
+      de: Atonal
+      fr: Atonal
+      it: Atonale
+      es: Atonal
+      zh: 无调性
+    description:
+      ja: 調性中心を持たない音楽。
+      en: Music without a tonal center.

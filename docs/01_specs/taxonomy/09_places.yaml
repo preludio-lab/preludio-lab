@@ -1,0 +1,158 @@
+# 10. Places (主要都市・活動拠点)
+# ==============================
+# 音楽史における主要な都市。
+
+places:
+  - id: vienna
+    label:
+      ja: ウィーン
+      en: Vienna
+      de: Wien
+      fr: Vienne
+      it: Vienna
+      es: Viena
+      zh: 维也纳
+  - id: berlin
+    label:
+      ja: ベルリン
+      en: Berlin
+      de: Berlin
+      fr: Berlin
+      it: Berlino
+      es: Berlín
+      zh: 柏林
+  - id: leipzig
+    label:
+      ja: ライプツィヒ
+      en: Leipzig
+      de: Leipzig
+      fr: Leipzig
+      it: Lipsia
+      es: Leipzig
+      zh: 莱比锡
+  - id: salzburg
+    label:
+      ja: ザルツブルク
+      en: Salzburg
+      de: Salzburg
+      fr: Salzbourg
+      it: Salisburgo
+      es: Salzburgo
+      zh: 萨尔茨堡
+  - id: paris
+    label:
+      ja: パリ
+      en: Paris
+      de: Paris
+      fr: Paris
+      it: Parigi
+      es: París
+      zh: 巴黎
+  - id: london
+    label:
+      ja: ロンドン
+      en: London
+      de: London
+      fr: Londres
+      it: Londra
+      es: Londres
+      zh: 伦敦
+  - id: rome
+    label:
+      ja: ローマ
+      en: Rome
+      de: Rom
+      fr: Rome
+      it: Roma
+      es: Roma
+      zh: 罗马
+  - id: venice
+    label:
+      ja: ヴェネツィア
+      en: Venice
+      de: Venedig
+      fr: Venise
+      it: Venezia
+      es: Venecia
+      zh: 威尼斯
+  - id: milan
+    label:
+      ja: ミラノ
+      en: Milan
+      de: Mailand
+      fr: Milan
+      it: Milano
+      es: Milán
+      zh: 米兰
+  - id: st-petersburg
+    label:
+      ja: サンクトペテルブルク
+      en: St. Petersburg
+      de: Sankt Petersburg
+      fr: Saint-Pétersbourg
+      it: San Pietroburgo
+      es: San Petersburgo
+      zh: 圣彼得堡
+  - id: moscow
+    label:
+      ja: モスクワ
+      en: Moscow
+      de: Moskau
+      fr: Moscou
+      it: Mosca
+      es: Moscú
+      zh: 莫斯科
+  - id: warsaw
+    label:
+      ja: ワルシャワ
+      en: Warsaw
+      de: Warschau
+      fr: Varsovie
+      it: Varsavia
+      es: Varsovia
+      zh: 华沙
+  - id: prague
+    label:
+      ja: プラハ
+      en: Prague
+      de: Prag
+      fr: Prague
+      it: Praga
+      es: Praga
+      zh: 布拉格
+  - id: budapest
+    label:
+      ja: ブダペスト
+      en: Budapest
+      de: Budapest
+      fr: Budapest
+      it: Budapest
+      es: Budapest
+      zh: 布达佩斯
+  - id: tokyo
+    label:
+      ja: 東京
+      en: Tokyo
+      de: Tokio
+      fr: Tokyo
+      it: Tokyo
+      es: Tokio
+      zh: 东京
+  - id: beijing
+    label:
+      ja: 北京
+      en: Beijing
+      de: Peking
+      fr: Pékin
+      it: Pechino
+      es: Pekín
+      zh: 北京
+  - id: new-york
+    label:
+      ja: ニューヨーク
+      en: New York
+      de: New York
+      fr: New York
+      it: New York
+      es: Nueva York
+      zh: 纽约

@@ -1,0 +1,104 @@
+# 7. Nationalities (国・地域)
+# =========================
+# 主要な音楽拠点。ISO 3166-1 alpha-2 に準拠。
+
+nationalities:
+  - id: DE
+    label:
+      ja: ドイツ
+      en: Germany
+      de: Deutschland
+      fr: Allemagne
+      it: Germania
+      es: Alemania
+      zh: 德国
+  - id: AT
+    label:
+      ja: オーストリア
+      en: Austria
+      de: Österreich
+      fr: Autriche
+      it: Austria
+      es: Austria
+      zh: 奥地利
+  - id: FR
+    label:
+      ja: フランス
+      en: France
+      de: Frankreich
+      fr: France
+      it: Francia
+      es: Francia
+      zh: 法语
+  - id: IT
+    label:
+      ja: イタリア
+      en: Italy
+      de: Italien
+      fr: Italie
+      it: Italia
+      es: Italia
+      zh: 意大利
+  - id: RU
+    label:
+      ja: ロシア
+      en: Russia
+      de: Russland
+      fr: Russie
+      it: Russia
+      es: Rusia
+      zh: 俄罗斯
+  - id: PL
+    label:
+      ja: ポーランド
+      en: Poland
+      de: Polen
+      fr: Pologne
+      it: Polonia
+      es: Polonia
+      zh: 波兰
+  - id: CZ
+    label:
+      ja: チェコ
+      en: Czech Republic
+      de: Tschechien
+      fr: République tchèque
+      it: Repubblica Ceca
+      es: República Checa
+      zh: 捷克
+  - id: GB
+    label:
+      ja: イギリス
+      en: United Kingdom
+      de: Vereinigtes Königreich
+      fr: Royaume-Uni
+      it: Regno Unito
+      es: Reino Unido
+      zh: 英国
+  - id: US
+    label:
+      ja: アメリカ
+      en: United States
+      de: Vereinigte Staaten
+      fr: États-Unis
+      it: Stati Uniti
+      es: Estados Unidos
+      zh: 美国
+  - id: JP
+    label:
+      ja: 日本
+      en: Japan
+      de: Japan
+      fr: Japon
+      it: Giappone
+      es: Japón
+      zh: 日本
+  - id: CN
+    label:
+      ja: 中国
+      en: China
+      de: China
+      fr: Chine
+      it: Cina
+      es: China
+      zh: 中国

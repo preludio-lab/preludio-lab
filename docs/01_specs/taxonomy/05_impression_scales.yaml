@@ -1,0 +1,272 @@
+# 6. Impression Scales (印象評価軸)
+# ===============================
+# 楽曲の印象を定量的に評価するための軸定義。
+
+impression_scales:
+  - id: brightness
+    label:
+      ja: 明るさ
+      en: Brightness
+      de: Helligkeit
+      fr: Luminosité
+      it: Luminosità
+      es: Brillo
+      zh: 明亮感
+    description:
+      ja: 楽曲全体の色彩感。短調・長調だけでなく、音色の輝きを含む。
+      en: The overall sense of color in the music, including the brilliance of tone as well as major/minor keys.
+    min_label:
+      ja: 暗鬱・重厚
+      en: Dark
+      de: Dunkel
+      fr: Sombre
+      it: Oscuro
+      es: Oscuro
+      zh: 阴暗 / 重厚
+    max_label:
+      ja: 明朗・輝き
+      en: Bright
+      de: Hell / Strahlend
+      fr: Brillant
+      it: Brillante
+      es: Brillante
+      zh: 明朗 / 辉煌
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 絶望・葬送
+          en: Despair / Funeral
+          de: Verzweiflung / Trauer
+          fr: Désespoir / Funèbre
+          it: Disperazione / Funebre
+          es: Desesperación / Fúnebre
+          zh: 绝望 / 葬礼
+      - score_range: [-6, -3]
+        label:
+          ja: 哀愁・静謐
+          en: Melancholy / Serene
+          de: Melancholie / Heiter
+          fr: Mélancolie / Serein
+          it: Malinconia / Sereno
+          es: Melancolía / Sereno
+          zh: 哀愁 / 宁静
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 優雅・躍動
+          en: Elegant / Lively
+          de: Elegant / Lebhaft
+          fr: Élégant / Animé
+          it: Elegante / Vivace
+          es: Elegante / Vivaz
+          zh: 优雅 / 跃动
+      - score_range: [7, 10]
+        label:
+          ja: 祝祭・光輝
+          en: Triumphant / Radiant
+          de: Triumphierend / Strahlend
+          fr: Triomphant / Radiant
+          it: Trionfante / Radioso
+          es: Triunfante / Radiante
+          zh: 祝祭 / 光辉
+
+  - id: vibrancy
+    label:
+      ja: 躍動感
+      en: Vibrancy
+      de: Lebhaftigkeit
+      fr: Vibrance / Dynamisme
+      it: Vivacità
+      es: Vivacidad
+      zh: 跃动感
+    description:
+      ja: エネルギーレベルとリズムの活性度。
+      en: Energy level and rhythmic activity.
+    min_label:
+      ja: 静寂・停滞
+      en: Calm
+      de: Ruhig
+      fr: Calme
+      it: Calmo
+      es: Calma
+      zh: 静寂 / 停滞
+    max_label:
+      ja: 躍動・爆発
+      en: Energetic
+      de: Energetisch
+      fr: Énergétique
+      it: Energetico
+      es: Energético
+      zh: 跃动 / 爆发
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 静止・無
+          en: Stillness / Void
+          de: Stille / Leere
+          fr: Silence / Vide
+          it: Fermezza / Vuoto
+          es: Quietud / Vacío
+          zh: 静止 / 无
+      - score_range: [7, 10]
+        label:
+          ja: 爆発・狂喜
+          en: Explosive / Ecstatic
+          de: Explosiv / Ekstatisch
+          fr: Explosif / Extatique
+          it: Esplosivo / Estatico
+          es: Explosivo / Extático
+          zh: 爆发 / 狂喜
+
+  - id: scale
+    label:
+      ja: スケール
+      en: Scale
+      de: Umfang / Skala
+      fr: Échelle / Envergure
+      it: Scala / Grandezza
+      es: Escala / Magnitud
+      zh: 规模
+    description:
+      ja: 空間的な広がりと編成の規模感。
+      en: Spatial breadth and size of the ensemble.
+    min_label:
+      ja: 親密・個人的
+      en: Intimate
+      de: Intim
+      fr: Intime
+      it: Intimo
+      es: Íntimo
+      zh: 亲密 / 个人
+    max_label:
+      ja: 壮大・宇宙的
+      en: Grand
+      de: Großartig
+      fr: Grandiose
+      it: Grandioso
+      es: Grandioso
+      zh: 壮大 / 宏伟
+
+  - id: depth
+    label:
+      ja: 聴きごたえ
+      en: Depth
+      de: Tiefe
+      fr: Profondeur
+      it: Profondità
+      es: Profundidad
+      zh: 深度 / 耐听度
+    description:
+      ja: 音楽の複雑さと、要求される聴取の集中度。
+      en: Complexity of the music and level of listening concentration required.
+    min_label:
+      ja: 軽快・BGM
+      en: Light
+      de: Leicht
+      fr: Léger
+      it: Leggero
+      es: Ligero
+      zh: 轻快 / BGM
+    max_label:
+      ja: 深遠・哲学的
+      en: Deep
+      de: Tief / Philosophisch
+      fr: Profond / Philosophique
+      it: Profondo / Filosofico
+      es: Profundo / Filosófico
+      zh: 深奥 / 哲学性
+
+  - id: drama
+    label:
+      ja: ドラマ性
+      en: Drama
+      de: Dramatik
+      fr: Drame / Théâtralité
+      it: Drammaticità
+      es: Drama
+      zh: 戏剧性
+    description:
+      ja: 物語的な展開や感情の起伏の激しさ。
+      en: Narrative development and emotional intensity.
+    min_label:
+      ja: 純音楽的・抽象
+      en: Pure
+      de: Rein / Abstrakt
+      fr: Pur / Abstrait
+      it: Puro / Astratto
+      es: Puro / Abstracto
+      zh: 绝对音乐 / 抽象
+    max_label:
+      ja: 映画的・劇的
+      en: Cinematic
+      de: Filmisch / Dramatisch
+      fr: Cinématique / Dramatique
+      it: Cinematico / Drammatico
+      es: Cinemático / Dramático
+      zh: 影视化 / 剧烈
+
+  - id: tempo
+    label:
+      ja: テンポ
+      en: Tempo
+      de: Tempo
+      fr: Tempo
+      it: Tempo
+      es: Tempo
+      zh: 速度
+    description:
+      ja: 楽曲の主要な速さ。
+      en: The primary speed of the work.
+    min_label:
+      ja: 緩慢・静止
+      en: Slow
+      de: Langsam
+      fr: Lent
+      it: Lento
+      es: Lento
+      zh: 缓慢 / 静止
+    max_label:
+      ja: 爆発・超高速
+      en: Fast
+      de: Schnell
+      fr: Rapide
+      it: Veloce
+      es: Rápido
+      zh: 爆发 / 超高速
+
+  - id: work_popularity
+    label:
+      ja: 楽曲知名度
+      en: Work Popularity
+      de: Bekanntheit des Werks
+      fr: Popularité de l'œuvre
+      it: Popolarità dell'opera
+      es: Popularidad de la obra
+      zh: 楽曲知名度
+    description:
+      ja: 楽曲本来の知名度・ポピュラリティ。
+      en: The inherent popularity or recognition of the work.
+    min_label:
+      ja: 秘匿・新発見
+      en: Niche
+      de: Nische
+      fr: Niche / Méconnu
+      it: Di nicchia
+      es: De nicho
+      zh: 秘匿 / 新发现
+    max_label:
+      ja: 不朽・万国共通
+      en: Famous
+      de: Weltberühmt
+      fr: Universel / Célèbre
+      it: Universale / Celebre
+      es: Universal / Célebre
+      zh: 不朽 / 万国共通

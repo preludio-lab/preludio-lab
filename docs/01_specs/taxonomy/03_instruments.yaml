@@ -1,0 +1,764 @@
+# 3. Instrumentations & Instruments (編成・楽器)
+# ============================================
+# 楽曲の演奏規模（人数）および使用される具体的な楽器。
+
+instrumentations:
+  - id: solo
+    label:
+      ja: 独奏（無伴奏）
+      en: Solo / Unaccompanied
+      de: Solo / Unbegleitet
+      fr: Solo / Sans accompagnement
+      it: Solo / Non accompagnato
+      es: Solo / Sin acompañamiento
+      zh: 独奏（无伴奏）
+  - id: duo
+    label:
+      ja: 二重奏
+      en: Duo
+      de: Duo
+      fr: Duo
+      it: Duo
+      es: Dúo
+      zh: 二重奏
+  - id: trio
+    label:
+      ja: 三重奏
+      en: Trio
+      de: Trio
+      fr: Trio
+      it: Trio
+      es: Trío
+      zh: 三重奏
+  - id: quartet
+    label:
+      ja: 四重奏
+      en: Quartet
+      de: Quartett
+      fr: Quatuor
+      it: Quartetto
+      es: Cuarteto
+      zh: 四重奏
+  - id: quintet
+    label:
+      ja: 五重奏
+      en: Quintet
+      de: Quintett
+      fr: Quintette
+      it: Quintetto
+      es: Quinteto
+      zh: 五重奏
+  - id: sextet-larger
+    label:
+      ja: 六重奏以上
+      en: Sextet or larger
+      de: Sextett oder größer
+      fr: Sextuor ou plus
+      it: Sestetto o superiore
+      es: Sexteto o más
+      zh: 六重奏或更大规模
+  - id: soloist-with-ensemble
+    label:
+      ja: 独奏楽器とアンサンブル
+      en: Soloist(s) with Ensemble
+      de: Solist(en) mit Ensemble
+      fr: Soliste(s) avec ensemble
+      it: Solista/i con ensemble
+      es: Solista(s) con conjunto
+      zh: 独奏与合唱/器乐合奏
+    description:
+      ja: 協奏曲や、独唱＋室内楽などの編成。
+      en: Formations such as concertos or solo voice with chamber ensemble.
+
+  - id: full-orchestra
+    label:
+      ja: フルオーケストラ
+      en: Full Orchestra
+      de: Großes Orchester
+      fr: Grand orchestre
+      it: Grande orchestra
+      es: Gran orquesta
+      zh: 全编制管弦乐团
+  - id: chamber-orchestra
+    label:
+      ja: 室内オーケストラ
+      en: Chamber Orchestra
+      de: Kammerorchester
+      fr: Orchestre de chambre
+      it: Orchestra da camera
+      es: Orquesta de cámara
+      zh: 室内管弦乐团
+  - id: string-orchestra
+    label:
+      ja: 弦楽オーケストラ
+      en: String Orchestra
+      de: Streichorchester
+      fr: Orchestre à cordes
+      it: Orchestra d'archi
+      es: Orquesta de cuerdas
+      zh: 弦乐团
+  - id: wind-ensemble-band
+    label:
+      ja: 吹奏楽・管楽合奏
+      en: Wind Ensemble / Concert Band
+      de: Blasorchester / Musikkorps
+      fr: Orchestre d'harmonie
+      it: Orchestra di fiati / Banda
+      es: Orquesta de vientos / Banda
+      zh: 管乐团 / 吹奏乐
+  - id: choir-unaccompanied
+    label:
+      ja: 無伴奏合唱
+      en: Choir (A cappella)
+      de: Chor (A cappella)
+      fr: Chœur (A cappella)
+      it: Coro (A cappella)
+      es: Coro (A cappella)
+      zh: 无伴奏合唱
+
+instruments:
+  - category: keyboard
+    label:
+      ja: 鍵盤楽器
+      en: Keyboard
+      de: Tasteninstrumente
+      fr: Claviers
+      it: Strumenti a tastiera
+      es: Instrumentos de teclado
+      zh: 键盘乐器
+    items:
+      - id: piano
+        label:
+          ja: ピアノ
+          en: Piano
+          de: Klavier
+          fr: Piano
+          it: Pianoforte
+          es: Piano
+          zh: 钢琴
+      - id: organ
+        label:
+          ja: オルガン
+          en: Organ
+          de: Orgel
+          fr: Orgue
+          it: Organo
+          es: Órgano
+          zh: 管风琴
+      - id: harpsichord
+        label:
+          ja: チェンバロ
+          en: Harpsichord
+          de: Cembalo
+          fr: Clavecin
+          it: Cembalo
+          es: Clavecin
+          zh: 大键琴 / 羽管键琴
+      - id: fortepiano
+        label:
+          ja: フォルテピアノ
+          en: Fortepiano
+          de: Hammerklavier / Fortepiano
+          fr: Piano-forte
+          it: Fortepiano
+          es: Fortepiano
+          zh: 早期钢琴
+      - id: celesta
+        label:
+          ja: チェレスタ
+          en: Celesta
+          de: Celesta
+          fr: Célesta
+          it: Celesta
+          es: Celesta
+          zh: 钢片琴
+      - id: clavichord
+        label:
+          ja: クラヴィコード
+          en: Clavichord
+          de: Clavichord
+          fr: Clavicorde
+          it: Clavicordo
+          es: Clavicordio
+          zh: 击弦古钢琴
+      - id: virginal
+        label:
+          ja: バージナル
+          en: Virginal
+          de: Virginal
+          fr: Virginal
+          it: Virginale
+          es: Virginal
+          zh: 维金纳琴
+      - id: spinet
+        label:
+          ja: スピネット
+          en: Spinet
+          de: Spinett
+          fr: Épinette
+          it: Spinetta
+          es: Espineta
+          zh: 小型大键琴
+      - id: harmonium
+        label:
+          ja: ハルモニウム
+          en: Harmonium
+          de: Harmonium
+          fr: Harmonium
+          it: Armonium
+          es: Armonio
+          zh: 簧风琴
+      - id: glass-harmonica
+        label:
+          ja: グラス・ハーモニカ
+          en: Glass Harmonica
+          de: Glasharmonika
+          fr: Harmonica de verre
+          it: Armonica a bicchieri
+          es: Armónica de cristal
+          zh: 玻璃琴
+
+  - category: strings
+    label:
+      ja: 弦楽器
+      en: Strings
+      de: Streichinstrumente
+      fr: Cordes
+      it: Archi
+      es: Cuerdas
+      zh: 弦乐器
+    items:
+      - id: violin
+        label:
+          ja: ヴァイオリン
+          en: Violin
+          de: Violine / Geige
+          fr: Violon
+          it: Violino
+          es: Violín
+          zh: 小提琴
+      - id: viola
+        label:
+          ja: ヴィオラ
+          en: Viola
+          de: Bratsche / Viola
+          fr: Alto
+          it: Viola
+          es: Viola
+          zh: 中提琴
+      - id: cello
+        label:
+          ja: チェロ
+          en: Cello
+          de: Violoncello
+          fr: Violoncelle
+          it: Violoncello
+          es: Violonchelo
+          zh: 大提琴
+      - id: double-bass
+        label:
+          ja: コントラバス
+          en: Double Bass
+          de: Kontrabass
+          fr: Contrebasse
+          it: Contrabbasso
+          es: Contrabajo
+          zh: 低音提琴
+      - id: viola-da-gamba
+        label:
+          ja: ヴィオラ・ダ・ガンバ
+          en: Viola da Gamba
+          de: Viola da Gamba
+          fr: Viole de gambe
+          it: Viola da gamba
+          es: Viola da gamba
+          zh: 古大提琴
+      - id: period-strings
+        label:
+          ja: 古楽器（弦）
+          en: Period Strings
+          de: Historische Streichinstrumente
+          fr: Cordes anciennes
+          it: Archi storici
+          es: Cuerdas de época
+          zh: 早期弦乐器
+      - id: arpeggione
+        label:
+          ja: アルペジョーネ
+          en: Arpeggione
+          de: Arpeggione
+          fr: Arpeggione
+          it: Arpeggione
+          es: Arpeggione
+          zh: 琶音琴
+
+  - category: woodwinds
+    label:
+      ja: 木管楽器
+      en: Woodwinds
+      de: Holzblasinstrumente
+      fr: Bois
+      it: Legni
+      es: Maderas
+      zh: 木管乐器
+    items:
+      - id: flute
+        label:
+          ja: フルート
+          en: Flute
+          de: Flöte
+          fr: Flûte
+          it: Flauto
+          es: Flauta
+          zh: 长笛
+      - id: piccolo
+        label:
+          ja: ピッコロ
+          en: Piccolo
+          de: Pikkoloflöte
+          fr: Piccolo
+          it: Ottavino
+          es: Píccolo
+          zh: 短笛
+      - id: oboe
+        label:
+          ja: オーボエ
+          en: Oboe
+          de: Oboe
+          fr: Hautbois
+          it: Oboe
+          es: Oboe
+          zh: 双簧管
+      - id: english-horn
+        label:
+          ja: コーラングレ
+          en: English Horn
+          de: Englischhorn
+          fr: Cor anglais
+          it: Corno inglese
+          es: Corno inglés
+          zh: 英国管
+      - id: clarinet
+        label:
+          ja: クラリネット
+          en: Clarinet
+          de: Klarinette
+          fr: Clarinette
+          it: Clarinetto
+          es: Clarinete
+          zh: 单簧管
+      - id: bass-clarinet
+        label:
+          ja: バスクラリネット
+          en: Bass Clarinet
+          de: Bassklarinette
+          fr: Clarinette basse
+          it: Clarinetto basso
+          es: Clarinete bajo
+          zh: 低音单簧管
+      - id: bassoon
+        label:
+          ja: ファゴット
+          en: Bassoon
+          de: Fagott
+          fr: Basson
+          it: Fagotto
+          es: Fagot
+          zh: 巴松管 / 大管
+      - id: contrabassoon
+        label:
+          ja: コントラファゴット
+          en: Contrabassoon
+          de: Kontrafagott
+          fr: Contrebasson
+          it: Controfagotto
+          es: Contrafagot
+          zh: 低音大管
+      - id: recorder
+        label:
+          ja: リコーダー
+          en: Recorder
+          de: Blockflöte
+          fr: Flûte à bec
+          it: Flauto dolce
+          es: Flauta de pico
+          zh: 竖笛
+      - id: saxophone
+        label:
+          ja: サクソフォン
+          en: Saxophone
+          de: Saxophon
+          fr: Saxophone
+          it: Sassofono
+          es: Saxofón
+          zh: 萨克斯管
+      - id: traverso
+        label:
+          ja: フラウト・トラヴェルソ
+          en: Traverso
+          de: Traversflöte
+          fr: Traversière
+          it: Flauto traverso (antico)
+          es: Flauta travesera (antigua)
+          zh: 横笛（古乐器）
+      - id: basset-horn
+        label:
+          ja: バセットホルン
+          en: Basset Horn
+          de: Bassetthorn
+          fr: Cor de basset
+          it: Corno di bassetto
+          es: Corno di bassetto
+          zh: 巴塞特管
+
+  - category: brass
+    label:
+      ja: 金管楽器
+      en: Brass
+      de: Blechblasinstrumente
+      fr: Cuivres
+      it: Ottoni
+      es: Metales
+      zh: 金管乐器
+    items:
+      - id: horn
+        label:
+          ja: ホルン
+          en: Horn
+          de: Horn
+          fr: Cor
+          it: Corno
+          es: Trompa
+          zh: 圆号
+      - id: trumpet
+        label:
+          ja: トランペット
+          en: Trumpet
+          de: Trompete
+          fr: Trompette
+          it: Tromba
+          es: Trompeta
+          zh: 小号
+      - id: trombone
+        label:
+          ja: トロンボーン
+          en: Trombone
+          de: Posaune
+          fr: Trombone
+          it: Trombone
+          es: Trombón
+          zh: 长号
+      - id: tuba
+        label:
+          ja: チューバ
+          en: Tuba
+          de: Tuba
+          fr: Tuba
+          it: Tuba
+          es: Tuba
+          zh: 大号
+      - id: euphonium
+        label:
+          ja: ユーフォニアム
+          en: Euphonium
+          de: Euphonium
+          fr: Euphonium
+          it: Euphonium
+          es: Bombardino
+          zh: 上低音号
+      - id: wagner-tuba
+        label:
+          ja: ワーグナー・テューバ
+          en: Wagner Tuba
+          de: Wagnertuba
+          fr: Tuba wagnérien
+          it: Tuba wagneriana
+          es: Tuba wagneriana
+          zh: 华格纳大号
+
+  - category: voice
+    label:
+      ja: 声楽
+      en: Voice
+      de: Gesang
+      fr: Voix
+      it: Voce
+      es: Voz
+      zh: 声乐
+    items:
+      - id: soprano
+        label:
+          ja: ソプラノ
+          en: Soprano
+          de: Sopran
+          fr: Soprano
+          it: Soprano
+          es: Soprano
+          zh: 女高音
+      - id: alto
+        label:
+          ja: アルト
+          en: Alto
+          de: Alt
+          fr: Alto
+          it: Contralto
+          es: Alto
+          zh: 女低音
+      - id: tenor
+        label:
+          ja: テノール
+          en: Tenor
+          de: Tenor
+          fr: Ténor
+          it: Tenore
+          es: Tenor
+          zh: 男高音
+      - id: baritone
+        label:
+          ja: バリトン
+          en: Baritone
+          de: Bariton
+          fr: Baryton
+          it: Baritono
+          es: Barítono
+          zh: 男中音
+      - id: bass
+        label:
+          ja: バス
+          en: Bass
+          de: Bass
+          fr: Basse
+          it: Basso
+          es: Bajo
+          zh: 男低音
+      - id: mezzo-soprano
+        label:
+          ja: メゾ・ソプラノ
+          en: Mezzo Soprano
+          de: Mezzosopran
+          fr: Mezzo-soprano
+          it: Mezzosoprano
+          es: Mezzosoprano
+          zh: 次女高音
+      - id: choir-mixed
+        label:
+          ja: 混声合唱
+          en: Mixed Choir
+          de: Gemischter Chor
+          fr: Chœur mixte
+          it: Coro misto
+          es: Coro mixto
+          zh: 混声合唱
+      - id: choir-male
+        label:
+          ja: 男声合唱
+          en: Male Choir
+          de: Männerchor
+          fr: Chœur d'hommes
+          it: Coro maschile
+          es: Coro masculino
+          zh: 男声合唱
+      - id: choir-female
+        label:
+          ja: 女声合唱
+          en: Female Choir
+          de: Frauenchor
+          fr: Chœur de femmes
+          it: Coro femminile
+          es: Coro femenino
+          zh: 女声合唱
+
+  - category: percussion
+    label:
+      ja: 打楽器
+      en: Percussion
+      de: Schlagzeug
+      fr: Percussions
+      it: Percussioni
+      es: Percusión
+      zh: 打击乐器
+    items:
+      - id: timpani
+        label:
+          ja: ティンパニ
+          en: Timpani
+          de: Pauken
+          fr: Timbales
+          it: Timpani
+          es: Timbales
+          zh: 定音鼓
+      - id: percussion-general
+        label:
+          ja: 打楽器（全般）
+          en: Percussion (General)
+          de: Schlagwerk
+          fr: Percussions (général)
+          it: Percussioni (generale)
+          es: Percusión (general)
+          zh: 打击乐（全般）
+      - id: glockenspiel
+        label:
+          ja: グロッケンシュピール
+          en: Glockenspiel
+          de: Glockenspiel
+          fr: Glockenspiel
+          it: Glockenspiel
+          es: Glockenspiel
+          zh: 钟琴
+      - id: xylophone
+        label:
+          ja: シロフォン
+          en: Xylophone
+          de: Xylophon
+          fr: Xylophone
+          it: Xilofono
+          es: Xilófono
+          zh: 木琴
+      - id: vibraphone
+        label:
+          ja: ヴィブラフォン
+          en: Vibraphone
+          de: Vibraphon
+          fr: Vibraphone
+          it: Vibrafono
+          es: Vibráfono
+          zh: 颤音琴
+      - id: marimba
+        label:
+          ja: マリンバ
+          en: Marimba
+          de: Marimba
+          fr: Marimba
+          it: Marimba
+          es: Marimba
+          zh: 马林巴
+      - id: snare-drum
+        label:
+          ja: 小太鼓（スネアドラム）
+          en: Snare Drum
+          de: Kleine Trommel
+          fr: Caisse claire
+          it: Rullante
+          es: Caja clara
+          zh: 小军鼓
+      - id: bass-drum
+        label:
+          ja: 大太鼓（バスドラム）
+          en: Bass Drum
+          de: Große Trommel
+          fr: Grosse caisse
+          it: Gran cassa
+          es: Bombo
+          zh: 大鼓
+      - id: cymbals
+        label:
+          ja: シンバル
+          en: Cymbals
+          de: Becken
+          fr: Cymbales
+          it: Piatti
+          es: Platillos
+          zh: 镲 / 钹
+      - id: triangle
+        label:
+          ja: トライアングル
+          en: Triangle
+          de: Triangel
+          fr: Triangle
+          it: Triangolo
+          es: Triángulo
+          zh: 三角铁
+      - id: tubular-bells
+        label:
+          ja: チューブラー・ベル
+          en: Tubular Bells
+          de: Röhrenglocken
+          fr: Cloches tubulaires
+          it: Campane tubolari
+          es: Campanas tubulares
+          zh: 管钟
+
+  - category: plucked-strings
+    label:
+      ja: 撥弦楽器
+      en: Plucked Strings
+      de: Zupfinstrumente
+      fr: Cordes pincées
+      it: Strumenti a pizzico
+      es: Instrumentos de púa / cuerda pulsada
+      zh: 拨弦乐器
+    items:
+      - id: guitar
+        label:
+          ja: ギター
+          en: Guitar
+          de: Gitarre
+          fr: Guitare
+          it: Chitarra
+          es: Guitarra
+          zh: 吉他
+      - id: lute
+        label:
+          ja: リュート
+          en: Lute
+          de: Laute
+          fr: Luth
+          it: Liuto
+          es: Laúd
+          zh: 鲁特琴
+      - id: mandolin
+        label:
+          ja: マンドリン
+          en: Mandolin
+          de: Mandoline
+          fr: Mandoline
+          it: Mandolino
+          es: Mandolina
+          zh: 曼陀林
+      - id: harp
+        label:
+          ja: ハープ
+          en: Harp
+          de: Harfe
+          fr: Harpe
+          it: Arpa
+          es: Arpa
+          zh: 竖琴
+      - id: theorbo
+        label:
+          ja: テオルボ
+          en: Theorbo
+          de: Theorbe
+          fr: Théorbe
+          it: Tiorba
+          es: Tiorba
+          zh: 希尔伯琴
+
+  - category: historical-roles
+    label:
+      ja: 歴史的役割・その他
+      en: Historical Roles / Others
+      de: Historische Rollen / Sonstiges
+      fr: Rôles historiques / Autres
+      it: Ruoli storici / Altri
+      es: Roles históricos / Otros
+      zh: 历史角色 / 其他
+    items:
+      - id: basso-continuo
+        label:
+          ja: 通奏低音
+          en: Basso Continuo
+          de: Basso continuo
+          fr: Basse continue
+          it: Basso continuo
+          es: Bajo continuo
+          zh: 通奏低音
+      - id: electronics
+        label:
+          ja: 電子音響
+          en: Electronics
+          de: Elektronik
+          fr: Électronique
+          it: Elettronica
+          es: Electrónica
+          zh: 电子音乐

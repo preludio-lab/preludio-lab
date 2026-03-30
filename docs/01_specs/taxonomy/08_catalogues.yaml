@@ -1,0 +1,80 @@
+# 8. Catalogue Prefixes (作品番号接頭辞)
+# =====================================
+# 作品を識別するための目録番号（カタログ番号）の接頭辞。
+
+catalogue_prefixes:
+  - id: op
+    label: Op.
+    description:
+      ja: 作品番号 (Opus)。ラテン語で「作品」を意味し、作曲家自身または出版社が付与。
+      en: Opus number. Latin for "work", assigned by the composer or publisher.
+  - id: op-posth
+    label: Op. posth.
+    description:
+      ja: 遺作作品番号 (Opus posthumous)。作曲家の死後に出版された作品。
+      en: Posthumous opus number. Published after the composer's death.
+  - id: woo
+    label: WoO
+    description:
+      ja: 作品番号なし (Werke ohne Opuszahl)。
+      en: Works without opus number.
+  - id: bwv
+    label: BWV
+    description:
+      ja: バッハ作品目録 (Bach-Werke-Verzeichnis)。J.S.バッハ。
+      en: Bach-Werke-Verzeichnis. J.S. Bach.
+  - id: rv
+    label: RV
+    description:
+      ja: リオム番号 (Ryom-Verzeichnis)。ヴィヴァルディ。
+      en: Ryom-Verzeichnis. Vivaldi.
+  - id: hwv
+    label: HWV
+    description:
+      ja: ヘンデル作品目録 (Händel-Werke-Verzeichnis)。
+      en: Händel-Werke-Verzeichnis.
+  - id: k
+    label: K.
+    description:
+      ja: ケッヘル番号 (Köchel-Verzeichnis)。モーツァルト。
+      en: Köchel-Verzeichnis. Mozart.
+  - id: d
+    label: D
+    description:
+      ja: ドイチュ番号。シューベルト。
+      en: Deutsch catalogue. Schubert.
+  - id: hob
+    label: Hob.
+    description:
+      ja: ホーボーケン番号。ハイドン。
+      en: Hoboken catalogue. Haydn.
+  - id: s
+    label: S.
+    description:
+      ja: サール番号 (Searle)。リス。
+      en: Searle catalogue. Liszt.
+  - id: l
+    label: L.
+    description:
+      ja: ルシュール番号 (Lesure)。ドビュッシー。
+      en: Lesure catalogue. Debussy.
+  - id: m
+    label: M.
+    description:
+      ja: マルナ番号 (Marnat)。ラヴェル。
+      en: Marnat catalogue. Ravel.
+  - id: sz
+    label: Sz.
+    description:
+      ja: セーレシュ番号 (Szőllősy)。バルトーク。
+      en: Szőllősy catalogue. Bartók.
+  - id: b
+    label: B.
+    description:
+      ja: ブルクハウザー番号 (Burghauser)。ドヴォルザーク。
+      en: Burghauser catalogue. Dvořák.
+  - id: kk
+    label: Kk.
+    description:
+      ja: カークパトリック番号 (Kirkpatrick)。D.スカルラッティ。
+      en: Kirkpatrick catalogue. D. Scarlatti.
