@@ -1,13 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import {
-  inter,
-  playfair,
-  notoSansJP,
-  zenOldMincho,
-  notoSansSC,
-  notoSerifSC,
-} from '@/shared/i18n/fonts';
+import { inter, playfair } from '@/shared/i18n/fonts';
 
 import '../globals.css';
 import { Header } from '@/components/layout/Header';
@@ -70,10 +63,12 @@ export default async function RootLayout({ children, params }: Props) {
 
   if (lang === AppLocale.JA) {
     // 日本語: Noto Sans JP + Zen Old Mincho
+    const { notoSansJP, zenOldMincho } = await import('@/shared/i18n/fonts/japanese');
     fontVariables += ` ${notoSansJP.variable} ${zenOldMincho.variable}`;
     baseFontClass = 'font-sans-ja text-primary bg-paper';
   } else if (lang === AppLocale.ZH) {
     // 中国語: Noto Sans SC + Noto Serif SC
+    const { notoSansSC, notoSerifSC } = await import('@/shared/i18n/fonts/chinese');
     fontVariables += ` ${notoSansSC.variable} ${notoSerifSC.variable}`;
     baseFontClass = 'font-sans-zh text-primary bg-paper';
   } else {
