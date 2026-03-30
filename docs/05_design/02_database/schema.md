@@ -69,6 +69,9 @@ erDiagram
     Phrases }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
     Recordings ||--|{ RecordingSources : "available on"
+    Works ||--o{ ScoreSources : "has deterministic source"
+    WorkParts ||--o{ ScoreSources : "has movement source"
+    ScoreSources }o--|| Scores : "references edition from"
 
     %% Master Tables: Composers & Works
     Composers ||--|{ ComposerTranslations : "has localized"
@@ -435,7 +438,38 @@ sequenceDiagram
 | `idx_score_works_lookup` | `(score_id, work_id)` | **UNIQUE** | 重複防止                   |
 | `idx_score_works_work`   | `(work_id)`           | B-Tree     | 楽曲から対応する楽譜を検索 |
 
-### 4.4 `phrases` (Musical Phrase Component)
+### 4.4 `score_sources` (Deterministic Retrieval Source)
+
+楽譜データの外部ソース（GitHub等）を管理します。実行時の動的神経衰弱を排除し、不変のコミットハッシュに基づく決定論的取得を実現します。
+
+| Column             | Type      | Default | NOT NULL | CHECK                                   | Description                                        |
+| :----------------- | :-------- | :------ | :------- | :-------------------------------------- | :------------------------------------------------- |
+| **`id`**           | `text`    | -       | YES      | -                                       | **PK**. UUID v7                                    |
+| **`work_id`**      | `text`    | -       | YES      | -                                       | **FK to `works.id`**                               |
+| **`work_part_id`** | `text`    | -       | NO       | -                                       | **FK to `work_parts.id`** (楽章固有のソース)       |
+| **`score_id`**     | `text`    | -       | NO       | -                                       | **FK to `scores.id`** (出典。指定なしは自作/不明)  |
+| `provider`         | `text`    | -       | YES      | `IN ('github', 'r2')`                   | 取得元プロバイダ                                   |
+| `repository_owner` | `text`    | -       | NO       | -                                       | リポジトリ所有者 (GitHub用)                        |
+| `repository_name`  | `text`    | -       | NO       | -                                       | リポジトリ名 (GitHub用)                            |
+| `commit_hash`      | `text`    | -       | NO       | `length(commit_hash) = 40`              | **[Immutability]** 40文字コミットハッシュ          |
+| `file_path`        | `text`    | -       | YES      | -                                       | リポジトリ内パス                                   |
+| `format`           | `text`    | -       | YES      | `IN ('kern', 'musicxml', 'mei', 'mxl')` | データ形式                                         |
+| `work_part_number` | `integer` | `0`     | YES      | -                                       | 表示順序                                           |
+| `work_part_title`  | `text`    | -       | NO       | -                                       | 楽章名/タイトル (e.g. "I. Allegro")                |
+| `work_part_slug`   | `text`    | -       | YES      | -                                       | **[Linkage]** `work_parts.slug` と一致させる識別子 |
+| `license`          | `text`    | -       | NO       | -                                       | ライセンス表記                                     |
+| `created_at`       | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`**  | 作成日時                                           |
+| `updated_at`       | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`**  | 更新日時                                           |
+
+#### 4.4.1 Indexes (Score Sources)
+
+| `idx_score_src_work` | `(work_id)` | B-Tree | 楽曲配下のソース一括取得 |
+| `idx_score_src_part` | `(work_part_id)` | B-Tree | 楽章固有ソースの取得 |
+| `idx_score_src_score` | `(score_id)` | B-Tree | 出典（エディション）からの逆引き |
+| `idx_score_src_lookup` | `(work_id, work_part_slug, provider)` | B-Tree | 特定楽曲・楽章のソース識別 |
+| `idx_score_src_version` | `(repository_name, commit_hash)` | B-Tree | 同一コミットハッシュのソース一括管理 |
+
+### 4.5 `phrases` (Musical Phrase Component)
 
 記事内で解説のために使用される「フレーズ」の定義。`Works`（作品）に直接紐付きつつ、出典として `Scores`（版）を参照します。
 
@@ -452,9 +486,9 @@ sequenceDiagram
 | `recording_segments` | `text`    | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
 | `favorites_count`    | `integer` | `0`     | YES      | `favorites_count >= 0`                 | **[Engagement]** お気に入り数                               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
-| `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
+| `updated_at`         | `text`    | -       | YES      | -                                      | 更新日時                                                    |
 
-#### 4.3.1 Indexes (Phrases)
+#### 4.5.1 Indexes (Phrases)
 
 | Index Name          | Columns           | Type       | Usage                            |
 | :------------------ | :---------------- | :--------- | :------------------------------- |
@@ -463,9 +497,9 @@ sequenceDiagram
 | `idx_phr_slug`      | `(work_id, slug)` | **UNIQUE** | 楽曲内の一意スラグ取得           |
 | `idx_phr_score_id`  | `(score_id)`      | B-Tree     | 出典（エディション）からの逆引き |
 
-#### 4.3.2 JSON Type Definitions
+#### 4.5.2 JSON Type Definitions
 
-##### 4.3.2.1 `measure_range`
+##### 4.5.2.1 `measure_range`
 
 ```typescript
 type MeasureRange = {
@@ -475,9 +509,7 @@ type MeasureRange = {
 };
 ```
 
-##### 4.3.2.2 `recording_segments`
-
-| `favorites_count` | `integer` | `0` | YES | `favorites_count >= 0` | **[Engagement]** お気に入り数 |
+##### 4.5.2.2 `recording_segments`
 
 ```typescript
 type RecordingSegment = {
@@ -488,7 +520,7 @@ type RecordingSegment = {
 };
 ```
 
-### 4.4 `recordings` (Audio/Video Entity)
+### 4.6 `recordings` (Audio/Video Entity)
 
 「誰の、いつの演奏か」を管理する実体。
 
@@ -503,7 +535,7 @@ type RecordingSegment = {
 | `created_at`       | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)               |
 | `updated_at`       | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)               |
 
-#### 4.3.1 Indexes (Recordings)
+#### 4.6.1 Indexes (Recordings)
 
 | Index Name               | Columns                     | Type   | Usage                      |
 | :----------------------- | :-------------------------- | :----- | :------------------------- |
@@ -511,7 +543,7 @@ type RecordingSegment = {
 | `idx_recordings_part_id` | `(work_part_id)`            | B-Tree | 楽章単位での検索           |
 | `idx_recordings_rec`     | `(work_id, is_recommended)` | B-Tree | おすすめ音源による絞り込み |
 
-### 4.4 `recording_sources` (Media Providers)
+### 4.7 `recording_sources` (Media Providers)
 
 1つの録音（Recording）に紐づく、具体的な再生手段。
 
@@ -525,7 +557,7 @@ type RecordingSegment = {
 | `created_at`         | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時 (ISO8601形式を強制)                   |
 | `updated_at`         | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時 (ISO8601形式を強制)                   |
 
-#### 4.4.1 Indexes (Recording Sources)
+#### 4.7.1 Indexes (Recording Sources)
 
 | Index Name           | Columns                          | Type   | Usage                                  |
 | :------------------- | :------------------------------- | :----- | :------------------------------------- |
