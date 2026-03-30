@@ -14,7 +14,7 @@ export class TaxonomyFileRepository {
   private readonly taxonomyDir: string;
 
   private constructor() {
-    this.taxonomyDir = join(process.cwd(), 'docs/01_specs/taxonomy');
+    this.taxonomyDir = join(process.cwd(), 'src/domain/shared/taxonomy');
   }
 
   public static getInstance(): TaxonomyFileRepository {

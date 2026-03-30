@@ -45,7 +45,7 @@ const TaxonomyFileSchema = z.record(
   z.union([z.array(BaseItemSchema), z.array(CategorySchema)]),
 );
 
-const TAXONOMY_DIR = 'docs/01_specs/taxonomy';
+const TAXONOMY_DIR = 'src/domain/shared/taxonomy';
 
 function validateFile(filename: string) {
   const filePath = join(TAXONOMY_DIR, filename);
