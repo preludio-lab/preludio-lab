@@ -392,6 +392,13 @@ export const MUSICAL_INSTRUMENT_LABELS: Record<MusicalInstrument, string> = {
 };
 
 /**
+ * 主要都市・拠点 (Place) のラベル取得関数
+ */
+export const getPlaceLabel = (placeId: string, locale: AppLocale = 'ja' as AppLocale): string => {
+  return taxonomy.getLabel('places', placeId, locale);
+};
+
+/**
  * 印象スケール (ImpressionScale) のラベル取得関数
  */
 export const getImpressionScaleLabel = (

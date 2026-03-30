@@ -12,24 +12,9 @@ places:
       it: Vienna
       es: Viena
       zh: 维也纳
-  - id: berlin
-    label:
-      ja: ベルリン
-      en: Berlin
-      de: Berlin
-      fr: Berlin
-      it: Berlino
-      es: Berlín
-      zh: 柏林
-  - id: leipzig
-    label:
-      ja: ライプツィヒ
-      en: Leipzig
-      de: Leipzig
-      fr: Leipzig
-      it: Lipsia
-      es: Leipzig
-      zh: 莱比锡
+    description:
+      ja: ハイドン、モーツァルト、ベートーヴェンが活躍した「音楽の都」。
+      en: The "City of Music" where Haydn, Mozart, and Beethoven flourished.
   - id: salzburg
     label:
       ja: ザルツブルク
@@ -39,6 +24,57 @@ places:
       it: Salisburgo
       es: Salzburgo
       zh: 萨尔茨堡
+    description:
+      ja: モーツァルトの生誕地であり、世界的な音楽祭の開催地。
+      en: Birthplace of Mozart and home to the world-renowned Salzburg Festival.
+  - id: berlin
+    label:
+      ja: ベルリン
+      en: Berlin
+      de: Berlin
+      fr: Berlin
+      it: Berlino
+      es: Berlín
+      zh: 柏林
+    description:
+      ja: ベルリン・フィルを擁する現代ドイツ音楽の世界的中心。
+      en: Global center of German music, home to the Berlin Philharmonic.
+  - id: leipzig
+    label:
+      ja: ライプツィヒ
+      en: Leipzig
+      de: Leipzig
+      fr: Leipzig
+      it: Lipsia
+      es: Leipzig
+      zh: 莱比锡
+    description:
+      ja: バッハ、メンデルスゾーンゆかりの地。ゲヴァントハウス管弦楽団の本拠地。
+      en: Associated with Bach and Mendelssohn; home to the Gewandhaus Orchestra.
+  - id: bayreuth
+    label:
+      ja: バイロイト
+      en: Bayreuth
+      de: Bayreuth
+      fr: Bayreuth
+      it: Bayreuth
+      es: Bayreuth
+      zh: 拜罗伊特
+    description:
+      ja: ワーグナー自らが設計した祝祭劇場を擁する、全世界のワーグネリアンの聖地。
+      en: Site of the Festival Theatre designed by Wagner himself; a pilgrimage site for Wagnerians.
+  - id: dresden
+    label:
+      ja: ドレスデン
+      en: Dresden
+      de: Dresden
+      fr: Dresde
+      it: Dresda
+      es: Dresde
+      zh: 德累斯顿
+    description:
+      ja: ザクセン選帝侯の宮廷音楽の伝統と、世界最高峰の歴史を持つシュターツカペレ。
+      en: Tradition of the Saxon electoral court music and home to the world-renowned Staatskapelle.
   - id: paris
     label:
       ja: パリ
@@ -48,6 +84,9 @@ places:
       it: Parigi
       es: París
       zh: 巴黎
+    description:
+      ja: オペラや印象派音楽の革新的拠点。
+      en: Innovative hub for opera and Impressionist music.
   - id: london
     label:
       ja: ロンドン
@@ -57,6 +96,9 @@ places:
       it: Londra
       es: Londres
       zh: 伦敦
+    description:
+      ja: ヘンデルやハイドンの滞在地であり、独自の合唱・合奏文化の伝統を持つ。
+      en: Host to Handel and Haydn, with a rich tradition of choral and orchestral music.
   - id: rome
     label:
       ja: ローマ
@@ -66,6 +108,9 @@ places:
       it: Roma
       es: Roma
       zh: 罗马
+    description:
+      ja: 教会音楽（パレストリーナ）とコレッリ以来の器楽の伝統。
+      en: Home of sacred music (Palestrina) and instrumental traditions since Corelli.
   - id: venice
     label:
       ja: ヴェネツィア
@@ -75,6 +120,9 @@ places:
       it: Venezia
       es: Venecia
       zh: 威尼斯
+    description:
+      ja: ヴィヴァルディとサン・マルコ大聖堂の多重合唱の響き。
+      en: Vivaldi's city and the site of St Mark's polychoral splendor.
   - id: milan
     label:
       ja: ミラノ
@@ -84,6 +132,21 @@ places:
       it: Milano
       es: Milán
       zh: 米兰
+    description:
+      ja: スカラ座を擁するイタリア・オペラの聖地。
+      en: The center of Italian opera and home to La Scala.
+  - id: naples
+    label:
+      ja: ナボリ
+      en: Naples
+      de: Neapel
+      fr: Naples
+      it: Napoli
+      es: Nápoles
+      zh: 那不勒斯
+    description:
+      ja: 18世紀ナポリ楽派によるオペラ・セリアとオペラ・ブッファの発展地。
+      en: Birthplace of the 18th-century Neapolitan school, critical to opera seria and buffa.
   - id: st-petersburg
     label:
       ja: サンクトペテルブルク
@@ -93,6 +156,9 @@ places:
       it: San Pietroburgo
       es: San Petersburgo
       zh: 圣彼得堡
+    description:
+      ja: チャイコフスキーや「5人組」を生んだロシア帝国の文化の都。
+      en: Imperial capital that gave birth to Tchaikovsky and "The Five".
   - id: moscow
     label:
       ja: モスクワ
@@ -102,6 +168,9 @@ places:
       it: Mosca
       es: Moscú
       zh: 莫斯科
+    description:
+      ja: 強力なピアニズムと交響曲の伝統。チャイコフスキー・コンクールの開催地。
+      en: Known for powerful pianism and symphonic traditions; host of the Tchaikovsky Competition.
   - id: warsaw
     label:
       ja: ワルシャワ
@@ -111,6 +180,9 @@ places:
       it: Varsavia
       es: Varsovia
       zh: 华沙
+    description:
+      ja: ショパンが青春を過ごし、今日その名を冠したコンクールが開催される地。
+      en: Where Chopin spent his youth and where the competition named after him is held.
   - id: prague
     label:
       ja: プラハ
@@ -120,6 +192,9 @@ places:
       it: Praga
       es: Praga
       zh: 布拉格
+    description:
+      ja: モーツァルトを愛したボヘミアの都。ドヴォルザーク、スメタナゆかりの地。
+      en: The Bohemian capital that loved Mozart; associated with Dvořák and Smetana.
   - id: budapest
     label:
       ja: ブダペスト
@@ -129,6 +204,33 @@ places:
       it: Budapest
       es: Budapest
       zh: 布达佩斯
+    description:
+      ja: リスト、バルトークを育んだハンガリー音楽の拠点。
+      en: Hub of Hungarian music, nurturing Liszt and Bartók.
+  - id: helsinki
+    label:
+      ja: ヘルシンキ
+      en: Helsinki
+      de: Helsinki
+      fr: Helsinki
+      it: Helsinki
+      es: Helsinki
+      zh: 赫尔辛基
+    description:
+      ja: シベリウスが愛した北欧の自然と静寂が息づく、フィンランド音楽の拠点。
+      en: Hub of Finnish music, where the Nordic nature and silence loved by Sibelius reside.
+  - id: madrid
+    label:
+      ja: マドリード
+      en: Madrid
+      de: Madrid
+      fr: Madrid
+      it: Madrid
+      es: Madrid
+      zh: 马德里
+    description:
+      ja: スペイン宮廷音楽と、ギター音楽やサルスエラの伝統が息づく街。
+      en: Home of the Spanish royal court music, with traditions of guitar and Zarzuela.
   - id: tokyo
     label:
       ja: 東京
@@ -138,6 +240,9 @@ places:
       it: Tokyo
       es: Tokio
       zh: 东京
+    description:
+      ja: 西欧クラシック音楽を深く受容し、世界最高峰のホールや楽団が集結する。
+      en: A major global hub for classical music with world-class halls and orchestras.
   - id: beijing
     label:
       ja: 北京
@@ -147,6 +252,9 @@ places:
       it: Pechino
       es: Pekín
       zh: 北京
+    description:
+      ja: 東洋と西洋の音楽が交差する、アジアの新たな文化の発信地。
+      en: A modern cultural hub where Eastern and Western musical traditions intersect.
   - id: new-york
     label:
       ja: ニューヨーク
@@ -156,3 +264,6 @@ places:
       it: New York
       es: Nueva York
       zh: 纽约
+    description:
+      ja: カーネギー・ホールやメトロポリタン歌劇場を擁する世界のエンターテインメントの中心。
+      en: Global cultural center home to Carnegie Hall and the Metropolitan Opera.
