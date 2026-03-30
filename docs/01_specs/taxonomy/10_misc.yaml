@@ -20,7 +20,7 @@ trending_levels:
       fr: Incontournable
       it: Classico
       es: Clásico
-      zh: 经典稳定
+      zh: 经典常青
   - id: new-arrival
     label:
       ja: 新着・注目
@@ -29,7 +29,7 @@ trending_levels:
       fr: Nouveauté
       it: Novità
       es: Novedad
-      zh: 新着
+      zh: 最新上线
 
 work_part_types:
   - id: movement
