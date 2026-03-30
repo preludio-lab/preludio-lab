@@ -451,7 +451,7 @@ sequenceDiagram
 | `provider`         | `text`    | -       | YES      | `IN ('github', 'r2')`                   | 取得元プロバイダ                                   |
 | `repository_owner` | `text`    | -       | NO       | -                                       | リポジトリ所有者 (GitHub用)                        |
 | `repository_name`  | `text`    | -       | NO       | -                                       | リポジトリ名 (GitHub用)                            |
-| `commit_hash`      | `text`    | -       | NO       | `length(commit_hash) = 40`              | **[Immutability]** 40文字コミットハッシュ          |
+| `commit_hash`      | `text`    | -       | YES      | `length(commit_hash) = 40`              | **[Immutability]** 40文字コミットハッシュ          |
 | `file_path`        | `text`    | -       | YES      | -                                       | リポジトリ内パス                                   |
 | `format`           | `text`    | -       | YES      | `IN ('kern', 'musicxml', 'mei', 'mxl')` | データ形式                                         |
 | `work_part_number` | `integer` | `0`     | YES      | -                                       | 表示順序                                           |
@@ -463,11 +463,13 @@ sequenceDiagram
 
 #### 4.4.1 Indexes (Score Sources)
 
-| `idx_score_src_work` | `(work_id)` | B-Tree | 楽曲配下のソース一括取得 |
-| `idx_score_src_part` | `(work_part_id)` | B-Tree | 楽章固有ソースの取得 |
-| `idx_score_src_score` | `(score_id)` | B-Tree | 出典（エディション）からの逆引き |
-| `idx_score_src_lookup` | `(work_id, work_part_slug, provider)` | B-Tree | 特定楽曲・楽章のソース識別 |
-| `idx_score_src_version` | `(repository_name, commit_hash)` | B-Tree | 同一コミットハッシュのソース一括管理 |
+| Index Name              | Columns                               | Type       | Usage                                 |
+| :---------------------- | :------------------------------------ | :--------- | :------------------------------------ |
+| `idx_score_src_work`    | `(work_id)`                           | B-Tree     | 楽曲配下のソース一括取得              |
+| `idx_score_src_part`    | `(work_part_id)`                      | B-Tree     | 楽章固有ソースの取得                  |
+| `idx_score_src_score`   | `(score_id)`                          | B-Tree     | 出典（エディション）からの逆引き      |
+| `idx_score_src_lookup`  | `(work_id, work_part_slug, provider)` | **UNIQUE** | 特定楽曲・楽章のソース一意識別 (SSOT) |
+| `idx_score_src_version` | `(repository_name, commit_hash)`      | B-Tree     | 同一コミットハッシュのソース一括管理  |
 
 ### 4.5 `phrases` (Musical Phrase Component)
 
