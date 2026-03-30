@@ -78,7 +78,7 @@ eras:
       ja: 中期ロマン派
       en: Mid-Romantic
       de: Hochromantik
-      fr: Romantisme médiat
+      fr: Plein romantisme
       it: Romanticismo pieno
       es: Romanticismo pleno
       zh: 中期浪漫主义
@@ -92,7 +92,7 @@ eras:
       ja: 後期ロマン派 / 世紀末
       en: Late Romantic / Fin de siècle
       de: Spätromantik
-      fr: Romantisme tardif
+      fr: Romantisme tardif / Fin de siècle
       it: Tardo Romanticismo
       es: Romanticismo tardío
       zh: 晚期浪漫主义
@@ -103,7 +103,7 @@ eras:
       en: Mahler, R. Strauss. Limits of functional harmony and large-scale orchestration.
   - id: impressionism
     label:
-      ja: 印象主義
+      ja: 印象派
       en: Impressionism
       de: Impressionismus
       fr: Impressionnisme
