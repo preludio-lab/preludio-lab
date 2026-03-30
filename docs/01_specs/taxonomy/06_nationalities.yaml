@@ -1,8 +1,10 @@
 # 7. Nationalities (国・地域)
 # =========================
 # 主要な音楽拠点。ISO 3166-1 alpha-2 に準拠。
+# composers.nationality_code (ISO 3166-1 alpha-2) に対応。
 
 nationalities:
+  # --- Europe (Central & West) ---
   - id: DE
     label:
       ja: ドイツ
@@ -12,6 +14,9 @@ nationalities:
       it: Germania
       es: Alemania
       zh: 德国
+    description:
+      ja: バッハ、ベートーヴェン、ブラームス。論理性と構築美。
+      en: Bach, Beethoven, Brahms. Logic and architectural beauty.
   - id: AT
     label:
       ja: オーストリア
@@ -21,6 +26,9 @@ nationalities:
       it: Austria
       es: Austria
       zh: 奥地利
+    description:
+      ja: モーツァルト、シューベルト、ウィーン古典派。
+      en: Mozart, Schubert, Viennese Classicism.
   - id: FR
     label:
       ja: フランス
@@ -30,42 +38,21 @@ nationalities:
       it: Francia
       es: Francia
       zh: 法国
-  - id: IT
+    description:
+      ja: ドビュッシー、ラヴェル。色彩豊かな和声、繊細な情緒。
+      en: Debussy, Ravel. Rich harmonic colors and delicate emotions.
+  - id: BE
     label:
-      ja: イタリア
-      en: Italy
-      de: Italien
-      fr: Italie
-      it: Italia
-      es: Italia
-      zh: 意大利
-  - id: RU
-    label:
-      ja: ロシア
-      en: Russia
-      de: Russland
-      fr: Russie
-      it: Russia
-      es: Rusia
-      zh: 俄罗斯
-  - id: PL
-    label:
-      ja: ポーランド
-      en: Poland
-      de: Polen
-      fr: Pologne
-      it: Polonia
-      es: Polonia
-      zh: 波兰
-  - id: CZ
-    label:
-      ja: チェコ
-      en: Czech Republic
-      de: Tschechien
-      fr: République tchèque
-      it: Repubblica Ceca
-      es: República Checa
-      zh: 捷克
+      ja: ベルギー
+      en: Belgium
+      de: Belgien
+      fr: Belgique
+      it: Belgio
+      es: Bélgica
+      zh: 比利时
+    description:
+      ja: フランク、イザイ。バイオリン演奏の伝統と重厚な和声。
+      en: Franck, Ysaÿe. Violin traditions and thick harmonies.
   - id: GB
     label:
       ja: イギリス
@@ -75,6 +62,137 @@ nationalities:
       it: Regno Unito
       es: Reino Unido
       zh: 英国
+    description:
+      ja: エルガー、ホルスト。合唱の伝統、高潔なロマンティシズム。
+      en: Elgar, Holst. Choral traditions and noble romanticism.
+
+  # --- Europe (South) ---
+  - id: IT
+    label:
+      ja: イタリア
+      en: Italy
+      de: Italien
+      fr: Italie
+      it: Italia
+      es: Italia
+      zh: 意大利
+    description:
+      ja: ヴィヴァルディ、ヴェルディ。ベルカントの伝統、オペラの聖地。
+      en: Vivaldi, Verdi. Bel canto traditions and the center of opera.
+  - id: ES
+    label:
+      ja: スペイン
+      en: Spain
+      de: Spanien
+      fr: Espagne
+      it: Spagna
+      es: España
+      zh: 西班牙
+    description:
+      ja: アルベニス、ファリャ。情熱的なリズムと情緒。
+      en: Albéniz, Falla. Passionate rhythms and atmosphere.
+
+  # --- Europe (North) ---
+  - id: FI
+    label:
+      ja: フィンランド
+      en: Finland
+      de: Finnland
+      fr: Finlande
+      it: Finlandia
+      es: Finlandia
+      zh: 芬兰
+    description:
+      ja: シベリウス。北欧の冷たく透き通った空気。
+      en: Sibelius. Cold, transparent Nordic air.
+  - id: NO
+    label:
+      ja: ノルウェー
+      en: Norway
+      de: Norwegen
+      fr: Norvège
+      it: Norvegia
+      es: Noruega
+      zh: 挪威
+    description:
+      ja: グリーグ。北欧の自然と抒情、国民楽派の至宝。
+      en: Grieg. Nordic nature and lyricism, treasure of the Nationalist school.
+  - id: DK
+    label:
+      ja: デンマーク
+      en: Denmark
+      de: Dänemark
+      fr: Danemark
+      it: Danimarca
+      es: Dinamarca
+      zh: 丹麦
+    description:
+      ja: ニールセン。力強い生命力と独自の交響曲体系。
+      en: Nielsen. Strong vitality and a unique symphonic system.
+
+  # --- Europe (East) ---
+  - id: RU
+    label:
+      ja: ロシア
+      en: Russia
+      de: Russland
+      fr: Russie
+      it: Russia
+      es: Rusia
+      zh: 俄罗斯
+    description:
+      ja: チャイコフスキー、ラフマニノフ。広大な大地とメランコリー。
+      en: Tchaikovsky, Rachmaninoff. Vast lands and melancholy.
+  - id: PL
+    label:
+      ja: ポーランド
+      en: Poland
+      de: Polen
+      fr: Pologne
+      it: Polonia
+      es: Polonia
+      zh: 波兰
+    description:
+      ja: ショパン。ピアノ音楽と民族の誇り。
+      en: Chopin. Piano music and national pride.
+  - id: CZ
+    label:
+      ja: チェコ
+      en: Czech Republic
+      de: Tschechien
+      fr: République tchèque
+      it: Repubblica Ceca
+      es: República Checa
+      zh: 捷克
+    description:
+      ja: ドヴォルザーク、スメタナ。ボヘミアの哀愁。
+      en: Dvořák, Smetana. Bohemian melancholy.
+  - id: HU
+    label:
+      ja: ハンガリー
+      en: Hungary
+      de: Ungarn
+      fr: Hongrie
+      it: Ungheria
+      es: Hungría
+      zh: 匈牙利
+    description:
+      ja: リスト、バルトーク。独特のリズムと民俗色。
+      en: Liszt, Bartók. Unique rhythms and folk elements.
+  - id: UA
+    label:
+      ja: ウクライナ
+      en: Ukraine
+      de: Ukraine
+      fr: Ukraine
+      it: Ucraina
+      es: Ucrania
+      zh: 乌克兰
+    description:
+      ja: 伝統的な正教音楽の系譜と、現代における深い祈り。
+      en: Traditional Orthodox music lineage and deep contemporary prayer.
+
+  # --- Americas ---
   - id: US
     label:
       ja: アメリカ
@@ -84,6 +202,35 @@ nationalities:
       it: Stati Uniti
       es: Estados Unidos
       zh: 美国
+    description:
+      ja: ガーシュウィン、バーバー。ジャズとの融合と現代性。
+      en: Gershwin, Barber. Fusion with jazz and modernity.
+  - id: BR
+    label:
+      ja: ブラジル
+      en: Brazil
+      de: Brasilien
+      fr: Brésil
+      it: Brasile
+      es: Brasil
+      zh: 巴西
+    description:
+      ja: ヴィラ＝ロボス。アマゾンの生命力とバロックの形式。
+      en: Villa-Lobos. Amazonian vitality and Baroque forms.
+  - id: AR
+    label:
+      ja: アルゼンチン
+      en: Argentina
+      de: Argentinien
+      fr: Argentine
+      it: Argentina
+      es: Argentina
+      zh: 阿根廷
+    description:
+      ja: ヒナステラ、ピアソラ。パンパの熱狂とタンゴの革新。
+      en: Ginastera, Piazzolla. Pampa frenzy and tango innovation.
+
+  # --- Asia ---
   - id: JP
     label:
       ja: 日本
@@ -93,6 +240,9 @@ nationalities:
       it: Giappone
       es: Japón
       zh: 日本
+    description:
+      ja: 武満徹。東洋の感性と西洋の技法を融合させた「音の河」。
+      en: Toru Takemitsu. A "river of sound" merging Eastern sensitivity and Western technique.
   - id: CN
     label:
       ja: 中国
@@ -102,3 +252,6 @@ nationalities:
       it: Cina
       es: China
       zh: 中国
+    description:
+      ja: 陳其鋼、譚盾。悠久の歴史と、東洋の伝統楽器や思想の現代的翻案。
+      en: Chen Qigang, Tan Dun. Eon-long history and modern adaptations of Eastern traditional instruments and ideas.
