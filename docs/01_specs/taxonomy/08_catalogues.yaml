@@ -75,6 +75,18 @@ catalogue_prefixes:
     description:
       ja: ヘンデル作品目録 (Händel-Werke-Verzeichnis)。
       en: Händel-Werke-Verzeichnis.
+  - id: twv
+    label:
+      ja: TWV
+      en: TWV
+      de: TWV
+      fr: TWV
+      it: TWV
+      es: TWV
+      zh: TWV
+    description:
+      ja: テレマン作品目録 (Telemann-Werke-Verzeichnis)。
+      en: Telemann-Werke-Verzeichnis.
   - id: k
     label:
       ja: K.
@@ -171,6 +183,18 @@ catalogue_prefixes:
     description:
       ja: ブルクハウザー番号 (Burghauser)。ドヴォルザーク。
       en: Burghauser catalogue. Dvořák.
+  - id: wwv
+    label:
+      ja: WWV
+      en: WWV
+      de: WWV
+      fr: WWV
+      it: WWV
+      es: WWV
+      zh: WWV
+    description:
+      ja: ワーグナー作品目録 (Wagner-Werke-Verzeichnis)。
+      en: Wagner-Werke-Verzeichnis.
   - id: kk
     label:
       ja: Kk.

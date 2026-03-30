@@ -1,55 +1,56 @@
 # 6. Impression Scales (印象評価軸)
 # ===============================
 # 楽曲の印象を定量的に評価するための軸定義。
+# src/domain/work/work.shared.ts の ImpressionDimensionsSchema に準拠。
 
 impression_scales:
-  - id: brightness
+  - id: innovation
     label:
-      ja: 明るさ
-      en: Brightness
-      de: Helligkeit
-      fr: Luminosité
-      it: Luminosità
-      es: Brillo
-      zh: 明亮感
+      ja: 革新性
+      en: Innovation
+      de: Innovation
+      fr: Innovation
+      it: Innovazione
+      es: Innovación
+      zh: 革新性
     description:
-      ja: 楽曲全体の色彩感。短調・長調だけでなく、音色の輝きを含む。
-      en: The overall sense of color in the music, including the brilliance of tone as well as major/minor keys.
+      ja: 伝統的な形式や語法を重んじるか、あるいは革新的・前衛的な試みを行うか。
+      en: Whether it respects traditional forms and idioms or engages in innovative/avant-garde experiments.
     min_label:
-      ja: 暗鬱・重厚
-      en: Dark
-      de: Dunkel
-      fr: Sombre
-      it: Oscuro
-      es: Oscuro
-      zh: 阴暗 / 重厚
+      ja: 伝統的
+      en: Traditional
+      de: Traditionell
+      fr: Traditionnel
+      it: Tradizionale
+      es: Tradicional
+      zh: 传统
     max_label:
-      ja: 明朗・輝き
-      en: Bright
-      de: Hell / Strahlend
-      fr: Brillant
-      it: Brillante
-      es: Brillante
-      zh: 明朗 / 辉煌
+      ja: 前衛的
+      en: Avant-garde
+      de: Avantgardistisch
+      fr: Avant-gardiste
+      it: d'avanguardia
+      es: de vanguardia
+      zh: 前卫
     criteria:
       - score_range: [-10, -7]
         label:
-          ja: 絶望・葬送
-          en: Despair / Funeral
-          de: Verzweiflung / Trauer
-          fr: Désespoir / Funèbre
-          it: Disperazione / Funebre
-          es: Desesperación / Fúnebre
-          zh: 绝望 / 葬礼
+          ja: 古典的・保守的
+          en: Classical / Conservative
+          de: Klassisch / Konservativ
+          fr: Classique / Conservateur
+          it: Classico / Conservatore
+          es: Clásico / Conservador
+          zh: 古典 / 保守
       - score_range: [-6, -3]
         label:
-          ja: 哀愁・静謐
-          en: Melancholy / Serene
-          de: Melancholie / Gelassen
-          fr: Mélancolie / Serein
-          it: Malinconia / Sereno
-          es: Melancolía / Sereno
-          zh: 哀愁 / 宁静
+          ja: 伝統の継承
+          en: Continuation of Tradition
+          de: Traditionell
+          fr: Traditionnel
+          it: Tradizionale
+          es: Tradicional
+          zh: 传统继承
       - score_range: [-2, 2]
         label:
           ja: 標準
@@ -61,212 +62,394 @@ impression_scales:
           zh: 标准
       - score_range: [3, 6]
         label:
-          ja: 優雅・躍動
-          en: Elegant / Lively
-          de: Elegant / Lebhaft
-          fr: Élégant / Animé
-          it: Elegante / Vivace
-          es: Elegante / Vivaz
-          zh: 优雅 / 跃动
+          ja: 斬新・独立的
+          en: Novel / Independent
+          de: Neuartig / Unabhängig
+          fr: Novateur / Indépendant
+          it: Novativo / Indipendente
+          es: Novedoso / Independiente
+          zh: 斩新 / 独立
       - score_range: [7, 10]
         label:
-          ja: 祝祭・光輝
-          en: Triumphant / Radiant
-          de: Triumphierend / Strahlend
-          fr: Triomphant / Radiant
-          it: Trionfante / Radioso
-          es: Triunfante / Radiante
-          zh: 祝祭 / 光辉
+          ja: 過激・前衛的
+          en: Radical / Avant-garde
+          de: Radikal / Avantgardistisch
+          fr: Radical / Avant-gardiste
+          it: Radicale / d'avanguardia
+          es: Radical / de vanguardia
+          zh: 激进 / 前卫
 
-  - id: vibrancy
+  - id: emotionality
     label:
-      ja: 躍動感
-      en: Vibrancy
-      de: Lebhaftigkeit
-      fr: Vibrance / Dynamisme
-      it: Vivacità
-      es: Vivacidad
-      zh: 跃动感
+      ja: 情動性
+      en: Emotionality
+      de: Emotionalität
+      fr: Émotivité
+      it: Emotività
+      es: Emotividad
+      zh: 情动性
     description:
-      ja: エネルギーレベルとリズムの活性度。
-      en: Energy level and rhythmic activity.
+      ja: 客観的・論理的な構築を重視するか、あるいは主観的・情熱的な感情露呈を重視するか。
+      en: Whether it emphasizes objective/logical construction or subjective/passionate emotional expression.
     min_label:
-      ja: 静寂・停滞
-      en: Calm
-      de: Ruhig
-      fr: Calme
-      it: Calmo
-      es: Calma
-      zh: 静寂 / 停滞
+      ja: 客観的・理性的
+      en: Objective / Rational
+      de: Objektiv / Rational
+      fr: Objectif / Rationnel
+      it: Oggettivo / Razionale
+      es: Objetivo / Racional
+      zh: 客观 / 理性
     max_label:
-      ja: 躍動・爆発
-      en: Energetic
-      de: Energetisch
-      fr: Énergique
-      it: Energetico
-      es: Energético
-      zh: 跃动 / 爆发
+      ja: 情熱的・主観的
+      en: Passionate / Subjective
+      de: Leidenschaftlich / Subjektiv
+      fr: Passionné / Subjectif
+      it: Appassionato / Soggettivo
+      es: Apasionado / Subjetivo
+      zh: 激情 / 主观
     criteria:
       - score_range: [-10, -7]
         label:
-          ja: 静止・無
-          en: Stillness / Void
-          de: Stille / Leere
-          fr: Silence / Vide
-          it: Staticità / Vuoto
-          es: Quietud / Vacío
-          zh: 静止 / 无
+          ja: 冷徹・厳格
+          en: Rigorous / Austere
+          de: Streng / Kalt
+          fr: Rigoureux / Austère
+          it: Rigoroso / Austero
+          es: Rigoroso / Austero
+          zh: 冷峻 / 严格
+      - score_range: [-6, -3]
+        label:
+          ja: 中立・客観
+          en: Neutral / Objective
+          de: Neutral / Objektiv
+          fr: Neutre / Objectif
+          it: Neutrale / Oggettivo
+          es: Neutral / Objetivo
+          zh: 中立 / 客观
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 情緒的・表情豊か
+          en: Emotional / Expressive
+          de: Emotional / Ausdrucksvoll
+          fr: Émotionnel / Expressif
+          it: Emozionale / Espressivo
+          es: Emocional / Expresivo
+          zh: 情绪化 / 表情丰富
       - score_range: [7, 10]
         label:
-          ja: 爆発・狂喜
-          en: Explosive / Ecstatic
-          de: Explosiv / Ekstatisch
-          fr: Explosif / Extatique
-          it: Esplosivo / Estatico
-          es: Explosivo / Extático
-          zh: 爆发 / 狂喜
+          ja: 激情・忘我
+          en: Passionate / Ecstatic
+          de: Leidenschaftlich / Ekstatisch
+          fr: Passionné / Extatique
+          it: Appassionato / Estatico
+          es: Apasionado / Extático
+          zh: 激情 / 忘我
+
+  - id: nationalism
+    label:
+      ja: 民族性
+      en: Nationalism
+      de: Nationalismus
+      fr: Nationalisme
+      it: Nazionalismo
+      es: Nacionalismo
+      zh: 民族性
+    description:
+      ja: 普遍的な音楽言語（国際様式）を志向するか、あるいは特定の民族・土着的な情緒を志向するか。
+      en: Whether it aims for a universal musical language (international style) or specific ethnic/indigenous sentiments.
+    min_label:
+      ja: 普遍的・国際的
+      en: Universal / International
+      de: Universell / International
+      fr: Universel / International
+      it: Universale / Internazionale
+      es: Universal / Internacional
+      zh: 普遍 / 国际
+    max_label:
+      ja: 民族的・土着的
+      en: National / Indigenous
+      de: National / Folkloristisch
+      fr: National / Folklorique
+      it: Nazionale / Folklorico
+      es: Nacional / Folclórico
+      zh: 民族 / 土著
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 普遍・絶対的
+          en: Universal / Absolute
+          de: Universell / Absolut
+          fr: Universel / Absolu
+          it: Universale / Assoluto
+          es: Universal / Absoluto
+          zh: 普遍 / 绝对
+      - score_range: [-6, -3]
+        label:
+          ja: 国際様式
+          en: International Style
+          de: Internationaler Stil
+          fr: Style international
+          it: Stile internazionale
+          es: Estilo internacional
+          zh: 国际样式
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 郷土色の反映
+          en: Regional Color
+          de: Lokalkolorit
+          fr: Couleur locale
+          it: Colore locale
+          es: Color local
+          zh: 乡土色彩
+      - score_range: [7, 10]
+        label:
+          ja: 強い民族主義
+          en: Strong Nationalism
+          de: Nationalistisch
+          fr: Nationaliste
+          it: Nazionalista
+          es: Nacionalista
+          zh: 强烈民族主义
 
   - id: scale
     label:
-      ja: スケール
+      ja: 規模感
       en: Scale
       de: Umfang / Skala
       fr: Échelle / Envergure
       it: Scala / Grandezza
       es: Escala / Magnitud
-      zh: 规模
+      zh: 规模感
     description:
-      ja: 空間的な広がりと編成の規模感。
-      en: Spatial breadth and size of the ensemble.
+      ja: 空間的な広がりと編成の規模感。室内楽的な親密さから、宇宙的な壮大さまで。
+      en: Spatial breadth and size of the ensemble, from chamber intimacy to cosmic grandeur.
     min_label:
       ja: 親密・個人的
-      en: Intimate
-      de: Intim
-      fr: Intime
-      it: Intimo
-      es: Íntimo
+      en: Intimate / Personal
+      de: Intim / Persönlich
+      fr: Intime / Personnel
+      it: Intimo / Personale
+      es: Íntimo / Personal
       zh: 亲密 / 个人
     max_label:
       ja: 壮大・宇宙的
-      en: Grand
-      de: Großartig
-      fr: Grandiose
-      it: Grandioso
-      es: Grandioso
+      en: Grand / Universal
+      de: Grandios / Universell
+      fr: Grandiose / Universel
+      it: Grandioso / Universale
+      es: Grandioso / Universal
       zh: 壮大 / 宏伟
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 孤独・極少編成
+          en: Solitary / Minimalist
+          de: Einsam / Minimalistisch
+          fr: Solitaire / Minimaliste
+          it: Solitario / Minimalista
+          es: Solitario / Minimalista
+          zh: 孤独 / 极小编制
+      - score_range: [-6, -3]
+        label:
+          ja: 室内楽的・親密
+          en: Chamber-like / Intimate
+          de: Kammermusikalisch / Intim
+          fr: De chambre / Intime
+          it: Da camera / Intimo
+          es: De cámara / Íntimo
+          zh: 室内乐 / 亲密
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 堂々とした規模
+          en: Grand Scale
+          de: Großer Umfang
+          fr: Grande échelle
+          it: Grande scala
+          es: Gran escala
+          zh: 堂堂规模
+      - score_range: [7, 10]
+        label:
+          ja: 宇宙的・極大
+          en: Cosmic / Immense
+          de: Universell / Immens
+          fr: Universel / Immense
+          it: Universale / Immenso
+          es: Universal / Inmenso
+          zh: 宇宙的 / 极大
 
-  - id: depth
+  - id: complexity
     label:
-      ja: 聴きごたえ
-      en: Depth
-      de: Tiefe
-      fr: Profondeur
-      it: Profondità
-      es: Profundidad
-      zh: 深度 / 耐听度
+      ja: 複雑性
+      en: Complexity
+      de: Komplexität
+      fr: Complexité
+      it: Complessità
+      es: Complejidad
+      zh: 复杂性
     description:
-      ja: 音楽の複雑さと、要求される聴取の集中度。
-      en: Complexity of the music and level of listening concentration required.
+      ja: 旋律の明快さ・単純さか、あるいは対位法的・多声的な緻密さと難解さか。
+      en: Clarity/simplicity of melody vs. contrapuntal/polyphonic intricacy and complexity.
     min_label:
-      ja: 軽快・BGM
-      en: Light
-      de: Leicht
-      fr: Léger
-      it: Leggero
-      es: Ligero
-      zh: 轻快 / BGM
+      ja: 明快・単純
+      en: Clear / Simple
+      de: Klar / Einfach
+      fr: Clair / Simple
+      it: Chiaro / Semplice
+      es: Claro / Simple
+      zh: 明快 / 简单
     max_label:
-      ja: 深遠・哲学的
-      en: Deep
-      de: Tief / Philosophisch
-      fr: Profond / Philosophique
-      it: Profondo / Filosofico
-      es: Profundo / Filosófico
-      zh: 深奥 / 哲学性
+      ja: 緻密・難解
+      en: Intricate / Abstruse
+      de: Komplex / Schwierig
+      fr: Complexe / Difficile
+      it: Complesso / Difficile
+      es: Complejo / Difícil
+      zh: 缜密 / 难解
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 素朴・純真
+          en: Simple / Innocent
+          de: Schlicht / Naiv
+          fr: Simple / Naïf
+          it: Semplice / Ingenuo
+          es: Simple / Inocente
+          zh: 素朴 / 纯真
+      - score_range: [-6, -3]
+        label:
+          ja: 簡潔・明瞭
+          en: Concise / Clear
+          de: Knapp / Klar
+          fr: Concis / Clair
+          it: Concise / Chiaro
+          es: Conciso / Claro
+          zh: 简洁 / 明了
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 対位法的・知的
+          en: Contrapuntal / Intellectual
+          de: Kontrapunktisch / Intellektuell
+          fr: Contrapuntique / Intellectuel
+          it: Contrappuntistico / Intellettuale
+          es: Contrapuntístico / Intelectual
+          zh: 对位法 / 知性
+      - score_range: [7, 10]
+        label:
+          ja: 極めて緻密・難解
+          en: Highly Intricate / Abstruse
+          de: Hochkomplex / Tiefgründig
+          fr: Très complexe / Profond
+          it: Molto complesso / Profondo
+          es: Muy complejo / Profundo
+          zh: 极精密 / 难解
 
-  - id: drama
+  - id: theatricality
     label:
-      ja: ドラマ性
-      en: Drama
-      de: Dramatik
-      fr: Drame / Théâtralité
-      it: Drammaticità
-      es: Drama
-      zh: 戏剧性
+      ja: 演劇性
+      en: Theatricality (Drama)
+      de: Theatralik (Dramatik)
+      fr: Théâtralité (Dramatique)
+      it: Teatralità (Dramma)
+      es: Teatralidad (Drama)
+      zh: 演剧性 (戏剧性)
     description:
-      ja: 物語的な展開や感情の起伏の激しさ。
-      en: Narrative development and emotional intensity.
+      ja: 抽象的な音の構成（純音楽）を志向するか、あるいは物語的・舞台的なドラマを志向するか。
+      en: Whether it aims for abstract sound structure (absolute music) or narrative/theatrical drama.
     min_label:
-      ja: 純音楽的・抽象
-      en: Pure
-      de: Rein / Abstrakt
-      fr: Pur / Abstrait
-      it: Puro / Astratto
-      es: Puro / Abstracto
-      zh: 绝对音乐 / 抽象
+      ja: 抽象的・純音楽
+      en: Abstract / Absolute Music
+      de: Abstrakt / Absolute Musik
+      fr: Abstrait / Musique absolue
+      it: Astratto / Musica assoluta
+      es: Abstracto / Música absoluta
+      zh: 抽象 / 绝对音楽
     max_label:
-      ja: 映画的・劇的
-      en: Cinematic
-      de: Filmisch / Dramatisch
-      fr: Cinématique / Dramatique
-      it: Cinematografico / Drammatico
-      es: Cinematográfico / Dramático
-      zh: 影视化 / 剧烈
-
-  - id: tempo
-    label:
-      ja: テンポ
-      en: Tempo
-      de: Tempo
-      fr: Tempo
-      it: Tempo
-      es: Tempo
-      zh: 速度
-    description:
-      ja: 楽曲の主要な速さ。
-      en: The primary speed of the work.
-    min_label:
-      ja: 緩慢・静止
-      en: Slow
-      de: Langsam
-      fr: Lent
-      it: Lento
-      es: Lento
-      zh: 缓慢 / 静止
-    max_label:
-      ja: 爆発・超高速
-      en: Fast
-      de: Schnell
-      fr: Rapide
-      it: Veloce
-      es: Rápido
-      zh: 爆发 / 超高速
-
-  - id: work_popularity
-    label:
-      ja: 楽曲知名度
-      en: Work Popularity
-      de: Bekanntheit des Werks
-      fr: Popularité de l'œuvre
-      it: Popolarità dell'opera
-      es: Popularidad de la obra
-      zh: 楽曲知名度
-    description:
-      ja: 楽曲本来の知名度・ポピュラリティ。
-      en: The inherent popularity or recognition of the work.
-    min_label:
-      ja: 秘匿・新発見
-      en: Niche
-      de: Nische
-      fr: Niche / Méconnu
-      it: Di nicchia
-      es: De nicho
-      zh: 秘匿 / 新发现
-    max_label:
-      ja: 不朽・万国共通
-      en: Famous
-      de: Weltberühmt
-      fr: Universel / Célèbre
-      it: Universale / Celebre
-      es: Universal / Célebre
-      zh: 不朽 / 万国共通
+      ja: 物語的・劇的
+      en: Narrative / Dramatic
+      de: Erzählend / Dramatisch
+      fr: Narratif / Dramatique
+      it: Narrativo / Drammatico
+      es: Narrativo / Dramático
+      zh: 叙事 / 剧烈
+    criteria:
+      - score_range: [-10, -7]
+        label:
+          ja: 非劇的・静止
+          en: Undramatic / Static
+          de: Undramatisch / Statisch
+          fr: Non dramatique / Statique
+          it: Non drammatico / Statico
+          es: No dramático / Estático
+          zh: 非戏剧 / 静止
+      - score_range: [-6, -3]
+        label:
+          ja: 抽象・対自的
+          en: Abstract / Introspective
+          de: Abstrakt / Introspektiv
+          fr: Abstrait / Introspectif
+          it: Astratto / Introspettivo
+          es: Abstracto / Introspectivo
+          zh: 抽象 / 内省
+      - score_range: [-2, 2]
+        label:
+          ja: 標準
+          en: Neutral
+          de: Neutral
+          fr: Neutre
+          it: Neutrale
+          es: Neutral
+          zh: 标准
+      - score_range: [3, 6]
+        label:
+          ja: 情景的・演劇的
+          en: Scenic / Theatrical
+          de: Szenisch / Theatralisch
+          fr: Scénique / Théâtral
+          it: Scenico / Teatrale
+          es: Escénico / Teatral
+          zh: 情景 / 演剧
+      - score_range: [7, 10]
+        label:
+          ja: 映画的・総合芸術
+          en: Cinematic / Total Art
+          de: Filmisch / Gesamtkunstwerk
+          fr: Cinématique / Art total
+          it: Cinematografico / Opera d'arte totale
+          es: Cinematográfico / Obra de arte total
+          zh: 影视化 / 综合艺术

@@ -129,6 +129,30 @@ nationalities:
     description:
       ja: ニールセン。力強い生命力と独自の交響曲体系。
       en: Nielsen. Strong vitality and a unique symphonic system.
+  - id: SE
+    label:
+      ja: スウェーデン
+      en: Sweden
+      de: Schweden
+      fr: Suède
+      it: Svezia
+      es: Suecia
+      zh: 瑞典
+    description:
+      ja: ベルワルド、アルヴェーン。北欧の叙情と色彩豊かな管弦楽。
+      en: Berwald, Alfvén. Nordic lyricism and colorful orchestration.
+  - id: EE
+    label:
+      ja: エストニア
+      en: Estonia
+      de: Estland
+      fr: Estonie
+      it: Estonia
+      es: Estonia
+      zh: 爱沙尼亚
+    description:
+      ja: ペルト、テュール。神秘的な静寂と祈りの音楽。
+      en: Pärt, Tüür. Mystical silence and music of prayer.
 
   # --- Europe (East) ---
   - id: RU

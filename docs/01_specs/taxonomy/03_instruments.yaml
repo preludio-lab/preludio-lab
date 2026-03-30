@@ -567,6 +567,15 @@ instruments:
           it: Coro femminile
           es: Coro femenino
           zh: 女声合唱
+      - id: countertenor
+        label:
+          ja: カウンターテナー
+          en: Countertenor
+          de: Countertenor
+          fr: Contre-ténor
+          it: Controtenore
+          es: Contratenor
+          zh: 假声男高音
 
   - category: percussion
     label:
@@ -762,3 +771,41 @@ instruments:
           it: Elettronica
           es: Electrónica
           zh: 电子音乐
+
+  - category: electronic-modern
+    label:
+      ja: 電子・現代楽器
+      en: Electronic / Modern Instruments
+      de: Elektronische / Moderne Instrumente
+      fr: Instruments électroniques / modernes
+      it: Strumenti elettronici / moderni
+      es: Instrumentos electrónicos / modernos
+      zh: 电子 / 现代乐器
+    items:
+      - id: ondes-martenot
+        label:
+          ja: オンド・マルトノ
+          en: Ondes Martenot
+          de: Ondes Martenot
+          fr: Ondes Martenot
+          it: Onde Martenot
+          es: Ondas Martenot
+          zh: 马特诺琴 / 奥ンド・马特诺
+      - id: synthesizer
+        label:
+          ja: シンセサイザー
+          en: Synthesizer
+          de: Synthesizer
+          fr: Synthétiseur
+          it: Sintetizzatore
+          es: Sintetizador
+          zh: 合成器
+      - id: tape
+        label:
+          ja: テープ・録音メディア
+          en: Tape / Recorded Media
+          de: Tonband / Aufgenommenes Medium
+          fr: Bande / Média enregistré
+          it: Nastro / Supporto registrato
+          es: Cinta / Medios grabados
+          zh: 磁带 / 录音媒体
