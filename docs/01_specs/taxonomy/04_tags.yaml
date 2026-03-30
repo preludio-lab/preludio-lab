@@ -66,7 +66,7 @@ tags:
         label:
           ja: 静謐な・穏やかな
           en: Serene / Peaceful
-          de: Heiter / Friedlich
+          de: Gelassen / Friedlich
           fr: Serein / Paisible
           it: Sereno / Pacifico
           es: Sereno / Pacífico
@@ -114,7 +114,7 @@ tags:
         label:
           ja: 優雅な
           en: Elegant / Graceful
-          de: Elegant / Gnädig
+          de: Elegant / Anmutig
           fr: Élégant / Gracieux
           it: Elegante / Grazioso
           es: Elegante / Gracioso
@@ -200,7 +200,7 @@ tags:
           en: Tense / Thrilling
           de: Gespannt / Spannend
           fr: Tendu / Palpitant
-          it: Teso / Emozionante
+          it: Teso / Avvincente
           es: Tenso / Emocionante
           zh: 紧张 / 扣人心弦
         description:
@@ -484,7 +484,7 @@ tags:
           ja: 楽曲分析（アナリーゼ）向け
           en: For Analysis / Study
           de: Für Analyse / Studium
-          fr: Pour l'analyse / étudie
+          fr: Pour l'analyse / l'étude
           it: Per l'analisi / studio
           es: Para el análisis / estudio
           zh: 乐曲分析（分析用）
