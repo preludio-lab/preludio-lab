@@ -851,7 +851,7 @@ genres:
           ja: 通奏形式
           en: Through-composed
           de: Durchkomponiert
-          fr: Chant à travers
+          fr: Composition continue
           it: Durchkomponiert
           es: Composición continua
           zh: 通奏形式
@@ -1071,7 +1071,7 @@ genres:
           ja: 狂詩曲
           en: Rhapsody
           de: Rhapsodie
-          fr: Rhapsody
+          fr: Rhapsodie
           it: Rapsodia
           es: Rapsodia
           zh: 狂诗曲
@@ -1463,7 +1463,7 @@ genres:
           de: Wortmalerei
           fr: Peinture de mots
           it: Pittura di parole
-          es: Pittura di palabras
+          es: Pintura de palabras
           zh: 音画法
         description:
           ja: 歌詞の意味を音型で直接的に描写する伝統的技法。
