@@ -52,7 +52,7 @@ nationalities:
       zh: 比利时
     description:
       ja: フランク、イザイ。バイオリン演奏の伝統と重厚な和声。
-      en: Franck, Ysaÿe. Violin traditions and thick harmonies.
+      en: Franck, Ysaÿe. Violin traditions and richly textured harmonies.
   - id: GB
     label:
       ja: イギリス
@@ -254,4 +254,4 @@ nationalities:
       zh: 中国
     description:
       ja: 陳其鋼、譚盾。悠久の歴史と、東洋の伝統楽器や思想の現代的翻案。
-      en: Chen Qigang, Tan Dun. Eon-long history and modern adaptations of Eastern traditional instruments and ideas.
+      en: Chen Qigang, Tan Dun. Aeon-long history and modern adaptations of Eastern traditional instruments and ideas.
