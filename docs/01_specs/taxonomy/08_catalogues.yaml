@@ -29,13 +29,13 @@ catalogue_prefixes:
       en: Posthumous opus number. Published after the composer's death.
   - id: woo
     label:
-      ja: 作品番号なし
+      ja: WoO
       en: WoO
       de: WoO
       fr: WoO
       it: WoO
       es: WoO
-      zh: 无作品编号
+      zh: WoO
     description:
       ja: 作品番号なし (Werke ohne Opuszahl)。
       en: Works without opus number (Werke ohne Opuszahl).
