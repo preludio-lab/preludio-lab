@@ -108,23 +108,17 @@ export const WorkPartTranslationOutputSchema = z.object({
     })
     .describe('翻訳を行う前のセルフチェック（Chain of Thought）。'),
   titleComponents: z.object({
-    prefix: z
+    distinctiveTitle: z
       .string()
       .optional()
       .describe(
-        '純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。翻訳不要な場合はプロパティごと省略すること。',
-      ),
-    content: z
-      .string()
-      .optional()
-      .describe(
-        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+        '固有の楽章・曲目の題名の翻訳。純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。翻訳不要な場合はプロパティごと省略すること。',
       ),
     nickname: z
       .string()
       .optional()
       .describe(
-        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+        '愛称の翻訳。純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略すること。',
       ),
   }),
   description: z

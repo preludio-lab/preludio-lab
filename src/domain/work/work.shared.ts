@@ -17,29 +17,38 @@ export const TempoTranslationSchema = createMultilingualStringSchema({ max: 100 
 export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 });
 
 /**
+ * Title Display Type
+ * 楽曲タイトルの合成形式を指定します。
+ */
+export const TitleDisplayTypeSchema = z.enum([
+  'standard', // 標準: [ジャンル+番] [調] [昵称] [作品番号]
+  'catalogue-only', // 目録番号主体: [ジャンル] [調] [作品番号]
+  'title-priority', // 固有題名優先: [固有題名] [調] [作品番号]
+  'custom', // カスタム: 自動合成をせず手動入力を優先
+]);
+
+export type TitleDisplayType = z.infer<typeof TitleDisplayTypeSchema>;
+
+/**
  * Title Components
- * 称号、本題、ニックネームを分離して管理するための構造
+ * 楽曲タイトルの事実（Fact）を構造化したデータ。
+ * WorkTitleFormatter によって多言語タイトルが自動合成されます。
  */
 export const TitleComponentsSchema = z.object({
-  /**
-   * 接頭辞 (Systematic Identifier)
-   * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
-   * 例: "第1楽章", "交響曲第5番", "No. 1"
-   */
-  prefix: TitleSchema.optional(),
-  /**
-   * 内容 (Substantive Title)
-   * 楽曲の固有性を決定づける情報。
-   * - 固有曲: 作曲家が付与した「固有タイトル」 (例: "くるみ割り人形", "La Mer")
-   * - 汎用曲 (固有タイトルなし): 識別子を補完する「テンポ」や「調性」 (例: "ハ短調", "in C minor")
-   */
-  content: TitleSchema.optional(),
-  /**
-   * 通称 (Colloquial Name)
-   * 一般大衆や後世によって付けられた呼び名。
-   * 例: "運命", "Moonlight"
-   */
+  /** タイトル全体の表示形式パターン */
+  displayType: TitleDisplayTypeSchema.default('standard'),
+  /** 楽曲の通し番号 (例: 5) */
+  number: z.number().int().optional(),
+  /** 固有のタイトル (例: "くるみ割り人形") */
+  distinctiveTitle: TitleSchema.optional(),
+  /** 広く知られた愛称 (例: "運命") */
   nickname: TitleSchema.optional(),
+
+  // --- 移行用フィールド (将来的に削除) ---
+  /** 旧：ジャンル名等を含む接頭辞 */
+  prefix: TitleSchema.optional(),
+  /** 旧：本題（調性等を含む） */
+  content: TitleSchema.optional(),
 });
 
 export type TitleComponents = z.infer<typeof TitleComponentsSchema>;

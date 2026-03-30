@@ -25,7 +25,7 @@ export const WorkReasoningSchema = z
     identityAnalysis: z
       .string()
       .describe(
-        '作品の基本情報の事実確認。正確な作曲年、カタログ番号（作品番号）、調性、および一般的に親しまれている愛称などを整理してください。',
+        '作品の基本情報の事実（Fact）確認。正確な作曲年、カタログ番号（作品番号）、通し番号（何番か）、調性、固有の楽曲題名（幻想、くるみ割り人形等）、および愛称（運命、月光等）を、表示文字列とは別に「事実」として整理してください。',
       ),
     historicalContext: z
       .string()
@@ -126,23 +126,17 @@ export const WorkTranslationOutputSchema = z.object({
     })
     .describe('翻訳を行う前のセルフチェック（Chain of Thought）。'),
   titleComponents: z.object({
-    prefix: z
+    distinctiveTitle: z
       .string()
       .optional()
       .describe(
-        '純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。該当なし・翻訳不要な場合はプロパティごと省略すること。',
-      ),
-    content: z
-      .string()
-      .optional()
-      .describe(
-        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+        '固有の楽曲題名の翻訳。純粋な文字列のみを出力し、オブジェクト（例: {"en": "..."}）を入れ子にしないこと。翻訳不要な場合は省略すること。',
       ),
     nickname: z
       .string()
       .optional()
       .describe(
-        '純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略。',
+        '愛称の翻訳。純粋な文字列のみを出力し、オブジェクトを入れ子にしないこと。翻訳不要な場合は省略すること。',
       ),
   }),
   description: z

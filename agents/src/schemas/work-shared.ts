@@ -61,19 +61,38 @@ export const TagIdDraftSchema = z.enum(TAGS);
 
 /**
  * タイトル構成ドラフトスキーマ
+ * 事実（Fact）に基づいた構造化データを抽出するためのスキーマ。
  */
 export const TitleComponentsDraftSchema = z.object({
-  prefix: MultilingualDraftSchema.optional().describe(
-    '【日本語固定】体系的識別子（ジャンル名）。「Polonaise」ではなく「ポロネーズ」、「Symphony」ではなく「交響曲」のように必ず日本語で出力してください。',
-  ),
-  content: MultilingualDraftSchema.optional().describe(
-    '【日本語固定】番号、調性、作品番号。★重要：ニックネーム（英雄、運命等）は絶対にここには含めず、nicknameフィールドに分離してください。また、「No. 6」は「第6番」、「in A-flat major」は「変イ長調」のように日本語に翻訳して出力してください。',
+  displayType: z
+    .enum(['standard', 'catalogue-only', 'title-priority', 'custom'])
+    .default('standard')
+    .describe(
+      'タイトルの表示形式パターン。1. standard: [ジャンル+番] [調] [昵称] [作品番号], 2. catalogue-only: [ジャンル] [調] [作品番号] (作品番号が主役の曲用), 3. title-priority: [固有題名] [調] [作品番号] (標題が主役の曲用), 4. custom: 手動入力を優先',
+    ),
+  number: z
+    .number()
+    .int()
+    .optional()
+    .describe(
+      '楽曲の通し番号。例: 「交響曲第5番」なら 5、「ピアノソナタ第11番」なら 11。接頭辞や「番」という文字は含めず、数値のみを出力してください。',
+    ),
+  distinctiveTitle: MultilingualDraftSchema.optional().describe(
+    '作曲家によって付与された固有の楽曲題名。例: "くるみ割り人形"、"幻想交響曲"、"La Mer"。ジャンル名やニックネームはここには含めないでください。',
   ),
   nickname: MultilingualDraftSchema.nullable()
     .optional()
     .describe(
-      '【日本語固定】楽曲の独自の愛称（例：英雄、月光）。UI側でcontentと自動結合して表示するため、contentとの重複は厳禁です。括弧や引用符は含めないでください。広く知られた固有の愛称が存在しない場合は、必ず null を出力してください。',
+      '広く知られた独自の愛称。例: "運命"、"月光"、"大公"。括弧や引用符は含めないでください。一般的でない呼び名は含めず、存在しない場合は null を出力してください。',
     ),
+
+  // --- 移行期間用 (非推奨) ---
+  prefix: MultilingualDraftSchema.optional().describe(
+    '【移行用・非推奨】旧ジャンル名フィールド。新規作成時は number, distinctiveTitle を優先してください。',
+  ),
+  content: MultilingualDraftSchema.optional().describe(
+    '【移行用・非推奨】旧本題フィールド。新規作成時は number, distinctiveTitle, key を優先してください。',
+  ),
 });
 
 /**
