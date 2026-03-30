@@ -45,8 +45,8 @@ reading_levels:
   - id: 5
     label:
       ja: 専門
-      en: Virtuoso / Professional
-      de: Profi
+      en: Professional / Expert
+      de: Experte
       fr: Professionnel
       it: Professionale
       es: Profesional
@@ -84,7 +84,7 @@ performance_difficulty:
     label:
       ja: プロ級
       en: Professional
-      de: Professionell
+      de: Konzertreif
       fr: Professionnel
       it: Professionale
       es: Profesional
