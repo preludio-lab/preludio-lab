@@ -45,7 +45,7 @@ impression_scales:
         label:
           ja: 哀愁・静謐
           en: Melancholy / Serene
-          de: Melancholie / Heiter
+          de: Melancholie / Ruhig
           fr: Mélancolie / Serein
           it: Malinconia / Sereno
           es: Melancolía / Sereno
@@ -102,7 +102,7 @@ impression_scales:
       ja: 躍動・爆発
       en: Energetic
       de: Energetisch
-      fr: Énergétique
+      fr: Énergique
       it: Energetico
       es: Energético
       zh: 跃动 / 爆发
@@ -113,7 +113,7 @@ impression_scales:
           en: Stillness / Void
           de: Stille / Leere
           fr: Silence / Vide
-          it: Fermezza / Vuoto
+          it: Staticità / Vuoto
           es: Quietud / Vacío
           zh: 静止 / 无
       - score_range: [7, 10]
@@ -209,8 +209,8 @@ impression_scales:
       en: Cinematic
       de: Filmisch / Dramatisch
       fr: Cinématique / Dramatique
-      it: Cinematico / Drammatico
-      es: Cinemático / Dramático
+      it: Cinematografico / Drammatico
+      es: Cinematográfico / Dramático
       zh: 影视化 / 剧烈
 
   - id: tempo
