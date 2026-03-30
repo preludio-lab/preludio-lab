@@ -4,77 +4,182 @@
 
 catalogue_prefixes:
   - id: op
-    label: Op.
+    label:
+      ja: 作品
+      en: Op.
+      de: Op.
+      fr: Op.
+      it: Op.
+      es: Op.
+      zh: 作品
     description:
       ja: 作品番号 (Opus)。ラテン語で「作品」を意味し、作曲家自身または出版社が付与。
       en: Opus number. Latin for "work", assigned by the composer or publisher.
   - id: op-posth
-    label: Op. posth.
+    label:
+      ja: 遺作
+      en: Op. posth.
+      de: Op. posth.
+      fr: Op. posth.
+      it: Op. posth.
+      es: Op. posth.
+      zh: 遗作
     description:
       ja: 遺作作品番号 (Opus posthumous)。作曲家の死後に出版された作品。
       en: Posthumous opus number. Published after the composer's death.
   - id: woo
-    label: WoO
+    label:
+      ja: 作品番号なし
+      en: WoO
+      de: WoO
+      fr: WoO
+      it: WoO
+      es: WoO
+      zh: 无作品编号
     description:
       ja: 作品番号なし (Werke ohne Opuszahl)。
       en: Works without opus number (Werke ohne Opuszahl).
   - id: bwv
-    label: BWV
+    label:
+      ja: BWV
+      en: BWV
+      de: BWV
+      fr: BWV
+      it: BWV
+      es: BWV
+      zh: BWV
     description:
       ja: バッハ作品目録 (Bach-Werke-Verzeichnis)。J.S.バッハ。
       en: Bach-Werke-Verzeichnis. J.S. Bach.
   - id: rv
-    label: RV
+    label:
+      ja: RV
+      en: RV
+      de: RV
+      fr: RV
+      it: RV
+      es: RV
+      zh: RV
     description:
       ja: リオム番号 (Ryom-Verzeichnis)。ヴィヴァルディ。
       en: Ryom-Verzeichnis. Vivaldi.
   - id: hwv
-    label: HWV
+    label:
+      ja: HWV
+      en: HWV
+      de: HWV
+      fr: HWV
+      it: HWV
+      es: HWV
+      zh: HWV
     description:
       ja: ヘンデル作品目録 (Händel-Werke-Verzeichnis)。
       en: Händel-Werke-Verzeichnis.
   - id: k
-    label: K.
+    label:
+      ja: K.
+      en: K.
+      de: K.
+      fr: K.
+      it: K.
+      es: K.
+      zh: K.
     description:
       ja: ケッヘル番号 (Köchel-Verzeichnis)。モーツァルト。
       en: Köchel-Verzeichnis. Mozart.
   - id: d
-    label: D
+    label:
+      ja: D
+      en: D
+      de: D
+      fr: D
+      it: D
+      es: D
+      zh: D
     description:
       ja: ドイチュ番号。シューベルト。
       en: Deutsch catalogue. Schubert.
   - id: hob
-    label: Hob.
+    label:
+      ja: Hob.
+      en: Hob.
+      de: Hob.
+      fr: Hob.
+      it: Hob.
+      es: Hob.
+      zh: Hob.
     description:
       ja: ホーボーケン番号。ハイドン。
       en: Hoboken catalogue. Haydn.
   - id: s
-    label: S.
+    label:
+      ja: S.
+      en: S.
+      de: S.
+      fr: S.
+      it: S.
+      es: S.
+      zh: S.
     description:
       ja: サール番号 (Searle)。リスト。
       en: Searle catalogue. Liszt.
   - id: l
-    label: L.
+    label:
+      ja: L.
+      en: L.
+      de: L.
+      fr: L.
+      it: L.
+      es: L.
+      zh: L.
     description:
       ja: ルシュール番号 (Lesure)。ドビュッシー。
       en: Lesure catalogue. Debussy.
   - id: m
-    label: M.
+    label:
+      ja: M.
+      en: M.
+      de: M.
+      fr: M.
+      it: M.
+      es: M.
+      zh: M.
     description:
       ja: マルナ番号 (Marnat)。ラヴェル。
       en: Marnat catalogue. Ravel.
   - id: sz
-    label: Sz.
+    label:
+      ja: Sz.
+      en: Sz.
+      de: Sz.
+      fr: Sz.
+      it: Sz.
+      es: Sz.
+      zh: Sz.
     description:
       ja: セーレシ番号 (Szőllősy)。バルトーク。
       en: Szőllősy catalogue. Bartók.
   - id: b
-    label: B.
+    label:
+      ja: B.
+      en: B.
+      de: B.
+      fr: B.
+      it: B.
+      es: B.
+      zh: B.
     description:
       ja: ブルクハウザー番号 (Burghauser)。ドヴォルザーク。
       en: Burghauser catalogue. Dvořák.
   - id: kk
-    label: Kk.
+    label:
+      ja: Kk.
+      en: Kk.
+      de: Kk.
+      fr: Kk.
+      it: Kk.
+      es: Kk.
+      zh: Kk.
     description:
       ja: カークパトリック番号 (Kirkpatrick)。D.スカルラッティ。
       en: Kirkpatrick catalogue. D. Scarlatti.
