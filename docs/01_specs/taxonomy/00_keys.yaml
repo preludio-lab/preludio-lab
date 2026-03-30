@@ -184,7 +184,7 @@ keys:
       de: es-Moll
       fr: Mi bémol mineur
       it: Mi bemolle minore
-      es: Mi bemol mayor
+      es: Mi bemol menor
       zh: 降E小调
   - id: e-minor
     label:
@@ -274,7 +274,7 @@ keys:
       de: as-Moll
       fr: La bémol mineur
       it: La bemolle minore
-      es: La bemol mayor
+      es: La bemol menor
       zh: 降A小调
 
   # --- Plain Notes / Modeless (主音のみ / 指定なし) ---
