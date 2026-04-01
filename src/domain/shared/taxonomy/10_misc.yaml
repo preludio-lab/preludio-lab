@@ -1,0 +1,99 @@
+# 11. Miscellaneous (その他)
+# ========================
+# その他の補助的なタクソノミー定義。
+
+trending_levels:
+  - id: hot
+    label:
+      ja: 急上昇
+      en: Hot / Trending
+      de: Trending
+      fr: En vogue
+      it: Di tendenza
+      es: Tendencia
+      zh: 急上升
+  - id: steady
+    label:
+      ja: 定番・安定
+      en: Steady / Evergreen
+      de: Klassiker
+      fr: Incontournable
+      it: Classico
+      es: Clásico
+      zh: 经典常青
+  - id: new-arrival
+    label:
+      ja: 新着・注目
+      en: New Arrival
+      de: Neuerscheinung
+      fr: Nouveauté
+      it: Novità
+      es: Novedad
+      zh: 最新上线
+
+work_part_types:
+  - id: movement
+    label:
+      ja: 楽章
+      en: Movement
+      de: Satz
+      fr: Mouvement
+      it: Movimento
+      es: Movimiento
+      zh: 乐章
+  - id: scene
+    label:
+      ja: 場面
+      en: Scene
+      de: Szene
+      fr: Scène
+      it: Scena
+      es: Escena
+      zh: 场景
+  - id: act
+    label:
+      ja: 幕
+      en: Act
+      de: Akt
+      fr: Acte
+      it: Atto
+      es: Acto
+      zh: 幕
+  - id: number
+    label:
+      ja: 番号
+      en: Number
+      de: Nummer
+      fr: Numéro
+      it: Numero
+      es: Número
+      zh: 编号
+
+instrumentation_flags:
+  - id: with-chorus
+    label:
+      ja: 合唱付
+      en: with Chorus
+      de: mit Chor
+      fr: avec chœur
+      it: con coro
+      es: con coro
+      zh: 含合唱
+  - id: with-soloists
+    label:
+      ja: 独唱付
+      en: with Soloists
+      de: mit Solisten
+      fr: avec solistes
+      it: con solisti
+      es: con solistas
+      zh: 含独唱
+  - id: basso-continuo
+    label:
+      ja: 通奏低音
+      en: Basso Continuo
+      de: Generalbass
+      fr: Basse continue
+      it: Basso continuo
+      es: Bajo continuo
+      zh: 通奏低音

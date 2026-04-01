@@ -2,15 +2,10 @@
 
 import React from 'react';
 import { MusicalKey } from '@/domain/work/musical-key';
-import { MUSICAL_KEY_LABELS } from '@/domain/shared/enum-labels';
+import { getMusicalKeyLabel, MUSICAL_KEY_LABELS } from '@/domain/shared/enum-labels';
 import { AdminSelect, SelectOption } from '@/components/ui/admin/AdminSelect';
-
-const OPTIONS: SelectOption<MusicalKey>[] = (Object.keys(MUSICAL_KEY_LABELS) as MusicalKey[]).map(
-  (key) => ({
-    value: key,
-    label: MUSICAL_KEY_LABELS[key],
-  }),
-);
+import { useLocale } from 'next-intl';
+import { AppLocale } from '@/domain/i18n/locale';
 
 interface MusicalKeySelectProps {
   id?: string;
@@ -36,13 +31,23 @@ export function MusicalKeySelect({
   error,
   disabled = false,
 }: MusicalKeySelectProps) {
+  const locale = useLocale() as AppLocale;
+
+  // ラベルを多言語設定
+  const options: SelectOption<MusicalKey>[] = (Object.keys(MUSICAL_KEY_LABELS) as MusicalKey[]).map(
+    (key) => ({
+      value: key,
+      label: getMusicalKeyLabel(key, locale),
+    }),
+  );
+
   return (
     <AdminSelect<MusicalKey>
       id={id}
       label={label}
       // 強制的にキャストして AdminSelect に渡す (既存データ不整合警告が出るようにする)
       value={value as MusicalKey}
-      options={OPTIONS}
+      options={options}
       onChange={onChange}
       placeholder={placeholder}
       className={className}

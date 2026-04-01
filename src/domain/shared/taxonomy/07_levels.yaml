@@ -1,0 +1,100 @@
+# 9. Levels (専門性と難易度)
+# =========================
+# 記事の専門性および楽曲の演奏難易度。
+
+reading_levels:
+  - id: 1
+    label:
+      ja: 入門
+      en: Beginner
+      de: Einsteiger
+      fr: Débutant
+      it: Principiante
+      es: Principiante
+      zh: 入门
+    description:
+      ja: 初めてクラシックを聴く人向け。
+      en: For first-time listeners of classical music.
+  - id: 2
+    label:
+      ja: 初級
+      en: Elementary
+      de: Anfänger
+      fr: Élémentaire
+      it: Elementare
+      es: Elemental
+      zh: 初级
+  - id: 3
+    label:
+      ja: 中級
+      en: Intermediate
+      de: Mittelstufe
+      fr: Intermédiaire
+      it: Intermedio
+      es: Intermedio
+      zh: 中级
+  - id: 4
+    label:
+      ja: 上級
+      en: Advanced
+      de: Fortgeschritten
+      fr: Avancé
+      it: Avanzato
+      es: Avanzado
+      zh: 高级
+  - id: 5
+    label:
+      ja: 専門
+      en: Professional / Expert
+      de: Experte
+      fr: Professionnel
+      it: Professionale
+      es: Profesional
+      zh: 专家 / 职业
+
+performance_difficulty:
+  - id: 1
+    label:
+      ja: 初級
+      en: Beginner
+      de: Anfänger
+      fr: Débutant
+      it: Principiante
+      es: Principiante
+      zh: 初级
+  - id: 2
+    label:
+      ja: 中級
+      en: Intermediate
+      de: Mittelstufe
+      fr: Intermédiaire
+      it: Intermedio
+      es: Intermedio
+      zh: 中级
+  - id: 3
+    label:
+      ja: 上級
+      en: Advanced
+      de: Fortgeschritten
+      fr: Avancé
+      it: Avanzato
+      es: Avanzado
+      zh: 高级
+  - id: 4
+    label:
+      ja: プロ級
+      en: Professional
+      de: Konzertreif
+      fr: Professionnel
+      it: Professionale
+      es: Profesional
+      zh: 职业级
+  - id: 5
+    label:
+      ja: 超絶技巧
+      en: Virtuoso
+      de: Virtuose
+      fr: Virtuose
+      it: Virtuoso
+      es: Virtuoso
+      zh: 超绝技巧

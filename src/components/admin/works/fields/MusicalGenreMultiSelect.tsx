@@ -1,13 +1,10 @@
 'use client';
 
 import React from 'react';
-import { MUSICAL_GENRE_LABELS } from '@/domain/shared/enum-labels';
+import { getMusicalGenreLabel, MUSICAL_GENRE_LABELS } from '@/domain/shared/enum-labels';
 import { AdminMultiSelect, MultiSelectOption } from '@/components/ui/admin/AdminMultiSelect';
-
-const OPTIONS: MultiSelectOption<string>[] = Object.keys(MUSICAL_GENRE_LABELS).map((key) => ({
-  value: key,
-  label: MUSICAL_GENRE_LABELS[key],
-}));
+import { useLocale } from 'next-intl';
+import { AppLocale } from '@/domain/i18n/locale';
 
 interface MusicalGenreMultiSelectProps {
   id?: string;
@@ -33,12 +30,20 @@ export function MusicalGenreMultiSelect({
   error,
   disabled = false,
 }: MusicalGenreMultiSelectProps) {
+  const locale = useLocale() as AppLocale;
+
+  // ラベルを多言語設定
+  const options: MultiSelectOption<string>[] = Object.keys(MUSICAL_GENRE_LABELS).map((key) => ({
+    value: key,
+    label: getMusicalGenreLabel(key, locale),
+  }));
+
   return (
     <AdminMultiSelect<string>
       id={id}
       label={label}
       values={values}
-      options={OPTIONS}
+      options={options}
       onChange={onChange}
       placeholder={placeholder}
       className={className}

@@ -1,0 +1,339 @@
+# 11. Musical Forms (楽曲形式・構造)
+# ==================================
+# 楽曲の内部構造、作曲技法、および論理的な構成原理。
+# ジャンル（作品分類）とは別に、楽曲の「書き方」を定義します。
+
+forms:
+  - category: structural-forms
+    label:
+      ja: 基本構造・構成原理
+      en: Structural Forms
+      de: Strukturformen
+      fr: Formes structurelles
+      it: Forme strutturali
+      es: Formas estructurales
+      zh: 基本结构 / 构成原理
+    items:
+      - id: sonata-form
+        label:
+          ja: ソナタ形式
+          en: Sonata Form
+          de: Sonatenhauptsatzform
+          fr: Forme sonate
+          it: Forma-sonata
+          es: Forma sonata
+          zh: 奏鸣曲式
+        description:
+          ja: 提示部、展開部、再現部の3つの主要部分から成る構成原理。対照的な2つの主題の相克と解決。
+          en: A musical structure consisting of exposition, development, and recapitulation, characterized by the conflict and resolution of two contrasting themes.
+      - id: ternary-form
+        label:
+          ja: 三部形式
+          en: Ternary Form
+          de: Dreiteilige Form
+          fr: Forme ternaire
+          it: Forma ternaria
+          es: Forma ternaria
+          zh: 三部曲式
+        description:
+          ja: A-B-Aの三部構造。中間部（B）で対照的な楽想を提示し、再び（A）に戻る基本形式。
+          en: A three-part musical structure (A-B-A) where the first section is repeated after a contrasting middle section.
+      - id: binary-form
+        label:
+          ja: 二部形式
+          en: Binary Form
+          de: Zweiteilige Form
+          fr: Forme binaire
+          it: Forma binaria
+          es: Forma binaria
+          zh: 二部曲式
+        description:
+          ja: A-Bの二部構造。バロック期の舞曲などに多く見られる、前半と後半が対照または補完し合う形式。
+          en: A two-part musical structure (A-B), commonly found in Baroque dances, where two related sections are repeated.
+      - id: rondo-form
+        label:
+          ja: ロンド形式
+          en: Rondo Form
+          de: Rondoform
+          fr: Forme rondo
+          it: Forma di rondò
+          es: Forma de rondó
+          zh: 回旋曲式
+        description:
+          ja: 主要主題（A）が異なるエピソード（BやC）を挟んで何度も回帰する構造。
+          en: A musical form in which a principal theme (A) alternates with several contrasting sections called episodes.
+      - id: cyclic-form
+        label:
+          ja: 循環形式
+          en: Cyclic Form
+          de: Zyklische Form
+          fr: Forme cyclique
+          it: Forma ciclica
+          es: Forma cíclica
+          zh: 循环形式
+        description:
+          ja: 特定の主題や動機を全楽章に登場させ、作品全体の統一感を図る構成原理。
+          en: A technique of musical construction where a theme, melody, or thematic material occurs in more than one movement as a unifying device.
+      - id: variation-form
+        label:
+          ja: 変奏形式
+          en: Variation Form
+          de: Variationsform
+          fr: Forme variation
+          it: Forma di variazione
+          es: Forma de variación
+          zh: 变奏形式
+        description:
+          ja: 提示された主題を、リズム、メロディ、和声、音色などを変化させて反復・発展させる構造。
+          en: A formal principle based on the repetition of a theme, which is modified each time in rhythm, melody, harmony, or texture.
+
+  - category: contrapuntal-forms
+    label:
+      ja: 対位法的形式・技法
+      en: Contrapuntal Forms / Techniques
+      de: Kontrapunktische Formen
+      fr: Formes contrapuntiques
+      it: Forme contrappuntistiche
+      es: Formas contrapuntísticas
+      zh: 对位法形式 / 技法
+    items:
+      - id: fugue-structure
+        label:
+          ja: フーガ形式
+          en: Fugue Structure
+          de: Fugentechnik
+          fr: Structure de fugue
+          it: Struttura di fuga
+          es: Estructura de fuga
+          zh: 赋格形式
+        description:
+          ja: 特定の主題が異なる声部で模倣され、対位法的に展開される高度な構成技法。
+          en: A highly developed contrapuntal composition technique based on the imitation of a principal theme in different parts.
+      - id: canon
+        label:
+          ja: カノン
+          en: Canon
+          de: Kanon
+          fr: Canon
+          it: Canone
+          es: Canon
+          zh: 卡农 / 轮唱
+        description:
+          ja: 先行する旋律を他の声部が厳格に模倣する対位法的手法。
+          en: A contrapuntal compositional technique that employs a melody with one or more strict imitations of the melody played after a given duration.
+      - id: passacaglia-chaconne
+        label:
+          ja: パッサカリア・シャコンヌ形式
+          en: Passacaglia / Chaconne Form
+          de: Passacaglia / Chaconne
+          fr: Forme passacaille / chaconne
+          it: Forma della passacaglia / ciaccona
+          es: Forma de pasacalle / chacona
+          zh: 帕萨卡利亚 / 恰空形式
+        description:
+          ja: 繰り返される低音主題（パッサカリア）や和声進行（シャコンヌ）の上で変奏が行われる構造。
+          en: Structural forms built upon a repeated bass line (passacaglia) or a recurring harmonic progression (chaconne).
+      - id: basso-ostinato
+        label:
+          ja: バッソ・オスティナート
+          en: Basso Ostinato / Ground
+          de: Basso ostinato
+          fr: Basse obstinée
+          it: Basso ostinato
+          es: Bajo ostinato
+          zh: 固执低音
+        description:
+          ja: 同じ低音音型を反復させ、その上で旋律や和声を展開させる技法。
+          en: A short, recurring melodic pattern in the bass part throughout a composition.
+
+  - category: vocal-forms
+    label:
+      ja: 声楽の構成形式
+      en: Vocal Structures
+      de: Vokalformen
+      fr: Formes vocales
+      it: Forme vocali
+      es: Formas vocales
+      zh: 声乐构成形式
+    items:
+      - id: strophic-form
+        label:
+          ja: 有節形式
+          en: Strophic Form
+          de: Strophenform
+          fr: Forme strophique
+          it: Forma strofica
+          es: Forma estrófica
+          zh: 有节形式
+        description:
+          ja: 各節の歌詞に対し、同一の旋律を繰り返す歌曲の構成。
+          en: A vocal structure where all verses or stanzas of the text are sung to the same music.
+      - id: through-composed
+        label:
+          ja: 通奏形式
+          en: Through-composed
+          de: Durchkomponiert
+          fr: Composition continue
+          it: Durchkomponiert
+          es: Composición continua
+          zh: 通奏形式
+        description:
+          ja: 歌詞の展開に合わせ、反復を排して新しい音楽が連続して書かれる歌曲の構成。
+          en: A vocal form that features continuous, non-repetitive music following the development of the text.
+      - id: song-cycle-structure
+        label:
+          ja: 連作歌曲構造
+          en: Song Cycle Structure
+          de: Liederzyklus-Struktur
+          fr: Structure du cycle de mélodies
+          it: Struttura del ciclo di liriche
+          es: Estructura de ciclo de canciones
+          zh: 连作歌曲结构
+        description:
+          ja: 複数の歌曲が物語や情緒によって結びつけられ、一つの大きなまとまりを形成する構成原理。
+          en: The logical grouping of several songs connected by a unified theme or narrative arc.
+      - id: aria-form
+        label:
+          ja: アリア形式
+          en: Aria Form
+          de: Arienform
+          fr: Forme d'aria
+          it: Forma d'aria
+          es: Forma de aria
+          zh: 咏叹调形式
+        description:
+          ja: A-B-A（ダ・カーポ・アリア）など、独唱者のための定型化された楽曲構造。
+          en: Standardized musical structures for solo vocal items within larger works, such as the Da Capo Aria (A-B-A).
+      - id: recitative-form
+        label:
+          ja: レチタティーヴォ形式
+          en: Recitative Form
+          de: Rezitativform
+          fr: Forme de récitatif
+          it: Forma di recitativo
+          es: Forma de recitativo
+          zh: 宣叙调形式
+        description:
+          ja: 言葉の自然な抑揚を活かした、叙唱的な対話や語りの構造。
+          en: A narrative style of vocal music that follows the natural flow of spoken language.
+
+  - category: programmatic-structures
+    label:
+      ja: 標題的・物語的構造
+      en: Programmatic Structures
+      de: Programmatische Strukturen
+      fr: Structures programmatiques
+      it: Strutture programmatiche
+      es: Estructuras programáticas
+      zh: 标题性 / 叙事结构
+    items:
+      - id: symphonic-poem-structure
+        label:
+          ja: 交響詩的構造
+          en: Symphonic Poem Structure
+          de: Sinfonische Dichtung (Struktur)
+          fr: Structure du poème symphonique
+          it: Struttura del poema sinfonico
+          es: Estructura de poema sinfónico
+          zh: 交响诗结构
+        description:
+          ja: 特定の文学的・絵画的な物語を、単一楽章の管弦楽曲の中で音楽的に描写する構成手法。
+          en: The structural principle of an orchestral work that portrays a narrative or landscape through musical development in a single movement.
+      - id: leitmotif-system
+        label:
+          ja: ライトモティーフ体系
+          en: Leitmotif System
+          de: Leitmotiv-System
+          fr: Système de leitmotiv
+          it: Sistema di leitmotiv
+          es: Sistema de leitmotiv
+          zh: 主导动机体系
+        description:
+          ja: 特定の人物、事象、感情などを象徴する動機（モティーフ）を網の目のように結合・変容させる構成。
+          en: A complex structural system where recurring musical motifs represent specific characters, themes, or ideas.
+      - id: idee-fixe
+        label:
+          ja: 固定観念 (Idée fixe)
+          en: Idée fixe
+          de: Idée fixe
+          fr: Idée fixe
+          it: Idea fissa
+          es: Idea fija
+          zh: 固定乐念
+        description:
+          ja: 全楽章を通じて変容しながら現れる特定の主題。ベルリオーズ等による構成原理。
+          en: A recurring theme that provides structural unity by appearing in various guises throughout all movements of a work.
+      - id: word-painting
+        label:
+          ja: 語画法
+          en: Word Painting
+          de: Wortmalerei
+          fr: Peinture de mots
+          it: Pittura di parole
+          es: Pintura de palabras
+          zh: 音画法
+        description:
+          ja: 歌詞の具体的な意味（上昇、下降、嘆き等）を音型で直接的に表現する技法。
+          en: A compositional technique where the music directly mimics the literal meaning of the lyrics.
+
+  - category: dance-forms
+    label:
+      ja: 舞曲形式（楽章構成）
+      en: Dance Forms (Movements)
+      de: Tanzformen (Sätze)
+      fr: Formes de danse (Mouvements)
+      it: Forme di danza (Movimenti)
+      es: Formas de danza (Movimientos)
+      zh: 舞曲形式 (乐章构成)
+    description:
+      ja: 交響曲やソナタの内部楽章（主に第3楽章）として現れる舞曲の形式的特徴。
+      en: Formal characteristics of dances when used as internal movements (often the third) of symphonies or sonatas.
+    items:
+      - id: minuet-trio
+        label:
+          ja: メヌエットとトリオ
+          en: Minuet and Trio
+          de: Menuett und Trio
+          fr: Menuet et Trio
+          it: Minuetto e Trio
+          es: Minueto y Trío
+          zh: 小步舞曲与三部曲
+        description:
+          ja: 3拍子の典雅な舞曲。A-B-A形式を基本とし、古典派交響曲の標準的な第3楽章形式。
+          en: A stately dance in triple meter, typically serving as the third movement of a classical symphony or quartet, in minuet-trio-minuet form.
+      - id: scherzo-form
+        label:
+          ja: スケルツォ形式
+          en: Scherzo Form
+          de: Scherzo-Form
+          fr: Forme scherzo
+          it: Forma di scherzo
+          es: Forma de scherzo
+          zh: 谐谑曲形式
+        description:
+          ja: 急速な3拍子。ベートーヴェン以降の交響曲でメヌエットに代わって採用された、快活または風刺的な形式。
+          en: A fast, lively movement in triple time, often replacing the minuet in symphonies from Beethoven onwards.
+      - id: waltz-form
+        label:
+          ja: ワルツ形式
+          en: Waltz Form
+          de: Walzer-Form
+          fr: Forme valse
+          it: Forma di valzer
+          es: Forma de vals
+          zh: 圆舞曲形式
+        description:
+          ja: 3拍子の舞曲形式。楽章の一部として、または連作的なワルツの構造。
+          en: Triple-meter dance form used as a movement in a suite or a section of a larger work.
+      - id: baroque-dance-forms
+        label:
+          ja: バロック舞曲（組曲形式）
+          en: Baroque Dance Forms
+          de: Barocktanz-Formen
+          fr: Formes de danses baroques
+          it: Forme di danza barocca
+          es: Formas de danza barroca
+          zh: 巴洛克舞曲形式
+        description:
+          ja: アルマンド、クーラント、サラバンド、ジーグといった組曲を構成する各舞曲の構造的特徴。
+          en: The structural characteristics of dances that comprise a Baroque suite (Allemande, Courante, Sarabande, Gigue).

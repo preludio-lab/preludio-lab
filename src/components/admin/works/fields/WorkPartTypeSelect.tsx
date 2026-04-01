@@ -2,15 +2,10 @@
 
 import React from 'react';
 import { WorkPartType } from '@/domain/work/work-part.metadata';
-import { WORK_PART_TYPE_LABELS } from '@/domain/shared/enum-labels';
+import { getWorkPartTypeLabel } from '@/domain/shared/enum-labels';
 import { AdminSelect, SelectOption } from '@/components/ui/admin/AdminSelect';
-
-const OPTIONS: SelectOption<WorkPartType>[] = (
-  Object.keys(WORK_PART_TYPE_LABELS) as WorkPartType[]
-).map((key) => ({
-  value: key,
-  label: WORK_PART_TYPE_LABELS[key],
-}));
+import { useLocale } from 'next-intl';
+import { AppLocale } from '@/domain/i18n/locale';
 
 interface WorkPartTypeSelectProps {
   id?: string;
@@ -36,12 +31,30 @@ export function WorkPartTypeSelect({
   error,
   disabled = false,
 }: WorkPartTypeSelectProps) {
+  const locale = useLocale() as AppLocale;
+
+  // ラベルを多言語設定
+  const options: SelectOption<WorkPartType>[] = [
+    'movement',
+    'number',
+    'act',
+    'scene',
+    'variation',
+    'section',
+    'part',
+    'interlude',
+    'supplement',
+  ].map((type) => ({
+    value: type as WorkPartType,
+    label: getWorkPartTypeLabel(type as WorkPartType, locale),
+  }));
+
   return (
     <AdminSelect<WorkPartType>
       id={id}
       label={label}
       value={value as WorkPartType}
-      options={OPTIONS}
+      options={options}
       onChange={onChange}
       placeholder={placeholder}
       className={className}

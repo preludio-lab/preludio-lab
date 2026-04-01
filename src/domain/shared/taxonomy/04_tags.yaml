@@ -1,0 +1,580 @@
+# 5. Tags (タグ)
+# =============
+# 記事や楽曲の多角的な属性。
+
+tags:
+  # --- Mood: 情緒的なラベル ---
+  - category: mood
+    label:
+      ja: ムード・雰囲気
+      en: Mood / Atmosphere
+      de: Stimmung / Atmosphäre
+      fr: Humeur / Atmosphère
+      it: Umore / Atmosfera
+      es: Ánimo / Atmósfera
+      zh: 情绪 / 氛围
+    items:
+      - id: joyful
+        label:
+          ja: 歓喜に満ちた
+          en: Joyful / Triumphant
+          de: Freudig / Triumphierend
+          fr: Joyeux / Triomphant
+          it: Gioioso / Trionfante
+          es: Jubiloso / Triunfante
+          zh: 欢快 / 凯旋
+        description:
+          ja: 勝利、祝祭、突き抜けるような明るさ。
+          en: Victory, celebration, and piercing brightness.
+      - id: passionate
+        label:
+          ja: 情熱的な
+          en: Passionate
+          de: Leidenschaftlich
+          fr: Passionné
+          it: Appassionato
+          es: Apasionado
+          zh: 激情
+        description:
+          ja: 激しい感情のほとばしり、熱量のある音楽。
+          en: Intense emotional outbursts and high-energy music.
+      - id: brilliant
+        label:
+          ja: 華麗な・輝かしい
+          en: Brilliant
+          de: Brillant
+          fr: Brillant
+          it: Brillante
+          es: Brillante
+          zh: 华丽 / 辉煌
+        description:
+          ja: 超絶技巧と結びついた、光り輝くような外向的な美しさ。
+          en: Radiant, extroverted beauty often linked with virtuosity.
+      - id: dramatic
+        label:
+          ja: ドラマチックな
+          en: Dramatic
+          de: Dramatisch
+          fr: Dramatique
+          it: Drammatico
+          es: Dramático
+          zh: 戏剧性
+        description:
+          ja: 映画のワンシーンのような物語性と展開。
+          en: Narrative quality and development like a scene from a movie.
+      - id: serene
+        label:
+          ja: 静謐な・穏やかな
+          en: Serene / Peaceful
+          de: Gelassen / Friedlich
+          fr: Serein / Paisible
+          it: Sereno / Pacifico
+          es: Sereno / Pacífico
+          zh: 宁静 / 和平
+        description:
+          ja: 心を落ち着かせる、静かで澄んだ響き。
+          en: Calm, clear sounds that settle the mind.
+      - id: healing
+        label:
+          ja: 癒やされる
+          en: Healing / Soothing
+          de: Heilend / Beruhigend
+          fr: Apaisant / Guérissant
+          it: Rilassante / Lenitivo
+          es: Curativo / Relajante
+          zh: 治愈 / 舒缓
+        description:
+          ja: 疲れた心を優しく包み込むような温かさ。
+          en: Warmth that gently envelops a tired heart.
+      - id: spiritual
+        label:
+          ja: 崇高な・祈りの
+          en: Spiritual / Sacred
+          de: Spirituell / Geistlich
+          fr: Spirituel / Sacré
+          it: Spirituale / Sacro
+          es: Espiritual / Sagrado
+          zh: 神圣 / 祈祷
+        description:
+          ja: 宗教的あるいは精神的に高い次元へ導かれる感覚。
+          en: A sense of being led to a higher religious or spiritual level.
+      - id: ethereal
+        label:
+          ja: 幻想的な・天上の
+          en: Ethereal / Dreamy
+          de: Ätherisch / Traumhaft
+          fr: Éthéré / Onirique
+          it: Etereo / Sognante
+          es: Etéreo / Ensoñador
+          zh: 虚幻 / 天籁
+        description:
+          ja: 浮世離れした、夢見心地で神秘的な美しさ。
+          en: Otherworldly, dreamy, and mysterious beauty.
+      - id: elegant
+        label:
+          ja: 優雅な
+          en: Elegant / Graceful
+          de: Elegant / Anmutig
+          fr: Élégant / Gracieux
+          it: Elegante / Grazioso
+          es: Elegante / Gracioso
+          zh: 优雅 / 优美
+        description:
+          ja: 洗練された、貴族的な「洗練」を感じさせる美。
+          en: Refined beauty with an aristocratic sense of sophistication.
+      - id: majestic
+        label:
+          ja: 荘厳な・高貴な
+          en: Majestic / Noble
+          de: Majestätisch / Edel
+          fr: Majestueux / Noble
+          it: Maestoso / Nobile
+          es: Majestuoso / Noble
+          zh: 庄严 / 高贵
+        description:
+          ja: 威厳があり、堂々とした王道的な響き。
+          en: Dignified and grand, classic sound.
+      - id: pastoral
+        label:
+          ja: 田園的な
+          en: Pastoral / Rustic
+          de: Pastoral / Ländlich
+          fr: Pastoral / Rustique
+          it: Pastorale / Rustico
+          es: Pastoral / Rústico
+          zh: 田园
+        description:
+          ja: 自然の風景、鳥の声、のどかな田舎の情景。
+          en: Landscapes, bird songs, and peaceful country scenes.
+      - id: nostalgic
+        label:
+          ja: 懐かしい
+          en: Nostalgic
+          de: Nostalgisch
+          fr: Nostalgique
+          it: Nostalgico
+          es: Nostálgico
+          zh: 怀旧 / 思乡
+        description:
+          ja: 遠い記憶を呼び覚ますような温かい追憶。
+          en: Warm reminiscence that awakens distant memories.
+      - id: melancholic
+        label:
+          ja: 哀愁漂う・切ない
+          en: Melancholic / Sentimental
+          de: Melancholisch / Sentimental
+          fr: Mélancolique / Sentimental
+          it: Malinconico / Sentimentale
+          es: Melancólico / Sentimental
+          zh: 忧郁 / 感伤
+        description:
+          ja: 個人的な、甘美さを伴う「切なさ」。胸を締め付けるような悲しみや郷愁。
+          en: Personal sadness or nostalgia with a sense of sweetness.
+      - id: gloomy
+        label:
+          ja: 暗鬱な・深刻な
+          en: Gloomy / Dark
+          de: Düster / Dunkel
+          fr: Lugubre / Sombre
+          it: Tetro / Oscuro
+          es: Sombrío / Oscuro
+          zh: 阴郁 / 黑暗
+        description:
+          ja: より重く、深い絶望、出口のない「暗さ」。内省的な闇。
+          en: Heavier, deep despair, a darkness with no exit.
+      - id: tragic
+        label:
+          ja: 悲劇的な
+          en: Tragic
+          de: Tragisch
+          fr: Tragique
+          it: Tragico
+          es: Trágico
+          zh: 悲剧性
+        description:
+          ja: 避けられない運命や、激しく打ちひしがれるような悲劇性。
+          en: Inevitable fate and overhelming tragedy.
+      - id: tense
+        label:
+          ja: 緊迫した・スリリングな
+          en: Tense / Thrilling
+          de: Gespannt / Spannend
+          fr: Tendu / Palpitant
+          it: Teso / Avvincente
+          es: Tenso / Emocionante
+          zh: 紧张 / 扣人心弦
+        description:
+          ja: 手に汗握るようなスピード感や焦燥感。
+          en: A sense of speed or impatience that makes hands sweat.
+
+  # --- Situation: 利用シーン ---
+  - category: situation
+    label:
+      ja: 利用シーン
+      en: Situation / Scene
+      de: Situation / Szene
+      fr: Situation / Scène
+      it: Situazione / Scena
+      es: Situación / Escena
+      zh: 场景 / 状况
+    items:
+      - id: morning
+        label:
+          ja: 爽やかな朝に
+          en: Morning Refresh
+          de: Erfrischender Morgen
+          fr: Matin rafraîchissant
+          it: Mattina rinfrescante
+          es: Mañana refrescante
+          zh: 清新的早晨
+      - id: afternoon-tea
+        label:
+          ja: 午後のティータイム
+          en: Afternoon Tea / Break
+          de: Nachmittagstee / Pause
+          fr: Thé de l'après-midi
+          it: Tè pomeridiano
+          es: Té de la tarde
+          zh: 下午茶时间
+      - id: night
+        label:
+          ja: 静かな夜に
+          en: Night / Late Night
+          de: Stille Nacht
+          fr: Nuit calme
+          it: Notte silenziosa
+          es: Noche tranquila
+          zh: 宁静的夜晚
+      - id: deep-focus
+        label:
+          ja: 集中・作業用
+          en: Deep Focus
+          de: Tiefe Konzentration
+          fr: Concentration profonde
+          it: Concentrazione profonda
+          es: Concentración profunda
+          zh: 深度专注 / 工作用
+      - id: relax
+        label:
+          ja: リラックスタイム
+          en: Relax / Chill
+          de: Entspannung
+          fr: Détente
+          it: Relax
+          es: Relajación
+          zh: 放松时间
+      - id: sleep
+        label:
+          ja: 眠りのために
+          en: Sleep / Lullaby
+          de: Schlaf / Wiegenlied
+          fr: Sommeil / Berceuse
+          it: Sonno / Ninna nanna
+          es: Sueño / Canción de cuna
+          zh: 助眠 / 摇篮曲
+
+  # --- Terminology: 音楽用語 ---
+  - category: terminology
+    label:
+      ja: 音楽用語・キーワード
+      en: Terminology
+      de: Terminologie
+      fr: Terminologie
+      it: Terminologia
+      es: Terminología
+      zh: 音乐术语
+    items:
+      - id: virtuoso
+        label:
+          ja: 超絶技巧
+          en: Virtuoso
+          de: Virtuose / Virtuosität
+          fr: Virtuosité
+          it: Virtuosismo
+          es: Virtuosismo
+          zh: 超绝技巧 / 演奏名家
+        description:
+          ja: 人間離れした技術、圧倒的な指回りを堪能する作品。
+          en: Works to enjoy superhuman technique and overwhelming fingerwork.
+      - id: period-instrument
+        label:
+          ja: 古楽器演奏
+          en: Period Instrument
+          de: Historische Instrumente
+          fr: Instruments d'époque
+          it: Strumenti originali
+          es: Instrumentos de época
+          zh: 古乐器演奏
+        description:
+          ja: 作曲当時の楽器による、素朴で刺激的な響き。
+          en: Rustic and stimulating sounds of instruments from the time of composition.
+      - id: transcription
+        label:
+          ja: 編曲・トランスクリプション
+          en: Transcription
+          de: Transkription
+          fr: Transcription
+          it: Trascrizione
+          es: Transcripción
+          zh: 改编曲
+      - id: pizzicato
+        label:
+          ja: ピチカート
+          en: Pizzicato
+          de: Pizzicato
+          fr: Pizzicato
+          it: Pizzicato
+          es: Pizzicato
+          zh: 拨弦奏法
+      - id: unfinished-beauty
+        label:
+          ja: 未完成の美
+          en: Unfinished
+          de: Unvollendet
+          fr: Inachevé
+          it: Incompiuto
+          es: Inacabado
+          zh: 未完成之美
+      - id: accessible-classics
+        label:
+          ja: 親しみやすい名曲
+          en: Accessible Classics / BGM
+          de: Zugängliche Klassik
+          fr: Classique accessible
+          it: Classica accessibile
+          es: Clásicos accesibles
+          zh: 通俗名曲 / BGM
+
+  # --- Duration: 演奏時間 ---
+  - category: duration
+    label:
+      ja: 演奏時間
+      en: Duration
+      de: Dauer
+      fr: Durée
+      it: Durata
+      es: Duración
+      zh: 时长
+    items:
+      - id: short-piece
+        label:
+          ja: 小品（5分以内）
+          en: Short Piece (< 5 min)
+          de: Kurzes Stück (< 5 Min.)
+          fr: Pièce courte (< 5 min)
+          it: Breve composizione (< 5 min)
+          es: Pieza corta (< 5 min)
+          zh: 小品（5分钟以内）
+      - id: mid-length
+        label:
+          ja: 中規模作品（15-30分）
+          en: Mid-length Work (15-30 min)
+          de: Mittellanges Werk (15-30 Min.)
+          fr: Œuvre de longueur moyenne (15-30 min)
+          it: Opera di media durata (15-30 min)
+          es: Obra de duración media (15-30 min)
+          zh: 中等篇幅（15-30分钟）
+      - id: monumental-work
+        label:
+          ja: 大作（45分以上）
+          en: Monumental Work (> 45 min)
+          de: Monumentales Werk (> 45 Min.)
+          fr: Œuvre monumentale (> 45 min)
+          it: Opera monumentale (> 45 min)
+          es: Obra monumental (> 45 min)
+          zh: 大作（45分钟以上）
+
+  # --- Occasion: 行事・季節 ---
+  - category: occasion
+    label:
+      ja: 行事・季節
+      en: Occasion / Seasonal
+      de: Anlass / Saison
+      fr: Occasion / Saison
+      it: Occasione / Stagione
+      es: Ocasión / Temporada
+      zh: 行事 / 季节
+    items:
+      - id: seasonal-spring
+        label:
+          ja: 春
+          en: Spring
+          de: Frühling
+          fr: Printemps
+          it: Primavera
+          es: Primavera
+          zh: 春季
+      - id: seasonal-summer
+        label:
+          ja: 夏
+          en: Summer
+          de: Sommer
+          fr: Été
+          it: Estate
+          es: Verano
+          zh: 夏季
+      - id: seasonal-autumn
+        label:
+          ja: 秋
+          en: Autumn
+          de: Herbst
+          fr: Automne
+          it: Automne
+          es: Otoño
+          zh: 秋季
+      - id: seasonal-winter
+        label:
+          ja: 冬
+          en: Winter
+          de: Winter
+          fr: Hiver
+          it: Inverno
+          es: Invierno
+          zh: 冬季
+      - id: christmas
+        label:
+          ja: クリスマス
+          en: Christmas
+          de: Weihnachten
+          fr: Noël
+          it: Natale
+          es: Navidad
+          zh: 圣诞节
+      - id: new-year-celebration
+        label:
+          ja: 新年
+          en: New Year
+          de: Neujahr
+          fr: Nouvel An
+          it: Capodanno
+          es: Año Nuevo
+          zh: 新年
+      - id: wedding-celebration
+        label:
+          ja: 結婚式
+          en: Wedding
+          de: Hochzeit
+          fr: Mariage
+          it: Matrimonio
+          es: Boda
+          zh: 婚礼
+      - id: birthday-anniversary
+        label:
+          ja: 誕生日・記念日
+          en: Birthday / Anniversary
+          de: Geburtstag / Jubiläum
+          fr: Anniversaire
+          it: Compleanno / Anniversario
+          es: Cumpleaños / Aniversario
+          zh: 生日 / 纪念日
+
+  # --- Pedagogy: 学習・教育 ---
+  - category: pedagogy
+    label:
+      ja: 学習・教育
+      en: Pedagogy / Study
+      de: Pädagogik / Studium
+      fr: Pédagogie / Étude
+      it: Pedagogia / Studio
+      es: Pedagogía / Estudio
+      zh: 教育 / 学习
+    items:
+      - id: analysis-focus
+        label:
+          ja: 楽曲分析（アナリーゼ）向け
+          en: For Analysis / Study
+          de: Für Analyse / Studium
+          fr: Pour l'analyse / l'étude
+          it: Per l'analisi / studio
+          es: Para el análisis / estudio
+          zh: 乐曲分析（分析用）
+        description:
+          ja: 形式や構造が明確で、音楽理論の学習や楽曲分析の素材として適した名作。
+          en: Masterpieces with clear form and structure, suitable for music theory study and analysis.
+      - id: counterpoint-mastery
+        label:
+          ja: 対位法の学習・手本
+          en: Mastery of Counterpoint
+          de: Beherrschung des Kontrapunkts
+          fr: Maîtrise du contrepoint
+          it: Maestria del contrappunto
+          es: Maestría del contrapunto
+          zh: 对位法练习 / 模板
+      - id: orchestration-gem
+        label:
+          ja: 管弦楽法の至宝
+          en: Orchestration Masterpiece
+          de: Juwel der Orchestrierung
+          fr: Joyau d'orchestration
+          it: Gioiello di orchestrazione
+          es: Joya de orquestación
+          zh: 管弦乐法宝库
+
+  # --- Heritage & Media: 文化・メディア ---
+  - category: heritage-media
+    label:
+      ja: 文化・メディア
+      en: Heritage & Media
+      de: Kulturerbe & Medien
+      fr: Patrimoine & Médias
+      it: Eredità & Media
+      es: Herencia & Medios
+      zh: 文化 / 媒体
+    items:
+      - id: featured-in-cinema
+        label:
+          ja: 映画で使用された名曲
+          en: Featured in Cinema
+          de: In Filmen verwendet
+          fr: Présent au cinéma
+          it: Presente nel cinema
+          es: Presente en el cine
+          zh: 电影名曲
+      - id: anime-manga-classic
+        label:
+          ja: アニメ・漫画に登場
+          en: Anime / Manga Heritage
+          de: Anime & Manga
+          fr: Animé & Manga
+          it: Anime & Manga
+          es: Anime & Manga
+          zh: 动漫 / 漫画登场
+
+  # --- Composer Attribute: 作曲家的属性 ---
+  - category: composer-attribute
+    label:
+      ja: 作曲家属性
+      en: Composer Attribute
+      de: Komponisten-Attribut
+      fr: Attribut du compositeur
+      it: Attributo del compositore
+      es: Atributo del compositor
+      zh: 作曲家属性
+    items:
+      - id: virtuoso-composer
+        label:
+          ja: ヴィルトゥオーゾ（演奏の名手）
+          en: Virtuoso Composer
+          de: Virtuoser Komponist
+          fr: Compositeur virtuose
+          it: Compositore virtuoso
+          es: Compositor virtuoso
+          zh: 演奏型作曲家
+      - id: master-orchestrator
+        label:
+          ja: 管弦楽法の大家
+          en: Master Orchestrator
+          de: Meister der Orchestrierung
+          fr: Maître orchestrateur
+          it: Maestro orchestratore
+          es: Maestro orquestador
+          zh: 管弦乐大师
+      - id: melodist
+        label:
+          ja: メロディメーカー
+          en: Gifted Melodist
+          de: Begabter Melodiker
+          fr: Mélodiste doué
+          it: Melodista di talento
+          es: Melodista talentoso
+          zh: 旋律大师
