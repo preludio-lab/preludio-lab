@@ -80,6 +80,7 @@ async function sync() {
   console.log(`Found ${manifest.scores.length} scores to sync.`);
 
   const limit = pLimit(5); // Concurrency control
+  const processedIds: string[] = [];
 
   const tasks = manifest.scores.map((score) =>
     limit(async () => {
@@ -91,8 +92,10 @@ async function sync() {
       });
 
       if (!work) {
-        console.warn(`[SKIP] Work not found for slug: ${score.work_slug}`);
-        return;
+        // [CRITICAL] Senior Reviewer's instruction: Stop on slug mismatch
+        throw new Error(
+          `[ERROR] Work master record not found for slug: ${score.work_slug}. Please sync works first.`,
+        );
       }
 
       // 2. Find work_part_id
@@ -125,7 +128,6 @@ async function sync() {
       }
 
       // 4. UPSERT into score_sources
-      // Note: We use idx_score_src_lookup (workId, workPartSlug, provider) as the unique key for upsert
       const existing = await db.query.scoreSources.findFirst({
         where: and(
           eq(schema.scoreSources.workId, work.id),
@@ -137,7 +139,7 @@ async function sync() {
       const data = {
         workId: work.id,
         workPartId: workPart?.id || null,
-        scoreId: null, // Edition linkage can be added later
+        scoreId: null,
         provider: score.provider,
         repositoryOwner: score.repository_owner || null,
         repositoryName: score.repository_name || null,
@@ -151,29 +153,48 @@ async function sync() {
         updatedAt: new Date().toISOString(),
       };
 
+      let sourceId: string;
       if (existing) {
         await db
           .update(schema.scoreSources)
           .set(data)
           .where(eq(schema.scoreSources.id, existing.id));
         console.log(`[UPDATE] ${score.work_slug} - ${score.work_part_slug}`);
+        sourceId = existing.id;
       } else {
+        sourceId = uuidv7();
         await db.insert(schema.scoreSources).values({
-          id: uuidv7(),
+          id: sourceId,
           ...data,
           createdAt: new Date().toISOString(),
         });
         console.log(`[INSERT] ${score.work_slug} - ${score.work_part_slug}`);
       }
+      processedIds.push(sourceId);
     }),
   );
 
   await Promise.all(tasks);
-  console.log('Synchronization completed.');
+
+  // 5. Cleanup Orphans (Records in DB but not in Manifest)
+  console.log('Checking for orphaned records...');
+  // Using simple array filter for safety in prototype. For large data, use NOT IN query.
+  const allExisting = await db.query.scoreSources.findMany();
+  const orphans = allExisting.filter((e) => !processedIds.includes(e.id));
+
+  if (orphans.length > 0) {
+    console.warn(`[ORPHAN] Found ${orphans.length} records that are no longer in the manifest.`);
+    for (const orphan of orphans) {
+      await db.delete(schema.scoreSources).where(eq(schema.scoreSources.id, orphan.id));
+      console.log(`[DELETE] Orphaned record: ${orphan.workPartSlug} (${orphan.id})`);
+    }
+  }
+
+  console.log('Synchronization completed successfully.');
   process.exit(0);
 }
 
 sync().catch((err) => {
-  console.error('Synchronization failed:', err);
+  console.error('Synchronization failed:', err.message || err);
   process.exit(1);
 });

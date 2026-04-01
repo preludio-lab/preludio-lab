@@ -1,0 +1,47 @@
+{
+  "slug": "piano-sonata-no-11-k331",
+  "composerSlug": "mozart",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Sonata No. 11 in A Major, K. 331",
+      "ja": "ピアノ・ソナタ第11番 イ長調 K. 331（トルコ行進曲付き）"
+    },
+    "prefix": {
+      "en": "Piano Sonata No. 11",
+      "ja": "ピアノ・ソナタ第11番"
+    },
+    "content": {
+      "en": "No. 11 in A Major",
+      "ja": "イ長調"
+    },
+    "nickname": {
+      "en": "Turkish March",
+      "ja": "トルコ行進曲"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "k",
+      "number": "331",
+      "isPrimary": true
+    }
+  ],
+  "era": "classical",
+  "compositionYear": 1783,
+  "instrumentation": "piano",
+  "instruments": ["piano"],
+  "instrumentationFlags": {
+    "isSolo": true,
+    "isChamber": false,
+    "isOrchestral": false,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "key": "a-major",
+  "tags": ["stub", "popular-work", "nicknamed-work"],
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "source": "manual-stub",
+    "generatedAt": "2026-03-30T17:50:00Z"
+  }
+}

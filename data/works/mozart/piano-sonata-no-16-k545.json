@@ -1,0 +1,43 @@
+{
+  "slug": "piano-sonata-no-16-k545",
+  "composerSlug": "mozart",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Sonata No. 16 in C Major, K. 545",
+      "ja": "ピアノ・ソナタ第16番 ハ長調 K. 545（15番）"
+    },
+    "prefix": {
+      "en": "Piano Sonata No. 16",
+      "ja": "ピアノ・ソナタ第16番"
+    },
+    "content": {
+      "en": "No. 16 in C Major",
+      "ja": "ハ長調"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "k",
+      "number": "545",
+      "isPrimary": true
+    }
+  ],
+  "era": "classical",
+  "compositionYear": 1788,
+  "instrumentation": "piano",
+  "instruments": ["piano"],
+  "instrumentationFlags": {
+    "isSolo": true,
+    "isChamber": false,
+    "isOrchestral": false,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "key": "c-major",
+  "tags": ["stub", "popular-work"],
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "source": "manual-stub",
+    "generatedAt": "2026-03-30T17:50:00Z"
+  }
+}

@@ -21,3 +21,19 @@ export class AppError extends Error {
     }
   }
 }
+
+/**
+ * インフラ層固有のエラー
+ * ネットワーク瞬断やタイムアウトなど、一時的な問題（isTransient）を表現できる。
+ */
+export class InfrastructureError extends AppError {
+  constructor(
+    message: string,
+    public readonly isTransient: boolean = false,
+    cause?: Error | unknown,
+    status: number = 500,
+  ) {
+    super(message, 'INFRASTRUCTURE_ERROR', status, cause);
+    this.name = 'InfrastructureError';
+  }
+}
