@@ -1,0 +1,1293 @@
+# 2. Genres & Musical Forms (ジャンル・楽曲形式)
+# ============================================
+# 楽曲の分類（媒体・編成）および構造的・歴史的な形式。
+
+genres:
+  - category: orchestral
+    label:
+      ja: 管弦楽曲
+      en: Orchestral
+      de: Sinfonik / Orchestermusik
+      fr: Musique symphonique
+      it: Musica orchestrale
+      es: Música para orquesta
+      zh: 管弦乐
+    items:
+      - id: symphony
+        label:
+          ja: 交響曲
+          en: Symphony
+          de: Sinfonie
+          fr: Symphonie
+          it: Sinfonia
+          es: Sinfonía
+          zh: 交响曲
+        description:
+          ja: 管弦楽のための多楽章形式の主要作品。
+          en: A major work for orchestra, usually in several movements.
+      - id: overture
+        label:
+          ja: 序曲・前奏曲
+          en: Overture / Prelude
+          de: Ouvertüre / Präludium
+          fr: Ouverture / Prélude
+          it: Ouverture / Preludio
+          es: Obertura / Preludio
+          zh: 序曲 / 前奏曲
+        description:
+          ja: 劇作品の導入部、あるいは自立した管弦楽曲。
+          en: An introductory piece for a dramatic work or an independent orchestral work.
+      - id: tone-poem
+        label:
+          ja: 交響詩
+          en: Tone Poem
+          de: Sinfonische Dichtung
+          fr: Poème symphonique
+          it: Poema sinfonico
+          es: Poema sinfónico
+          zh: 交响诗
+        description:
+          ja: 文学的、絵画的な内容を音楽で描写した作品。
+          en: An orchestral work that illustrates a literary or pictorial idea.
+      - id: suite-orch
+        label:
+          ja: 管弦楽組曲
+          en: Orchestral Suite
+          de: Orchestersuite
+          fr: Suite pour orchestre
+          it: Suite orchestrale
+          es: Suite para orquesta
+          zh: 管弦乐组曲
+        description:
+          ja: 舞曲や性格的小品を並べた多楽章形式。
+          en: A multi-movement orchestral work consisting of dances or characteristic pieces.
+      - id: serenade-divertimento
+        label:
+          ja: セレナード・ディヴェルティメント
+          en: Serenade / Divertimento
+          de: Serenade / Divertimento
+          fr: Sérénade / Divertimento
+          it: Serenata / Divertimento
+          es: Serenata / Divertimento
+          zh: 小夜曲 / 嬉游曲
+        description:
+          ja: 娯楽的、社交的な性格を持つ多楽章の器楽曲。
+          en: Multi-movement instrumental works with an entertaining or social character.
+      - id: incidental-music
+        label:
+          ja: 劇付随音楽
+          en: Incidental Music
+          de: Schauspielmusik
+          fr: Musique de scène
+          it: Musica di scena
+          es: Música de escena
+          zh: 剧付随音楽
+        description:
+          ja: 演劇、劇作品の伴奏・挿入曲。
+          en: Music for a play, including overtures, interludes, and background music.
+
+  - category: stage
+    label:
+      ja: 舞台音楽
+      en: Stage Music
+      de: Bühnenmusik
+      fr: Musique de scène
+      it: Musica per il teatro
+      es: Música escénica
+      zh: 舞台音乐
+    items:
+      - id: opera
+        label:
+          ja: オペラ
+          en: Opera
+          de: Oper
+          fr: Opéra
+          it: Opera
+          es: Ópera
+          zh: 歌剧
+        description:
+          ja: 歌唱、演技、管弦楽を伴う総合芸術。
+          en: A dramatic work combining singing, acting, and orchestral music.
+      - id: operetta
+        label:
+          ja: オペレッタ
+          en: Operetta
+          de: Operette
+          fr: Opérette
+          it: Operetta
+          es: Opereta
+          zh: 轻歌剧
+        description:
+          ja: 喜劇的、世俗的な性格を持つ軽い歌劇。
+          en: A light opera, usually with spoken dialogue and comic plots.
+      - id: ballet
+        label:
+          ja: バレエ音楽
+          en: Ballet Music
+          de: Ballettmusik
+          fr: Musique de ballet
+          it: Musica per balletto
+          es: Música para ballet
+          zh: 芭蕾舞音乐
+        description:
+          ja: 舞踏のための音楽作品。
+          en: Music composed specifically for a ballet performance.
+
+  - category: concerto
+    label:
+      ja: 協奏曲
+      en: Concerto
+      de: Konzert
+      fr: Concerto
+      it: Concerto
+      es: Concierto
+      zh: 协奏曲
+    items:
+      - id: piano-concerto
+        label:
+          ja: ピアノ協奏曲
+          en: Piano Concerto
+          de: Klavierkonzert
+          fr: Concerto pour piano
+          it: Concerto per pianoforte
+          es: Concierto para piano
+          zh: 钢琴协奏曲
+        description:
+          ja: 独奏ピアノと管弦楽のための協奏曲。
+          en: A concerto for solo piano and orchestra.
+      - id: violin-concerto
+        label:
+          ja: ヴァイオリン協奏曲
+          en: Violin Concerto
+          de: Violinkonzert
+          fr: Concerto pour violon
+          it: Concerto per violino
+          es: Concierto para violín
+          zh: 小提琴协奏曲
+        description:
+          ja: 独奏ヴァイオリンと管弦楽のための協奏曲。
+          en: A concerto for solo violin and orchestra.
+      - id: cello-concerto
+        label:
+          ja: チェロ協奏曲
+          en: Cello Concerto
+          de: Cellokonzert
+          fr: Concerto pour violoncelle
+          it: Concerto per violoncello
+          es: Concierto para violonchelo
+          zh: 大提琴协奏曲
+        description:
+          ja: 独奏チェロと管弦楽のための協奏曲。
+          en: A concerto for solo cello and orchestra.
+      - id: wind-concerto
+        label:
+          ja: 管楽器のための協奏曲
+          en: Wind Concerto
+          de: Bläserkonzert
+          fr: Concerto pour instruments à vent
+          it: Concerto per strumenti a fiato
+          es: Concierto para instrumentos de viento
+          zh: 管乐协奏曲
+        description:
+          ja: 木管、金管楽器を独奏とする協奏曲。
+          en: A concerto featuring a solo woodwind or brass instrument.
+      - id: concerto-grosso
+        label:
+          ja: 合奏協奏曲
+          en: Concerto Grosso
+          de: Concerto Grosso
+          fr: Concerto grosso
+          it: Concerto grosso
+          es: Concerto grosso
+          zh: 大协奏曲
+        description:
+          ja: 独奏楽器群（コンチェルティーノ）と合奏（リピエーノ）の対比を特徴とするバロック形式。
+          en: A Baroque form featuring contrast between a small group of soloists (concertino) and the full orchestra (ripieno).
+      - id: concerted-work
+        label:
+          ja: 協奏的楽曲
+          en: Concerted Work
+          de: Konzertantes Werk
+          fr: Œuvre concertante
+          it: Opera concertante
+          es: Obra concertante
+          zh: 协奏性作品
+        description:
+          ja: 「協奏曲」の名称を持たない、独奏楽器と管弦楽のための作品。
+          en: A work for solo instrument(s) and orchestra that is not formally titled "concerto".
+
+  - category: chamber
+    label:
+      ja: 室内楽曲
+      en: Chamber Music
+      de: Kammermusik
+      fr: Musique de chambre
+      it: Musica da camera
+      es: Música de cámara
+      zh: 室内乐
+    items:
+      - id: chamber-strings
+        label:
+          ja: 弦楽重奏
+          en: String Ensemble
+          de: Streicherensemble
+          fr: Ensemble à cordes
+          it: Ensemble d'archi
+          es: Conjunto de cuerdas
+          zh: 弦乐合奏
+        description:
+          ja: 弦楽器のみによるアンサンブル。
+          en: Ensemble music performed by string instruments only.
+      - id: string-quartet
+        label:
+          ja: 弦楽四重奏曲
+          en: String Quartet
+          de: Streichquartett
+          fr: Quatuor à cordes
+          it: Quartetto d'archi
+          es: Cuarteto de cuerdas
+          zh: 弦乐四重奏
+      - id: string-trio
+        label:
+          ja: 弦楽三重奏曲
+          en: String Trio
+          de: Streichtrio
+          fr: Trio à cordes
+          it: Trio d'archi
+          es: Trío de cuerdas
+          zh: 弦乐三重奏
+      - id: string-quintet
+        label:
+          ja: 弦楽五重奏曲
+          en: String Quintet
+          de: Streichquintett
+          fr: Quintette à cordes
+          it: Quintetto d'archi
+          es: Quinteto de cuerdas
+          zh: 弦乐五重奏
+      - id: chamber-piano
+        label:
+          ja: ピアノ重奏
+          en: Piano Ensemble
+          de: Klavierensemble
+          fr: Ensemble avec piano
+          it: Ensemble con pianoforte
+          es: Conjunto con piano
+          zh: 钢琴合奏
+        description:
+          ja: 独奏楽器とピアノによるアンサンブル。
+          en: Ensemble for solo instrument(s) and piano.
+      - id: piano-trio
+        label:
+          ja: ピアノ三重奏曲
+          en: Piano Trio
+          de: Klaviertrio
+          fr: Trio avec piano
+          it: Trio con pianoforte
+          es: Trío con piano
+          zh: 钢琴三重奏
+      - id: piano-quartet
+        label:
+          ja: ピアノ四重奏曲
+          en: Piano Quartet
+          de: Klavierquartett
+          fr: Quatuor avec piano
+          it: Quartetto con pianoforte
+          es: Cuarteto con piano
+          zh: 钢琴四重奏
+      - id: piano-quintet
+        label:
+          ja: ピアノ五重奏曲
+          en: Piano Quintet
+          de: Klavierquintett
+          fr: Quintette avec piano
+          it: Quintetto con pianoforte
+          es: Quinteto con piano
+          zh: 钢琴五重奏
+      - id: sonata-duo
+        label:
+          ja: 独奏ソナタ（伴奏付）
+          en: Instrumental Sonata (with Piano)
+          de: Instrumentalsonate (mit Klavier)
+          fr: Sonate instrumentale (avec piano)
+          it: Sonata strumentale (con pianoforte)
+          es: Sonata instrumental (con piano)
+          zh: 独奏奏鸣曲（有伴奏）
+        description:
+          ja: 独奏楽器とピアノのためのソナタ。
+          en: A sonata for a solo instrument and piano accompaniment.
+      - id: violin-sonata
+        label:
+          ja: ヴァイオリンソナタ
+          en: Violin Sonata
+          de: Violinsonate
+          fr: Sonate pour violon
+          it: Sonata per violino
+          es: Sonata para violín
+          zh: 小提琴奏鸣曲
+      - id: cello-sonata
+        label:
+          ja: チェロソナタ
+          en: Cello Sonata
+          de: Cellosonate
+          fr: Sonate pour violoncelle
+          it: Sonata per violoncello
+          es: Sonata para violonchelo
+          zh: 大提琴奏鸣曲
+      - id: viola-sonata
+        label:
+          ja: ヴィオラソナタ
+          en: Viola Sonata
+          de: Violasonate
+          fr: Sonate pour alto
+          it: Sonata per viola
+          es: Sonata para viola
+          zh: 中提琴奏鸣曲
+      - id: flute-sonata
+        label:
+          ja: フルートソナタ
+          en: Flute Sonata
+          de: Flötensonate
+          fr: Sonate pour flûte
+          it: Sonata per flauto
+          es: Sonata para flauta
+          zh: 长笛奏鸣曲
+      - id: clarinet-sonata
+        label:
+          ja: クラリネットソナタ
+          en: Clarinet Sonata
+          de: Klarinettensonate
+          fr: Sonate pour clarinette
+          it: Sonata per clarinetto
+          es: Sonata para clarinete
+          zh: 单簧管奏鸣曲
+      - id: keyboard-ensemble
+        label:
+          ja: 鍵盤アンサンブル
+          en: Keyboard Ensemble
+          de: Klavierensemble (vierhändig / 2 Klaviere)
+          fr: Ensemble de claviers
+          it: Ensemble di tastiere
+          es: Conjunto de teclados
+          zh: 键盘合奏
+        description:
+          ja: 複数人によるピアノ演奏などの鍵盤アンサンブル曲。
+          en: Works for keyboard ensemble, e.g., piano four-hands or two pianos.
+      - id: chamber-wind
+        label:
+          ja: 管楽アンサンブル
+          en: Wind Ensemble
+          de: Bläserensemble
+          fr: Ensemble à vent
+          it: Ensemble di fiati
+          es: Conjunto de vientos
+          zh: 管乐合奏
+        description:
+          ja: 管楽器のみ、あるいは管楽器主体の室内楽編成。
+          en: Chamber music for wind instruments, such as a wind quintet.
+      - id: chamber-mixed
+        label:
+          ja: 混合・その他アンサンブル
+          en: Mixed / Other Ensemble
+          de: Gemischtes Ensemble
+          fr: Ensemble mixte
+          it: Ensemble misto
+          es: Conjunto mixto
+          zh: 混合/其他合奏
+        description:
+          ja: 上記に当てはまらない楽器構成、あるいは特殊な大規模室内楽。
+          en: Ensembles with a mix of different instrument families or unusual instrumentation.
+
+  - category: solo
+    label:
+      ja: 独奏曲
+      en: Solo Music
+      de: Solomusik
+      fr: Musique pour instrument seul
+      it: Musica solista
+      es: Música para solista
+      zh: 独奏
+    items:
+      - id: keyboard-solo
+        label:
+          ja: 鍵盤独奏
+          en: Keyboard Solo
+          de: Klaviermusik / Tasteninstrument solo
+          fr: Clavier seul
+          it: Tastiera sola
+          es: Teclado solo
+          zh: 键盘独奏
+        description:
+          ja: ピアノ、オルガン、チェンバロ等の鍵盤楽器一台のための作品。
+          en: Works for a single keyboard instrument like piano, organ, or harpsichord.
+      - id: piano-sonata
+        label:
+          ja: ピアノソナタ
+          en: Piano Sonata
+          de: Klaviersonate
+          fr: Sonate pour piano
+          it: Sonata per pianoforte
+          es: Sonata para piano
+          zh: 钢琴奏鸣曲
+      - id: organ-sonata
+        label:
+          ja: オルガンソナタ
+          en: Organ Sonata
+          de: Orgelsonate
+          fr: Sonate pour orgue
+          it: Sonata per organo
+          es: Sonata para órgano
+          zh: 管风琴奏鸣曲
+      - id: string-solo
+        label:
+          ja: 弦楽器独奏
+          en: String Solo
+          de: Streichinstrument solo
+          fr: Cordes seules
+          it: Archi soli
+          es: Cuerdas solas
+          zh: 弦乐独奏
+        description:
+          ja: ヴァイオリン、チェロ等の弦楽器一台のみによる作品（無伴奏）。
+          en: Works for a single string instrument without accompaniment.
+      - id: wind-solo
+        label:
+          ja: 管楽器独奏
+          en: Wind Solo
+          de: Blasinstrument solo
+          fr: Vent seul
+          it: Fiati soli
+          es: Viento solo
+          zh: 管乐独奏
+        description:
+          ja: フルート、クラリネット等の管楽器一台のみによる作品（無伴奏）。
+          en: Works for a single wind instrument without accompaniment.
+      - id: solo-other-inst
+        label:
+          ja: その他独奏
+          en: Other Instrumental Solo
+          de: Sonstiges Instrumentalsolo
+          fr: Autre instrument seul
+          it: Altri strumenti soli
+          es: Otros instrumentos solos
+          zh: 其他独奏
+        description:
+          ja: ギター、打楽器など、上記以外の一台の楽器による作品。
+          en: Works for other single instruments such as guitar, harp, or percussion.
+
+  - category: vocal-choral
+    label:
+      ja: 声楽・合唱曲
+      en: Vocal / Choral
+      de: Vokalmusik / Chormusik
+      fr: Musique vocale et chorale
+      it: Musica vocale e corale
+      es: Música vocal y coral
+      zh: 声乐与合唱
+    items:
+      - id: lied
+        label:
+          ja: 歌曲
+          en: Art Song / Lied
+          de: Lied
+          fr: Mélodie / Lied
+          it: Lirica da camera / Lied
+          es: Canción artística / Lied
+          zh: 艺术歌曲 / 德奥艺术歌曲
+        description:
+          ja: 独唱とピアノのための叙情的作品。
+          en: A lyric work for solo voice and piano.
+      - id: song-cycle
+        label:
+          ja: 連作歌曲
+          en: Song Cycle
+          de: Liederkreis / Liederzyklus
+          fr: Cycle de mélodies
+          it: Ciclo di liriche
+          es: Ciclo de canciones
+          zh: 连作歌曲
+        description:
+          ja: 共通のテーマや詩による歌曲の連なり。
+          en: A sequence of songs connected by a common theme or story.
+      - id: mass-requiem
+        label:
+          ja: ミサ曲・レクイエム
+          en: Mass / Requiem
+          de: Messe / Requiem
+          fr: Messe / Requiem
+          it: Messa / Requiem
+          es: Misa / Réquiem
+          zh: 弥撒 / 安魂曲
+        description:
+          ja: キリスト教の典礼、あるいは死者のための大規模作品。
+          en: Large-scale religious works for Christian liturgy or remembrance of the dead.
+      - id: oratorio-passion
+        label:
+          ja: オラトリオ・受難曲
+          en: Oratorio / Passion
+          de: Oratorium / Passion
+          fr: Oratorio / Passion
+          it: Oratorio / Passione
+          es: Oratorio / Pasión
+          zh: 清唱剧 / 受难曲
+        description:
+          ja: 聖書や物語に基づく、演技を伴わない大規模な舞台風作品。
+          en: Large-scale dramatic works for voices and orchestra, usually on a religious theme, without stage action.
+      - id: cantata
+        label:
+          ja: カンタータ
+          en: Cantata
+          de: Kantate
+          fr: Cantate
+          it: Cantata
+          es: Cantata
+          zh: 康塔塔
+        description:
+          ja: 声楽、合唱、器楽伴奏による多楽章作品。
+          en: A vocal work in several movements for soloists, chorus, and instrumental accompaniment.
+      - id: early-vocal
+        label:
+          ja: 古楽声楽曲
+          en: Early Vocal Music
+          de: Alte Musik (Vokal)
+          fr: Musique vocale ancienne
+          it: Musica vocale antica
+          es: Musica vocal antigua
+          zh: 早期声乐
+        description:
+          ja: ルネサンス以前の形式を持つ声楽曲。
+          en: Vocal works in forms common before the Baroque era, such as madrigals and motets.
+      - id: choral-others
+        label:
+          ja: その他合唱曲
+          en: Other Choral Works
+          de: Sonstige Chormusik
+          fr: Autres œuvres chorales
+          it: Altre opere corali
+          es: Otras obras corales
+          zh: 其他合唱作品
+        description:
+          ja: 世俗合唱曲、アカペラなど。
+          en: Secular choral pieces, a cappella works, and other vocal ensemble music.
+
+  - category: form-led-genres
+    label:
+      ja: 形式主導のジャンル
+      en: Form-led Genres
+      de: Formbasierte Gattungen
+      fr: Genres basés sur la forme
+      it: Generi basati sulla forma
+      es: Géneros basados en la forma
+      zh: 形式主导的体裁
+    description:
+      ja: 特定の楽曲形式をタイトルや作品の根幹とするジャンル。
+      en: Genres where a specific musical form serves as the title or the core of the work.
+    items:
+      - id: sonata
+        label:
+          ja: ソナタ
+          en: Sonata
+          de: Sonate
+          fr: Sonate
+          it: Sonata
+          es: Sonata
+          zh: 奏鸣曲
+        description:
+          ja: 古典派以前から続く多楽章の器楽曲。独奏や伴奏付き。モーツァルトやベートーヴェンの傑作群。
+          en: A multi-movement instrumental work from the Classical era and beyond. Masterworks by Mozart, Beethoven, and others.
+      - id: variations
+        label:
+          ja: 変奏曲
+          en: Variations
+          de: Variationen
+          fr: Variations
+          it: Variazioni
+          es: Variaciones
+          zh: 变奏曲
+        description:
+          ja: 主題を様々に変奏していく作品。バッハの『ゴールドベルク変奏曲』などの不朽の名作。
+          en: A set of variations on a theme. Immortal works like Bach's "Goldberg Variations".
+      - id: fugue-counterpoint
+        label:
+          ja: フーガ・対位法的作品
+          en: Fugue / Contrapuntal Works
+          de: Fuge / Kontrapunktische Werke
+          fr: Fugue / Œuvres contrapuntiques
+          it: Fuga / Opere contrappuntistiche
+          es: Fuga / Obras contrapuntísticas
+          zh: 赋格 / 对位作品
+        description:
+          ja: 高度な対位法に基づくジャンル。バッハの『フーガの技法』が頂点。
+          en: Genres based on advanced counterpoint. Bach's "The Art of Fugue" represents its pinnacle.
+      - id: suite-partita
+        label:
+          ja: 組曲・パルティータ
+          en: Suite / Partita
+          de: Suite / Partita
+          fr: Suite / Partita
+          it: Suite / Partita
+          es: Suite / Partita
+          zh: 组曲 / 帕蒂塔
+        description:
+          ja: バロック期の『イギリス組曲』や『パルティータ』など、複数の楽曲を連ねたジャンル。
+          en: A collection of musical items, such as the Baroque "English Suites" or "Partitas".
+      - id: rondo
+        label:
+          ja: ロンド
+          en: Rondo
+          de: Rondo
+          fr: Rondeau / Rondo
+          it: Rondò
+          es: Rondó
+          zh: 回旋曲
+        description:
+          ja: 主題が回帰する形式をタイトルとする独立曲。モーツァルトの『ロンド ニ長調』など。
+          en: An independent work titled after its rondo structure, such as Mozart's "Rondo in D major".
+      - id: aria
+        label:
+          ja: アリア（詠唱）
+          en: Aria / Air
+          de: Arie
+          fr: Air / Aria
+          it: Aria
+          es: Aria
+          zh: 咏叹调
+        description:
+          ja: オペラやオラトリオの看板となる歌。ヘンデルの『私を泣かせてください』など。
+          en: The centerpiece of operas or oratorios, such as Handel's "Lascia ch'io pianga".
+      - id: recitative
+        label:
+          ja: レチタティーヴォ（叙唱）
+          en: Recitative
+          de: Rezitativ
+          fr: Récitatif
+          it: Recitativo
+          es: Recitativo
+          zh: 宣叙调
+        description:
+          ja: ドラマの対話や状況説明を行う歌。バロック・オペラにおける重要な構成要素。
+          en: Songs used for dialogue or exposition in drama, a key component of Baroque opera.
+      - id: chorus-piece
+        label:
+          ja: 合唱曲
+          en: Chorus
+          de: Chor / Chorsatz
+          fr: Chœur
+          it: Coro
+          es: Coro
+          zh: 合唱
+        description:
+          ja: 合唱のための作品。大規模なオラトリオ内の合唱から、小規模な世俗合唱まで。
+          en: Works for chorus, ranging from large-scale oratorio movements to smaller secular pieces.
+      - id: mass-ordinary
+        label:
+          ja: ミサ曲
+          en: Mass
+          de: Messe
+          fr: Messe
+          it: Messa
+          es: Misa
+          zh: 弥撒
+        description:
+          ja: 典礼文に基づき作曲された宗教曲の主要ジャンル。バッハ、モーツァルトの傑作群。
+          en: A major genre of religious music based on liturgical texts. Masterpieces by Bach and Mozart.
+      - id: requiem-form
+        label:
+          ja: レクイエム
+          en: Requiem
+          de: Requiem
+          fr: Requiem
+          it: Requiem
+          es: Réquiem
+          zh: 安魂曲
+        description:
+          ja: 死者のためのミサ。モーツァルト、ヴェルディ、フォーレなどの傑作が知られる。
+          en: Mass for the dead. Famous masterpieces by Mozart, Verdi, and Fauré.
+      - id: passion-structure
+        label:
+          ja: 受難曲
+          en: Passion
+          de: Passion
+          fr: Passion
+          it: Passione
+          es: Pasión
+          zh: 受难曲
+        description:
+          ja: キリストの受難を描く大規模なジャンル。バッハの『マタイ受難曲』が最高峰。
+          en: A large-scale genre depicting the suffering of Jesus. Bach's "St. Matthew Passion" is its peak.
+      - id: chorale
+        label:
+          ja: コラール
+          en: Chorale
+          de: Choral
+          fr: Choral
+          it: Corale
+          es: Coral
+          zh: 赞美诗 / 圣咏
+        description:
+          ja: 会衆歌。バッハによる和声付けが最高の手本とされる宗教曲のジャンル。
+          en: A hymn tune. Bach's harmonizations are considered the definitive examples of this genre.
+      - id: motet
+        label:
+          ja: モテット
+          en: Motet
+          de: Motette
+          fr: Motet
+          it: Mottetto
+          es: Motete
+          zh: 经文歌
+        description:
+          ja: ルネサンス・バロック期の主要な多声宗教声楽曲。パレストリーナやバッハの歴史的傑作。
+          en: A major polyphonic religious vocal genre of the Renaissance and Baroque eras.
+      - id: madrigal
+        label:
+          ja: マドリガル
+          en: Madrigal
+          de: Madrigal
+          fr: Madrigal
+          it: Madrigale
+          es: Madrigal
+          zh: 牧歌
+        description:
+          ja: イタリア・ルネサンス期に隆盛を極めた世俗声楽曲の主要ジャンル。
+          en: A major secular vocal genre that thrived during the Italian Renaissance.
+      - id: lied-song
+        label:
+          ja: 歌曲・リート
+          en: Lied / Art Song
+          de: Lied / Kunstlied
+          fr: Mélodie / Lied
+          it: Lirica da camera / Lied
+          es: Canción lírica / Lied
+          zh: 艺术歌曲
+        description:
+          ja: 詩と音楽の融合。シューベルトの『魔王』など、19世紀ドイツで芸術的頂点に達した。
+          en: The fusion of poetry and music. Reached its artistic peak in 19th-century Germany with works like Schubert's "Erlkönig".
+      - id: vocalise
+        label:
+          ja: ヴォカリーズ
+          en: Vocalise
+          de: Vokalise
+          fr: Vocalise
+          it: Vocalizzo
+          es: Vocalización
+          zh: 练声曲
+        description:
+          ja: 歌詞なしで歌われる芸術曲。ラフマニノフの『ヴォカリーズ』が世界的に著名。
+          en: An artistic song sung without words. Rachmaninoff's "Vocalise" is world-renowned.
+      - id: prelude
+        label:
+          ja: 前奏曲
+          en: Prelude
+          de: Präludium
+          fr: Prélude
+          it: Preludio
+          es: Preludio
+          zh: 前奏曲
+        description:
+          ja: 導入、または独立小品。バッハの『平均律』やドビュッシーの傑作群。
+          en: An introductory movement or an independent piece. Featured in Bach's "Well-Tempered Clavier" and Debussy's sets.
+      - id: nocturne
+        label:
+          ja: 夜想曲
+          en: Nocturne
+          de: Nokturne
+          fr: Nocturne
+          it: Notturno
+          es: Nocturno
+          zh: 夜想曲
+        description:
+          ja: 抒情的な性質。ショパンの全21曲がこのジャンルの不滅の遺産。
+          en: A lyrical genre. Chopin's 21 nocturnes are the immortal legacy of this category.
+      - id: impromptu
+        label:
+          ja: 即興曲
+          en: Impromptu
+          de: Impromptu
+          fr: Impromptu
+          it: Improvviso
+          es: Impromptu / Improvisación
+          zh: 即兴曲
+        description:
+          ja: 即興性を写した性格的小品。シューベルト、ショパンの名作が知られる。
+          en: A character piece capturing an improvisatory spirit. Well-known works by Schubert and Chopin.
+      - id: scherzo
+        label:
+          ja: スケルツォ
+          en: Scherzo
+          de: Scherzo
+          fr: Scherzo
+          it: Scherzo
+          es: Scherzo
+          zh: 谐谑曲
+        description:
+          ja: 冗談を意味する。ショパンがこの名を冠した独立した傑作群として確立。
+          en: Meaning "joke". Established by Chopin as a genre of independent, large-scale masterpieces.
+      - id: ballade
+        label:
+          ja: バラード
+          en: Ballade
+          de: Ballade
+          fr: Ballade
+          it: Ballata
+          es: Balada
+          zh: 叙事曲
+        description:
+          ja: 物語的叙事曲。ショパンが器楽ジャンルとして昇華させた。
+          en: A narrative ballad. Elevated to an instrumental genre by Chopin.
+      - id: fantasia
+        label:
+          ja: 幻想曲
+          en: Fantasia
+          de: Fantasie
+          fr: Fantaisie
+          it: Fantasia
+          es: Fantasía
+          zh: 幻想曲
+        description:
+          ja: 自由な展開を持つ作品。モーツァルト、シューマンらの精神的深みをたたえる傑作。
+          en: A work with free-form development. Masterpieces by Mozart, Schumann, and others known for their spiritual depth.
+      - id: intermezzo
+        label:
+          ja: 間奏曲
+          en: Intermezzo
+          de: Intermezzo
+          fr: Intermède
+          it: Intermezzo
+          es: Intermezzo / Intermedio
+          zh: 间奏曲
+        description:
+          ja: 幕間や独立曲。ブラームス晩年の内省的な名品群がこのジャンルを象徴する。
+          en: An interlude or independent piece. Brahms's late introspective piano works define this genre.
+      - id: bagatelle
+        label:
+          ja: バガテル
+          en: Bagatelle
+          de: Bagatelle
+          fr: Bagatelle
+          it: Bagatella
+          es: Bagatela
+          zh: 巴加泰勒
+        description:
+          ja: 「些細なもの」。ベートーヴェンの『エリーゼのために』などがこのジャンルに含まれる。
+          en: Meaning "trifle". Beethoven's "Für Elise" and other short gems belong to this genre.
+      - id: humoresque
+        label:
+          ja: ユモレスク
+          en: Humoresque
+          de: Humoreske
+          fr: Humoresque
+          it: Umoresca
+          es: Humoresca
+          zh: 幽默曲
+        description:
+          ja: 風変わりな小品。ドヴォルザークの『ユモレスク 第7番』が代名詞。
+          en: A whimsical piece. Dvořák's "Humoresque No. 7" is the synonym for this genre.
+      - id: romance
+        label:
+          ja: ロマンス
+          en: Romance
+          de: Romanze
+          fr: Romance
+          it: Romanza
+          es: Romance
+          zh: 浪漫曲
+        description:
+          ja: 甘美で気品のある旋律。ベートーヴェンの『ヘ長調』などが歴史的名曲。
+          en: Sweet and elegant melody. Beethoven's "Romance in F major" is a historical masterpiece.
+      - id: arabesque
+        label:
+          ja: アラベスク
+          en: Arabesque
+          de: Arabeske
+          fr: Arabesque
+          it: Arabesca
+          es: Arabesco
+          zh: 阿拉伯风格曲
+        description:
+          ja: 唐草模様のような装飾美。ドビュッシーの『第1番』などが有名。
+          en: Ornamental beauty like an arabesque pattern. Debussy's "Arabesque No. 1" is famous.
+      - id: barcarolle-berceuse
+        label:
+          ja: 船歌・子守歌
+          en: Barcarolle / Berceuse
+          de: Barcarole / Berceuse
+          fr: Barcarolle / Berceuse
+          it: Barcarola / Ninna nanna
+          es: Barcarola / Canción de cuna
+          zh: 船歌 / 摇篮曲
+        description:
+          ja: 水面の揺らぎや揺籃。ショパンの『舟歌』などが、その芸術的極地。
+          en: Ripples on water or a cradle's rocking. Chopin's "Barcarolle" represents its artistic pinnacle.
+      - id: elegy
+        label:
+          ja: 悲歌
+          en: Elegy
+          de: Elegie
+          fr: Élégie
+          it: Elegia
+          es: Elegía
+          zh: 悲歌
+        description:
+          ja: 哀悼。チャイコフスキーやフォーレによる深い悲しみをたたえた傑作。
+          en: A lament. Masterpieces by Tchaikovsky and Fauré filled with deep sorrow.
+      - id: etude
+        label:
+          ja: 練習曲
+          en: Étude
+          de: Etüde
+          fr: Étude
+          it: Studio
+          es: Estudio
+          zh: 练习曲
+        description:
+          ja: 技巧の磨錬と芸術の融合。ショパン、リスト、ラフマニノフによるコンサート・レパートリー。
+          en: Fusion of technique and art. A concert staple popularized by Chopin, Liszt, and Rachmaninoff.
+      - id: toccata
+        label:
+          ja: トッカータ
+          en: Toccata
+          de: Toccata
+          fr: Toccata
+          it: Toccata
+          es: Tocata
+          zh: 托卡塔
+        description:
+          ja: 打鍵の技巧と即興性。バッハの『トッカータとフーガ』など。
+          en: Displays of finger dexterity and improvisation. Bach's "Toccata and Fugue" set the standard.
+      - id: caprice-capriccio
+        label:
+          ja: 奇想曲
+          en: Caprice / Capriccio
+          de: Capriccio
+          fr: Caprice / Capriccio
+          it: Capriccio
+          es: Capricho
+          zh: 随想曲
+        description:
+          ja: 華やかな技巧と気まぐれな変化。パガニーニ、ブラームスの名品。
+          en: Brilliant technique and whimsical changes. Famous works by Paganini and Brahms.
+      - id: rhapsody
+        label:
+          ja: 狂詩曲
+          en: Rhapsody
+          de: Rhapsodie
+          fr: Rhapsodie
+          it: Rapsodia
+          es: Rapsodia
+          zh: 狂诗曲
+        description:
+          ja: 民族的、即興的。リストの『ハンガリー狂詩曲』などが歴史的人気を博したジャンル。
+          en: Ethnic and improvisatory. List's "Hungarian Rhapsodies" gained immense historical popularity.
+      - id: transcription-paraphrase
+        label:
+          ja: パラフレーズ・編曲
+          en: Transcription / Paraphrase
+          de: Transkription / Paraphrase
+          fr: Transcription / Paraphrase
+          it: Trascrizione / Parafrasi
+          es: Transcripción / Paráfrasis
+          zh: 改编曲 / 幻想变奏曲
+        description:
+          ja: 他の主題の華麗な再構築。リストのベルリーニ・パラフレーズなどがこのジャンルの代表。
+          en: Brilliant reconstructions of other themes. Liszt's Bellini paraphrases lead this genre.
+      - id: concert-piece
+        label:
+          ja: 演奏会用楽曲
+          en: Concert Piece / Konzertstück
+          de: Konzertstück
+          fr: Morceau de concert
+          it: Pezzo da concerto
+          es: Pieza de concierto
+          zh: 音乐会曲
+        description:
+          ja: 協奏的作品の単一楽章ジャンル。ウェーバーやメンデルスゾーンの名作。
+          en: A single-movement genre for solo instrument and orchestra. Masterworks by Weber and Mendelssohn.
+      - id: cadenza
+        label:
+          ja: カデンツァ
+          en: Cadenza
+          de: Kadenz
+          fr: Cadence
+          it: Cadenza
+          es: Cadencia
+          zh: 华彩乐段
+        description:
+          ja: 独奏の技巧。後の作曲家によって固定された作品群も含まれる。
+          en: Virtuosic solo displays. Includes those composed by later masters and fixed as independent items.
+      - id: style-brillant
+        label:
+          ja: 華麗なる様式
+          en: Style Brillant
+          de: Style Brillant
+          fr: Style brillant
+          it: Stile brillante
+          es: Estilo brillante
+          zh: 华丽风格
+        description:
+          ja: 19世紀前半のピアノ音楽の流行ジャンル。華麗な装飾と技巧。ショパンの影響。
+          en: A popular 19th-century piano genre marked by brilliant ornamentation and technique, influenced Chopin.
+      - id: allemande
+        label:
+          ja: アルマンド
+          en: Allemande
+          de: Allemande
+          fr: Allemande
+          it: Allemanda
+          es: Allemanda
+          zh: 阿勒曼德
+        description:
+          ja: ドイツの舞曲。バロック組曲の幕開けを飾る格調高いジャンル。
+          en: A German dance. The dignified opening to many Baroque suites.
+      - id: courante
+        label:
+          ja: クーラント
+          en: Courante
+          de: Courante / Corrente
+          fr: Courante
+          it: Corrente
+          es: Corrente
+          zh: 库朗特
+        description:
+          ja: 走る舞曲。急速な変化を持つバロック音楽の主要ジャンル。
+          en: '"Running" dance. A major Baroque genre characterized by quick changes.'
+      - id: sarabande
+        label:
+          ja: サラバンド
+          en: Sarabande
+          de: Sarabande
+          fr: Sarabande
+          it: Sarabanda
+          es: Zarabanda
+          zh: 萨拉班德
+        description:
+          ja: 荘重な舞曲。組曲の心臓。ヘンデルのニ短調組曲の旋律が世界的に有名。
+          en: A stately dance, the heart of the suite. Handel's melody in D minor suite is a world standard.
+      - id: gigue
+        label:
+          ja: ジーグ
+          en: Gigue
+          de: Gigue
+          fr: Gigue
+          it: Giga
+          es: Giga
+          zh: 吉格
+        description:
+          ja: 急速なフィナーレ。バロック組曲の結びを飾る快活なジャンル。
+          en: A fast finale. The lively conclusion to most Baroque suites.
+      - id: gavotte
+        label:
+          ja: ガヴォット
+          en: Gavotte
+          de: Gavotte
+          fr: Gavotte
+          it: Gavotta
+          es: Gavota
+          zh: 加沃特
+        description:
+          ja: 典雅なフランス舞曲。バッハ、リュリによる不朽の名曲。
+          en: A graceful French dance. Immortalized by Bach and Lully.
+      - id: bourree
+        label:
+          ja: ブーレ
+          en: Bourrée
+          de: Bourrée
+          fr: Bourrée
+          it: Bourrée
+          es: Bourrée
+          zh: 布雷
+        description:
+          ja: 快活なフランス舞曲。バッハのリュートやチェロ組曲の傑作が著名。
+          en: A lively French dance. Famous examples from Bach's lute and cello suites.
+      - id: passepied
+        label:
+          ja: パスピエ
+          en: Passepied
+          de: Passepied
+          fr: Passepied
+          it: Passepied
+          es: Passepied
+          zh: 帕斯比叶
+        description:
+          ja: 急速な舞曲。ルイ14世時代の宮廷音楽を象徴するジャンル。
+          en: A fast dance. Symbolizes the court music of Louis XIV's era.
+      - id: minuet
+        label:
+          ja: メヌエット
+          en: Minuet
+          de: Menuett
+          fr: Menuet
+          it: Minuetto
+          es: Minueto
+          zh: 小步舞曲
+        description:
+          ja: 代表的な宮廷舞曲。ボッケリーニの『メヌエット』などが世界中で愛される傑作。
+          en: The iconic palace dance. Boccherini's "Minuetto" remains a globally beloved masterpiece.
+      - id: waltz
+        label:
+          ja: ワルツ
+          en: Waltz
+          de: Walzer
+          fr: Valse
+          it: Valzer
+          es: Vals
+          zh: 圆舞曲
+        description:
+          ja: 円舞曲。ヨハン・シュトラウスII世の『美しく青きドナウ』に代表される帝都ウィーンの華。
+          en: The waltz. Represented by Strauss II's "Blue Danube," the glory of imperial Vienna.
+      - id: polonaise
+        label:
+          ja: ポロネーズ
+          en: Polonaise
+          de: Polonaise
+          fr: Polonaise
+          it: Polacca
+          es: Polonesa
+          zh: 波洛奈兹
+        description:
+          ja: ポーランドの誇り。ショパン教の『軍隊』『英雄』が不滅の芸術的頂点。
+          en: The pride of Poland. Chopin's "Military" and "Heroic" polonaises are its artistic peaks.
+      - id: mazurka
+        label:
+          ja: マズルカ
+          en: Mazurka
+          de: Mazurka
+          fr: Mazurka
+          it: Mazurca
+          es: Mazurca
+          zh: 马祖卡
+        description:
+          ja: ポーランドの民俗的情緒。ショパンの全58曲がこのジャンルの繊細さを語る。
+          en: Polish folk sentiment. Chopin's set of 58 mazurkas speaks to the delicacy of this genre.
+      - id: march
+        label:
+          ja: 行進曲
+          en: March
+          de: Marsch
+          fr: Marche
+          it: Marcia
+          es: Marcha
+          zh: 行进曲
+        description:
+          ja: 士気高揚や儀式。エルガーの『威風堂々』やスーザの傑作群。
+          en: Morale or ceremony. Elgar's "Pomp and Circumstance" and Sousa's marches lead this category.
+      - id: tarantella
+        label:
+          ja: タランテラ
+          en: Tarantella
+          de: Tarantella
+          fr: Tarentelle
+          it: Tarantella
+          es: Tarantela
+          zh: 塔兰泰拉
+        description:
+          ja: イタリアの熱狂的舞曲。ショパンやロッシーニによる急速なピアノ名品。
+          en: A frantic Italian dance. Piano masterpieces by Chopin and Rossini are well known.
+      - id: bolero-habanera
+        label:
+          ja: ボレロ・ハバネラ
+          en: Bolero / Habanera
+          de: Bolero / Habanera
+          fr: Boléro / Habanera
+          it: Bolero / Habanera
+          es: Bolero / Habanera
+          zh: 波莱罗 / 哈巴涅拉
+        description:
+          ja: 西・ラテン情緒。ラベルの『ボレロ』やビゼーによる歴史的名旋律。
+          en: Spanish and Latin sentiment. Iconic melodies by Ravel and Bizet define this category.
+      - id: czardas
+        label:
+          ja: チャールダーシュ
+          en: Czardas
+          de: Csárdás
+          fr: Csárdás
+          it: Csárdás
+          es: Csárdás
+          zh: 查尔达什
+        description:
+          ja: ハンガリーの哀愁と情熱。モンティの『チャールダーシュ』は世界的なアンコール曲。
+          en: Hungarian melancholy and passion. Monti's "Csárdás" is a world-standard encore piece.
+      - id: polka
+        label:
+          ja: ポルカ
+          en: Polka
+          de: Polka
+          fr: Polka
+          it: Polka
+          es: Polca
+          zh: 波尔卡
+        description:
+          ja: 快活な2拍子。シュトラウス家の舞踏会音楽として愛されるジャンル。
+          en: Lively duple meter. A staple of Strauss family ballroom music.
+      - id: galop
+        label:
+          ja: ギャロップ
+          en: Galop
+          de: Galopp
+          fr: Galop
+          it: Galop
+          es: Galope
+          zh: 加洛普
+        description:
+          ja: 猛烈な疾走。オッフェンバックの『地獄のオルフェ』のフィナーレが典型例。
+          en: Fervent speed. The finale of Offenbach's "Orpheus in the Underworld" is a prime example.
+      - id: pavane-galliard
+        label:
+          ja: パヴァーヌ・ガリアルド
+          en: Pavane / Galliard
+          de: Pavane / Galliarde
+          fr: Pavane / Gaillarde
+          it: Pavana / Gagliarda
+          es: Pavana / Gallarda
+          zh: 帕凡 / 嘉雅德
+        description:
+          ja: 古雅な舞曲。フォーレやラベルの『亡き王女のためのパヴァーヌ』への着想。
+          en: Archaic dances. Inspiration for Fauré and Ravel's "Pavane for a Dead Princess".
+      - id: passacaglia
+        label:
+          ja: パッサカリア
+          en: Passacaglia
+          de: Passacaglia
+          fr: Passacaille
+          it: Passacaglia
+          es: Pasacalle
+          zh: 帕萨卡利亚
+        description:
+          ja: 低音主題の変奏。バッハの『ハ短調』など、重厚な芸術ジャンルとして確立。
+          en: Variations on a bass theme. Established as a profound artistic genre like Bach's in C minor.
+      - id: chaconne
+        label:
+          ja: シャコンヌ
+          en: Chaconne
+          de: Chaconne
+          fr: Chaconne
+          it: Ciaccona
+          es: Chacona
+          zh: 恰空
+        description:
+          ja: 和声の宇宙。バッハの『無伴奏バイオリンのためのニ短調』が史上最高傑作。
+          en: A harmonic universe. Bach's "Chaconne in D minor" for solo violin is the ultimate masterwork.
+      - id: folia
+        label:
+          ja: フォリア
+          en: Folía
+          de: La Folia
+          fr: La Folia
+          it: La Follia
+          es: La Folía
+          zh: 佛利亚
+        description:
+          ja: 伝統的神話旋律。コレッリやラフマニノフらによる歴史的変奏ジャンル。
+          en: A traditional mythical melody. Variations by Corelli and Rachmaninoff lead this category.
+      - id: melodrame
+        label:
+          ja: メロドラマ
+          en: Mélodrame
+          de: Melodram
+          fr: Mélodrame
+          it: Melodramma
+          es: Melodrama
+          zh: 情节剧 / 配乐朗诵
+        description:
+          ja: 朗読と音楽の融合。シューマンやリヒャルト・シュトラウスの名品が有名。
+          en: The fusion of recitation and music. Masterpieces by Schumann and Richard Strauss.

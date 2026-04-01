@@ -2,15 +2,10 @@
 
 import React from 'react';
 import { MusicalEra } from '@/domain/shared/musical-era';
-import { MUSICAL_ERA_LABELS } from '@/domain/shared/enum-labels';
+import { getMusicalEraLabel } from '@/domain/shared/enum-labels';
 import { AdminSelect, SelectOption } from '@/components/ui/admin/AdminSelect';
-
-const OPTIONS: SelectOption<MusicalEra>[] = (Object.keys(MUSICAL_ERA_LABELS) as MusicalEra[]).map(
-  (key) => ({
-    value: key,
-    label: MUSICAL_ERA_LABELS[key],
-  }),
-);
+import { useLocale } from 'next-intl';
+import { AppLocale } from '@/domain/i18n/locale';
 
 interface MusicalEraSelectProps {
   id?: string;
@@ -36,12 +31,20 @@ export function MusicalEraSelect({
   error,
   disabled = false,
 }: MusicalEraSelectProps) {
+  const locale = useLocale() as AppLocale;
+
+  // 全てのEraキーを取得してラベルを多言設定
+  const options: SelectOption<MusicalEra>[] = Object.values(MusicalEra).map((eraValue) => ({
+    value: eraValue as MusicalEra,
+    label: getMusicalEraLabel(eraValue, locale),
+  }));
+
   return (
     <AdminSelect<MusicalEra>
       id={id}
       label={label}
       value={value as MusicalEra}
-      options={OPTIONS}
+      options={options}
       onChange={onChange}
       placeholder={placeholder}
       className={className}

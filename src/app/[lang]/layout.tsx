@@ -18,6 +18,9 @@ import { supportedLocales, AppLocale } from '@/domain/i18n/locale';
 // フォント設定は @/shared/i18n/fonts/ で一括管理
 
 import { BASE_URL } from '@/lib/constants';
+import { initTaxonomy } from '@/application/shared/taxonomy/initTaxonomy';
+import { TaxonomyProvider } from '@/components/shared/TaxonomyProvider';
+import { TaxonomyFileRepository } from '@/infrastructure/shared/taxonomy/TaxonomyFileRepository';
 
 type Props = {
   children: React.ReactNode;
@@ -54,6 +57,11 @@ export async function generateStaticParams() {
 
 export default async function RootLayout({ children, params }: Props) {
   const { lang } = await params;
+
+  // タクソノミーの初期化 (サーバーサイド)
+  await initTaxonomy();
+  const taxonomyData = await TaxonomyFileRepository.getInstance().getAllTaxonomy();
+
   const messages = await getMessages();
 
   // 言語に基づいてフォント変数とベースクラスを決定
@@ -77,19 +85,21 @@ export default async function RootLayout({ children, params }: Props) {
     <html lang={lang} className={fontVariables} suppressHydrationWarning>
       <body className={`${baseFontClass} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <AudioPlayerProvider>
-            <LazyMotionConfig>
-              <Header lang={lang} />
-              <main className="min-h-screen pb-24">{children}</main>
-              <Footer />
+          <TaxonomyProvider data={taxonomyData}>
+            <AudioPlayerProvider>
+              <LazyMotionConfig>
+                <Header lang={lang} />
+                <main className="min-h-screen pb-24">{children}</main>
+                <Footer />
 
-              {/* グローバルオーディオプレイヤー (遅延読み込み) */}
-              <DynamicAudioPlayer />
+                {/* グローバルオーディオプレイヤー (遅延読み込み) */}
+                <DynamicAudioPlayer />
 
-              <ConsentBanner />
-              <Toaster position="bottom-right" />
-            </LazyMotionConfig>
-          </AudioPlayerProvider>
+                <ConsentBanner />
+                <Toaster position="bottom-right" />
+              </LazyMotionConfig>
+            </AudioPlayerProvider>
+          </TaxonomyProvider>
         </NextIntlClientProvider>
       </body>
     </html>
