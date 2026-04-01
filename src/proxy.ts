@@ -42,7 +42,7 @@ export const proxy = auth((req) => {
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob: https://www.youtube.com https://www.youtube-nocookie.com https://img.youtube.com https://i.ytimg.com https://cdn.preludiolab.com;
     font-src 'self' data:;
-    connect-src 'self' https://www.google-analytics.com ${supabaseUrl} https://*.supabase.co;
+    connect-src 'self' https://www.google-analytics.com https://raw.githubusercontent.com ${supabaseUrl} https://*.supabase.co;
     frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;
     media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://cdn.preludiolab.com;
     worker-src 'self';

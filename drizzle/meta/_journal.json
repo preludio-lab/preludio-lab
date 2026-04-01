@@ -57,6 +57,13 @@
       "when": 1774071698102,
       "tag": "0007_chief_imperial_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1774849265633,
+      "tag": "0008_cold_princess_powerful",
+      "breakpoints": true
     }
   ]
 }

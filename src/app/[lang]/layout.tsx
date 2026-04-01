@@ -1,13 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import {
-  inter,
-  playfair,
-  notoSansJP,
-  zenOldMincho,
-  notoSansSC,
-  notoSerifSC,
-} from '@/shared/i18n/fonts';
+import { inter, playfair } from '@/shared/i18n/fonts';
 
 import '../globals.css';
 import { Header } from '@/components/layout/Header';
@@ -25,6 +18,9 @@ import { supportedLocales, AppLocale } from '@/domain/i18n/locale';
 // フォント設定は @/shared/i18n/fonts/ で一括管理
 
 import { BASE_URL } from '@/lib/constants';
+import { initTaxonomy } from '@/application/shared/taxonomy/initTaxonomy';
+import { TaxonomyProvider } from '@/components/shared/TaxonomyProvider';
+import { TaxonomyFileRepository } from '@/infrastructure/shared/taxonomy/TaxonomyFileRepository';
 
 type Props = {
   children: React.ReactNode;
@@ -61,6 +57,11 @@ export async function generateStaticParams() {
 
 export default async function RootLayout({ children, params }: Props) {
   const { lang } = await params;
+
+  // タクソノミーの初期化 (サーバーサイド)
+  await initTaxonomy();
+  const taxonomyData = await TaxonomyFileRepository.getInstance().getAllTaxonomy();
+
   const messages = await getMessages();
 
   // 言語に基づいてフォント変数とベースクラスを決定
@@ -69,12 +70,12 @@ export default async function RootLayout({ children, params }: Props) {
   let baseFontClass = 'font-sans-en text-primary bg-paper';
 
   if (lang === AppLocale.JA) {
-    // 日本語: Noto Sans JP + Zen Old Mincho
-    fontVariables += ` ${notoSansJP.variable} ${zenOldMincho.variable}`;
+    // 日本語: Noto Sans JP + Zen Old Mincho (globals.css 参照)
+    fontVariables += ' var(--font-noto-sans-jp) var(--font-zen-old-mincho)';
     baseFontClass = 'font-sans-ja text-primary bg-paper';
   } else if (lang === AppLocale.ZH) {
-    // 中国語: Noto Sans SC + Noto Serif SC
-    fontVariables += ` ${notoSansSC.variable} ${notoSerifSC.variable}`;
+    // 中国語: Noto Sans SC + Noto Serif SC (globals.css 参照)
+    fontVariables += ' var(--font-noto-sans-sc) var(--font-noto-serif-sc)';
     baseFontClass = 'font-sans-zh text-primary bg-paper';
   } else {
     // その他 (欧文): 追加フォントなし (Inter/Playfairのみ)
@@ -84,19 +85,21 @@ export default async function RootLayout({ children, params }: Props) {
     <html lang={lang} className={fontVariables} suppressHydrationWarning>
       <body className={`${baseFontClass} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <AudioPlayerProvider>
-            <LazyMotionConfig>
-              <Header lang={lang} />
-              <main className="min-h-screen pb-24">{children}</main>
-              <Footer />
+          <TaxonomyProvider data={taxonomyData}>
+            <AudioPlayerProvider>
+              <LazyMotionConfig>
+                <Header lang={lang} />
+                <main className="min-h-screen pb-24">{children}</main>
+                <Footer />
 
-              {/* グローバルオーディオプレイヤー (遅延読み込み) */}
-              <DynamicAudioPlayer />
+                {/* グローバルオーディオプレイヤー (遅延読み込み) */}
+                <DynamicAudioPlayer />
 
-              <ConsentBanner />
-              <Toaster position="bottom-right" />
-            </LazyMotionConfig>
-          </AudioPlayerProvider>
+                <ConsentBanner />
+                <Toaster position="bottom-right" />
+              </LazyMotionConfig>
+            </AudioPlayerProvider>
+          </TaxonomyProvider>
         </NextIntlClientProvider>
       </body>
     </html>

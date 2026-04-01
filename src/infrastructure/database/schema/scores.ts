@@ -114,3 +114,43 @@ export const phrases = sqliteTable(
     slugIdx: uniqueIndex('idx_phrase_slug').on(table.workId, table.slug),
   }),
 );
+
+// --- Score Sources Table (Deterministic Retrieval) ---
+export const scoreSources = sqliteTable(
+  'score_sources',
+  {
+    id: text('id').primaryKey(), // UUID v7
+    workId: text('work_id')
+      .notNull()
+      .references(() => works.id, { onDelete: 'cascade' }),
+    workPartId: text('work_part_id').references(() => workParts.id), // Movement specific source
+    scoreId: text('score_id').references(() => scores.id), // Edition source
+    provider: text('provider').notNull(), // 'github' | 'r2'
+    repositoryOwner: text('repository_owner'),
+    repositoryName: text('repository_name'),
+    commitHash: text('commit_hash').notNull(), // Immutability: 40-char hash
+    filePath: text('file_path').notNull(),
+    format: text('format').notNull(), // 'kern' | 'musicxml' | 'mei' | 'mxl'
+    workPartNumber: integer('work_part_number').default(0).notNull(),
+    workPartTitle: text('work_part_title'),
+    workPartSlug: text('work_part_slug').notNull(), // Linkage to work_parts.slug
+    license: text('license'),
+    createdAt: text('created_at')
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: text('updated_at')
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (table) => ({
+    workIdx: index('idx_score_src_work').on(table.workId),
+    partIdx: index('idx_score_src_part').on(table.workPartId),
+    scoreIdx: index('idx_score_src_score').on(table.scoreId),
+    lookupIdx: uniqueIndex('idx_score_src_lookup').on(
+      table.workId,
+      table.workPartSlug,
+      table.provider,
+    ),
+    versionIdx: index('idx_score_src_version').on(table.repositoryName, table.commitHash),
+  }),
+);
