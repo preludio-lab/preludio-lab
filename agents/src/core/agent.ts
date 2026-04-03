@@ -218,7 +218,7 @@ export class BaseAgent {
   async generateObject<T>(
     prompt: string,
     schema: z.ZodType<T, z.ZodTypeDef, unknown>,
-    options: { maxRetries?: number } = {},
+    options: { maxRetries?: number; metadataContext?: Record<string, unknown> } = {},
   ): Promise<T> {
     const maxRetries = options.maxRetries ?? 3;
     let currentRetries = 0;
@@ -260,7 +260,14 @@ export class BaseAgent {
 
       try {
         const parsed = JSON.parse(responseText);
-        return schema.parse(parsed);
+        const validated = schema.parse(parsed);
+
+        // プログラムによるメタデータの注入（トレーサビリティの確保）
+        // 外部コンテキスト（信頼できる情報）とモデル出力（参考情報）を分けて扱う
+        const contextMeta = options.metadataContext;
+        const llmMeta = (parsed as Record<string, unknown>)?._generatorMeta;
+
+        return this.injectMetadata(validated, contextMeta, llmMeta);
       } catch (error) {
         lastError = error as Error;
         currentRetries++;
@@ -269,6 +276,36 @@ export class BaseAgent {
 
     consola.error('[BaseAgent] Max retries reached. Failed to satisfy schema.');
     throw lastError || new Error('Failed to generate valid object after retries.');
+  }
+
+  /**
+   * 生成されたオブジェクトにメタデータを注入します。
+   * 外部コンテキスト（contextMeta）の generatedAt を最優先し、起点を不変に保ちます。
+   * モデル出力（llmMeta）に含まれる generatedAt はハルシネーションの可能性があるため、
+   * コンテキストがない場合は現在時刻で上書きします。
+   */
+  private injectMetadata<T>(data: T, contextMeta?: Record<string, unknown>, llmMeta?: unknown): T {
+    if (!data || typeof data !== 'object') return data;
+
+    const result = { ...data } as Record<string, unknown>;
+
+    // 1. LLMが生成したメタデータ（confidenceScore 等）をベースにする
+    // 2. 外部コンテキスト（以前のステップのメタデータ等）で上書きして継承する
+    // 3. システム制御値（model, generatedAt）を最終決定する
+    const meta = {
+      ...(llmMeta as Record<string, unknown>),
+      ...contextMeta,
+    };
+
+    // model は常に最新（現在の実行モデル）に更新
+    meta.model = this.config.modelName;
+
+    // generatedAt はコンテキスト（既存の正解）があれば維持、なければ新規生成
+    // LLMが出力した generatedAt は一切信用しない
+    meta.generatedAt = contextMeta?.generatedAt ?? new Date().toISOString();
+
+    result._generatorMeta = meta;
+    return result as T;
   }
 
   /**

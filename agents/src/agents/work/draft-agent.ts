@@ -1,6 +1,7 @@
 import { BaseAgent } from '@/core/agent.js';
 import { GeminiModelName } from '@/core/models.js';
 import { WorkDraftSchema, type WorkDraft } from '@/schemas/work.js';
+import { normalizeWorkDraft } from './work-agent-utils.js';
 
 const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サイトの専属プロデューサー・音楽学者です。
 指定された楽曲に関する正確な史実と、音楽史における独自の解釈・評価を提供してください。
@@ -10,9 +11,9 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 2. **タクソノミー遵守**: 指定されたEnum（時代区分、楽器ID、タグ等）以外の値を出力しないでください。
 3. **多言語構造の遵守 (最重要・警告)**: 
    - \`description\`, \`compositionPeriod\`, \`titleComponents\` の各フィールド、および \`tempoTranslation\` は、**絶対に文字列（"..."）で出力しないでください。**
-   - 必ず **\`{"ja": "..."}\` というオブジェクト形式** で出力してください。
+   - 必ず **\`{"ja": "..."}\` という Map/オブジェクト形式** で出力してください。
    - **ドラフト生成段階では日本語 (ja) のみを出力してください。** \`en\`, \`de\`, \`fr\` などの他言語フィールドは絶対に出力しないでください。
-   - 万が一、指示に従えず文字列（"..."）を出力する場合でも、**内容は必ず日本語（ja）** としてください。
+   - 万が一、指示に従えず文字列（"..."）を出力し、オブジェクト形式（{"ja": "..."}）を無視した場合、それは「重大なシステムエラー」と見なされます。
    - **言語ロック**: 情報源や検索結果が英語であっても、必ず日本語に翻訳・翻案して格納してください。
 4. **不要なフィールドの省略 (厳格・警告)**:
    - 値がない、不明、あるいは適用されないフィールドは、絶対に **空文字 ("")、空配列 ([])、あるいは "none" などの文字列を出力しないでください。**
@@ -20,8 +21,8 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
    - **ニックネームがない場合**: \`nickname\` フィールドは、必ず **null** を出力してください。
    - 上記に違反した場合、バリデーションエラーとなります。
 5. **楽曲(Work)と楽章(WorkPart)の役割分離 (厳格)**:
-   - 交響曲、協奏曲、ソナタなどの多楽章形式の作品では、特定の楽章の情報はWorkレベルに含めないでください。
-   - **Workレベルで情報を捏造してはいけないもの**: \`tempo\`, \`bpm\`, \`timeSignature\`, \`tempoTranslation\`, \`metronomeUnit\`。これらはWorkPart（楽章）のデータであるため、Workレベルでは原則として **null** を出力してください。
+   - 交響曲、協奏曲、ソナタ、室内楽曲などの多楽章形式の作品では、特定の楽章の情報はWorkレベル（トップレベル）に含めないでください。
+   - **【Strictly Forbidden / 禁止】Workレベルで情報を捏造してはいけないもの**: \`tempo\`, \`bpm\`, \`timeSignature\`, \`tempoTranslation\`, \`metronomeUnit\`。これらは各楽章のデータであるため、Workレベルでは原則として **null** を出力してください。
 6. **タイトルの構成と正規化 (重要)**:
    - \`titleComponents\` には \`prefix\`, \`content\`, \`nickname\` のみを含めます。
    - **UI整合性**: UI側で \`content\` と \`nickname\` を自動的に結合して表示するため（例：タイトル (ニックネーム)）、情報の重複を厳禁とします。
@@ -110,7 +111,7 @@ export class WorkDraftAgent {
   "compositionPeriod": { "ja": "1803年-1804年" },
   "genres": ["symphony"],
   "catalogues": [
-    { "prefix": "op", "number": "55", "isPrimary: true }
+    { "prefix": "op", "number": "55", "isPrimary": true }
   ],
   "instruments": ["flute", "oboe", "clarinet", "bassoon", "horn", "trumpet", "timpani", "violin", "viola", "cello", "double-bass"],
   "instrumentationFlags": {
@@ -181,40 +182,6 @@ export class WorkDraftAgent {
 - **ドラフト生成段階では日本語 (ja) のみのデータを出力し、他言語フィールドは含めないでください。**`;
 
     const result = await this.agent.generateObject<WorkDraft>(prompt, WorkDraftSchema);
-    return this.normalize(result);
-  }
-
-  /**
-   * 楽曲データの正規化（音楽学的な制約に基づくクリーンアップ）を行います。
-   */
-  private normalize(data: WorkDraft): WorkDraft {
-    const res = { ...data } as Record<string, unknown>;
-
-    // 1. 多楽章形式（公認）の場合は、Workレベルの演奏情報を強制削除
-    const genres = (res['genres'] as string[]) || [];
-    const slug = (res['slug'] as string) || '';
-
-    const isMultiMovement =
-      genres.some((g) =>
-        ['symphony', 'concerto', 'sonata', 'suite', 'mass', 'opera', 'oratorio'].includes(g),
-      ) ||
-      slug.includes('concerto') ||
-      slug.includes('symphony');
-
-    if (isMultiMovement) {
-      delete res['tempo'];
-      delete res['bpm'];
-      delete res['timeSignature'];
-      delete res['tempoTranslation'];
-      delete res['metronomeUnit'];
-    }
-
-    // 2. basedOn が不完全（原曲スラグがない）場合は削除
-    const basedOn = res['basedOn'] as Record<string, unknown> | undefined;
-    if (basedOn && !basedOn['originalWorkSlug']) {
-      delete res['basedOn'];
-    }
-
-    return res as WorkDraft;
+    return normalizeWorkDraft(result);
   }
 }

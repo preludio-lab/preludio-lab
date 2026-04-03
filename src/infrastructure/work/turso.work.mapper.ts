@@ -148,6 +148,7 @@ export class TursoWorkMapper {
         titlePrefix: getVal(tc.prefix),
         titleContent: getVal(tc.content),
         titleNickname: getVal(tc.nickname),
+        titleComponents: tc,
         compositionPeriod: getVal(meta.compositionPeriod),
         description: getVal(meta.description),
         nicknames: [],

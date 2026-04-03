@@ -2,6 +2,7 @@ import { BaseAgent } from '@/core/agent.js';
 import { GeminiModelName } from '@/core/models.js';
 import { WorkDraftSchema, type WorkDraft } from '@/schemas/work.js';
 import { WorkPartDraftSchema, type WorkPartDraft } from '@/schemas/work-part.js';
+import { normalizeWorkDraft } from './work-agent-utils.js';
 import { z } from 'zod';
 import { consola } from 'consola';
 
@@ -16,10 +17,14 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 
 # 修正のルール (極めて重要)
 - **【超厳格】構造の完全維持**: 入力データの各フィールドの内部構造を絶対に崩さないでください。文字列への簡略化（Flattening）は「システムエラー」を引き起こします。
+  - **多言語オブジェクト (i18n)**: \`description\`, \`compositionPeriod\`, \`titleComponents\` 等は、**絶対に文字列（"..."）で出力しないでください。** 必ず **\`{"ja": "..."}\` という Map/オブジェクト形式** を維持せよ。
   - **timeSignature**: 必ず \`{ "numerator": X, "denominator": Y }\` 形式を維持せよ。\`"4/4"\` などの文字列は禁止。
   - **genres / tags / instruments**: 必ず「文字列の配列」形式を維持せよ。\`"symphony"\` などの単一文字列は禁止。
   - **bpm / order / performanceDifficulty**: 必ず「数値（number）」を維持せよ。\`"120"\` などの引用符付き文字列は禁止。
   - **impressionDimensions**: 必ず各項目の数値キーを含むオブジェクト形式を維持せよ。
+- **【Strictly Forbidden / 禁止】多楽章作品のWorkレベル項目**: 
+  - 交響曲、協奏曲、ソナタ、室内楽曲、組曲などの多楽章作品において、**Workレベル（トップレベル）**に \`bpm\`, \`timeSignature\`, \`tempo\`, \`tempoTranslation\` などの演奏情報を出力することは **厳禁** です。
+  - これらの情報は楽章（Parts）側で定義されるべきものであり、Workレベルでは原則として **null** としてください。
 - **Slugの不変性**: 構造的な識別子として生成されたSlug（例: \`mov-1\`, \`var-1\`）は絶対に書き換えないでください。
 - **品質向上**: \`description\` の「事実＋フック」構造を崩さず、より洗練された表現に磨き上げてください。`;
 
@@ -58,7 +63,14 @@ ${JSON.stringify(partsData, null, 2)}
 - Workデータの構造（titleComponents, impressionDimensions等）を絶対に崩さないでください。
 - 文字列への簡略化は厳禁です。`;
 
-    const refinedWork = await this.agent.generateObject(workPrompt, WorkDraftSchema);
+    const refinedWork = await this.agent.generateObject(workPrompt, WorkDraftSchema, {
+      metadataContext: (workData as Record<string, unknown>)._generatorMeta as Record<
+        string,
+        unknown
+      >,
+    });
+
+    const normalizedWork = normalizeWorkDraft(refinedWork as WorkDraft);
 
     consola.info(`[WorkRefineAgent] Pass 2: Refining Parts metadata...`);
 
@@ -67,7 +79,7 @@ ${JSON.stringify(partsData, null, 2)}
 各楽章の属性（調性、タグ、印象評価）が楽曲本体と矛盾していないか、また楽章間でのトーンが統一されているかを確認してください。
 
 【修正済みの楽曲データ (Work)】
-${JSON.stringify(refinedWork, null, 2)}
+${JSON.stringify(normalizedWork, null, 2)}
 
 【対象の楽章リスト (Parts)】
 ${JSON.stringify(partsData, null, 2)}
@@ -80,10 +92,15 @@ ${JSON.stringify(partsData, null, 2)}
       parts: z.array(WorkPartDraftSchema),
     });
 
-    const refinedPartsResult = await this.agent.generateObject(partsPrompt, RefinedPartsSchema);
+    const refinedPartsResult = await this.agent.generateObject(partsPrompt, RefinedPartsSchema, {
+      metadataContext: (workData as Record<string, unknown>)._generatorMeta as Record<
+        string,
+        unknown
+      >,
+    });
 
     return {
-      work: refinedWork,
+      work: normalizedWork,
       parts: refinedPartsResult.parts,
     };
   }
@@ -105,9 +122,20 @@ ${review}
 ${JSON.stringify(targetData, null, 2)}`;
 
     if (isPart) {
-      return await this.agent.generateObject(prompt, WorkPartDraftSchema);
+      return await this.agent.generateObject(prompt, WorkPartDraftSchema, {
+        metadataContext: (targetData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      });
     } else {
-      return await this.agent.generateObject(prompt, WorkDraftSchema);
+      const refined = await this.agent.generateObject(prompt, WorkDraftSchema, {
+        metadataContext: (targetData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      });
+      return normalizeWorkDraft(refined as WorkDraft);
     }
   }
 }

@@ -14,6 +14,7 @@ import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 import { WorkDraftAgent } from '@/agents/work/draft-agent.js';
 import { WorkRefineAgent } from '@/agents/work/refine-agent.js';
 import { WorkTranslateAgent } from '@/agents/work/translate-agent.js';
+import { normalizeWorkDraft } from '@/agents/work/work-agent-utils.js';
 
 /**
  * 楽曲生成ワークフローの実行ステップ定義
@@ -155,7 +156,8 @@ export class GenerateWorkWorkflow {
       slug: input.workSlug,
     });
 
-    const result = prune(workDraft);
+    // 2. Final Normalization (Last line of defense before saving)
+    const result = prune(normalizeWorkDraft(workDraft));
 
     const outPath = this.getDraftPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify(result, null, 2), 'utf-8');
@@ -192,6 +194,9 @@ export class GenerateWorkWorkflow {
       const refined = await agent.refineGlobalConsistency(targetWork as WorkDraft, []);
       targetWork = refined.work as WorkDraft;
     }
+
+    // Final Normalization (Last line of defense before saving)
+    targetWork = normalizeWorkDraft(targetWork as WorkDraft);
 
     const outPath = this.getRefinedPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify(targetWork, null, 2), 'utf-8');

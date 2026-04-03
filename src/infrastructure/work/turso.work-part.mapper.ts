@@ -134,6 +134,7 @@ export class TursoWorkPartMapper {
         titlePrefix: getVal(tc.prefix),
         titleContent: getVal(tc.content),
         titleNickname: getVal(tc.nickname),
+        titleComponents: tc,
         tempoTranslation: null, // No source currently
         description: getVal(meta.description),
         createdAt: new Date().toISOString(),

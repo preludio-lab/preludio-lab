@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { parse } from 'yaml';
+import yaml from 'js-yaml';
 import { TaxonomyFileSchema, TaxonomyItem, TaxonomyCategory } from '@/domain/shared/taxonomy/types';
 import { AppLocale } from '@/domain/i18n/locale';
 
@@ -38,7 +38,7 @@ export class TaxonomyFileRepository {
     for (const file of files) {
       const filePath = join(this.taxonomyDir, file);
       const content = readFileSync(filePath, 'utf8');
-      const data = parse(content);
+      const data = yaml.load(content);
 
       // バリデーション (オプションだが安全のため)
       const result = TaxonomyFileSchema.safeParse(data);

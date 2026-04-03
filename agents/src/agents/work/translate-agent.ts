@@ -80,6 +80,12 @@ ${workData.compositionPeriod?.ja ? `- 作曲時期: ${workData.compositionPeriod
     return await this.agent.generateObject<WorkTranslationOutput>(
       prompt,
       WorkTranslationOutputSchema,
+      {
+        metadataContext: (workData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      },
     );
   }
 
@@ -120,6 +126,12 @@ ${partData.tempoTranslation?.ja ? `- 速度記号/補足: ${partData.tempoTransl
     return await this.agent.generateObject<WorkPartTranslationOutput>(
       prompt,
       WorkPartTranslationOutputSchema,
+      {
+        metadataContext: (partData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      },
     );
   }
 }

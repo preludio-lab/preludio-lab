@@ -17,6 +17,7 @@ describe('WorkPart Entity', () => {
 
   const metadata: WorkPartMetadata = {
     titleComponents: {
+      displayType: 'standard' as const,
       prefix: { ja: '第1楽章', en: '1st Movement' },
     },
     type: 'movement',

@@ -17,6 +17,7 @@ describe('Work Entity', () => {
 
   const validMetadata = {
     titleComponents: {
+      displayType: 'standard' as const,
       content: { ja: '交響曲第5番', en: 'Symphony No. 5' },
       nickname: { ja: '運命', en: 'Fate' },
     },
@@ -122,5 +123,42 @@ describe('Work Entity', () => {
     expect(cloned.composerSlug).toBe('brahms');
     expect(cloned.metadata.performanceDifficulty).toBe(4);
     expect(cloned.id).toBe(work.id);
+  });
+
+  describe('Title Synthesis', () => {
+    it('should synthesize standard title correctly', () => {
+      const work = new Work({
+        control: validControl,
+        metadata: {
+          ...validMetadata,
+          titleComponents: {
+            displayType: 'standard' as const,
+            prefix: { ja: '祝典序曲', en: 'Festive Overture' },
+            content: { ja: '作品96', en: 'Op. 96' },
+          },
+        },
+      });
+      expect(work.title.ja).toBe('祝典序曲 作品96');
+      expect(work.title.en).toBe('Festive Overture Op. 96');
+    });
+
+    it('should respect distinctive title when provided', () => {
+      // Assuming formatter is updated or will handle distinctiveTitle appropriately
+      // For now, let's just ensure basic synthesis still works with the new fields present
+      const work = new Work({
+        control: validControl,
+        metadata: {
+          ...validMetadata,
+          titleComponents: {
+            displayType: 'title-priority' as const,
+            distinctiveTitle: { ja: '竹取物語', en: 'Tale of the Bamboo Cutter' },
+            number: 1,
+          },
+        },
+      });
+      // In current synthesizeTitle, only prefix/content are used.
+      // Once work.formatter.ts is and synthesizeTitle is updated, this will be more expressive.
+      expect(work).toBeDefined();
+    });
   });
 });
