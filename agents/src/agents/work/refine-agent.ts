@@ -18,6 +18,8 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 # 修正のルール (極めて重要)
 - **【超厳格】構造の完全維持**: 入力データの各フィールドの内部構造を絶対に崩さないでください。文字列への簡略化（Flattening）は「システムエラー」を引き起こします。
   - **多言語オブジェクト (i18n)**: \`description\`, \`compositionPeriod\`, \`titleComponents\` 等は、**絶対に文字列（"..."）で出力しないでください。** 必ず **\`{"ja": "..."}\` という Map/オブジェクト形式** を維持せよ。
+  - [Bad] 不正解: \`"description": "これは素晴らしい曲です。"\`
+  - [Good] 正解: \`"description": { "ja": "これは素晴らしい曲です。" }\`
   - **timeSignature**: 必ず \`{ "numerator": X, "denominator": Y }\` 形式を維持せよ。\`"4/4"\` などの文字列は禁止。
   - **genres / tags / instruments**: 必ず「文字列の配列」形式を維持せよ。\`"symphony"\` などの単一文字列は禁止。
   - **bpm / order / performanceDifficulty**: 必ず「数値（number）」を維持せよ。\`"120"\` などの引用符付き文字列は禁止。
