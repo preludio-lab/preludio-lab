@@ -67,3 +67,6 @@ agents/**/*.js
 
 # gemini-cli
 .gemini/Local/
+
+# local storage for scores
+/storage/

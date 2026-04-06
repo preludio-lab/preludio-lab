@@ -44,14 +44,22 @@ export const getSupabaseAdmin = (): SupabaseClient<Database> => {
     // 4. クライアント生成
     logger.info('Initializing Supabase Admin Client (Singleton)');
 
-    adminClient = createClient<Database>(env.NEXT_PUBLIC_SUPABASE_URL, serviceRoleKey, {
+    const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) {
+      throw new Error(
+        'NEXT_PUBLIC_SUPABASE_URL is required for admin operations. Check your server environment variables.',
+      );
+    }
+
+    const client = createClient<Database>(supabaseUrl, serviceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
       },
     });
 
-    return adminClient;
+    adminClient = client;
+    return client;
   } catch (err) {
     const error = err instanceof Error ? err : new Error(String(err));
     logger.error('Failed to initialize Supabase Admin Client', error, {

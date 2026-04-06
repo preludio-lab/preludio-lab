@@ -33,7 +33,7 @@ interface ScoreManifest {
   scores: {
     work_slug: string;
     composer_slug: string;
-    provider: 'github' | 'r2';
+    provider: 'github' | 'r2' | 'musedata';
     repository_owner?: string;
     repository_name?: string;
     commit_hash: string;
@@ -64,7 +64,18 @@ async function verifyGithubUrl(
     const response = await fetch(url, { method: 'HEAD', headers });
     return response.ok;
   } catch (error) {
-    console.error(`Failed to verify URL: ${url}`, error);
+    console.error(`Failed to verify GitHub URL: ${url}`, error);
+    return false;
+  }
+}
+
+async function verifyMuseDataUrl(path: string): Promise<boolean> {
+  const url = `http://old.musedata.org/${path}`;
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok;
+  } catch (error) {
+    console.error(`Failed to verify MuseData URL: ${url}`, error);
     return false;
   }
 }
@@ -72,7 +83,7 @@ async function verifyGithubUrl(
 async function sync() {
   console.log('Starting Score Manifest synchronization...');
 
-  const manifestPath = join(process.cwd(), 'data', 'score-manifest.yaml');
+  const manifestPath = join(process.cwd(), 'data', 'scores', 'manifest.yaml');
   const manifestContent = readFileSync(manifestPath, 'utf8');
   const manifest = yaml.load(manifestContent) as ScoreManifest;
 
@@ -112,7 +123,7 @@ async function sync() {
         );
       }
 
-      // 3. Verify GitHub URL if applicable
+      // 3. Verify Source URL
       if (score.provider === 'github' && score.repository_owner && score.repository_name) {
         const isValid = await verifyGithubUrl(
           score.repository_owner,
@@ -122,7 +133,14 @@ async function sync() {
         );
         if (!isValid) {
           console.warn(
-            `[INVALID URL] Could not verify source for ${score.work_slug}. Check commit hash and path.`,
+            `[INVALID URL] Could not verify source for ${score.work_slug} (GitHub). Check commit hash and path.`,
+          );
+        }
+      } else if (score.provider === 'musedata') {
+        const isValid = await verifyMuseDataUrl(score.file_path);
+        if (!isValid) {
+          console.warn(
+            `[INVALID URL] Could not verify source for ${score.work_slug} (MuseData). URL: http://old.musedata.org/${score.file_path}`,
           );
         }
       }

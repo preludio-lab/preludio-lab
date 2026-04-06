@@ -6,6 +6,7 @@ import { z } from 'zod';
 export const ScoreSourceProvider = {
   GITHUB: 'github',
   R2: 'r2',
+  MUSEDATA: 'musedata',
 } as const;
 
 export type ScoreSourceProvider = (typeof ScoreSourceProvider)[keyof typeof ScoreSourceProvider];
@@ -32,18 +33,18 @@ export const ScoreSourceSchema = z.object({
   workId: z.string().uuid(),
   workPartId: z.string().uuid().optional(),
   scoreId: z.string().uuid().optional(),
-  provider: z.nativeEnum(ScoreSourceProvider),
-  // GitHub 詳細
-  repositoryOwner: z.string().optional(),
-  repositoryName: z.string().optional(),
-  commitHash: z.string().length(40),
+  provider: z.string(), // z.nativeEnum(ScoreSourceProvider) から string に緩和し、拡張性を確保
+  // GitHub / MuseData 詳細
+  repositoryOwner: z.string().optional().nullable(),
+  repositoryName: z.string().optional().nullable(),
+  commitHash: z.string().nullable(), // length(40) 制約を解除。musedata 等では不要なため。
   filePath: z.string(),
   format: z.nativeEnum(ScoreSourceFormat),
   // 譜面上の楽章情報
   workPartNumber: z.number().int().nonnegative(),
-  workPartTitle: z.string().optional(),
+  workPartTitle: z.string().optional().nullable(),
   workPartSlug: z.string(),
-  license: z.string().optional(),
+  license: z.string().optional().nullable(),
 });
 
 export type ScoreSource = z.infer<typeof ScoreSourceSchema>;

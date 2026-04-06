@@ -69,7 +69,8 @@
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.5.0",
     "use-debounce": "^10.1.0",
-    "uuidv7": "^1.2.1"
+    "uuidv7": "^1.2.1",
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "@google/gemini-cli": "^0.36.0",
@@ -106,7 +107,6 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.0",
     "vitest": "^4.1.2",
-    "yaml": "^2.8.3",
     "zod": "^3.23.8"
   },
   "browserslist": {

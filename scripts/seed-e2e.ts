@@ -1,3 +1,7 @@
+import { config } from 'dotenv';
+config({ path: '.env.local' });
+config();
+
 import {
   ComposerFixturesSchema,
   WorkFixturesSchema,

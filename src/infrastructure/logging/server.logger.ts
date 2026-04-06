@@ -65,14 +65,16 @@ export class ServerLogger implements Logger {
     this.pino.error({ ...meta, error: error ? this.formatError(error) : undefined }, message);
 
     // ガイドライン: ERROR レベルのログ出力時に自動で Sentry.captureException が走る
-    // Sentry が初期化されていない場合でも安全に呼び出せる (内部で null check される)
-    Sentry.captureException(error || new Error(message), {
-      extra: { ...meta, originalMessage: message },
-      tags: {
-        logger: 'server',
-        runtime: process.env.NEXT_RUNTIME || 'unknown',
-      },
-    });
+    // CLI環境やSentry未初期化時でも安全に動作するように関数チェックを行う
+    if (typeof Sentry.captureException === 'function') {
+      Sentry.captureException(error || new Error(message), {
+        extra: { ...meta, originalMessage: message },
+        tags: {
+          logger: 'server',
+          runtime: process.env.NEXT_RUNTIME || 'unknown',
+        },
+      });
+    }
   }
 
   /**

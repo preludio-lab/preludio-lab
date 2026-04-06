@@ -44,12 +44,13 @@ export class GitHubScoreSourceRepository implements ScoreSourceRepository {
 
         if (!response.ok) {
           const isTransient = response.status === 503 || response.status === 429;
-          throw new InfrastructureError(
-            `Failed to fetch score from GitHub: ${response.statusText} (${response.status})`,
-            isTransient,
-            undefined,
-            response.status,
-          );
+          let message = `Failed to fetch score from GitHub: ${response.statusText} (${response.status})`;
+
+          if (response.status === 404) {
+            message += `. \n[Context] 404 Not Found at: ${url}\nCheck if the file_path, commit_hash, and repository identifiers are correct. Note: Some repositories (like humdrum-data) might have complex submodule-based structures that Raw URL cannot reach directly.`;
+          }
+
+          throw new InfrastructureError(message, isTransient, undefined, response.status);
         }
 
         const content = await response.text();

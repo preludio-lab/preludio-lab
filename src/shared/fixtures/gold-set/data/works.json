@@ -22,5 +22,35 @@
         "description": "A collection of two sets of preludes and fugues in all 24 major and minor keys for keyboard."
       }
     ]
+  },
+  {
+    "id": "01947470-0000-7000-8000-000000000004",
+    "composerId": "01947470-0000-7000-8000-000000000003",
+    "slug": "piano-concerto-no-20-k466",
+    "categories": ["piano-concerto"],
+    "catalogues": [
+      {
+        "name": "K.",
+        "number": "466"
+      }
+    ],
+    "translations": [
+      {
+        "lang": "ja",
+        "title": "ピアノ協奏曲第20番 ニ短調 K. 466",
+        "titlePrefix": "ピアノ協奏曲第20番",
+        "titleContent": "ニ短調",
+        "titleNickname": "",
+        "description": "モーツァルトのピアノ協奏曲の中で最も劇的で人気のある作品の一つ。ニ短調という調性が持つ暗い情熱が特徴。"
+      },
+      {
+        "lang": "en",
+        "title": "Piano Concerto No. 20 in D minor, K. 466",
+        "titlePrefix": "Piano Concerto No. 20",
+        "titleContent": "in D minor",
+        "titleNickname": "",
+        "description": "One of Mozart's most dramatic and popular piano concertos, characterized by its stormy D minor tonality."
+      }
+    ]
   }
 ]

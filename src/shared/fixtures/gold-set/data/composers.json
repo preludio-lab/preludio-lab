@@ -22,5 +22,29 @@
         "shortName": "Bach"
       }
     ]
+  },
+  {
+    "id": "01947470-0000-7000-8000-000000000003",
+    "slug": "mozart",
+    "era": "classical",
+    "birthDate": "1756-01-27",
+    "deathDate": "1791-12-05",
+    "nationalityCode": "AT",
+    "representativeInstruments": ["piano", "violin"],
+    "representativeGenres": ["opera", "symphony", "piano-concerto"],
+    "translations": [
+      {
+        "lang": "ja",
+        "fullName": "ヴォルフガング・アマデウス・モーツァルト",
+        "displayName": "モーツァルト",
+        "shortName": "モーツァルト"
+      },
+      {
+        "lang": "en",
+        "fullName": "Wolfgang Amadeus Mozart",
+        "displayName": "W.A. Mozart",
+        "shortName": "Mozart"
+      }
+    ]
   }
 ]

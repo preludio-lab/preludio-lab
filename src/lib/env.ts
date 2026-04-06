@@ -2,6 +2,8 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 import { APP_ENV, NODE_ENV } from './constants';
 
+const isCli = typeof window === 'undefined' && !process.env.NEXT_RUNTIME;
+
 export const env = createEnv({
   /**
    * サーバー側でのみ使用可能な環境変数
@@ -104,10 +106,11 @@ export const env = createEnv({
   /**
    * クライアント側（ブラウザ）に公開される環境変数
    * `NEXT_PUBLIC_` プレフィックスが必須
+   * CLI実行時は、Next.jsのビルド・ランタイム外であるためバリデーションを緩和する
    */
   client: {
-    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+    NEXT_PUBLIC_SUPABASE_URL: isCli ? z.string().url().optional() : z.string().url(),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: isCli ? z.string().min(1).optional() : z.string().min(1),
     NEXT_PUBLIC_APP_ENV: z
       .enum([APP_ENV.DEVELOPMENT, APP_ENV.STAGING, APP_ENV.PRODUCTION])
       .default(APP_ENV.DEVELOPMENT),
@@ -138,8 +141,8 @@ export const env = createEnv({
 
   /**
    * 検証に失敗した際の処理
-   * CI環境などではビルドを失敗させる
+   * CI環境などではビルドを失敗させる。CLI実行時は不完全な環境変数でも動作を継続させる。
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION || isCli,
   emptyStringAsUndefined: true,
 });

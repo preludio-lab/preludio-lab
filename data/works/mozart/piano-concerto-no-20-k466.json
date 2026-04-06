@@ -1,0 +1,43 @@
+{
+  "slug": "piano-concerto-no-20-k466",
+  "composerSlug": "mozart",
+  "titleComponents": {
+    "title": {
+      "en": "Piano Concerto No. 20 in D Minor, K. 466",
+      "ja": "ピアノ協奏曲第20番 ニ短調 K. 466"
+    },
+    "prefix": {
+      "en": "Piano Concerto No. 20",
+      "ja": "ピアノ協奏曲第20番"
+    },
+    "content": {
+      "en": "No. 20 in D Minor",
+      "ja": "ニ短調"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "k",
+      "number": "466",
+      "isPrimary": true
+    }
+  ],
+  "era": "classical",
+  "compositionYear": 1785,
+  "instrumentation": "piano and orchestra",
+  "instruments": ["piano", "orchestra"],
+  "instrumentationFlags": {
+    "isSolo": false,
+    "isChamber": false,
+    "isOrchestral": true,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "key": "d-minor",
+  "tags": ["concerto", "stub"],
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "source": "manual-stub",
+    "generatedAt": "2026-04-01T23:20:00Z"
+  }
+}
