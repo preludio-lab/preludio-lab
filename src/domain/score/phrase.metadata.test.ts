@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
-import { PhraseMetadataSchema, NotationFormat } from './phrase.metadata';
+import { PhraseMetadataSchema } from './phrase.metadata';
 
 describe('PhraseMetadata', () => {
   const validParams = {
-    workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4',
+    workSlug: 'symphony-no-5',
     slug: '1st-theme',
-    format: NotationFormat.ABC,
+    format: 'abc',
     notationPath: 'scores/beethoven/sym5-theme1.abc',
-    visualPath: 'scores/beethoven/sym5-theme1.svg',
+    caption: { ja: '第1主題' },
   };
 
   it('必須フィールドを持つ PhraseMetadata を作成できること', () => {
     const metadata = PhraseMetadataSchema.parse(validParams);
-    expect(metadata.workId).toBe(validParams.workId);
+    expect(metadata.workSlug).toBe(validParams.workSlug);
     expect(metadata.format).toBe(validParams.format);
   });
 
@@ -33,7 +33,7 @@ describe('PhraseMetadata', () => {
   });
 
   it('caption が最大文字数を超える場合にエラーになること', () => {
-    const longCaption = 'a'.repeat(31);
+    const longCaption = 'a'.repeat(51);
     expect(() =>
       PhraseMetadataSchema.parse({
         ...validParams,

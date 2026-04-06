@@ -65,6 +65,7 @@ erDiagram
     Scores ||--o{ ScoreWorks : "contains"
     Scores ||--|{ ScoreTranslations : "has localized metadata"
     Works ||--o{ Phrases : "has musical phrases"
+    Phrases ||--|{ PhraseTranslations : "has localized metadata"
     Phrases }o--|| Scores : "references edition from"
     Phrases }o..|| RecordingSources : "has playback samples"
     Works ||--o{ Recordings : "has recordings"
@@ -481,23 +482,22 @@ sequenceDiagram
 | **`work_id`**        | `text`    | -       | YES      | -                                      | **FK to `works.id`**                                        |
 | **`work_part_id`**   | `text`    | -       | NO       | -                                      | **FK to `work_parts.id`** (楽章固有のフレーズ、NULLは全体)  |
 | **`score_id`**       | `text`    | -       | NO       | -                                      | **FK to `scores.id`** (出典。指定なしは自作/不明)           |
-| `slug`               | `text`    | -       | YES      | -                                      | **[DX Slug]** 楽曲内URL/識別子 (e.g. `1st-theme`)           |
-| `format`             | `text`    | -       | YES      | `IN ('abc', 'musicxml')`               | データ形式                                                  |
-| `data_storage_path`  | `text`    | -       | YES      | -                                      | **[R2]** 譜面データパス                                     |
+| `slug`               | `text`    | -       | YES      | -                                      | **Universal Slug** 楽曲内/URL識別子 (e.g. `1st-theme`)      |
+| `format`             | `text`    | `'abc'` | YES      | -                                      | データ形式 (`abc`, `musicxml` 等)                           |
+| `data_storage_path`  | `text`    | -       | NO       | -                                      | **[R2]** 譜面データパス                                     |
 | `measure_range`      | `text`    | -       | NO       | -                                      | **[Music Discovery]** 開始・終了小節 (JSON: `MeasureRange`) |
-| `recording_segments` | `text`    | `[]`    | YES      | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
+| `recording_segments` | `text`    | -       | NO       | -                                      | **[Recording Sync]** (JSON: `RecordingSegment[]`)           |
 | `favorites_count`    | `integer` | `0`     | YES      | `favorites_count >= 0`                 | **[Engagement]** お気に入り数                               |
 | `created_at`         | `text`    | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                                    |
-| `updated_at`         | `text`    | -       | YES      | -                                      | 更新日時                                                    |
+| `updated_at`         | `text`    | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                                    |
 
 #### 4.5.1 Indexes (Phrases)
 
-| Index Name          | Columns           | Type       | Usage                            |
-| :------------------ | :---------------- | :--------- | :------------------------------- |
-| `idx_phr_work_id`   | `(work_id)`       | B-Tree     | 楽曲単位でのフレーズ取得         |
-| `idx_phr_work_part` | `(work_part_id)`  | B-Tree     | 楽章単位でのフレーズ取得         |
-| `idx_phr_slug`      | `(work_id, slug)` | **UNIQUE** | 楽曲内の一意スラグ取得           |
-| `idx_phr_score_id`  | `(score_id)`      | B-Tree     | 出典（エディション）からの逆引き |
+| Index Name         | Columns      | Type       | Usage                            |
+| :----------------- | :----------- | :--------- | :------------------------------- |
+| `idx_phr_work_id`  | `(work_id)`  | B-Tree     | 楽曲単位でのフレーズ取得         |
+| `idx_phr_slug`     | `(slug)`     | **UNIQUE** | スラグによる一意思決定           |
+| `idx_phr_score_id` | `(score_id)` | B-Tree     | 出典（エディション）からの逆引き |
 
 #### 4.5.2 JSON Type Definitions
 
@@ -522,7 +522,24 @@ type RecordingSegment = {
 };
 ```
 
-### 4.6 `recordings` (Audio/Video Entity)
+### 4.6 `phrase_translations` (Localized Metadata)
+
+| Column          | Type   | Default | NOT NULL | CHECK                                  | Description                                    |
+| :-------------- | :----- | :------ | :------- | :------------------------------------- | :--------------------------------------------- |
+| **`phrase_id`** | `text` | -       | YES      | -                                      | **PK, FK to `phrases.id`** (ON DELETE CASCADE) |
+| **`lang`**      | `text` | -       | YES      | -                                      | **PK**, ISO Language Code                      |
+| `caption`       | `text` | -       | NO       | -                                      | フレーズのキャプション (e.g. "第1主題")        |
+| `created_at`    | `text` | -       | YES      | **`datetime(created_at) IS NOT NULL`** | 作成日時                                       |
+| `updated_at`    | `text` | -       | YES      | **`datetime(updated_at) IS NOT NULL`** | 更新日時                                       |
+
+#### 4.6.1 Indexes (Phrase Translations)
+
+| Index Name  | Columns             | Type       | Usage              |
+| :---------- | :------------------ | :--------- | :----------------- |
+| `PRIMARY`   | `(phrase_id, lang)` | **UNIQUE** | 複合主キー         |
+| `idx_phr_t` | `(phrase_id)`       | B-Tree     | 外部キーによる検索 |
+
+### 4.7 `recordings` (Audio/Video Entity)
 
 「誰の、いつの演奏か」を管理する実体。
 

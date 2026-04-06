@@ -7,6 +7,8 @@ import { Id } from '@/shared/id';
 export const PhraseControlSchema = z.object({
   /** フレーズID (UUID v7) */
   id: z.string().uuid(),
+  /** フレーズスラグ (楽曲内一意識別子) */
+  slug: z.string().min(1).max(50),
   /** 作成日時 */
   createdAt: z.coerce.date(),
   /** 最終更新日時 */
@@ -27,11 +29,13 @@ export type PhraseId = Id<'Phrase'>;
  */
 export const createPhraseControl = (
   id: string,
+  slug: string,
   createdAt: Date = new Date(),
   updatedAt: Date = new Date(),
 ): PhraseControl => {
   return PhraseControlSchema.parse({
     id: id as PhraseId,
+    slug,
     createdAt,
     updatedAt,
   }) as PhraseControl;
