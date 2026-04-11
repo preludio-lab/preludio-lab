@@ -34,22 +34,30 @@ export type MeasureRange = z.infer<typeof MeasureRangeSchema>;
  * PhraseMetadata の Zod スキーマ
  */
 export const PhraseMetadataSchema = z.object({
-  /** 対象楽曲ID */
-  workId: z.string().uuid(),
-  /** 出典エディションID (任意) */
-  scoreId: z.string().uuid().optional(),
-  /** URLスラグ / での階層化を許容 */
+  /** 自身の表示・識別用スラグ (e.g. "1st-theme") */
   slug: createSlugSchema(50),
+
+  /** 作曲家スラグ (DX/論理参照用) */
+  composerSlug: z.string().min(1).max(100).optional(),
+  /** 対象楽曲スラグ (DX/論理参照用) */
+  workSlug: z.string().min(1).max(200).optional(),
+  /** 対象楽章・パーツスラグ (DX/論理参照用) */
+  workPartSlug: z.string().min(1).max(100).optional(),
+  /** 出典エディションスラグ (DX/論理参照用) */
+  scoreSlug: z.string().min(1).max(200).optional(),
+
   /** データ形式 (ABC/MusicXML) */
   format: z.nativeEnum(NotationFormat),
-  /** 楽譜データへのパス (R2内のキーまたは相対パス) */
+  /** 楽譜データへのパス (R2内のキー。将来的なアップロード対象) */
   notationPath: z.string().min(1).max(1024),
-  /** 描画された楽譜イメージへのパス (SVG/PNG等) */
+  /** 描画された楽譜イメージへのパス (SVG/PNG等。任意) */
   visualPath: z.string().min(1).max(1024).optional(),
-  /** 対象とする小節範囲 */
+  /** 対象とする小節範囲 (任意) */
   measureRange: MeasureRangeSchema.optional(),
-  /** キャプション (最大30, 多言語) */
-  caption: createMultilingualStringSchema({ max: 30 }).optional(),
+  /** キャプション (多言語。PreludioLabでは日本語 'ja' を必須とする) */
+  caption: createMultilingualStringSchema({ max: 50 }).extend({
+    ja: z.string().min(1, '日本語のキャプションは必須です').max(50),
+  }),
 });
 
 export type PhraseMetadata = z.infer<typeof PhraseMetadataSchema>;

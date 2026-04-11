@@ -2,7 +2,8 @@ import { relations } from 'drizzle-orm';
 import { articles, articleTranslations, series, seriesArticles } from './articles';
 import { composers, composerTranslations } from './composers';
 import { works, workTranslations, workParts, workPartTranslations } from './works';
-import { scores, scoreTranslations, scoreWorks, phrases } from './scores';
+import { scores, scoreTranslations, scoreWorks } from './scores';
+import { phrases, phraseTranslations } from './phrases';
 import { recordings, recordingSources } from './recordings';
 import { tags, tagTranslations } from './common';
 
@@ -150,7 +151,7 @@ export const scoreWorksRelations = relations(scoreWorks, ({ one }) => ({
   }),
 }));
 
-export const phrasesRelations = relations(phrases, ({ one }) => ({
+export const phrasesRelations = relations(phrases, ({ one, many }) => ({
   // どの作品の譜例か (N:1)
   work: one(works, {
     fields: [phrases.workId],
@@ -165,6 +166,15 @@ export const phrasesRelations = relations(phrases, ({ one }) => ({
   score: one(scores, {
     fields: [phrases.scoreId],
     references: [scores.id],
+  }),
+  // フレーズの翻訳データ (1:N)
+  translations: many(phraseTranslations),
+}));
+
+export const phraseTranslationsRelations = relations(phraseTranslations, ({ one }) => ({
+  phrase: one(phrases, {
+    fields: [phraseTranslations.phraseId],
+    references: [phrases.id],
   }),
 }));
 

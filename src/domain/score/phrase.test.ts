@@ -8,14 +8,17 @@ describe('Phrase', () => {
   it('Phrase を正しく構成できること', () => {
     const control = PhraseControlSchema.parse({
       id: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a3' as PhraseId,
+      slug: 'theme-slug',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
     const metadata = PhraseMetadataSchema.parse({
       workId: '018f3a3a-3a3a-7a3a-a3a3-a3a3a3a3a3a4' as WorkId,
-      slug: 'theme',
+      workSlug: 'test-work',
+      slug: 'theme-slug',
       format: NotationFormat.ABC,
       notationPath: 'test.abc',
+      caption: { ja: 'テストキャプション' },
     });
     const samples = [
       {
