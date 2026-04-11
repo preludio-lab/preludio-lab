@@ -88,6 +88,8 @@ export class TursoPhraseMapper {
           phraseId: ctrl.id,
           lang,
           caption: captionVal,
+          createdAt: ctrl.createdAt.toISOString(),
+          updatedAt: new Date().toISOString(),
         });
       }
     });
