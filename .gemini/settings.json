@@ -2,5 +2,8 @@
   "theme": "Default",
   "tools": {
     "allowed": ["run_shell_command"]
+  },
+  "general": {
+    "defaultApprovalMode": "auto_edit"
   }
 }
