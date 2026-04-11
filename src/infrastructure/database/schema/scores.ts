@@ -2,8 +2,6 @@ import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqli
 import { sql } from 'drizzle-orm';
 import { works, workParts } from './works';
 import type { MonetizationElement } from '@/domain/monetization/monetization';
-import type { RecordingSegment } from '@/domain/recording/recording.segment';
-import type { MeasureRange } from '@/domain/score/phrase.metadata';
 
 // --- Scores Table ---
 export const scores = sqliteTable(
@@ -73,45 +71,6 @@ export const scoreWorks = sqliteTable(
   (table) => ({
     pk: uniqueIndex('idx_score_works_lookup').on(table.scoreId, table.workId),
     workIdx: index('idx_score_works_work').on(table.workId),
-  }),
-);
-
-// --- Phrases Table ---
-export const phrases = sqliteTable(
-  'phrases',
-  {
-    id: text('id').primaryKey(), // UUID v7
-    workId: text('work_id')
-      .notNull()
-      .references(() => works.id, { onDelete: 'cascade' }),
-    workPartId: text('work_part_id').references(() => workParts.id), // Nullable (entire work)
-    scoreId: text('score_id').references(() => scores.id), // Nullable (self-made/unknown)
-    slug: text('slug').notNull(),
-    format: text('format').notNull(), // 'abc', 'musicxml'
-    dataStoragePath: text('data_storage_path').notNull(), // R2 path
-
-    measureRange: text('measure_range', { mode: 'json' }).$type<MeasureRange>(),
-
-    // Renamed from playback_bindings (JSON, Nullable)
-    recordingSegments: text('recording_segments', { mode: 'json' })
-      .default('[]')
-      .notNull()
-      .$type<RecordingSegment[]>(),
-
-    favoritesCount: integer('favorites_count').default(0).notNull(),
-
-    createdAt: text('created_at')
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: text('updated_at')
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (table) => ({
-    workIdx: index('idx_phrase_work_id').on(table.workId),
-    partIdx: index('idx_phrase_work_part').on(table.workPartId),
-    scoreIdx: index('idx_phrase_score_id').on(table.scoreId),
-    slugIdx: uniqueIndex('idx_phrase_slug').on(table.workId, table.slug),
   }),
 );
 

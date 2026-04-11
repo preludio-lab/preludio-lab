@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PhraseControl, PhraseControlSchema } from './phrase.control';
+import { PhraseControlSchema, createPhraseControl } from './phrase.control';
 import { PhraseMetadata, PhraseMetadataSchema } from './phrase.metadata';
 import { RecordingSegment, RecordingSegmentSchema } from '../recording/recording.segment';
 
@@ -21,10 +21,22 @@ export { type PhraseId } from './phrase.control';
  * Phrase の生成
  */
 export const createPhrase = (
-  control: PhraseControl,
+  controlArgs: {
+    id: string;
+    slug: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  },
   metadata: PhraseMetadata,
   samples: RecordingSegment[] = [],
 ): Phrase => {
+  const control = createPhraseControl(
+    controlArgs.id,
+    controlArgs.slug,
+    controlArgs.createdAt,
+    controlArgs.updatedAt,
+  );
+
   return PhraseSchema.parse({
     control,
     metadata,
