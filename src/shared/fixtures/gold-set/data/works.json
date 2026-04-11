@@ -26,12 +26,13 @@
   {
     "id": "01947470-0000-7000-8000-000000000004",
     "composerId": "01947470-0000-7000-8000-000000000003",
-    "slug": "piano-concerto-no-20-k466",
+    "slug": "piano-concerto-no-20",
     "categories": ["piano-concerto"],
     "catalogues": [
       {
-        "name": "K.",
-        "number": "466"
+        "prefix": "K.",
+        "number": "466",
+        "sortOrder": 466
       }
     ],
     "translations": [

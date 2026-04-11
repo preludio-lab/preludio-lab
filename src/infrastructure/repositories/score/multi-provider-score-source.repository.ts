@@ -2,6 +2,7 @@ import { ScoreSource, ScoreSourceProvider } from '@/domain/score/score-source';
 import { ScoreSourceRepository } from '@/domain/score/score-source.repository';
 import { GitHubScoreSourceRepository } from './github-score-source.repository';
 import { MuseDataScoreSourceRepository } from './musedata-score-source.repository';
+import { R2ScoreSourceRepository } from './r2-score-source.repository';
 import { InfrastructureError } from '@/domain/shared/app-error';
 
 /**
@@ -14,6 +15,7 @@ export class MultiProviderScoreSourceRepository implements ScoreSourceRepository
     this.repositories = {
       [ScoreSourceProvider.GITHUB]: new GitHubScoreSourceRepository(),
       [ScoreSourceProvider.MUSEDATA]: new MuseDataScoreSourceRepository(),
+      [ScoreSourceProvider.R2]: new R2ScoreSourceRepository(),
     };
   }
 
