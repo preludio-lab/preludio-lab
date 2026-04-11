@@ -15,13 +15,13 @@
   "era": "classical",
   "compositionYear": 1785,
   "compositionPeriod": {
-    "en": "1785",
-    "ja": "1785年",
-    "es": "1785",
-    "de": "1785",
-    "fr": "1785",
-    "it": "1785",
-    "zh": "古典主义时期"
+    "en": "February 1785",
+    "ja": "1785年2月",
+    "es": "Febrero de 1785",
+    "de": "Februar 1785",
+    "fr": "Février 1785",
+    "it": "Febbraio 1785",
+    "zh": "1785年2月"
   },
   "instrumentation": "1.2.0.2 - 2.2.0.0 - tmp - str",
   "instruments": [
@@ -49,34 +49,35 @@
     "innovation": 8,
     "emotionality": 9,
     "nationalism": 0,
-    "scale": 5,
+    "scale": 6,
     "complexity": 7,
     "theatricality": 9
   },
   "nicknames": [],
   "description": {
-    "en": "Among Mozart's piano concertos, this work stands out for its exceptional dramatic tension and profound tragic quality. The sharp intensity of the D minor key transcends Classical balance, embodying a serenity and elegance that foreshadow the Romantic era. The dialogue between the solo piano and the orchestra is a masterpiece of musical introspection and a landmark that deeply captivated Beethoven.",
-    "ja": "モーツァルトが遺したピアノ協奏曲の中でも、群を抜く劇性と深淵な悲劇性を湛えた至高の傑作。ニ短調という調性がもたらす鋭い緊張感は、古典派の均整美を超越し、後のロマン派を予見させる静謐と気品に満ちている。独奏ピアノと管弦楽が繰り広げる対話は、まさに人間の内面を深く穿つ音楽の真髄であり、ベートーヴェンを魅了した音楽史上の記念碑である。",
-    "es": "Una de las obras cumbres de Mozart, caracterizada por su dramatismo inusitado y su profunda tragedia. La tonalidad de re menor aporta una tensión aguda que trasciende el equilibrio clásico, presagiando el romanticismo con serenidad y distinción. El diálogo entre el piano y la orquesta es un hito de la historia musical, una obra que cautivó a Beethoven y explora la esencia del espíritu humano.",
-    "de": "Eines der bedeutendsten Werke unter Mozarts Klavierkonzerten, das durch seine dramatische Intensität und tiefe Tragik besticht. Die düstere Grundstimmung in d-Moll transzendiert die klassische Ausgewogenheit und weist bereits auf die Romantik voraus. Ein Meilenstein der Musikgeschichte, der auch Beethoven tief beeindruckte.",
-    "fr": "L'un des chefs-d'œuvre les plus dramatiques et profonds de Mozart. La tension du ton de ré mineur transcende l'équilibre classique, annonçant la sensibilité romantique. Ce dialogue entre le piano et l'orchestre, monument de l'histoire musicale, a profondément marqué Beethoven par sa noblesse et sa tragédie.",
-    "it": "Tra i concerti per pianoforte di Mozart, questo capolavoro si distingue per la sua drammaticità e la profonda tragicità. La tensione della tonalità di re minore trascende l'equilibrio classico, anticipando il romanticismo in un'opera monumentale che affascinò profondamente Beethoven.",
-    "zh": "莫扎特钢琴协奏曲中的巅峰之作，以其卓越的戏剧性与深邃的悲剧色彩著称。D小调所带来的尖锐紧张感，超越了古典主义的均整美，蕴含着预示浪漫派的静谧与优雅。独奏钢琴与管弦乐团間の对话，深入剖析了人类的内在情感，是令贝多芬为之倾倒的音乐史里程碑。"
+    "en": "Among Mozart's 27 piano concertos, this is his most dramatic and passionate masterpiece. The choice of D minor, rare for a concerto of that era, left a profound influence on Beethoven. A monumental work in music history, it features intense dialogue between the solo piano and orchestra, blending operatic tension with deep pathos.",
+    "ja": "モーツァルトが手がけた全27曲のピアノ協奏曲の中で、最も劇的で情熱的な傑作です。ニ短調という当時の協奏曲としては異例の調性が選ばれており、後のベートーヴェンにも多大な影響を与えました。独奏ピアノと管弦楽が激しく対話し、オペラのような緊張感と深い哀愁が交錯する音楽史上の記念碑的楽曲です。",
+    "es": "Una de las obras maestras más dramáticas y apasionadas de los 27 conciertos para piano de Mozart. La elección de la tonalidad de re menor, inusual para un concierto de la época, ejerció una gran influencia en Beethoven. Es una pieza fundamental en la historia de la música, caracterizada por el intenso diálogo entre el piano solista y la orquesta, evocando una tensión operística y una profunda melancolía.",
+    "de": "Unter Mozarts 27 Klavierkonzerten nimmt dieses Werk einen herausragenden Rang ein; es ist ein Zeugnis dramatischer Wucht und leidenschaftlicher Tiefe. Die für die damalige Zeit ungewöhnliche Wahl der Tonart d-Moll prägte maßgeblich das Schaffen Beethovens. In diesem monumentalen Werk der Musikgeschichte verschmelzen das Soloklavier und das Orchester zu einem Dialog von opernhafter Intensität und erhabener Melancholie.",
+    "fr": "Parmi les vingt-sept concertos pour piano de Mozart, cette œuvre s'impose comme un chef-d'œuvre de tension dramatique et de ferveur passionnée. En choisissant la tonalité de ré mineur, alors peu commune pour un concerto, le compositeur a exercé une influence déterminante sur Beethoven. Véritable monument de l'histoire musicale, ce concerto tisse un dialogue saisissant entre le piano et l'orchestre, où l'élégance opératique se marie à une mélancolie d'une profondeur absolue.",
+    "it": "È il più drammatico e appassionato capolavoro tra i 27 concerti per pianoforte di Mozart. La scelta della tonalità di re minore, inusuale per i concerti dell'epoca, esercitò una profonda influenza su Beethoven. Il dialogo intenso tra il pianoforte solista e l'orchestra crea una tensione operistica e una malinconia profonda, rendendo quest'opera un monumento nella storia della musica.",
+    "zh": "这是莫扎特所创作的27部钢琴协奏曲中最为戏剧性且充满激情的杰作。他选择了在当时协奏曲中罕见的D小调，对后来的贝多芬产生了深远影响。独奏钢琴与管弦乐团之间激烈交锋，充满如歌剧般的紧张感与深沉忧郁，是音乐史上极具里程碑意义的作品。"
   },
-  "tags": [
-    "passionate",
-    "dramatic",
-    "tragic",
-    "virtuoso",
-    "standard-repertoire",
-    "viennese-classicism",
-    "tense"
-  ],
+  "tags": ["dramatic", "passionate", "virtuoso", "standard-repertoire"],
   "genres": ["piano-concerto"],
   "key": "d-minor",
+  "tempoTranslation": {
+    "en": "Not specified",
+    "ja": "指定なし",
+    "es": "No especificado",
+    "de": "Nicht angegeben",
+    "fr": "Non spécifié",
+    "it": "Non specificato",
+    "zh": "未指定"
+  },
   "_schemaVersion": "1.1.0",
   "_generatorMeta": {
     "model": "gemini-3.1-flash-lite-preview",
-    "generatedAt": "2026-04-05T04:57:13.322Z"
+    "generatedAt": "2026-04-11T05:02:09.085Z"
   }
 }
