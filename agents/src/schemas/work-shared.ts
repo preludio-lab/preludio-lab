@@ -18,6 +18,19 @@ export const MultilingualDraftSchema = z.preprocess(
   (val) => {
     if (typeof val === 'string') {
       const trimmed = val.trim();
+      const lower = trimmed.toLowerCase();
+
+      // Skip wrapping if it appears to be a null-like placeholder
+      if (
+        lower === 'none' ||
+        lower === 'null' ||
+        lower === 'undefined' ||
+        lower === 'なし' ||
+        lower === 'n/a'
+      ) {
+        return undefined;
+      }
+
       // Handle stringified JSON hallucination: { "ja": "..." }
       if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
         try {
@@ -37,14 +50,16 @@ export const MultilingualDraftSchema = z.preprocess(
     }
     return val;
   },
-  z.object({
-    ja: z
-      .string()
-      .min(1)
-      .describe(
-        '【重要】必ず {"ja": "値"} というオブジェクト形式で出力してください。文字列を直接出力するとエラーになります。',
-      ),
-  }),
+  z
+    .object({
+      ja: z
+        .string()
+        .min(1)
+        .describe(
+          '【重要・直書き禁止】絶対に入力した値を文字列（"..."）として直書きしないでください。必ず {"ja": "値"} 形式のオブジェクトで出力してください。',
+        ),
+    })
+    .optional(),
 );
 
 /** Era Enum for strict constraints */
@@ -61,19 +76,28 @@ export const TagIdDraftSchema = z.enum(TAGS);
 
 /**
  * タイトル構成ドラフトスキーマ
+ * 事実（Fact）に基づいた構造化データを抽出するためのスキーマ。
  */
 export const TitleComponentsDraftSchema = z.object({
-  prefix: MultilingualDraftSchema.optional().describe(
-    '【日本語固定】体系的識別子（ジャンル名）。「Polonaise」ではなく「ポロネーズ」、「Symphony」ではなく「交響曲」のように必ず日本語で出力してください。',
-  ),
-  content: MultilingualDraftSchema.optional().describe(
-    '【日本語固定】番号、調性、作品番号。★重要：ニックネーム（英雄、運命等）は絶対にここには含めず、nicknameフィールドに分離してください。また、「No. 6」は「第6番」、「in A-flat major」は「変イ長調」のように日本語に翻訳して出力してください。',
-  ),
-  nickname: MultilingualDraftSchema.nullable()
+  displayType: z
+    .enum(['standard', 'catalogue-only', 'title-priority', 'custom'])
+    .default('standard')
+    .describe(
+      'タイトルの表示形式パターン。1. standard: [ジャンル+番] [調] [昵称] [作品番号], 2. catalogue-only: [ジャンル] [調] [作品番号] (作品番号が主役の曲用), 3. title-priority: [固有題名] [調] [作品番号] (標題が主役の曲用), 4. custom: 手動入力を優先',
+    ),
+  number: z
+    .number()
+    .int()
     .optional()
     .describe(
-      '【日本語固定】楽曲の独自の愛称（例：英雄、月光）。UI側でcontentと自動結合して表示するため、contentとの重複は厳禁です。括弧や引用符は含めないでください。広く知られた固有の愛称が存在しない場合は、必ず null を出力してください。',
+      '楽曲の通し番号。例: 「交響曲第5番」なら 5、「ピアノソナタ第11番」なら 11。接頭辞や「番」という文字は含めず、数値のみを出力してください。',
     ),
+  distinctiveTitle: MultilingualDraftSchema.optional().describe(
+    '作曲家によって付与された固有の楽曲題名。例: "くるみ割り人形"、"幻想交響曲"、"La Mer"。【警告】「ピアノ協奏曲」や「第20番」などのジャンル・番号属性を含めるとUIで二重表示されます。固有題名がない場合は、絶対にこのフィールド自体を出力しないでください（Property must be OMITTED）。',
+  ),
+  nickname: MultilingualDraftSchema.optional().describe(
+    '広く知られた独自の愛称。例: "運命"、"月光"、"大公"。括弧や引用符は含めないでください。一般的でない呼び名は含まず、存在しない場合はこのフィールド自体を絶対に出力しないでください（Property must be OMITTED）。',
+  ),
 });
 
 /**
@@ -125,7 +149,7 @@ export const MusicalIdentityDraftSchema = z.object({
     .array(MusicalGenreSchema)
     .max(5)
     .describe(
-      'ジャンル・形式（最大5つ）。楽曲全体のジャンルを指定します。多楽章形式の作品において、特定の楽章のみの形式（sonata-form, rondo 等）はここには含めず、各楽章のタグや形式として指定してください。',
+      'ジャンル・形式（最大5つ）。楽曲全体のジャンルを指定します。多楽章形式の作品において、特定の楽章のみの形式（sonata-form, rondo 等）はここには含めず、各楽章のタグや形式として指定してください。Workレベルでは、協奏曲なら "piano-concerto" 等の主要ジャンルに留め、詳細な形式名は避けてください。',
     ),
   bpm: z
     .number()

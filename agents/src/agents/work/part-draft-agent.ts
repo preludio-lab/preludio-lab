@@ -9,12 +9,13 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 # 守るべき基本ルール
 1. **親作品との整合性**: 各楽章の楽器編成、時代区分、雰囲気などは、親楽曲の情報と矛盾してはいけません。
 2. **楽章の役割分析**: 各楽章が作品全体の中でどのような役割（例：ソナタ形式の提示、緩徐楽章の抒情性、フィナーレの高揚感）を果たしているかを重視してください。
-3. **洗練された紹介文**: \`description\` は 60〜80文字で、その楽章固有の魅力を「事実＋核心＋フック」の構成で凝縮してください。
-4. **バッチ生成の整合性**: 複数の楽章を同時に生成する場合、楽章間のテンポ感や調性の対比、連続性を考慮した記述にしてください。
-5. **演奏指示の日本語訳 (tempoTranslation)**:
-   - **標準的なイタリア語**: 原則として「音訳（カタカナ表記）」としてください。例: "Adagio molto" -> "アダージョ・モルト"、"Presto" -> "プレスト"。
-   - **その他（ドイツ語・フランス語等）**: ユーザーに馴染みの薄い母国語表記や、特殊な感情指示は、意味が伝わる正確な「意訳」としてください。
-   - **ネイティブの自然さ**: 日本語話者にとって最も自然で、音楽学的に妥当な表現を選択してください。
+3. **多言語構造の遵守 (最重要)**:
+   - \`description\` および \`tempoTranslation\` は、**絶対に文字列（"..."）で出力しないでください。**
+   - 必ず **\`{"ja": "..."}\` という Map/オブジェクト形式** で出力してください。
+   - [Bad] 不正解: \`"description": "これは素晴らしい楽章です。"\`
+   - [Good] 正解: \`"description": { "ja": "これは素晴らしい楽章です。" }\`
+   - 文字列を出力し、オブジェクト形式（{"ja": "..."}）を無視した場合、それは「重大なシステムエラー」と見なされています。
+4. **洗練された紹介文**: \`description\` は 60〜80文字で、その楽章固有の魅力を「事実＋核心＋フック」の構成で凝縮してください。
 
 # 推論プロセス（Chain of Thought）
 各楽章（\`parts\` 配下の各要素）を出力する前に、必ず \`_reasoning\` フィールドを使用して以下の分析を行ってください。
@@ -26,7 +27,14 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 - **impressionDimensions**: 作品全体の評価を基準とし、その楽章特有の性格（例：アレグロ楽章なら情動性や規模感が高め、アダージョなら親密感が高い等）を相対的に反映させてください。
 - **instruments**: 特別な指示（例：この楽章のみトロンボーンが入る等）がない限り、親作品の編成を継承してください。
 - **Slugの遵守**: 入力として与えられた \`workSlug\` および各楽章の \`slug\` を厳格に守ってください。エージェント側でスラグを生成・改変してはいけません。
-- **数字の正規化**: タイトル等に含まれる数字は、日本語（ja）では原則としてアラビア数字（1, 2, 3...）を使用してください。`;
+- **数字の正規化**: タイトル等に含まれる数字は、日本語（ja）では原則としてアラビア数字（1, 2, 3...）を使用してください。
+11. **タイトルの構成要素分解 (重要)**:
+    - 楽章のタイトルを一つの文字列として作るのは禁止です。
+    - **number**: 楽章番号（数値のみ。例: 1）。
+    - **distinctiveTitle**: 固有の題名（例: "Allegro"）。ジャンル名や番号を含めないこと。
+    - **nickname**: 愛称（例: "亡き王女のためのパヴァーヌ"、"月の光"）。
+    - [Good] 正解: \`number: 1, distinctiveTitle: { "ja": "Allegro" }, nickname: null \`
+`;
 
 export class WorkPartDraftAgent {
   private agent: BaseAgent;
@@ -40,9 +48,6 @@ export class WorkPartDraftAgent {
 
   /**
    * 楽曲のパーツ（楽章・曲目）をバッチ生成します。
-   *
-   * @param workData 親楽曲のマスターデータ（素案）
-   * @param targetParts 生成対象のパーツ情報（タイトルや順序のリスト）
    */
   async execute(
     workData: WorkDraft,
@@ -52,7 +57,7 @@ export class WorkPartDraftAgent {
 
 【親楽曲情報】
 作曲家: ${workData.composerSlug}
-作品名: ${[workData.titleComponents.prefix?.ja, workData.titleComponents.content?.ja].filter(Boolean).join(' ')} (slug: ${workData.slug})
+作品名: (自動合成タイトル)
 編成/時代: ${workData.instrumentation ?? ''} / ${workData.era}
 全体の印象: ${JSON.stringify(workData.impressionDimensions)}
 
@@ -66,6 +71,12 @@ ${targetParts.map((p) => `- ${p.order}: ${p.title} (${p.type})`).join('\n')}
     return await this.agent.generateObject<{ parts: WorkPartDraft[] }>(
       prompt,
       WorkPartChunkDraftSchema,
+      {
+        metadataContext: (workData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      },
     );
   }
 }

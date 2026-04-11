@@ -1,5 +1,7 @@
 import { WorkControl, WorkId } from './work.control';
-import { WorkMetadata, synthesizeTitle } from './work.metadata';
+import { WorkMetadata } from './work.metadata';
+import { WorkTitleFormatter } from './work-title-formatter';
+import { supportedLocales } from '../i18n/locale';
 
 export type { WorkControl, WorkMetadata, WorkId };
 
@@ -37,7 +39,17 @@ export class Work {
     return this.metadata.musicalIdentity?.genres ?? [];
   }
   get title() {
-    return synthesizeTitle(this.metadata.titleComponents);
+    const result: Record<string, string> = {};
+    for (const locale of supportedLocales) {
+      result[locale] = WorkTitleFormatter.format({
+        components: this.metadata.titleComponents,
+        genres: this.genres,
+        key: this.key,
+        catalogues: this.metadata.catalogues,
+        locale,
+      });
+    }
+    return result;
   }
   get popularTitle() {
     return this.metadata.titleComponents.nickname;

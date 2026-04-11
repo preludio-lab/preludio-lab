@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { parse } from 'yaml';
+import yaml from 'js-yaml';
 import { z } from 'zod';
 import consola from 'consola';
 
@@ -50,7 +50,8 @@ const TAXONOMY_DIR = 'src/domain/shared/taxonomy';
 function validateFile(filename: string) {
   const filePath = join(TAXONOMY_DIR, filename);
   const content = readFileSync(filePath, 'utf8');
-  const data = parse(content);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = yaml.load(content) as any;
 
   const result = TaxonomyFileSchema.safeParse(data);
   if (!result.success) {

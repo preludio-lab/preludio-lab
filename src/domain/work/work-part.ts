@@ -1,5 +1,7 @@
-import { WorkPartControl, WorkPartId } from './work-part.control';
-import { WorkPartMetadata, synthesizeTitle } from './work-part.metadata';
+import { WorkPartControl, WorkPartId } from './work-part.control.js';
+import { WorkPartMetadata } from './work-part.metadata.js';
+import { WorkTitleFormatter } from './work-title-formatter.js';
+import { supportedLocales } from '../i18n/locale.js';
 
 export type { WorkPartControl, WorkPartMetadata, WorkPartId };
 
@@ -34,7 +36,17 @@ export class WorkPart {
   }
 
   get title() {
-    return synthesizeTitle(this.metadata.titleComponents);
+    const result: Record<string, string> = {};
+    for (const locale of supportedLocales) {
+      result[locale] = WorkTitleFormatter.format({
+        components: this.metadata.titleComponents,
+        genres: this.musicalIdentity?.genres ?? [],
+        key: this.musicalIdentity?.key,
+        catalogues: this.metadata.catalogues,
+        locale,
+      });
+    }
+    return result;
   }
 
   get popularTitle() {

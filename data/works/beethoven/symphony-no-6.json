@@ -1,0 +1,111 @@
+{
+  "slug": "symphony-no-6",
+  "composerSlug": "beethoven",
+  "titleComponents": {
+    "displayType": "title-priority",
+    "number": 6,
+    "distinctiveTitle": {
+      "en": "Pastoral",
+      "ja": "田園",
+      "es": "Pastoral",
+      "de": "Pastorale",
+      "fr": "« Pastorale »",
+      "it": "Pastorale",
+      "zh": "田园"
+    },
+    "isAmbiguous": false,
+    "prefix": {
+      "en": "Symphony No. 6",
+      "ja": "交響曲第6番",
+      "es": "Sinfonía n.º 6",
+      "de": "Sinfonie Nr. 6",
+      "fr": "Symphonie nº 6",
+      "it": "Sinfonia n. 6",
+      "zh": "第6号交响曲"
+    },
+    "content": {
+      "en": "in F major, Op. 68",
+      "ja": "ヘ長調 Op.68",
+      "es": "en fa mayor, op. 68",
+      "de": "F-Dur, op. 68",
+      "fr": "fa majeur, op. 68",
+      "it": "in fa maggiore, Op. 68",
+      "zh": "F大调 Op.68"
+    }
+  },
+  "catalogues": [
+    {
+      "prefix": "op",
+      "number": "68",
+      "isPrimary": true
+    }
+  ],
+  "era": "classical",
+  "compositionYear": 1808,
+  "compositionPeriod": {
+    "en": "1807–1808",
+    "ja": "1807年-1808年",
+    "es": "1807-1808",
+    "de": "1807–1808",
+    "fr": "1807–1808",
+    "it": "1807-1808",
+    "zh": "1807年-1808年"
+  },
+  "instrumentation": "2.2.2.2 - 2.2.2.0 - tmp - str",
+  "instruments": [
+    "flute",
+    "piccolo",
+    "oboe",
+    "clarinet",
+    "bassoon",
+    "horn",
+    "trumpet",
+    "trombone",
+    "timpani",
+    "violin",
+    "viola",
+    "cello",
+    "double-bass"
+  ],
+  "instrumentationFlags": {
+    "isSolo": false,
+    "isChamber": false,
+    "isOrchestral": true,
+    "hasChorus": false,
+    "hasVocal": false
+  },
+  "performanceDifficulty": 4,
+  "impressionDimensions": {
+    "innovation": 8,
+    "emotionality": 7,
+    "nationalism": 3,
+    "scale": 6,
+    "complexity": 5,
+    "theatricality": 9
+  },
+  "nicknames": [],
+  "description": {
+    "en": "One of the few programmatic works by Beethoven. It emphasizes the expression of emotions related to country life, depicting introspective joy through communion with nature. This monumental work transcends the classical framework and establishes a tone-poetic style that bridges toward the Romantic era.",
+    "ja": "ベートーヴェンが遺した数少ない標題音楽の一つ。田舎での生活に対する「感情の表現」を主眼に置き、自然との交感を通じた内省的な喜びが描かれています。古典派の枠組みを超え、後のロマン派へと続く音詩的な表現を確立した記念碑的作品です。",
+    "es": "Una de las pocas obras programáticas de Beethoven. Se centra en la «expresión de sentimientos» al vivir en el campo, retratando una alegría introspectiva a través de la comunión con la naturaleza. Es una obra monumental que trasciende el marco clásico y establece la expresión poemática propia del Romanticismo.",
+    "de": "Eines der wenigen programmatischen Werke Beethovens. Es konzentriert sich auf den Ausdruck von Empfindungen beim Aufenthalt auf dem Lande und schildert die freudigen Gefühle im Einklang mit der Natur. Ein monumentales Werk, das den klassischen Rahmen sprengt und den Weg für die sinfonische Dichtung der Romantik ebnete.",
+    "fr": "L'une des rares œuvres à programme de Beethoven. Axée sur l'« expression de sentiments » liés à la vie champêtre, elle dépeint une joie intérieure née de la communion avec la nature. Une œuvre monumentale qui transcende le cadre classique pour établir une esthétique poétique annonçant le romantisme.",
+    "it": "Una delle rare opere a programma di Beethoven. Focalizzata sull'espressione dei sentimenti vissuti in campagna, l'opera dipinge una gioia introspettiva nata dalla comunione con la natura. Un monumento che supera i confini del classicismo, anticipando il lirismo del Romanticismo.",
+    "zh": "贝多芬创作的极少数标题音乐之一。重点在于“情感的表现”，描绘了与自然交感所带来的内省式愉悦。这部作品超越了古典主义的框架，确立了通往后期浪漫主义的音诗式表现，是一部里程碑式的作品。"
+  },
+  "tags": [
+    "pastoral",
+    "majestic",
+    "serene",
+    "nostalgic",
+    "viennese-classicism",
+    "nature-depiction"
+  ],
+  "genres": ["symphony"],
+  "key": "f-major",
+  "_schemaVersion": "1.1.0",
+  "_generatorMeta": {
+    "model": "AgentSystem",
+    "generatedAt": "2026-04-01T02:13:36.349Z"
+  }
+}

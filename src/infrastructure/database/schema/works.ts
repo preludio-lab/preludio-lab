@@ -1,7 +1,12 @@
 import { sqliteTable, text, integer, real, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { composers } from './composers';
-import type { ImpressionDimensions, Catalogue, BasedOn } from '@/domain/work/work.shared';
+import type {
+  ImpressionDimensions,
+  Catalogue,
+  BasedOn,
+  TitleComponents,
+} from '@/domain/work/work.shared';
 import type { MusicalGenre } from '@/domain/shared/musical-genre';
 
 // Local interface for InstrumentationFlags (avoiding complex Zod import/inference in schema)
@@ -59,6 +64,13 @@ export const works = sqliteTable(
     compositionPeriod: text('composition_period'), // (Legacy)
     basedOn: text('based_on', { mode: 'json' }).$type<BasedOn>(),
 
+    /** タイトル構成要素 (Fact) */
+    titleComponents: text('title_components', { mode: 'json' }).$type<TitleComponents>(),
+    /** 合成済みタイトルキャッシュ (Presentation) */
+    fullTitle: text('full_title', { mode: 'json' }).$type<Record<string, string>>(),
+    /** 横断検索用テキスト */
+    searchText: text('search_text'),
+
     createdAt: text('created_at')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -90,6 +102,8 @@ export const workTranslations = sqliteTable(
     titlePrefix: text('title_prefix'),
     titleContent: text('title_content'),
     titleNickname: text('title_nickname'),
+    /** 楽曲パーツ単位のタイトル要素 (Fact) */
+    titleComponents: text('title_components', { mode: 'json' }).$type<TitleComponents>(),
     nicknames: text('nicknames', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
     compositionPeriod: text('composition_period'),
     description: text('description'),
@@ -137,6 +151,11 @@ export const workParts = sqliteTable(
     nicknames: text('nicknames', { mode: 'json' }).default('[]').notNull().$type<string[]>(),
     basedOn: text('based_on', { mode: 'json' }).$type<BasedOn>(),
 
+    /** タイトル構成要素 (Fact) */
+    titleComponents: text('title_components', { mode: 'json' }).$type<TitleComponents>(),
+    /** 合成済みタイトルキャッシュ (Presentation) */
+    fullTitle: text('full_title', { mode: 'json' }).$type<Record<string, string>>(),
+
     createdAt: text('created_at')
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -164,6 +183,8 @@ export const workPartTranslations = sqliteTable(
     titlePrefix: text('title_prefix'),
     titleContent: text('title_content'),
     titleNickname: text('title_nickname'),
+    /** 楽曲パーツ単位のタイトル要素 (Fact) */
+    titleComponents: text('title_components', { mode: 'json' }).$type<TitleComponents>(),
     tempoTranslation: text('tempo_translation'),
     description: text('description'),
 

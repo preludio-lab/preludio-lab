@@ -23,12 +23,14 @@ const SYSTEM_INSTRUCTION = `あなたは多言語対応のクラシック音楽�
    - **日本語 (JA)**: ご要望に基づき、標準的なイタリア語は「カタカナ音訳」とします（例："Allegro con brio" -> "アレグロ・コン・ブリオ"）。
    - **母国語表記/特殊指示**: 作曲家が母国語で記した指示（例：シューマンのドイツ語指示、ドビュッシーのフランス語指示）は、意訳としてターゲット言語のネイティブにとって最も自然で意味が通じる表現を選択してください。
 5. **UI制約の継承**: 日本語ドラフトが持つ「情報の凝縮感（60-80文字程度）」を維持し、カードレイアウトを破壊しない簡潔な表現を心がけてください。
-6. **titleComponentsの厳密な構造維持**: 元の日本語（ja）の構造（prefix/content/nicknameの分割単位）と厳密に一致させて翻訳し、重複や不整合が起きないようにしてください。勝手にタイトル全体をひとつのフィールドに結合しないでください。
+6. **titleComponentsの厳密な構造維持**: 元の日本語（ja）の構造（distinctiveTitle/nicknameの分割単位）と厳密に一致させて翻訳し、重複や不整合が起きないようにしてください。勝手にタイトル全体をひとつのフィールドに結合しないでください。
 
 # 最重要制約（コンテキストスワップ・ハルシネーションの禁止）
 - **あなたは翻訳者であり、作曲家名と楽曲の基本事実は絶対に変更してはならない不変の制約です。**
 - 知識が不足している場合や翻訳に自信がない場合は、決して他の有名な楽曲データを創作（ハルシネーション）して補完せず、翻訳を省略するか元の言語の値を維持してください。
 - 各フィールドには**指定された1言語分の純粋な文字列のみ**を出力してください。オブジェクトをネストさせてはなりません。
+- [Bad] 不正解: \`"title": { "en": "Piano Sonata No. 11" }\` （翻訳ステップではオブジェクトは不要）
+- [Good] 正解: \`"title": "Piano Sonata No. 11"\`
 
 # 言語別の具体的な指示
 - **EN**: 国際的な標準綴りを使用。作品タイトルは ' ' で囲む。
@@ -59,15 +61,14 @@ export class WorkTranslateAgent {
 
 【不変の参照コンテキスト (DO NOT CHANGE)】
 - 作曲家: ${contextComposer}
-- 原曲名: ${[workData.titleComponents.prefix?.ja, workData.titleComponents.content?.ja].filter(Boolean).join(' ')}
+- 原曲名: (自動合成タイトル)
 （※これらは絶対に変更してはならないアンカー情報です。他の作曲家や楽曲と混同しないでください）
 
 【推論プロセス (Chain of Thought)】
 翻訳を実行する前に、まずは「誰の何という曲か？」「これから翻訳する言語は何か？」をセルフチェック（_reasoning）してください。
 
 【入力データ (ja)】
-- 作品名(prefix): ${workData.titleComponents.prefix?.ja ?? ''}
-- 作品名(content): ${workData.titleComponents.content?.ja ?? ''}
+- 作品名(distinctiveTitle): ${workData.titleComponents.distinctiveTitle?.ja ?? ''}
 - 補足/ニックネーム: ${workData.titleComponents.nickname?.ja ?? ''}
 - 時代区分: ${workData.era}
 - 楽器編成: ${workData.instrumentation ?? ''}
@@ -75,11 +76,17 @@ export class WorkTranslateAgent {
 ${workData.compositionPeriod?.ja ? `- 作曲時期: ${workData.compositionPeriod.ja}\n` : ''}${workData.tempoTranslation?.ja ? `- 速度記号/補足: ${workData.tempoTranslation.ja}\n` : ''}
 【制約】
 - ターゲット言語圏の音楽事典や演奏会プログラムで用いられる、最も標準的でアカデミックな表現を採用すること。
-- titleComponents の分割構造（prefix / content / nickname）は、元の日本語（ja）の構造と厳密に一致させること。勝手にフルタイトルを1つのフィールドに結合・重複させないこと。`;
+- titleComponents の分割構造（distinctiveTitle / nickname / number）は、元の日本語（ja）の構造と厳密に一致させること。勝手にフルタイトルを1つのフィールドに結合・重複させないこと。`;
 
     return await this.agent.generateObject<WorkTranslationOutput>(
       prompt,
       WorkTranslationOutputSchema,
+      {
+        metadataContext: (workData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      },
     );
   }
 
@@ -97,29 +104,35 @@ ${workData.compositionPeriod?.ja ? `- 作曲時期: ${workData.compositionPeriod
 
 【不変の参照コンテキスト (DO NOT CHANGE)】
 - 作曲家: ${contextComposer}
-- 親楽曲名: ${[workContext.titleComponents.prefix?.ja, workContext.titleComponents.content?.ja].filter(Boolean).join(' ')}
+- 親楽曲名: ${[workContext.titleComponents.distinctiveTitle?.ja, workContext.titleComponents.nickname?.ja].filter(Boolean).join(' ')}
 （※これらは絶対に変更してはならないアンカー情報です。他の作曲家や楽曲と混同しないでください）
 
 【推論プロセス (Chain of Thought)】
 翻訳を実行する前に、まずは「誰の何という親楽曲の楽章か？」「これから翻訳する言語は何か？」をセルフチェック（_reasoning）してください。
 
 【親楽曲のコンテキスト】
-- 曲名: ${[workContext.titleComponents.prefix?.ja, workContext.titleComponents.content?.ja].filter(Boolean).join(' ')}
-- 時代: ${workContext.era}
+- 曲名: ${[workContext.titleComponents.distinctiveTitle?.ja, workContext.titleComponents.nickname?.ja].filter(Boolean).join(' ')}
+- 時代: (自動合成タイトル)
 
 【入力パーツデータ (ja)】
-- パーツ名(prefix): ${partData.titleComponents.prefix?.ja ?? ''}
-- パーツ名(content): ${partData.titleComponents.content?.ja ?? ''}
-- 補足/ニックネーム: ${partData.titleComponents.nickname?.ja ?? ''}
+- パーツ番号: ${partData.titleComponents.number ?? ''}
+- パーツ名(distinctiveTitle): ${partData.titleComponents.distinctiveTitle?.ja ?? ''}
+- パーツニックネーム: ${partData.titleComponents.nickname?.ja ?? ''}
 - 解説: ${partData.description?.ja ?? ''}
 ${partData.tempoTranslation?.ja ? `- 速度記号/補足: ${partData.tempoTranslation.ja}\n` : ''}
 【制約】
 - 親楽曲との整合性を保ちつつ、楽章特有の用語（Allegro, Andante等）がターゲット言語圏でどう扱われているか（そのままイタリア語を残すか、現地語にするか等）を適切に判断してください。
-- titleComponents の分割構造（prefix / content / nickname）は、元の日本語（ja）の構造と厳密に一致させること。勝手に結合・重複させないこと。`;
+- titleComponents の分割構造（distinctiveTitle / nickname / number）は、元の日本語（ja）の構造と厳密に一致させること。勝手に結合・重複させないこと。`;
 
     return await this.agent.generateObject<WorkPartTranslationOutput>(
       prompt,
       WorkPartTranslationOutputSchema,
+      {
+        metadataContext: (partData as Record<string, unknown>)._generatorMeta as Record<
+          string,
+          unknown
+        >,
+      },
     );
   }
 }

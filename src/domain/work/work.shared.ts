@@ -17,51 +17,35 @@ export const TempoTranslationSchema = createMultilingualStringSchema({ max: 100 
 export const CompositionPeriodSchema = createMultilingualStringSchema({ max: 50 });
 
 /**
+ * Title Display Type
+ * 楽曲タイトルの合成形式を指定します。
+ */
+export const TitleDisplayTypeSchema = z.enum([
+  'standard', // 標準: [ジャンル+番] [調] [昵称] [作品番号]
+  'catalogue-only', // 目録番号主体: [ジャンル] [調] [作品番号]
+  'title-priority', // 固有題名優先: [固有題名] [調] [作品番号]
+  'custom', // カスタム: 自動合成をせず手動入力を優先
+]);
+
+export type TitleDisplayType = z.infer<typeof TitleDisplayTypeSchema>;
+
+/**
  * Title Components
- * 称号、本題、ニックネームを分離して管理するための構造
+ * 楽曲タイトルの事実（Fact）を構造化したデータ。
+ * WorkTitleFormatter によって多言語タイトルが自動合成されます。
  */
 export const TitleComponentsSchema = z.object({
-  /**
-   * 接頭辞 (Systematic Identifier)
-   * 楽曲を体系的に分類・識別するための「ジャンル名 + 番号」。
-   * 例: "第1楽章", "交響曲第5番", "No. 1"
-   */
-  prefix: TitleSchema.optional(),
-  /**
-   * 内容 (Substantive Title)
-   * 楽曲の固有性を決定づける情報。
-   * - 固有曲: 作曲家が付与した「固有タイトル」 (例: "くるみ割り人形", "La Mer")
-   * - 汎用曲 (固有タイトルなし): 識別子を補完する「テンポ」や「調性」 (例: "ハ短調", "in C minor")
-   */
-  content: TitleSchema.optional(),
-  /**
-   * 通称 (Colloquial Name)
-   * 一般大衆や後世によって付けられた呼び名。
-   * 例: "運命", "Moonlight"
-   */
+  /** タイトル全体の表示形式パターン */
+  displayType: TitleDisplayTypeSchema.default('standard'),
+  /** 楽曲の通し番号 (例: 5) */
+  number: z.number().int().optional(),
+  /** 固有のタイトル (例: "くるみ割り人形") */
+  distinctiveTitle: TitleSchema.optional(),
+  /** 広く知られた愛称 (例: "運命") */
   nickname: TitleSchema.optional(),
 });
 
 export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
-
-/**
- * TitleComponents から各言語のフルタイトルを合成します。
- */
-export function synthesizeTitle(tc: TitleComponents): z.infer<typeof TitleSchema> {
-  const result: Record<string, string | undefined> = {};
-  const langs = ['en', 'ja', 'es', 'de', 'fr', 'it', 'zh'] as const;
-
-  for (const lang of langs) {
-    const p = tc.prefix?.[lang];
-    const c = tc.content?.[lang];
-    const combined = [p, c].filter(Boolean).join(' ');
-    if (combined) {
-      result[lang] = combined;
-    }
-  }
-
-  return result;
-}
 
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);

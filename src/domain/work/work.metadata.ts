@@ -37,7 +37,7 @@ export const InstrumentationFlagsSchema = z.object({
  * Work Metadata Base
  */
 export const WorkMetadataBaseSchema = z.object({
-  /** タイトル構成要素 (title, prefix, content, nickname) */
+  /** タイトル構成要素 (displayType, number, distinctiveTitle, nickname) */
   titleComponents: TitleComponentsSchema,
 
   /** カタログ情報リスト (作品番号等) */
