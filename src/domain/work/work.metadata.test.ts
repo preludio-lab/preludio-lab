@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { WorkMetadataSchema, MetronomeUnit } from './work.metadata';
-import { WorkPartMetadataSchema } from './work-part.metadata';
-import { MusicalEra } from '../shared/musical-era';
-import { MusicalGenre } from '../shared/musical-genre';
-import { MusicalCataloguePrefix } from './musical-catalogue-prefix';
-import { MusicalKey, MusicalKeySchema } from './musical-key';
+import { WorkMetadataSchema, MetronomeUnit } from './work.metadata.js';
+import { WorkPartMetadataSchema } from './work-part.metadata.js';
+import { MusicalEra } from '../shared/musical-era.js';
+import { MusicalGenre } from '../shared/musical-genre.js';
+import { MusicalCataloguePrefix } from './musical-catalogue-prefix.js';
+import { MusicalKey, MusicalKeySchema } from './musical-key.js';
 
 describe('WorkMetadataSchema', () => {
   const validMetadata = {
     titleComponents: {
-      prefix: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      distinctiveTitle: { ja: '交響曲第5番', en: 'Symphony No. 5' },
     },
     catalogues: [
       {
@@ -40,13 +40,13 @@ describe('WorkMetadataSchema', () => {
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        titleComponents: { prefix: { ja: 'A'.repeat(150) } },
+        titleComponents: { distinctiveTitle: { ja: 'A'.repeat(150) } },
       }).success,
     ).toBe(true);
     expect(
       WorkMetadataSchema.safeParse({
         ...validMetadata,
-        titleComponents: { prefix: { ja: 'A'.repeat(151) } },
+        titleComponents: { distinctiveTitle: { ja: 'A'.repeat(151) } },
       }).success,
     ).toBe(false);
   });
@@ -113,7 +113,7 @@ describe('WorkMetadataSchema', () => {
   it('should validate movement-specific genres directly via WorkPartMetadataSchema', () => {
     const partWithForm = {
       titleComponents: {
-        prefix: { ja: '1st' },
+        distinctiveTitle: { ja: '1st' },
       },
       type: 'movement',
       musicalIdentity: { genres: [MusicalGenre.FORM.SONATA_FORM] },
@@ -127,7 +127,7 @@ describe('WorkMetadataSchema', () => {
 
   it('should validate WorkPartMetadataSchema max limits indirectly', () => {
     const partValid = {
-      titleComponents: { prefix: { ja: '1st' } },
+      titleComponents: { distinctiveTitle: { ja: '1st' } },
       type: 'movement',
     };
     expect(WorkPartMetadataSchema.safeParse(partValid).success).toBe(true);
@@ -176,11 +176,11 @@ describe('WorkMetadataSchema', () => {
 
   it('should validate WorkPartMetadata via schema directly', () => {
     const partValid = {
-      titleComponents: { prefix: { ja: '1st' } },
+      titleComponents: { distinctiveTitle: { ja: '1st' } },
       type: 'movement',
     };
     const partInvalid = {
-      titleComponents: { prefix: { ja: 'A'.repeat(151) } },
+      titleComponents: { distinctiveTitle: { ja: 'A'.repeat(151) } },
       type: 'movement',
     };
 

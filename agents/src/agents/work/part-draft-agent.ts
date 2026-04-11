@@ -27,7 +27,14 @@ const SYSTEM_INSTRUCTION = `あなたは世界最高のクラシック音楽サ�
 - **impressionDimensions**: 作品全体の評価を基準とし、その楽章特有の性格（例：アレグロ楽章なら情動性や規模感が高め、アダージョなら親密感が高い等）を相対的に反映させてください。
 - **instruments**: 特別な指示（例：この楽章のみトロンボーンが入る等）がない限り、親作品の編成を継承してください。
 - **Slugの遵守**: 入力として与えられた \`workSlug\` および各楽章の \`slug\` を厳格に守ってください。エージェント側でスラグを生成・改変してはいけません。
-- **数字の正規化**: タイトル等に含まれる数字は、日本語（ja）では原則としてアラビア数字（1, 2, 3...）を使用してください。`;
+- **数字の正規化**: タイトル等に含まれる数字は、日本語（ja）では原則としてアラビア数字（1, 2, 3...）を使用してください。
+11. **タイトルの構成要素分解 (重要)**:
+    - 楽章のタイトルを一つの文字列として作るのは禁止です。
+    - **number**: 楽章番号（数値のみ。例: 1）。
+    - **distinctiveTitle**: 固有の題名（例: "Allegro"）。ジャンル名や番号を含めないこと。
+    - **nickname**: 愛称（例: "亡き王女のためのパヴァーヌ"、"月の光"）。
+    - [Good] 正解: \`number: 1, distinctiveTitle: { "ja": "Allegro" }, nickname: null \`
+`;
 
 export class WorkPartDraftAgent {
   private agent: BaseAgent;
@@ -41,9 +48,6 @@ export class WorkPartDraftAgent {
 
   /**
    * 楽曲のパーツ（楽章・曲目）をバッチ生成します。
-   *
-   * @param workData 親楽曲のマスターデータ（素案）
-   * @param targetParts 生成対象のパーツ情報（タイトルや順序のリスト）
    */
   async execute(
     workData: WorkDraft,
@@ -53,7 +57,7 @@ export class WorkPartDraftAgent {
 
 【親楽曲情報】
 作曲家: ${workData.composerSlug}
-作品名: ${[workData.titleComponents.prefix?.ja, workData.titleComponents.content?.ja].filter(Boolean).join(' ')} (slug: ${workData.slug})
+作品名: (自動合成タイトル)
 編成/時代: ${workData.instrumentation ?? ''} / ${workData.era}
 全体の印象: ${JSON.stringify(workData.impressionDimensions)}
 

@@ -18,6 +18,19 @@ export const MultilingualDraftSchema = z.preprocess(
   (val) => {
     if (typeof val === 'string') {
       const trimmed = val.trim();
+      const lower = trimmed.toLowerCase();
+
+      // Skip wrapping if it appears to be a null-like placeholder
+      if (
+        lower === 'none' ||
+        lower === 'null' ||
+        lower === 'undefined' ||
+        lower === 'なし' ||
+        lower === 'n/a'
+      ) {
+        return undefined;
+      }
+
       // Handle stringified JSON hallucination: { "ja": "..." }
       if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
         try {
@@ -37,14 +50,16 @@ export const MultilingualDraftSchema = z.preprocess(
     }
     return val;
   },
-  z.object({
-    ja: z
-      .string()
-      .min(1)
-      .describe(
-        '【重要・直書き禁止】絶対に入力した値を文字列（"..."）として直書きしないでください。必ず {"ja": "値"} 形式のオブジェクトで出力してください。',
-      ),
-  }),
+  z
+    .object({
+      ja: z
+        .string()
+        .min(1)
+        .describe(
+          '【重要・直書き禁止】絶対に入力した値を文字列（"..."）として直書きしないでください。必ず {"ja": "値"} 形式のオブジェクトで出力してください。',
+        ),
+    })
+    .optional(),
 );
 
 /** Era Enum for strict constraints */
@@ -78,20 +93,10 @@ export const TitleComponentsDraftSchema = z.object({
       '楽曲の通し番号。例: 「交響曲第5番」なら 5、「ピアノソナタ第11番」なら 11。接頭辞や「番」という文字は含めず、数値のみを出力してください。',
     ),
   distinctiveTitle: MultilingualDraftSchema.optional().describe(
-    '作曲家によって付与された固有の楽曲題名。例: "くるみ割り人形"、"幻想交響曲"、"La Mer"。ジャンル名やニックネームはここには含めないでください。',
+    '作曲家によって付与された固有の楽曲題名。例: "くるみ割り人形"、"幻想交響曲"、"La Mer"。【警告】「ピアノ協奏曲」や「第20番」などのジャンル・番号属性を含めるとUIで二重表示されます。固有題名がない場合は、絶対にこのフィールド自体を出力しないでください（Property must be OMITTED）。',
   ),
-  nickname: MultilingualDraftSchema.nullable()
-    .optional()
-    .describe(
-      '広く知られた独自の愛称。例: "運命"、"月光"、"大公"。括弧や引用符は含めないでください。一般的でない呼び名は含めず、存在しない場合は null を出力してください。',
-    ),
-
-  // --- 移行期間用 (非推奨) ---
-  prefix: MultilingualDraftSchema.optional().describe(
-    '【移行用・非推奨】旧ジャンル名フィールド。新規作成時は number, distinctiveTitle を優先してください。',
-  ),
-  content: MultilingualDraftSchema.optional().describe(
-    '【移行用・非推奨】旧本題フィールド。新規作成時は number, distinctiveTitle, key を優先してください。',
+  nickname: MultilingualDraftSchema.optional().describe(
+    '広く知られた独自の愛称。例: "運命"、"月光"、"大公"。括弧や引用符は含めないでください。一般的でない呼び名は含まず、存在しない場合はこのフィールド自体を絶対に出力しないでください（Property must be OMITTED）。',
   ),
 });
 
@@ -144,7 +149,7 @@ export const MusicalIdentityDraftSchema = z.object({
     .array(MusicalGenreSchema)
     .max(5)
     .describe(
-      'ジャンル・形式（最大5つ）。楽曲全体のジャンルを指定します。多楽章形式の作品において、特定の楽章のみの形式（sonata-form, rondo 等）はここには含めず、各楽章のタグや形式として指定してください。',
+      'ジャンル・形式（最大5つ）。楽曲全体のジャンルを指定します。多楽章形式の作品において、特定の楽章のみの形式（sonata-form, rondo 等）はここには含めず、各楽章のタグや形式として指定してください。Workレベルでは、協奏曲なら "piano-concerto" 等の主要ジャンルに留め、詳細な形式名は避けてください。',
     ),
   bpm: z
     .number()

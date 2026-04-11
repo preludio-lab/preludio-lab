@@ -1,11 +1,21 @@
-import { describe, it, expect } from 'vitest';
-import { WorkPart, WorkPartId } from './work-part';
-import { WorkPartControl, WorkPartControlSchema } from './work-part.control';
-import { WorkId } from './work';
-import { WorkPartMetadata } from './work-part.metadata';
-import { MusicalGenre } from '../shared/musical-genre';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { WorkPart, WorkPartId } from './work-part.js';
+import { WorkPartControl, WorkPartControlSchema } from './work-part.control.js';
+import { WorkId } from './work.js';
+import { WorkPartMetadata } from './work-part.metadata.js';
+import { MusicalGenre } from '../shared/musical-genre.js';
+import { taxonomy } from '../shared/taxonomy/TaxonomyRegistry.js';
 
 describe('WorkPart Entity', () => {
+  beforeAll(() => {
+    taxonomy.initialize({
+      genres: [
+        { id: 'symphony', label: { ja: '交響曲', en: 'Symphony' } },
+        { id: 'movement', label: { ja: '楽章', en: 'Movement' } },
+        { id: 'sonata-form', label: { ja: 'ソナタ形式', en: 'Sonata Form' } },
+      ],
+    });
+  });
   const control: WorkPartControl = {
     id: '550e8400-e29b-41d4-a716-446655440001' as WorkPartId,
     workId: '550e8400-e29b-41d4-a716-446655440000' as WorkId,
@@ -18,7 +28,7 @@ describe('WorkPart Entity', () => {
   const metadata: WorkPartMetadata = {
     titleComponents: {
       displayType: 'standard' as const,
-      prefix: { ja: '第1楽章', en: '1st Movement' },
+      number: 1,
     },
     type: 'movement',
     isNameStandard: true,
@@ -38,7 +48,7 @@ describe('WorkPart Entity', () => {
     expect(part.workId).toBe(control.workId);
     expect(part.slug).toBe(control.slug);
     expect(part.order).toBe(control.order);
-    expect(part.title.ja).toBe(metadata.titleComponents.prefix!.ja);
+    expect(part.title.ja).toBe('ソナタ形式第1番');
     expect(part.type).toBe(metadata.type);
     expect(part.isNameStandard).toBe(metadata.isNameStandard);
     expect(part.musicalIdentity?.tempo).toBe(metadata.musicalIdentity?.tempo);
@@ -54,7 +64,7 @@ describe('WorkPart Entity', () => {
     expect(cloned.order).toBe(2);
     expect(cloned.description?.ja).toBe('説明');
     expect(cloned.id).toBe(control.id); // Identity preserved
-    expect(cloned.title.ja).toBe(metadata.titleComponents.prefix!.ja); // Other metadata preserved
+    expect(cloned.title.ja).toBe('ソナタ形式第1番'); // Other metadata preserved
   });
 
   it('should fail validation if order exceeds 100', () => {

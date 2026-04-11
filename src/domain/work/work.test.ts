@@ -1,12 +1,22 @@
-import { describe, it, expect } from 'vitest';
-import { Work, WorkId } from './work';
-import { MetronomeUnit } from './work.metadata';
-import { MusicalEra } from '../shared/musical-era';
-import { MusicalGenre } from '../shared/musical-genre';
-import { MusicalCataloguePrefix } from './musical-catalogue-prefix';
-import { MusicalKey } from './musical-key';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { Work, WorkId } from './work.js';
+import { MetronomeUnit } from './work.metadata.js';
+import { MusicalEra } from '../shared/musical-era.js';
+import { MusicalGenre } from '../shared/musical-genre.js';
+import { MusicalCataloguePrefix } from './musical-catalogue-prefix.js';
+import { MusicalKey } from './musical-key.js';
+import { taxonomy } from '../shared/taxonomy/TaxonomyRegistry.js';
 
 describe('Work Entity', () => {
+  beforeAll(() => {
+    taxonomy.initialize({
+      genres: [
+        { id: 'symphony', label: { ja: '交響曲', en: 'Symphony' } },
+        { id: 'overture', label: { ja: '序曲', en: 'Overture' } },
+      ],
+      keys: [{ id: 'c-minor', label: { ja: 'ハ短調', en: 'C minor' } }],
+    });
+  });
   const validControl = {
     id: '550e8400-e29b-41d4-a716-446655440000' as WorkId,
     composerSlug: 'beethoven',
@@ -18,7 +28,7 @@ describe('Work Entity', () => {
   const validMetadata = {
     titleComponents: {
       displayType: 'standard' as const,
-      content: { ja: '交響曲第5番', en: 'Symphony No. 5' },
+      number: 5,
       nickname: { ja: '運命', en: 'Fate' },
     },
     catalogues: [
@@ -64,7 +74,7 @@ describe('Work Entity', () => {
     expect(work.id).toBe(validControl.id);
     expect(work.slug).toBe(validControl.slug);
     expect(work.composerSlug).toBe(validControl.composerSlug);
-    expect(work.title.ja).toBe('交響曲第5番');
+    expect(work.title.ja).toBe('交響曲第5番 ハ短調 「運命」 作品67');
     expect(work.catalogue).toBe('op 67');
     expect(work.era).toBe(MusicalEra.CLASSICAL);
     expect(work.genres).toContain('symphony');
@@ -133,13 +143,18 @@ describe('Work Entity', () => {
           ...validMetadata,
           titleComponents: {
             displayType: 'standard' as const,
-            prefix: { ja: '祝典序曲', en: 'Festive Overture' },
-            content: { ja: '作品96', en: 'Op. 96' },
+            number: 96,
           },
+          musicalIdentity: {
+            ...validMetadata.musicalIdentity,
+            genres: [MusicalGenre.ORCHESTRAL.OVERTURE],
+            key: undefined,
+          },
+          catalogues: [{ prefix: MusicalCataloguePrefix.OP, number: '96', isPrimary: true }],
         },
       });
-      expect(work.title.ja).toBe('祝典序曲 作品96');
-      expect(work.title.en).toBe('Festive Overture Op. 96');
+      expect(work.title.ja).toBe('序曲第96番 作品96');
+      expect(work.title.en).toBe('Overture No. 96 Op. 96');
     });
 
     it('should respect distinctive title when provided', () => {

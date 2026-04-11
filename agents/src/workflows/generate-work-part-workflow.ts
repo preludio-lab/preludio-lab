@@ -13,7 +13,7 @@ import { prune, deepMergeTranslation } from '@/shared/utils/json.js';
 import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 
 import { WorkPartDraftAgent } from '@/agents/work/part-draft-agent.js';
-import { WorkRefineAgent } from '@/agents/work/refine-agent.js';
+import { WorkRefineDraftAgent } from '@/agents/work/refine-draft-agent.js';
 import { WorkTranslateAgent } from '@/agents/work/translate-agent.js';
 
 /**
@@ -84,7 +84,7 @@ export class GenerateWorkPartWorkflow {
     return path.join(this.tempDir, `${workSlug}.parts.draft.json`);
   }
   private getRefinedPath(workSlug: string) {
-    return path.join(this.tempDir, `${workSlug}.parts.refined.json`);
+    return path.join(this.tempDir, `${workSlug}.parts.draft-refined.json`);
   }
   private getTranslatedPath(workSlug: string) {
     return path.join(this.tempDir, `${workSlug}.parts.translated.json`);
@@ -190,7 +190,7 @@ export class GenerateWorkPartWorkflow {
     const workPath = this.getWorkPath(input.composerSlug, input.workSlug);
     const parentWork = await this.loadAndParseJson(workPath);
 
-    const agent = new WorkRefineAgent({ modelName });
+    const agent = new WorkRefineDraftAgent({ modelName });
 
     consola.info(`[Step: refine] Running consistency check...`);
     const refined = await agent.refineGlobalConsistency(

@@ -43,34 +43,9 @@ export const TitleComponentsSchema = z.object({
   distinctiveTitle: TitleSchema.optional(),
   /** 広く知られた愛称 (例: "運命") */
   nickname: TitleSchema.optional(),
-
-  // --- 移行用フィールド (将来的に削除) ---
-  /** 旧：ジャンル名等を含む接頭辞 */
-  prefix: TitleSchema.optional(),
-  /** 旧：本題（調性等を含む） */
-  content: TitleSchema.optional(),
 });
 
 export type TitleComponents = z.infer<typeof TitleComponentsSchema>;
-
-/**
- * TitleComponents から各言語のフルタイトルを合成します。
- */
-export function synthesizeTitle(tc: TitleComponents): z.infer<typeof TitleSchema> {
-  const result: Record<string, string | undefined> = {};
-  const langs = ['en', 'ja', 'es', 'de', 'fr', 'it', 'zh'] as const;
-
-  for (const lang of langs) {
-    const p = tc.prefix?.[lang];
-    const c = tc.content?.[lang];
-    const combined = [p, c].filter(Boolean).join(' ');
-    if (combined) {
-      result[lang] = combined;
-    }
-  }
-
-  return result;
-}
 
 /** 演奏難易度 (Taxonomy準拠 1-5) */
 export const PerformanceDifficultySchema = zInt().min(1).max(5);

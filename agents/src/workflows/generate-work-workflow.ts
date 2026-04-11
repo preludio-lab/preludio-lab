@@ -12,7 +12,8 @@ import { prune, deepMergeTranslation } from '@/shared/utils/json.js';
 import { AgentDataWriterTool } from '@/tools/agent-data-writer.tool.js';
 
 import { WorkDraftAgent } from '@/agents/work/draft-agent.js';
-import { WorkRefineAgent } from '@/agents/work/refine-agent.js';
+import { WorkRefineDraftAgent } from '@/agents/work/refine-draft-agent.js';
+import { WorkRefineTranslateAgent } from '@/agents/work/refine-translate-agent.js';
 import { WorkTranslateAgent } from '@/agents/work/translate-agent.js';
 import { normalizeWorkDraft } from '@/agents/work/work-agent-utils.js';
 
@@ -21,8 +22,9 @@ import { normalizeWorkDraft } from '@/agents/work/work-agent-utils.js';
  */
 export const WORK_WORKFLOW_STEPS = {
   DRAFT: 'draft',
-  REFINE: 'refine',
+  REFINE_DRAFT: 'refine-draft',
   TRANSLATE: 'translate',
+  REFINE_TRANSLATE: 'refine-translate',
   FINALIZE: 'finalize',
 } as const;
 
@@ -30,8 +32,9 @@ export type WorkWorkflowStep = (typeof WORK_WORKFLOW_STEPS)[keyof typeof WORK_WO
 
 const StepEnumSchema = z.enum([
   WORK_WORKFLOW_STEPS.DRAFT,
-  WORK_WORKFLOW_STEPS.REFINE,
+  WORK_WORKFLOW_STEPS.REFINE_DRAFT,
   WORK_WORKFLOW_STEPS.TRANSLATE,
+  WORK_WORKFLOW_STEPS.REFINE_TRANSLATE,
   WORK_WORKFLOW_STEPS.FINALIZE,
 ]);
 
@@ -73,11 +76,14 @@ export class GenerateWorkWorkflow {
   private getDraftPath(slug: string) {
     return path.join(this.tempDir, `${slug}.draft.json`);
   }
-  private getRefinedPath(slug: string) {
-    return path.join(this.tempDir, `${slug}.refined.json`);
+  private getDraftRefinedPath(slug: string) {
+    return path.join(this.tempDir, `${slug}.draft-refined.json`);
   }
   private getTranslatedPath(slug: string) {
     return path.join(this.tempDir, `${slug}.translated.json`);
+  }
+  private getTranslatedRefinedPath(slug: string) {
+    return path.join(this.tempDir, `${slug}.translated-refined.json`);
   }
   private getFinalPath(composerSlug: string, workSlug: string) {
     return path.join(this.dataDir, composerSlug, `${workSlug}.json`);
@@ -117,9 +123,9 @@ export class GenerateWorkWorkflow {
       if (!input.auto) return;
     }
 
-    // ----- STEP 2: REFINE -----
-    if (isStepActive(WORK_WORKFLOW_STEPS.REFINE)) {
-      currentWork = await this.executeRefineStep(input, modelName, currentWork);
+    // ----- STEP 2: REFINE-DRAFT -----
+    if (isStepActive(WORK_WORKFLOW_STEPS.REFINE_DRAFT)) {
+      currentWork = await this.executeRefineDraftStep(input, modelName, currentWork);
       if (!input.auto) return;
     }
 
@@ -133,7 +139,13 @@ export class GenerateWorkWorkflow {
       if (!input.auto) return;
     }
 
-    // ----- STEP 4: FINALIZE -----
+    // ----- STEP 4: REFINE-TRANSLATE -----
+    if (isStepActive(WORK_WORKFLOW_STEPS.REFINE_TRANSLATE)) {
+      currentWork = await this.executeRefineTranslateStep(input, modelName, currentWork);
+      if (!input.auto) return;
+    }
+
+    // ----- STEP 5: FINALIZE -----
     if (isStepActive(WORK_WORKFLOW_STEPS.FINALIZE)) {
       await this.executeFinalizeStep(input, currentWork);
     }
@@ -166,12 +178,14 @@ export class GenerateWorkWorkflow {
     return workDraft;
   }
 
-  private async executeRefineStep(
+  private async executeRefineDraftStep(
     input: GenerateWorkInput,
     modelName: GeminiModelName,
     work: unknown,
   ) {
-    consola.start(`[Step: refine] Performing consistency cross-check and applying reviews...`);
+    consola.start(
+      `[Step: refine-draft] Performing consistency cross-check and applying reviews...`,
+    );
 
     let targetWork = work;
 
@@ -180,27 +194,27 @@ export class GenerateWorkWorkflow {
       targetWork = await this.loadAndParseJson(sourcePath);
     }
 
-    const agent = new WorkRefineAgent({ modelName });
+    const agent = new WorkRefineDraftAgent({ modelName });
 
     if (input.review) {
-      consola.info(`[Step: refine] Applying human review feedback...`);
+      consola.info(`[Step: refine-draft] Applying human review feedback...`);
       targetWork = (await agent.refineWithReview(
         targetWork as WorkDraft,
         input.review,
         false,
       )) as WorkDraft;
     } else {
-      consola.info(`[Step: refine] Running automated global consistency cross-check...`);
+      consola.info(`[Step: refine-draft] Running automated global consistency cross-check...`);
       const refined = await agent.refineGlobalConsistency(targetWork as WorkDraft, []);
       targetWork = refined.work as WorkDraft;
     }
 
-    // Final Normalization (Last line of defense before saving)
+    // Final Normalization
     targetWork = normalizeWorkDraft(targetWork as WorkDraft);
 
-    const outPath = this.getRefinedPath(input.workSlug);
+    const outPath = this.getDraftRefinedPath(input.workSlug);
     await fs.writeFile(outPath, JSON.stringify(targetWork, null, 2), 'utf-8');
-    consola.success(`[Step: refine] Saved refined data to ${outPath}`);
+    consola.success(`[Step: refine-draft] Saved refined draft to ${outPath}`);
 
     return targetWork;
   }
@@ -215,9 +229,9 @@ export class GenerateWorkWorkflow {
     let targetWork = work;
 
     if (!targetWork) {
-      const sourcePath = fsSync.existsSync(this.getRefinedPath(input.workSlug))
-        ? this.getRefinedPath(input.workSlug)
-        : this.getDraftPath(input.workSlug);
+      const draftRefinedPath = this.getDraftRefinedPath(input.workSlug);
+      const draftPath = this.getDraftPath(input.workSlug);
+      const sourcePath = fsSync.existsSync(draftRefinedPath) ? draftRefinedPath : draftPath;
       targetWork = await this.loadAndParseJson(sourcePath);
     }
 
@@ -250,12 +264,109 @@ export class GenerateWorkWorkflow {
     return translatedWork;
   }
 
+  private async executeRefineTranslateStep(
+    input: GenerateWorkInput,
+    modelName: GeminiModelName,
+    work: unknown,
+  ) {
+    consola.start(`[Step: refine-translate] Refining translated metadata...`);
+
+    let targetWork = work;
+    if (!targetWork) {
+      targetWork = await this.loadAndParseJson(this.getTranslatedPath(input.workSlug));
+    }
+
+    if (!input.review) {
+      consola.warn(`[Step: refine-translate] No review comments provided. Skipping.`);
+      return targetWork;
+    }
+
+    const agent = new WorkRefineTranslateAgent({ modelName });
+    const patch = await agent.refineMultilingualPatch(targetWork as WorkDraft, input.review);
+
+    // パッチを言語単位でマージ
+    const refined = this.patchMultilingualData(
+      targetWork as Record<string, unknown>,
+      patch as Record<string, unknown>,
+    );
+
+    const outPath = this.getTranslatedRefinedPath(input.workSlug);
+    await fs.writeFile(outPath, JSON.stringify(refined, null, 2), 'utf-8');
+    consola.success(`[Step: refine-translate] Saved refined translated data to ${outPath}`);
+
+    return refined;
+  }
+
+  /**
+   * 多言語オブジェクトのパッチを既存データにマージします（言語キー単位で保持）。
+   */
+  private patchMultilingualData(
+    base: Record<string, unknown>,
+    patch: Record<string, unknown>,
+  ): Record<string, unknown> {
+    const result = { ...base };
+
+    for (const key of Object.keys(patch)) {
+      const baseVal = base[key];
+      const patchVal = patch[key];
+
+      if (
+        baseVal &&
+        typeof baseVal === 'object' &&
+        patchVal &&
+        typeof patchVal === 'object' &&
+        !Array.isArray(patchVal)
+      ) {
+        // 多言語オブジェクト（ja, en, de...）または titleComponents のようなネスト構造
+        result[key] = { ...baseVal, ...patchVal };
+
+        // titleComponents の場合はさらに深くマージが必要な可能性があるため再帰的にも検討できるが、
+        // 今回の PatchSchema 構造（distinctiveTitle/nickname）であれば一段下をスプレッドすれば十分
+        if (key === 'titleComponents') {
+          const baseTc = baseVal as Record<string, Record<string, string>>;
+          const patchTc = patchVal as Record<string, Record<string, string>>;
+          result[key] = { ...baseTc };
+          if (patchTc.distinctiveTitle) {
+            (result[key] as Record<string, unknown>).distinctiveTitle = {
+              ...baseTc.distinctiveTitle,
+              ...patchTc.distinctiveTitle,
+            };
+          }
+          if (patchTc.nickname) {
+            (result[key] as Record<string, unknown>).nickname = {
+              ...baseTc.nickname,
+              ...patchTc.nickname,
+            };
+          }
+        }
+      } else {
+        // 文字列や数値、配列などの単純上書き
+        result[key] = patchVal;
+      }
+    }
+
+    return result;
+  }
+
   private async executeFinalizeStep(input: GenerateWorkInput, work: unknown) {
     consola.start(`[Step: finalize] Persisting work data...`);
 
     let targetJson = work;
     if (!targetJson) {
-      targetJson = await this.loadAndParseJson(this.getTranslatedPath(input.workSlug));
+      const transRefined = this.getTranslatedRefinedPath(input.workSlug);
+      const translated = this.getTranslatedPath(input.workSlug);
+      const draftRefined = this.getDraftRefinedPath(input.workSlug);
+      const draft = this.getDraftPath(input.workSlug);
+
+      const path = fsSync.existsSync(transRefined)
+        ? transRefined
+        : fsSync.existsSync(translated)
+          ? translated
+          : fsSync.existsSync(draftRefined)
+            ? draftRefined
+            : draft;
+
+      targetJson = await this.loadAndParseJson(path);
     }
 
     // WorkデータからParts（楽章リスト）を分離して単体Workとして保存

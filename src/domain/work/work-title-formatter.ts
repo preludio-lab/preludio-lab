@@ -1,11 +1,13 @@
-import { TitleComponents } from './work.shared.js';
-import { Catalogue } from './work.shared.js';
-import { TITLE_SYNTHESIS_LABELS, SupportedLang } from './work.constants.js';
+import { TitleComponents, Catalogue } from './work.shared';
+import { TITLE_SYNTHESIS_LABELS, SupportedLang } from './work.constants';
+import { getMusicalGenreLabel, getMusicalKeyLabel } from '../shared/enum-labels';
+import { AppLocale, MultilingualString } from '../i18n/locale';
+import { MusicalKey } from './musical-key';
 
 export interface TitleFormatContext {
-  lang: string;
-  genreName?: string;
-  keyName?: string;
+  locale: string;
+  genres?: string[];
+  key?: string;
   catalogues?: Catalogue[];
 }
 
@@ -25,29 +27,38 @@ export class WorkTitleFormatter {
   /**
    * 楽曲タイトルを合成します
    */
-  static format(tc: TitleComponents, ctx: TitleFormatContext): string {
-    const { lang, genreName, keyName, catalogues } = ctx;
-    const langKey = (lang as SupportedLang) || 'en';
+  static format(ctx: TitleFormatContext & { components: TitleComponents }): string {
+    const { locale, genres, key, catalogues, components: tc } = ctx;
+    const langKey = (locale as SupportedLang) || 'en';
     const labels = (TITLE_SYNTHESIS_LABELS as Record<string, TitleSynthesisLabels>)[langKey];
 
+    // 1. エスケープハッチ: Custom
     if (tc.displayType === 'custom') {
-      const distinctiveTitle = tc.distinctiveTitle as Record<string, string | undefined>;
-      const content = tc.content as Record<string, string | undefined>;
-      const sLangKey = langKey as string;
-      return distinctiveTitle?.[sLangKey] || content?.[sLangKey] || '';
+      const distinctiveTitle = (tc.distinctiveTitle as MultilingualString | undefined)?.[
+        langKey as AppLocale
+      ];
+      if (distinctiveTitle) {
+        return distinctiveTitle;
+      }
     }
 
     const primaryCatalogue =
       (catalogues as Catalogue[])?.find((c) => c.isPrimary) || (catalogues as Catalogue[])?.[0];
 
+    const genreName = genres?.[0]
+      ? getMusicalGenreLabel(genres[0], langKey as AppLocale)
+      : undefined;
+    const keyName = key ? getMusicalKeyLabel(key as MusicalKey, langKey as AppLocale) : undefined;
+
+    // 2. 合成パターン別処理
     switch (tc.displayType) {
       case 'catalogue-only':
-        return this.formatCatalogueOnly(labels, lang, genreName, keyName, primaryCatalogue);
+        return this.formatCatalogueOnly(labels, langKey, genreName, keyName, primaryCatalogue);
       case 'title-priority':
-        return this.formatTitlePriority(tc, labels, lang, keyName, primaryCatalogue);
+        return this.formatTitlePriority(tc, labels, langKey, keyName, primaryCatalogue);
       case 'standard':
       default:
-        return this.formatStandard(tc, labels, lang, genreName, keyName, primaryCatalogue);
+        return this.formatStandard(tc, labels, langKey, genreName, keyName, primaryCatalogue);
     }
   }
 
@@ -61,24 +72,32 @@ export class WorkTitleFormatter {
   ): string {
     const parts: string[] = [];
 
+    // [Genre + Number]
     if (genreName) {
       const numPart = tc.number ? `${labels.numberPrefix}${tc.number}${labels.numberSuffix}` : '';
-      parts.push(`${genreName}${numPart ? ' ' + numPart : ''}`);
+      parts.push(
+        `${genreName}${numPart ? (lang === 'ja' || lang === 'zh' ? '' : ' ') + numPart : ''}`,
+      );
+    } else if (tc.number) {
+      // ジャンルがないが番号がある場合（稀だが念のため）
+      parts.push(`${labels.numberPrefix}${tc.number}${labels.numberSuffix}`);
     }
 
+    // [Key]
     if (keyName) {
       parts.push(`${labels.keyPrefix}${keyName}`);
     }
 
-    const langKey = lang as SupportedLang;
-    const sLangKey = langKey as string;
-    const nickname = (tc.nickname as Record<string, string | undefined>)?.[sLangKey];
+    // [Nickname]
+    const nickname = (tc.nickname as MultilingualString | undefined)?.[lang as AppLocale];
     if (nickname) {
       parts.push(`${labels.nicknamePrefix}${nickname}${labels.nicknameSuffix}`);
     }
 
+    // [Catalogue]
     if (catalogue) {
-      parts.push(this.formatCatalogue(catalogue, labels, lang));
+      const catStr = this.formatCatalogue(catalogue, labels, lang);
+      if (catStr) parts.push(catStr);
     }
 
     return parts.filter(Boolean).join(' ');
@@ -94,7 +113,10 @@ export class WorkTitleFormatter {
     const parts: string[] = [];
     if (genreName) parts.push(genreName);
     if (keyName) parts.push(`${labels.keyPrefix}${keyName}`);
-    if (catalogue) parts.push(this.formatCatalogue(catalogue, labels, lang));
+    if (catalogue) {
+      const catStr = this.formatCatalogue(catalogue, labels, lang);
+      if (catStr) parts.push(catStr);
+    }
     return parts.filter(Boolean).join(' ');
   }
 
@@ -106,13 +128,15 @@ export class WorkTitleFormatter {
     catalogue?: Catalogue,
   ): string {
     const parts: string[] = [];
-    const langKey = lang as SupportedLang;
-    const sLangKey = langKey as string;
-    const distinctiveTitle = tc.distinctiveTitle as Record<string, string | undefined>;
-    const title = distinctiveTitle?.[sLangKey];
-    if (title) parts.push(title);
+    const distinctiveTitle = (tc.distinctiveTitle as MultilingualString | undefined)?.[
+      lang as AppLocale
+    ];
+    if (distinctiveTitle) parts.push(distinctiveTitle);
     if (keyName) parts.push(`${labels.keyPrefix}${keyName}`);
-    if (catalogue) parts.push(this.formatCatalogue(catalogue, labels, lang));
+    if (catalogue) {
+      const catStr = this.formatCatalogue(catalogue, labels, lang);
+      if (catStr) parts.push(catStr);
+    }
     return parts.filter(Boolean).join(' ');
   }
 

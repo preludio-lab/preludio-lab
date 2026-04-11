@@ -90,19 +90,68 @@ export const WorkDraftSchema = WorkMasterBaseSchema.omit({
     impressionDimensions: ImpressionDimensionsDraftSchema.optional(),
     tags: z.array(TagIdDraftSchema).max(10).describe(CommonDescriptions.tags),
     nicknames: z.array(z.string()).describe(CommonDescriptions.nicknames),
-    basedOn: BasedOnDraftSchema.nullable()
-      .optional()
-      .describe(
-        '編曲・派生元情報。オリジナル作品（編曲でない）の場合は、情報を捏造せず必ず null を出力してください。',
-      ),
+    basedOn: BasedOnDraftSchema.optional().describe(
+      '編曲・派生元情報。オリジナル作品（編曲でない）の場合は、情報を捏造せず、このフィールド自体を出力しないでください。',
+    ),
     description: MultilingualDraftSchema.optional().describe(
-      '【最重要】必ず {"ja": "..." } の形式で出力してください。60〜80文字で、検索結果や一覧画面からユーザーが「詳細な解説を読みたくなる」洗練された紹介文（SEO最適化）を作成してください。(1)客観的輪郭、(2)魅力の核心、(3)探求心の刺激の3要素を凝縮すること。直接的な煽りは避けてください。',
+      '【最重要】必ず {"ja": "..." } の形式で出力。70〜80文字で、一覧画面での「静謐さと気品」を両立した紹介文を作成してください。(1)音楽史的・生涯的な位置づけ（20字程度）、(2)音楽的本質の高解像度な描写（35字程度）、(3)読者の知的好奇心を刺激する独自の視点（20字程度）を凝縮すること。「本作品は〜」といった冗長な書き出しや宣伝的な煽り文句は厳禁。',
     ),
     _reasoning: WorkReasoningSchema,
   })
   .merge(MusicalIdentityDraftSchema.partial());
 
 export type WorkDraft = z.infer<typeof WorkDraftSchema>;
+
+/** 多言語対応（翻訳済み）データの精査用スキーマ */
+const MultilingualFullSchema = z
+  .object({
+    ja: z.string(),
+    en: z.string(),
+    de: z.string(),
+    fr: z.string(),
+    it: z.string(),
+    es: z.string(),
+    zh: z.string(),
+  })
+  .describe('多言語オブジェクト。必ず ja, en, de, fr, it, es, zh のすべてのキーを含めてください。');
+
+export const WorkMultilingualRefineSchema = WorkDraftSchema.extend({
+  titleComponents: z
+    .object({
+      displayType: z
+        .enum(['standard', 'catalogue-only', 'title-priority', 'custom'])
+        .default('standard'),
+      number: z.number().int().optional(),
+      distinctiveTitle: MultilingualFullSchema.optional(),
+      nickname: MultilingualFullSchema.optional(),
+    })
+    .describe('タイトル構成。各言語の翻訳を維持してください。'),
+  compositionPeriod:
+    MultilingualFullSchema.optional().describe('作曲時期。各言語の翻訳を維持してください。'),
+  description: MultilingualFullSchema.optional().describe(
+    '楽曲解説。各言語の翻訳を維持・精査してください。',
+  ),
+  tempoTranslation: MultilingualFullSchema.nullable()
+    .optional()
+    .describe('速度記号の訳。各言語の翻訳を維持してください。'),
+});
+
+/** 多言語パッチ用の緩和されたスキーマ (修正が必要な言語のみの出力を許容) */
+export const WorkMultilingualPatchSchema = z
+  .object({
+    titleComponents: z
+      .object({
+        distinctiveTitle: MultilingualFullSchema.partial().optional(),
+        nickname: MultilingualFullSchema.partial().optional(),
+      })
+      .optional(),
+    compositionPeriod: MultilingualFullSchema.partial().optional(),
+    description: MultilingualFullSchema.partial().optional(),
+    tempoTranslation: MultilingualFullSchema.partial().nullable().optional(),
+  })
+  .partial();
+
+export type WorkMultilingualPatch = z.infer<typeof WorkMultilingualPatchSchema>;
 
 /**
  * Workflow output & persistence specialized schema.

@@ -54,6 +54,9 @@ importers:
       import-in-the-middle:
         specifier: ^3.0.0
         version: 3.0.0
+      js-yaml:
+        specifier: ^4.1.1
+        version: 4.1.1
       mime-types:
         specifier: ^3.0.2
         version: 3.0.2
